@@ -1,0 +1,31 @@
+my_django_project/  # Diretório do projeto
+├── manage.py         # Script de gerenciamento do Django
+├── db.sqlite3        # Banco de dados SQLite (caso esteja usando SQLite)
+├── requirements.txt  # Dependências do projeto
+├── my_django_project/  # Diretório do aplicativo principal
+│   ├── __init__.py   # Indica que este diretório é um pacote Python
+│   ├── settings.py   # Configurações do projeto Django
+│   ├── urls.py       # Rotas do projeto
+│   ├── asgi.py       # Configuração ASGI
+│   ├── wsgi.py       # Configuração WSGI
+│
+├── torneios/     # App para torneios
+│   ├── migrations/   # Arquivos de migração do banco de dados
+│   ├── static/       # Arquivos estáticos (CSS, JS, imagens)
+│   ├── templates/    # Templates HTML
+│   ├── admin.py      # Configuração do Django Admin
+│   ├── apps.py       # Configuração do app
+│   ├── models.py     # Modelos de dados
+│   ├── tests.py      # Testes automatizados
+│   ├── views.py      # Lógica das views
+│   ├── urls.py       # Rotas do app
+│
+├── partidas/     # App para partidas
+├── usuarios/     # App para gerenciamento de usuários
+├── rankings/     # App para rankings
+├── notificacoes/ # App para notificações
+├── configuracoes/ # App para configurações do sistema
+│
+├── static/          # Diretório global para arquivos estáticos
+├── templates/       # Diretório global para templates HTML
+├── media/           # Diretório para arquivos de mídia enviados pelos usuários
