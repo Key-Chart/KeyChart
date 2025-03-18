@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body 
+    {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #198754;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            transition: width 0.3s ease-in-out;
+        }
+        .sidebar a {
+            padding: 15px;
+            display: block;
+            color: white;
+            text-decoration: none;
+            white-space: nowrap;
+            font-size: 18px;
+        }
+        .sidebar a i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .sidebar a:hover {
+            background-color: #146c43;
+        }
+        .content {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 20px;
+            transition: margin-left 0.3s ease-in-out;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        .sidebar-hidden {
+            width: 60px;
+        }
+        .sidebar-hidden a {
+            text-align: center;
+        }
+        .sidebar-hidden a span {
+            display: none;
+        }
+        .content-expanded {
+            margin-left: 60px;
+        }
+        .toggle-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1050;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h2 {
+            margin: 0; 
+        }
+        .user-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            .sidebar a span {
+                display: none;
+            }
+            .content {
+                margin-left: 60px;
+            }
+            .toggle-btn {
+                display: block;
+            }
+        }
+
+        @media (max-width: 174px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar-hidden {
+                transform: translateX(0);
+            }
+            .content {
+                margin-left: 0;
+            }
+            .toggle-btn {
+                left: 20px;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table {
+                min-width: 600px;
+            }
+        }
+       
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .user-icon {
+            font-size: 24px;
+            cursor: pointer;
+            color: #198754;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-width: 150px;
+            z-index: 1000;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f8f9fa;
+        }
+
+        .user-dropdown:hover .dropdown-menu {
+            display: block;
+        }
+  </style>
+</head>
+<body>
+    <button class="toggle-btn" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <div class="sidebar" id="sidebar">
+        <br>
+        <a href=""><i class="bi bi-bootstrap-fill"></i><span>KeyMatch</span></a>
+        <a href=""><i class="bi bi-trophy"></i><span>Competições</span></a>
+        <a href=""><i class="bi bi-person-lines-fill"></i><span>Equipes</span></a>
+        <a href=""><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
+        <a href=""><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
+        <a href=""><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
+        <a href=""><i class="bi bi-gear"></i><span>Configurações</span></a>
+        <a href=""><i class="bi bi-info-circle"></i><span>Sobre</span></a> 
+    </div>
+    <div class="content" id="content">
+        <div class="header">
+            <h2>🏆 Dashboard - KeyMatch</h2>
+            <div class="user-dropdown">
+                <i class="bi bi-person-circle user-icon"></i>
+                <div class="dropdown-menu">
+                    <a href="#">Ver perfil</a>
+                    <a href="#">Fazer logout</a>
+                    <a href="#">Sair</a>
+                </div>
+            </div>
+        </div>
+        <main class="container-fluid mt-4">
+            <div class="row text-center">
+                <div class="col-12 col-md-3">
+                    <div class="card bg-primary text-white p-3">
+                        <h5>Total de Campeonatos</h5>
+                        <p class="fs-2">12</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="card bg-success text-white p-3">
+                        <h5>Times cadastrados</h5>
+                        <p class="fs-2">12</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="card bg-warning text-white p-3">
+                        <h5>Times cadastrados</h5>
+                        <p class="fs-2">12</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <div class="card bg-danger text-white p-3">
+                        <h5>Times cadastrados</h5>
+                        <p class="fs-2">12</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12 col-md-6">
+                    <div class="card p-3">
+                        <h5>📊 Ranking de Times</h5>
+                        <canvas id="grafico01"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card p-3">
+                        <h5>📊 Ranking de Times</h5>
+                        <canvas id="grafico02"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card p-3">
+                        <h5>📅 Próximas Partidas</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped ">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Time 1</th>
+                                        <th>Time 2</th>
+                                        <th>Local</th>
+                                        <th>Árbitro</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>17/03/2025</td>
+                                        <td>Equipe do Marcus</td>
+                                        <td>Equipe do Luan</td>
+                                        <td>Casa do Marcus</td>
+                                        <td>Rafael</td>
+                                    </tr>
+                                    <tr>
+                                        <td>17/03/2025</td>
+                                        <td>Equipe do Marcus</td>
+                                        <td>Equipe do Luan</td>
+                                        <td>Casa do Marcus</td>
+                                        <td>Rafael</td>
+                                    </tr>
+                                    <tr>
+                                        <td>17/03/2025</td>
+                                        <td>Equipe do Marcus</td>
+                                        <td>Equipe do Luan</td>
+                                        <td>Casa do Marcus</td>
+                                        <td>Rafael</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar')
+            const content = document.getElementById('content')
+            sidebar.classList.toggle('sidebar-hidden')
+            content.classList.toggle('content-expanded')
+        }
+
+        var ctx1 = document.getElementById('grafico01').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['Time A', 'Time B', 'Time C', 'Time D'],
+                datasets: [{
+                    label: 'Pontos',
+                    data: [50, 42, 38, 36],
+                    backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545']
+                }]
+            }
+        });
+
+        var ctx2 = document.getElementById('grafico02').getContext('2d');
+        new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: ['Jogo 1', 'Jogo 2', 'Jogo 3', 'Jogo 4'],
+                datasets: [{
+                    label: 'Gols',
+                    data: [2, 4, 3, 5],
+                    borderColor: '#007bff',
+                    fill: false
+                }]
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
