@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <title>Competições - Sistema de Esportes</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #198754;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            transition: width 0.3s ease-in-out;
+        }
+        .sidebar a {
+            padding: 15px;
+            display: block;
+            color: white;
+            text-decoration: none;
+            white-space: nowrap;
+            font-size: 18px;
+        }
+        .sidebar a i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .sidebar a:hover {
+            background-color: #146c43;
+        }
+        .content {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 20px;
+            transition: margin-left 0.3s ease-in-out;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        .sidebar-hidden {
+            width: 60px;
+        }
+        .sidebar-hidden a {
+            text-align: center;
+        }
+        .sidebar-hidden a span {
+            display: none;
+        }
+        .content-expanded {
+            margin-left: 60px;
+        }
+        .toggle-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1050;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h2 {
+            margin: 0;
+        }
+        .user-icon {
+            font-size: 24px;
+            cursor: pointer;
+            color: #198754;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            .sidebar a span {
+                display: none;
+            }
+            .content {
+                margin-left: 60px;
+            }
+            .toggle-btn {
+                display: block;
+            }
+        }
+        @media (max-width: 576px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar-hidden {
+                transform: translateX(0);
+            }
+            .content {
+                margin-left: 0;
+            }
+            .toggle-btn {
+                left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-btn" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+    <div class="sidebar" id="sidebar">
+        <br>
+        <a href="dashboard.html"><i class="bi bi-bootstrap-fill"></i><span>KeyMatch</span></a>
+        <a href="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
+        <a href="equipes_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
+        <a href="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
+        <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
+        <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
+        <a href="configuracoes.html"><i class="bi bi-gear"></i><span>Configurações</span></a>
+        <a href="usuarios.html"><i class="bi bi-person-circle"></i><span>Usuários</span></a>
+        <a href="sobre.html"><i class="bi bi-info-circle"></i><span>Sobre</span></a>
+    </div>
+    <div class="content" id="content">
+        <div class="header">
+            <h2>🏆 Competições</h2>
+            <i class="bi bi-person-circle user-icon"></i>
+        </div>
+        <main class="container-fluid mt-4">
+            <div class="row text-center">
+                <div class="col-md-4 mb-3">
+                    <div class="card p-3 text-center bg-primary text-white">
+                        <h5>Total de Competições</h5>
+                        <p class="fs-2">8</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card p-3 text-center bg-success text-white">
+                        <h5>Competições Ativas</h5>
+                        <p class="fs-2">5</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card p-3 text-center bg-warning text-dark">
+                        <h5>Competições Finalizadas</h5>
+                        <p class="fs-2">3</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card p-3">
+                        <h5>📋 Lista de Competições</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Data de Início</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Copa Regional 2025</td>
+                                        <td>10/03/2025</td>
+                                        <td><span class="badge bg-success">Ativa</span></td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewModal">🔍 Ver</button>
+                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal">✏️ Editar</button>
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">🗑️ Excluir</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Campeonato Estadual</td>
+                                        <td>15/02/2025</td>
+                                        <td><span class="badge bg-danger">Finalizada</span></td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewModal">🔍 Ver</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">➕ Criar Nova Competição</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Ver Competição -->
+    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewModalLabel">Ver Competição</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Nome:</strong> Copa Regional 2025</p>
+                    <p><strong>Data de Início:</strong> 10/03/2025</p>
+                    <p><strong>Status:</strong> Ativa</p>
+                    <p><strong>Detalhes:</strong> Informações detalhadas sobre a competição.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Editar Competição -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Editar Competição</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="editName" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="editName" value="Copa Regional 2025">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDate" class="form-label">Data de Início</label>
+                            <input type="date" class="form-control" id="editDate" value="2025-03-10">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editStatus">
+                                <option selected>Ativa</option>
+                                <option>Finalizada</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Excluir Competição -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Excluir Competição</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir a competição <strong>Copa Regional 2025</strong>?</p>
+                    <p>Esta ação não pode ser desfeita.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Criar Nova Competição -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">Criar Nova Competição</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="createName" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="createName" placeholder="Nome da Competição">
+                        </div>
+                        <div class="mb-3">
+                            <label for="createDate" class="form-label">Data de Início</label>
+                            <input type="date" class="form-control" id="createDate">
+                        </div>
+                        <div class="mb-3">
+                            <label for="createStatus" class="form-label">Status</label>
+                            <select class="form-select" id="createStatus">
+                                <option>Ativa</option>
+                                <option>Finalizada</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Criar Competição</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebar.classList.toggle('sidebar-hidden');
+            content.classList.toggle('content-expanded');
+        }
+    </script>
+</body>
+</html>
