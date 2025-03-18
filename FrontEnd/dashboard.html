@@ -1,15 +1,14 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body 
-    {
+    <title>Dashboard - Sistema de Esportes</title>
+    <style>
+        body {
             display: flex;
             height: 100vh;
             margin: 0;
@@ -85,7 +84,7 @@
             font-size: 24px;
             cursor: pointer;
         }
-        
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 60px;
@@ -101,7 +100,7 @@
             }
         }
 
-        @media (max-width: 174px) {
+        @media (max-width: 576px) {
             .sidebar {
                 transform: translateX(-100%);
             }
@@ -116,17 +115,6 @@
             }
         }
 
-        @media screen and (max-width: 768px) {
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .table {
-                min-width: 600px;
-            }
-        }
-       
         .user-dropdown {
             position: relative;
             display: inline-block;
@@ -164,23 +152,23 @@
         .user-dropdown:hover .dropdown-menu {
             display: block;
         }
-  </style>
+    </style>
 </head>
 <body>
     <button class="toggle-btn" onclick="toggleSidebar()">
         <i class="bi bi-list"></i>
     </button>
-
     <div class="sidebar" id="sidebar">
         <br>
-        <a href=""><i class="bi bi-bootstrap-fill"></i><span>KeyMatch</span></a>
+        <a href="dashboard.html"><i class="bi bi-bootstrap-fill"></i><span>KeyMatch</span></a>
         <a href="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
-        <a href=""><i class="bi bi-person-lines-fill"></i><span>Equipes</span></a>
-        <a href=""><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
-        <a href=""><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
-        <a href=""><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
-        <a href=""><i class="bi bi-gear"></i><span>Configurações</span></a>
-        <a href=""><i class="bi bi-info-circle"></i><span>Sobre</span></a> 
+        <a href="equipes_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
+        <a href="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
+        <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
+        <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
+        <a href="configuracoes.html"><i class="bi bi-gear"></i><span>Configurações</span></a>
+        <a href="usuarios.html"><i class="bi bi-person-circle"></i><span>Usuários</span></a>
+        <a href="sobre.html"><i class="bi bi-info-circle"></i><span>Sobre</span></a>
     </div>
     <div class="content" id="content">
         <div class="header">
@@ -190,7 +178,7 @@
                 <div class="dropdown-menu">
                     <a href="#">Ver perfil</a>
                     <a href="#">Fazer logout</a>
-                    <a href="#">Sair</a>
+                    <a href="login.html">Sair</a>
                 </div>
             </div>
         </div>
@@ -204,94 +192,107 @@
                 </div>
                 <div class="col-12 col-md-3">
                     <div class="card bg-success text-white p-3">
-                        <h5>Times cadastrados</h5>
-                        <p class="fs-2">12</p>
+                        <h5>Times Cadastrados</h5>
+                        <p class="fs-2">48</p>
                     </div>
                 </div>
                 <div class="col-12 col-md-3">
-                    <div class="card bg-warning text-white p-3">
-                        <h5>Times cadastrados</h5>
-                        <p class="fs-2">12</p>
+                    <div class="card bg-warning text-dark p-3">
+                        <h5>Jogadores Registrados</h5>
+                        <p class="fs-2">256</p>
                     </div>
                 </div>
                 <div class="col-12 col-md-3">
                     <div class="card bg-danger text-white p-3">
-                        <h5>Times cadastrados</h5>
-                        <p class="fs-2">12</p>
+                        <h5>Partidas Hoje</h5>
+                        <p class="fs-2">6</p>
                     </div>
                 </div>
             </div>
-
+            
             <div class="row mt-4">
                 <div class="col-12 col-md-6">
                     <div class="card p-3">
                         <h5>📊 Ranking de Times</h5>
-                        <canvas id="grafico01"></canvas>
+                        <canvas id="rankingChart"></canvas>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="card p-3">
                         <h5>📊 Ranking de Times</h5>
-                        <canvas id="grafico02"></canvas>
+                        <canvas id="goalsChart"></canvas>
                     </div>
                 </div>
             </div>
-
+            
             <div class="row mt-4">
                 <div class="col-12">
                     <div class="card p-3">
                         <h5>📅 Próximas Partidas</h5>
-                        <div class="table-responsive">
-                            <table class="table table-striped ">
-                                <thead>
-                                    <tr>
-                                        <th>Data</th>
-                                        <th>Time 1</th>
-                                        <th>Time 2</th>
-                                        <th>Local</th>
-                                        <th>Árbitro</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>17/03/2025</td>
-                                        <td>Equipe do Marcus</td>
-                                        <td>Equipe do Luan</td>
-                                        <td>Casa do Marcus</td>
-                                        <td>Rafael</td>
-                                    </tr>
-                                    <tr>
-                                        <td>17/03/2025</td>
-                                        <td>Equipe do Marcus</td>
-                                        <td>Equipe do Luan</td>
-                                        <td>Casa do Marcus</td>
-                                        <td>Rafael</td>
-                                    </tr>
-                                    <tr>
-                                        <td>17/03/2025</td>
-                                        <td>Equipe do Marcus</td>
-                                        <td>Equipe do Luan</td>
-                                        <td>Casa do Marcus</td>
-                                        <td>Rafael</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Time 1</th>
+                                    <th>Time 2</th>
+                                    <th>Local</th>
+                                    <th>Árbitro</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>20/03/2025</td>
+                                    <td>Equipe A</td>
+                                    <td>Equipe B</td>
+                                    <td>Estádio Central</td>
+                                    <td>João Silva</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>21/03/2025</td>
+                                    <td>Equipe C</td>
+                                    <td>Equipe D</td>
+                                    <td>Estádio Norte</td>
+                                    <td>Maria Souza</td>
+                                </tr>
+                                <tr>
+                                    <td>22/03/2025</td>
+                                    <td>Equipe E</td>
+                                    <td>Equipe F</td>
+                                    <td>Estádio Sul</td>
+                                    <td>Carlos Oliveira</td>
+                                </tr>
+                                <tr>
+                                    <td>23/03/2025</td>
+                                    <td>Equipe G</td>
+                                    <td>Equipe H</td>
+                                    <td>Estádio Leste</td>
+                                    <td>Marcus</td>
+                                </tr>
+                                <tr>
+                                    <td>24/03/2025</td>
+                                    <td>Equipe I</td>
+                                    <td>Equipe J</td>
+                                    <td>Estádio Oeste</td>
+                                    <td>Emanuel</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </main>
-
     </div>
+
     <script>
         function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar')
-            const content = document.getElementById('content')
-            sidebar.classList.toggle('sidebar-hidden')
-            content.classList.toggle('content-expanded')
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebar.classList.toggle('sidebar-hidden');
+            content.classList.toggle('content-expanded');
         }
 
-        var ctx1 = document.getElementById('grafico01').getContext('2d');
+        var ctx1 = document.getElementById('rankingChart').getContext('2d');
         new Chart(ctx1, {
             type: 'bar',
             data: {
@@ -303,8 +304,8 @@
                 }]
             }
         });
-
-        var ctx2 = document.getElementById('grafico02').getContext('2d');
+        
+        var ctx2 = document.getElementById('goalsChart').getContext('2d');
         new Chart(ctx2, {
             type: 'line',
             data: {
