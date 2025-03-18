@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Partidas - Sistema de Esportes</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #198754; /* Cor da barra lateral */
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            transition: width 0.3s ease-in-out;
+        }
+        .sidebar a {
+            padding: 15px;
+            display: block;
+            color: white;
+            text-decoration: none;
+            white-space: nowrap;
+            font-size: 18px;
+        }
+        .sidebar a i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .sidebar a:hover {
+            background-color: #146c43; /* Cor mais escura para hover */
+        }
+        .content {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 20px;
+            transition: margin-left 0.3s ease-in-out;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        .sidebar-hidden {
+            width: 60px;
+        }
+        .sidebar-hidden a {
+            text-align: center;
+        }
+        .sidebar-hidden a span {
+            display: none;
+        }
+        .content-expanded {
+            margin-left: 60px;
+        }
+        .toggle-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1050;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h2 {
+            margin: 0;
+        }
+        .user-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            .sidebar a span {
+                display: none;
+            }
+            .content {
+                margin-left: 60px;
+            }
+            .toggle-btn {
+                display: block;
+            }
+        }
+        @media (max-width: 576px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar-hidden {
+                transform: translateX(0);
+            }
+            .content {
+                margin-left: 0;
+            }
+            .toggle-btn {
+                left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-btn" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+    <div class="sidebar" id="sidebar">
+        <br>
+        <a href="dashboard.html"><i class="bi bi-bootstrap-fill"></i><span>KeyMatch</span></a>
+        <a href="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
+        <a href="equipes_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
+        <a href="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
+        <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
+        <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
+        <a href="configuracoes.html"><i class="bi bi-gear"></i><span>Configurações</span></a>
+        <a href="usuarios.html"><i class="bi bi-person-circle"></i><span>Usuários</span></a>
+        <a href="sobre.html"><i class="bi bi-info-circle"></i><span>Sobre</span></a>
+    </div>
+    <div class="content" id="content">
+        <!-- Cabeçalho com título e ícone de usuário -->
+        <div class="header">
+            <h2>📅 Partidas</h2>
+            <i class="bi bi-person-circle user-icon"></i> <!-- Ícone de usuário -->
+        </div>
+        <main class="container-fluid mt-4">
+            <!-- Criar Partidas Manualmente -->
+            <div class="card p-3 mb-4">
+                <h5>🏁 Criar partidas manualmente</h5>
+                <form>
+                    <div class="mb-3">
+                        <label for="time1" class="form-label">Selecione o Time 1</label>
+                        <select class="form-select" id="time1" required>
+                            <option value="">Escolha o Time 1</option>
+                            <option value="time1">Equipe A</option>
+                            <option value="time2">Equipe B</option>
+                            <!-- Adicione as equipes disponíveis -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="time2" class="form-label">Selecione o Time 2</label>
+                        <select class="form-select" id="time2" required>
+                            <option value="">Escolha o Time 2</option>
+                            <option value="time1">Equipe C</option>
+                            <option value="time2">Equipe D</option>
+                            <!-- Adicione as equipes disponíveis -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dataHora" class="form-label">Data e Hora</label>
+                        <input type="datetime-local" class="form-control" id="dataHora" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="local" class="form-label">Local do Jogo</label>
+                        <input type="text" class="form-control" id="local" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Criar Partida</button>
+                </form>
+            </div>
+            
+            <!-- Gerar Partidas Automaticamente -->
+            <div class="card p-3 mb-4">
+                <h5>🔀 Gerar partidas automaticamente</h5>
+                <p>Selecione o chaveamento para gerar as partidas automaticamente:</p>
+                <button class="btn btn-success">Gerar Partidas</button>
+            </div>
+            
+            <!-- Listar Partidas Programadas -->
+            <div class="card p-3 mb-4">
+                <h5>📆 Listar partidas programadas</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Time 1</th>
+                                <th>Time 2</th>
+                                <th>Local</th>
+                                <th>Detalhes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>20/03/2025 18:00</td>
+                                <td>Equipe A</td>
+                                <td>Equipe B</td>
+                                <td>Estádio Central</td>
+                                <td><button class="btn btn-info">Ver detalhes</button></td>
+                            </tr>
+                            <!-- Mais partidas podem ser listadas aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Registrar Resultados -->
+            <div class="card p-3">
+                <h5>✅ Registrar resultados</h5>
+                <form>
+                    <div class="mb-3">
+                        <label for="partida" class="form-label">Selecione a Partida</label>
+                        <select class="form-select" id="partida" required>
+                            <option value="">Escolha uma partida</option>
+                            <option value="partida1">Equipe A vs Equipe B</option>
+                            <option value="partida2">Equipe C vs Equipe D</option>
+                            <!-- Adicione as partidas disponíveis -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="golsTime1" class="form-label">Gols Time 1</label>
+                        <input type="number" class="form-control" id="golsTime1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="golsTime2" class="form-label">Gols Time 2</label>
+                        <input type="number" class="form-control" id="golsTime2" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Registrar Resultado</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebar.classList.toggle('sidebar-hidden');
+            content.classList.toggle('content-expanded');
+        }
+    </script>
+</body>
+</html>
