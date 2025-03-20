@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <title>Categorias</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #198754;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            transition: width 0.3s ease-in-out;
+        }
+        .sidebar a {
+            padding: 15px;
+            display: block;
+            color: white;
+            text-decoration: none;
+            white-space: nowrap;
+            font-size: 18px;
+        }
+        .sidebar a i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .sidebar a:hover {
+            background-color: #146c43;
+        }
+        .content {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 20px;
+            transition: margin-left 0.3s ease-in-out;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        .sidebar-hidden {
+            width: 60px;
+        }
+        .sidebar-hidden a {
+            text-align: center;
+        }
+        .sidebar-hidden a span {
+            display: none;
+        }
+        .content-expanded {
+            margin-left: 60px;
+        }
+        .toggle-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1050;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h2 {
+            margin: 0;
+        }
+        .user-icon {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            .sidebar a span {
+                display: none;
+            }
+            .content {
+                margin-left: 60px;
+            }
+            .toggle-btn {
+                display: block;
+            }
+        }
+        @media (max-width: 576px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar-hidden {
+                transform: translateX(0);
+            }
+            .content {
+                margin-left: 0;
+            }
+            .toggle-btn {
+                left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-btn" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+    <div class="sidebar" id="sidebar">
+        <br>
+        <a href="dashboard.html"><i class="bi bi-bootstrap-fill"></i><span>KeyChart</span></a>
+        <a href="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
+        <a href="equipes_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
+        <a href="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
+        <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
+        <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
+        <a href="configuracoes.html"><i class="bi bi-gear"></i><span>Configurações</span></a>
+        <a href="usuarios.html"><i class="bi bi-person-circle"></i><span>Usuários</span></a>
+        <a href="sobre.html"><i class="bi bi-info-circle"></i><span>Sobre</span></a>
+    </div>
+    <div class="content" id="content">
+        <div class="header">
+            <h2>Copa Regional 2025</h2>
+            <i class="bi bi-person-circle user-icon"></i>
+        </div>
+        <main class="container-fluid mt-4">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card p-4">
+                        <h5>🏷️ Cadastro de Categorias</h5>
+                        <form>
+                            <div class="mb-3">
+                                <label for="categoryName" class="form-label">Nome da Categoria</label>
+                                <input type="text" class="form-control" id="categoryName" placeholder="Digite o nome da categoria" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="categoryType" class="form-label">Sexo</label>
+                                <select class="form-select" id="categoryType" required>
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="kata">Masculino</option>
+                                    <option value="kumite">Feminino</option>
+                                    <option value="kumite">Misto</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="categoryType" class="form-label">Tipo de Categoria</label>
+                                <select class="form-select" id="categoryType" required>
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="kata">Kata 🏯</option>
+                                    <option value="kumite">Kumite 🥊</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Cadastrar Categoria</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Cadastro de Academias -->
+                <div class="col-md-6">
+                    <div class="card p-4">
+                        <h5>🏫 Cadastro de Academias</h5>
+                        <form>
+                            <div class="mb-3">
+                                <label for="academyName" class="form-label">Nome da Academia</label>
+                                <input type="text" class="form-control" id="academyName" placeholder="Digite o nome da academia" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="academyCity" class="form-label">Cidade</label>
+                                <input type="text" class="form-control" id="academyCity" placeholder="Digite a cidade" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="academyAddress" class="form-label">Endereço</label>
+                                <input type="text" class="form-control" id="academyAddress" placeholder="Digite o endereço" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Cadastrar Academia</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabelas de Categorias e Academias lado a lado -->
+            <div class="row mb-4">
+                <!-- Tabela de Categorias -->
+                <div class="col-md-6">
+                    <div class="card p-4">
+                        <h5>📜 Lista de Categorias</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Sexo</th>
+                                        <th>Nome</th>
+                                        <th>Tipo</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>M</td>
+                                        <td>Categoria Master</td>
+                                        <td>Kata 🏯</td>
+                                        <td><span class="badge bg-success">Ativa</span></td>
+                                        <td>
+                                            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#createAthleteModal">+ Cadastrar</button>
+                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#verAcademiaModal"><a href="detalhes.html">Ver</a></button>
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#excluirCategoriaModal">Excluir</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>F</td>
+                                        <td>Juvenil</td>
+                                        <td>Kumite 🥊</td>
+                                        <td><span class="badge bg-danger">Finalizada</span></td>
+                                        <td>
+                                            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#createAthleteModal">+ Cadastrar</button>
+                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#verAcademiaModal">Ver</button>
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#excluirCategoriaModal">Excluir</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>M</td>
+                                        <td>Juvenil</td>
+                                        <td>Kata 🏯</td>
+                                        <td><span class="badge bg-warning">Suspenso</span></td>
+                                        <td>
+                                            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#createAthleteModal">+ Cadastrar</button>
+                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#verAcademiaModal">Ver</button>
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#excluirCategoriaModal">Excluir</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal de Cadastrar Atleta -->
+                <div class="modal fade" id="createAthleteModal" tabindex="-1" aria-labelledby="createAthleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="createAthleteModalLabel">Cadastrar Atleta</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="row">
+                                        <!-- Nome e Idade -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="athleteName" class="form-label">Nome Completo</label>
+                                            <input type="text" class="form-control" id="athleteName" placeholder="Digite o nome completo" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="athleteIdade" class="form-label">Idade</label>
+                                            <input type="number" class="form-control" id="athleteIdade" placeholder="Digite sua idade" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <!-- Peso e Faixa -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="athleteWeight" class="form-label">Peso</label>
+                                            <input type="number" class="form-control" id="athletePeso" placeholder="Digite o peso" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="athleteBelt" class="form-label">Faixa (Graduação)</label>
+                                            <select class="form-select" id="athleteBelt" required>
+                                                <option value="">Selecione a faixa</option>
+                                                <option value="branca">Faixa Branca</option>
+                                                <option value="amarela">Faixa Amarela</option>
+                                                <option value="vermelha">Faixa Vermelha</option>
+                                                <option value="laranja">Faixa Laranja</option>
+                                                <option value="verde">Faixa Verde</option>
+                                                <option value="roxa">Faixa Roxa</option>
+                                                <option value="marrom">Faixa Marrom</option>
+                                                <option value="preta">Faixa Preta</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <!-- Cidade/Estado-->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="athleteCityState" class="form-label">Cidade</label>
+                                            <input type="text" class="form-control" id="athleteCityState" placeholder="Digite a cidade" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="athleteBelt" class="form-label">Estado</label>
+                                            <select class="form-select" id="athleteBelt" required>
+                                                <option value="">Selecione o estado</option>
+                                                <option value="branca">PA</option>
+                                                <option value="amarela">SP</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <!-- e Foto -->
+                                        <div class="col-md-6 mb-3">
+                                            <label for="athleteClub" class="form-label">Academia/Clube</label>
+                                            <select class="form-select" id="athleteClub" required>
+                                                <option value="">Selecione a academia/clube</option>
+                                                <option value="academia1">Academia A</option>
+                                                <option value="academia2">Academia B</option>
+                                                <option value="academia3">Academia C</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="athletePhoto" class="form-label">Foto do Atleta</label>
+                                            <input type="file" class="form-control" id="athletePhoto" accept="image/*">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100">Cadastrar Atleta</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Academias -->
+                <div class="col-md-6">
+                    <div class="card p-4">
+                        <h5>📜 Lista de Academias</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome</th>
+                                        <th>Cidade</th>
+                                        <th>Endereço</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Academia A</td>
+                                        <td>São Paulo</td>
+                                        <td>Rua A, 123</td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#verAcademiaModal">Ver</button>
+                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarAcademiaModal">Editar</button>
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#excluirAcademiaModal">Excluir</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Academia B</td>
+                                        <td>Rio de Janeiro</td>
+                                        <td>Rua B, 456</td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#verAcademiaModal">Ver</button>
+                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarAcademiaModal">Editar</button>
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#excluirAcademiaModal">Excluir</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals para Categorias -->
+    <!-- Modal Editar Categoria -->
+    <div class="modal fade" id="editarCategoriaModal" tabindex="-1" aria-labelledby="editarCategoriaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarCategoriaModalLabel">Editar Categoria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="editCategoryName" class="form-label">Nome da Categoria</label>
+                            <input type="text" class="form-control" id="editCategoryName" value="Kata" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCategoryType" class="form-label">Tipo de Categoria</label>
+                            <select class="form-select" id="editCategoryType" required>
+                                <option value="kata">Kata 🏯</option>
+                                <option value="kumite">Kumite 🥊</option>
+                                <option value="faixa">Faixa</option>
+                                <option value="idade">Idade</option>
+                                <option value="peso">Peso</option>
+                                <option value="genero">Gênero</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Excluir Categoria -->
+    <div class="modal fade" id="excluirCategoriaModal" tabindex="-1" aria-labelledby="excluirCategoriaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="excluirCategoriaModalLabel">Excluir Categoria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir a categoria <strong>Kata</strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals para Academias -->
+    <!-- Modal Ver Academia -->
+    <div class="modal fade" id="verAcademiaModal" tabindex="-1" aria-labelledby="verAcademiaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="verAcademiaModalLabel">Detalhes da Academia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Nome:</strong> Academia A</p>
+                    <p><strong>Cidade:</strong> São Paulo</p>
+                    <p><strong>Endereço:</strong> Rua A, 123</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Academia -->
+    <div class="modal fade" id="editarAcademiaModal" tabindex="-1" aria-labelledby="editarAcademiaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarAcademiaModalLabel">Editar Academia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="editAcademyName" class="form-label">Nome da Academia</label>
+                            <input type="text" class="form-control" id="editAcademyName" value="Academia A" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editAcademyCity" class="form-label">Cidade</label>
+                            <input type="text" class="form-control" id="editAcademyCity" value="São Paulo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editAcademyAddress" class="form-label">Endereço</label>
+                            <input type="text" class="form-control" id="editAcademyAddress" value="Rua A, 123" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Excluir Academia -->
+    <div class="modal fade" id="excluirAcademiaModal" tabindex="-1" aria-labelledby="excluirAcademiaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="excluirAcademiaModalLabel">Excluir Academia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir a academia <strong>Academia A</strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Função para alternar a barra lateral
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebar.classList.toggle('sidebar-hidden');
+            content.classList.toggle('content-expanded');
+        }
+    </script>
+</body>
+</html>

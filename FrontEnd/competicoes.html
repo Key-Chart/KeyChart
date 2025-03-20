@@ -115,6 +115,28 @@
                 left: 20px;
             }
         }
+        
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none; 
+        }
+ 
+        .custom-spinner {
+            width: 5rem;
+            height: 5rem;
+            border-width: 0.5rem;
+            border-color: #198754;
+            border-right-color: transparent;
+        }
     </style>
 </head>
 <body>
@@ -123,15 +145,20 @@
     </button>
     <div class="sidebar" id="sidebar">
         <br>
-        <a href="dashboard.html"><i class="bi bi-bootstrap-fill"></i><span>KeyMatch</span></a>
-        <a href="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
-        <a href="equipes_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
-        <a href="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
-        <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
-        <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
-        <a href="configuracoes.html"><i class="bi bi-gear"></i><span>Configurações</span></a>
-        <a href="usuarios.html"><i class="bi bi-person-circle"></i><span>Usuários</span></a>
-        <a href="sobre.html"><i class="bi bi-info-circle"></i><span>Sobre</span></a>
+        <a href="dashboard.html" data-link="dashboard.html"><i class="bi bi-bootstrap-fill"></i><span>KeyChart</span></a>
+        <a href="competicoes.html" data-link="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
+        <a href="equipe_atletas.html" data-link="equipe_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
+        <a href="partidas.html" data-link="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
+        <a href="chaveamento.html" data-link="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
+        <a href="relatorio.html" data-link="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
+        <a href="configuracoes.html" data-link="configuracoes.html"><i class="bi bi-gear"></i><span>Configurações</span></a>
+        <a href="usuarios.html" data-link="usuarios.html"><i class="bi bi-person-circle"></i><span>Usuários</span></a>
+        <a href="sobre.html" data-link="sobre.html"><i class="bi bi-info-circle"></i><span>Sobre</span></a>
+    </div>
+    <div id="loading-screen">
+        <div class="spinner-border custom-spinner" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
     </div>
     <div class="content" id="content">
         <div class="header">
@@ -176,7 +203,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>Copa Regional 2025</td>
+                                        <td><a href="categoria.html" data-link="categoria.html">Copa Regional 2025</a></td>
                                         <td>10/03/2025</td>
                                         <td><span class="badge bg-success">Ativa</span></td>
                                         <td>
@@ -186,7 +213,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Campeonato Estadual</td>
+                                        <td><a href="categoria.html" data-link="categoria.html">Campeonato Estadual</a></td>
                                         <td>15/02/2025</td>
                                         <td><span class="badge bg-danger">Finalizada</span></td>
                                         <td>
@@ -218,9 +245,12 @@
                 </div>
                 <div class="modal-body">
                     <p><strong>Nome:</strong> Copa Regional 2025</p>
-                    <p><strong>Data de Início:</strong> 10/03/2025</p>
+                    <p><strong>Data e Horário:</strong> 10/03/2025 às 14:00</p>
+                    <p><strong>Local:</strong> Estádio Municipal</p>
+                    <p><strong>Regras Específicas:</strong> Regras detalhadas do campeonato.</p>
+                    <p><strong>Árbitros Responsáveis:</strong> João Silva, Maria Oliveira</p>
+                    <p><strong>Categorias:</strong> Adulto, Infantil</p>
                     <p><strong>Status:</strong> Ativa</p>
-                    <p><strong>Detalhes:</strong> Informações detalhadas sobre a competição.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
@@ -244,8 +274,24 @@
                             <input type="text" class="form-control" id="editName" value="Copa Regional 2025">
                         </div>
                         <div class="mb-3">
-                            <label for="editDate" class="form-label">Data de Início</label>
-                            <input type="date" class="form-control" id="editDate" value="2025-03-10">
+                            <label for="editDateTime" class="form-label">Data e Horário</label>
+                            <input type="datetime-local" class="form-control" id="editDateTime" value="2025-03-10T14:00">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editLocation" class="form-label">Local</label>
+                            <input type="text" class="form-control" id="editLocation" value="Estádio Municipal">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRules" class="form-label">Regras Específicas</label>
+                            <textarea class="form-control" id="editRules" rows="3">Regras detalhadas do campeonato.</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editReferees" class="form-label">Árbitros Responsáveis</label>
+                            <input type="text" class="form-control" id="editReferees" value="João Silva, Maria Oliveira">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCategories" class="form-label">Categorias</label>
+                            <input type="text" class="form-control" id="editCategories" value="Adulto, Infantil">
                         </div>
                         <div class="mb-3">
                             <label for="editStatus" class="form-label">Status</label>
@@ -299,9 +345,27 @@
                             <input type="text" class="form-control" id="createName" placeholder="Nome da Competição">
                         </div>
                         <div class="mb-3">
-                            <label for="createDate" class="form-label">Data de Início</label>
-                            <input type="date" class="form-control" id="createDate">
+                            <label for="createDateTime" class="form-label">Data e Horário</label>
+                            <input type="datetime-local" class="form-control" id="createDateTime">
                         </div>
+                        <div class="mb-3">
+                            <label for="createLocation" class="form-label">Local</label>
+                            <input type="text" class="form-control" id="createLocation" placeholder="Local da Competição">
+                        </div>
+                        <div class="mb-3">
+                            <label for="createRules" class="form-label">Regras Específicas</label>
+                            <textarea class="form-control" id="createRules" rows="3" placeholder="Regras da Competição"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="createReferees" class="form-label">Árbitros Responsáveis</label>
+                            <select class="form-select" id="createReferees" required>
+                                <option value="">Selecione um árbitro</option>
+                                <option value="1">João Silva</option>
+                                <option value="2">Maria Oliveira</option>
+                                <option value="3">Carlos Souza</option>
+                                <option value="4">Ana Pereira</option>
+                            </select>
+                        </div>             
                         <div class="mb-3">
                             <label for="createStatus" class="form-label">Status</label>
                             <select class="form-select" id="createStatus">
@@ -327,6 +391,25 @@
             sidebar.classList.toggle('sidebar-hidden');
             content.classList.toggle('content-expanded');
         }
+        
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.getElementById('loading-screen').style.display = 'flex';
+                setTimeout(() => {
+                    window.location.href = this.getAttribute('data-link');
+                }, 1000);
+            });
+        });
+        document.querySelectorAll('a[data-link]').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault(); 
+                document.getElementById('loading-screen').style.display = 'flex';
+                setTimeout(() => {
+                    window.location.href = this.getAttribute('data-link');
+                }, 2000);
+            });
+        });
     </script>
 </body>
 </html>
