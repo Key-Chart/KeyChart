@@ -32,6 +32,9 @@
             white-space: nowrap;
             font-size: 18px;
         }
+        .img-logo {
+            
+        }
         .sidebar a i {
             font-size: 24px;
             margin-right: 10px;
@@ -160,7 +163,7 @@
     </button>
     <div class="sidebar" id="sidebar">
         <br>
-        <a href="dashboard.html"><i class="bi bi-bootstrap-fill"></i><span>KeyMatch</span></a>
+        <a href="dashboard.html"><i><img src="img/image.png" style="height: 35px;" id="img-logo"></i><span>KeyChart</span></a>
         <a href="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
         <a href="equipes_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
         <a href="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
@@ -172,7 +175,7 @@
     </div>
     <div class="content" id="content">
         <div class="header">
-            <h2>🏆 Dashboard - KeyMatch</h2>
+            <h2>🏆 Dashboard - KeyChart</h2>
             <div class="user-dropdown">
                 <i class="bi bi-person-circle user-icon"></i>
                 <div class="dropdown-menu">
@@ -192,13 +195,13 @@
                 </div>
                 <div class="col-12 col-md-3">
                     <div class="card bg-success text-white p-3">
-                        <h5>Times Cadastrados</h5>
+                        <h5>Equipes Cadastradas</h5>
                         <p class="fs-2">48</p>
                     </div>
                 </div>
                 <div class="col-12 col-md-3">
                     <div class="card bg-warning text-dark p-3">
-                        <h5>Jogadores Registrados</h5>
+                        <h5>Atletas Registrados</h5>
                         <p class="fs-2">256</p>
                     </div>
                 </div>
@@ -233,8 +236,8 @@
                             <thead>
                                 <tr>
                                     <th>Data</th>
-                                    <th>Time 1</th>
-                                    <th>Time 2</th>
+                                    <th>Equipe 1</th>
+                                    <th>Equipe 2</th>
                                     <th>Local</th>
                                     <th>Árbitro</th>
                                 </tr>
@@ -245,7 +248,7 @@
                                     <td>Equipe A</td>
                                     <td>Equipe B</td>
                                     <td>Estádio Central</td>
-                                    <td>João Silva</td>
+                                    <td>Pai Erminio</td>
                                 </tr>
                                 
                                 <tr>
@@ -253,14 +256,14 @@
                                     <td>Equipe C</td>
                                     <td>Equipe D</td>
                                     <td>Estádio Norte</td>
-                                    <td>Maria Souza</td>
+                                    <td>Alan</td>
                                 </tr>
                                 <tr>
                                     <td>22/03/2025</td>
                                     <td>Equipe E</td>
                                     <td>Equipe F</td>
                                     <td>Estádio Sul</td>
-                                    <td>Carlos Oliveira</td>
+                                    <td>Luan</td>
                                 </tr>
                                 <tr>
                                     <td>23/03/2025</td>
@@ -275,6 +278,13 @@
                                     <td>Equipe J</td>
                                     <td>Estádio Oeste</td>
                                     <td>Emanuel</td>
+                                </tr>
+                                <tr>
+                                    <td>24/03/2025</td>
+                                    <td>Equipe I</td>
+                                    <td>Equipe J</td>
+                                    <td>Estádio Oeste</td>
+                                    <td>Rafael</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -296,7 +306,7 @@
         new Chart(ctx1, {
             type: 'bar',
             data: {
-                labels: ['Time A', 'Time B', 'Time C', 'Time D'],
+                labels: ['Time A', 'Equipe B', 'Equipe C', 'Equipe D'],
                 datasets: [{
                     label: 'Pontos',
                     data: [50, 42, 38, 36],
@@ -309,9 +319,9 @@
         new Chart(ctx2, {
             type: 'line',
             data: {
-                labels: ['Jogo 1', 'Jogo 2', 'Jogo 3', 'Jogo 4'],
+                labels: ['Atleta 1', 'Atleta 2', 'Atleta 3', 'Atleta 4'],
                 datasets: [{
-                    label: 'Gols',
+                    label: 'Pontos',
                     data: [2, 4, 3, 5],
                     borderColor: '#007bff',
                     fill: false
