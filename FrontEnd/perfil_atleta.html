@@ -236,24 +236,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script>
-        // Função para alternar a barra lateral
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const content = document.getElementById('content');
-            sidebar.classList.toggle('sidebar-hidden');
-            content.classList.toggle('content-expanded');
-        }
-
-        // Função para exportar o conteúdo para PDF
-        function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            const content = document.querySelector('.card').innerText;
-            doc.text(content, 10, 10);
-            doc.save("perfil_atleta.pdf");
-        }
-    </script>
+    <script src="scripts/scripts.js"></script>
 </body>
 </html>
