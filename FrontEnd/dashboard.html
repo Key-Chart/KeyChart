@@ -22,6 +22,8 @@
             width: 350px;
             z-index: 1000;
             transition: transform 0.3s ease-in-out;
+            border: 2px solid #198754;
+            /*border-radius: 10px;*/
         }
 
         .chat-container.collapsed {
@@ -68,7 +70,10 @@
         <div class="header">
             <h2>🏆 Dashboard - KeyChart</h2>
             <div class="user-dropdown">
-                <i class="bi bi-person-circle user-icon"></i>
+                <div class="user-icon-container">
+                    <i class="bi bi-person-circle user-icon"></i>
+                    <i class="bi bi-chevron-down arrow-icon"></i>
+                </div>
                 <div class="dropdown-menu">
                     <a href="#">Ver perfil</a>
                     <a href="#">Fazer logout</a>
@@ -210,9 +215,16 @@
             <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp" alt="avatar 3" style="width: 40px; height: 100%;">
                 <input type="text" class="form-control form-control-lg" id="exampleFormControlInput1" placeholder="Mensagem...">
-                <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
-                <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
-                <a class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>
+                    <!-- Ícone de anexo (abre o explorador de arquivos) -->
+                    <label for="fileInput" class="ms-1 text-muted" style="cursor: pointer;">
+                        <i class="fas fa-paperclip"></i>
+                    </label>
+                    <input type="file" id="fileInput" style="display: none;">
+                    
+                    <!-- Ícone de emoji e enviar -->
+                    <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
+                    <a class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>
+                </div>
             </div>
         </div>
     </div>
@@ -254,5 +266,19 @@
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelector('.user-icon-container').addEventListener('click', function () {
+            const dropdown = this.closest('.user-dropdown');
+            dropdown.classList.toggle('active');
+        });
+
+        // Fechar o menu ao clicar fora dele
+        document.addEventListener('click', function (event) {
+            const dropdown = document.querySelector('.user-dropdown');
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>

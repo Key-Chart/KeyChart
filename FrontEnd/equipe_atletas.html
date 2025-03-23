@@ -16,16 +16,16 @@
     </button>
     <div class="sidebar" id="sidebar">
         <br>
-        <a href="dashboard.html"><i class="bi bi-bootstrap-fill"></i><span>KayChart</span></a>
-        <a href="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
-        <a href="equipe_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
-        <a href="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
-        <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
-        <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
-        <a href="configuracoes.html"><i class="bi bi-gear"></i><span>Configurações</span></a>
-        <a href="usuarios.html"><i class="bi bi-person-circle"></i><span>Usuários</span></a>
-        <a href="sobre.html"><i class="bi bi-info-circle"></i><span>Sobre</span></a>
-        <a href="#"><i class="bi bi-escape"></i></i><span>Sair</span></a>
+        <a href="dashboard.html" title="Dashboard"><i class="bi bi-bootstrap-fill"></i><span>KayChart</span></a>
+        <a href="competicoes.html" title="Competições"><i class="bi bi-trophy"></i><span>Competições</span></a>
+        <a href="equipe_atletas.html" title="Equipes e Atletas"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
+        <a href="partidas.html" title="Partidas"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
+        <a href="chaveamento.html" title="Chaveamento"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
+        <a href="relatorio.html" title="Relatórios"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
+        <a href="configuracoes.html" title="Configurações"><i class="bi bi-gear"></i><span>Configurações</span></a>
+        <a href="usuarios.html" title="Usuários"><i class="bi bi-person-circle"></i><span>Usuários</span></a>
+        <a href="sobre.html" title="Sobre"><i class="bi bi-info-circle"></i><span>Sobre</span></a>
+        <a href="#" title="Sair"><i class="bi bi-escape"></i></i><span>Sair</span></a>
     </div>
     <div class="content" id="content">
         <div class="header">
@@ -44,16 +44,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="filterAge" class="form-label">Filtrar por Idade</label>
-                                <select class="form-select" id="filterAge">
-                                    <option value="">Selecione a idade</option>
-                                    <option value="6-8">6-8 anos</option>
-                                    <option value="9-11">9-11 anos</option>
-                                    <option value="12-14">12-14 anos</option>
-                                    <option value="15-17">15-17 anos</option>
-                                    <option value="18-34">18-34 anos</option>
-                                    <option value="35-44">35-44 anos</option>
-                                    <option value="45+">45+ anos</option>
-                                </select>
+                                <input type="number" class="form-control" id="filterName" placeholder="Digite a idade" maxlength="2">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="filterCategory" class="form-label">Filtrar por Categoria</label>

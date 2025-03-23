@@ -3,30 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tela de Login</title>
-    <link rel="stylesheet" href="./style.css/login.css">
+    <title>Tela de Login - KayMatch</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MDB CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #198754, #146c43);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+        }
+        .login-content {
+            padding: 40px;
+            flex: 1;
+        }
+        .login-content h2 {
+            color: #198754;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .form-control {
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+        .form-control:focus {
+            border-color: #198754;
+            box-shadow: 0 0 5px rgba(25, 135, 84, 0.5);
+        }
+        .btn-login {
+            background-color: #198754;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-login:hover {
+            background-color: #146c43;
+        }
+        .login-image {
+            flex: 1;
+            background: url('./img/images.png') no-repeat center center/cover;
+        }
+        .forgot-password, .create-account {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .forgot-password a, .create-account a {
+            color: #198754;
+            text-decoration: none;
+        }
+        .forgot-password a:hover, .create-account a:hover {
+            text-decoration: underline;
+        }
+        .password-toggle {
+            position: relative;
+        }
+        .password-toggle .toggle-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #198754;
+        }
+        @media (max-width: 768px) {
+            .login-card {
+                flex-direction: column;
+            }
+            .login-image {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="login-form">
-        <h1></h1>
-        <div class="container">
-            <div class="main">
-                <div class="content">
-                    <h2>Login</h2>
-                    <form action="" method="post">
-                        <input type="text" name="username" placeholder="User Name" required>
-                        <input type="password" name="password" placeholder="User password" required>
-                        <button class="btn" type="submit">Login</button>
-                    </form>
-                    <p class="account">
-                        <a href="#">Esqueceu a senha? Recuperar</a>
-                    </p>
+    <div class="login-card">
+        <!-- Conteúdo do Login -->
+        <div class="login-content">
+            <h2>Login</h2>
+            <form action="" method="post">
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="username" placeholder="Nome de usuário" required>
                 </div>
-                <div class="form-img">
-                    <img src="./img/images.png" alt="KayMatch">
+                <div class="mb-3 password-toggle">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Senha" required>
+                    <i class="fas fa-eye toggle-icon" onclick="togglePassword('password')"></i>
+                </div>
+                <button type="submit" class="btn btn-login">Entrar</button>
+            </form>
+            <div class="forgot-password">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Esqueceu a senha? Recuperar</a>
+            </div>
+            <div class="create-account">
+                <p>Não tem uma conta? <a href="#" data-bs-toggle="modal" data-bs-target="#createAccountModal">Crie uma agora</a></p>
+            </div>
+        </div>
+        <!-- Imagem do Login -->
+        <div class="login-image"></div>
+    </div>
+
+    <!-- Modal: Esqueceu a Senha -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">Recuperar Senha</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">E-mail</label>
+                            <input type="email" class="form-control" id="email" placeholder="Digite seu e-mail" required>
+                        </div>
+                        <button type="submit" class="btn btn-login">Enviar</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal: Criar Conta -->
+    <div class="modal fade" id="createAccountModal" tabindex="-1" aria-labelledby="createAccountModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createAccountModalLabel">Criar Conta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="fullName" placeholder="Digite seu nome completo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">E-mail</label>
+                            <input type="email" class="form-control" id="email" placeholder="Digite seu e-mail" required>
+                        </div>
+                        <div class="mb-3 password-toggle">
+                            <label for="password" class="form-label">Senha</label>
+                            <input type="password" class="form-control" id="createPassword" placeholder="Crie uma senha" required>
+                            <i class="fas fa-eye toggle-icon" onclick="togglePassword('createPassword')"></i>
+                        </div>
+                        <div class="mb-3 password-toggle">
+                            <label for="confirmPassword" class="form-label">Confirmar Senha</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirme sua senha" required>
+                            <i class="fas fa-eye toggle-icon" onclick="togglePassword('confirmPassword')"></i>
+                        </div>
+                        <button type="submit" class="btn btn-login">Criar Conta</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+    <script>
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = passwordInput.nextElementSibling;
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.classList.remove("fa-eye");
+                toggleIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.classList.remove("fa-eye-slash");
+                toggleIcon.classList.add("fa-eye");
+            }
+        }
+    </script>
 </body>
 </html>
