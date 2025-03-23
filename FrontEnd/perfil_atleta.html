@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil do Atleta</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MDB CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
         body {
-            display: flex;
-            height: 100vh;
-            margin: 0;
+            background-color: #f8f9fa; /* Fundo cinza claro */
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa; /* Fundo cinza claro para o body */
         }
         .sidebar {
             width: 250px;
-            background-color: #198754; /* Verde escuro para a sidebar */
+            background-color: #198754; /* Verde escuro */
             color: white;
             height: 100vh;
             position: fixed;
@@ -42,23 +43,35 @@
         }
         .content {
             margin-left: 250px;
-            flex-grow: 1;
             padding: 20px;
             transition: margin-left 0.3s ease-in-out;
-            overflow-y: auto;
-            height: 100vh;
         }
-        .sidebar-hidden {
-            width: 60px;
+        .profile-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #198754;
         }
-        .sidebar-hidden a {
-            text-align: center;
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            color: #333;
         }
-        .sidebar-hidden a span {
-            display: none;
+        .btn-pdf {
+            background-color: #dc3545;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            transition: background-color 0.3s ease;
         }
-        .content-expanded {
-            margin-left: 60px;
+        .btn-pdf:hover {
+            background-color: #c82333;
+        }
+        .btn-pdf i {
+            margin-right: 8px;
         }
         .toggle-btn {
             position: fixed;
@@ -71,52 +84,21 @@
             cursor: pointer;
             z-index: 1050;
         }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .header h2 {
-            margin: 0;
-            color: #198754; /* Verde escuro para o título */
-        }
-        .user-icon {
+        .back-btn {
+            background: none;
+            border: none;
+            color: #198754;
             font-size: 24px;
             cursor: pointer;
-            color: #198754; /* Verde escuro para o ícone do usuário */
         }
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            background-color: #ffffff; /* Fundo branco para o card */
-            color: #333; /* Cor do texto escuro */
+        .sidebar-hidden {
+            width: 60px;
         }
-        .profile-img {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 15px;
-            border: 3px solid #198754; /* Borda verde para a imagem */
+        .sidebar-hidden a span {
+            display: none;
         }
-        .btn-pdf {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #dc3545; /* Vermelho para o botão PDF */
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            color: white;
-            transition: background-color 0.3s ease;
-        }
-        .btn-pdf:hover {
-            background-color: #c82333; /* Vermelho mais escuro no hover */
-        }
-        .btn-pdf i {
-            margin-right: 8px;
+        .content-expanded {
+            margin-left: 60px;
         }
         @media (max-width: 768px) {
             .sidebar {
@@ -128,23 +110,6 @@
             .content {
                 margin-left: 60px;
             }
-            .toggle-btn {
-                display: block;
-            }
-        }
-        @media (max-width: 576px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar-hidden {
-                transform: translateX(0);
-            }
-            .content {
-                margin-left: 0;
-            }
-            .toggle-btn {
-                left: 20px;
-            }
         }
     </style>
 </head>
@@ -154,7 +119,7 @@
     </button>
     <div class="sidebar" id="sidebar">
         <br>
-        <a href="dashboard.html"><i class="bi bi-bootstrap-fill"></i><span>KeyChart</span></a>
+        <a href="dashboard.html"><i class="bi bi-bootstrap-fill"></i><span>KayChart</span></a>
         <a href="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
         <a href="equipes_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
         <a href="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
@@ -163,71 +128,83 @@
         <a href="configuracoes.html"><i class="bi bi-gear"></i><span>Configurações</span></a>
         <a href="usuarios.html"><i class="bi bi-person-circle"></i><span>Usuários</span></a>
         <a href="sobre.html"><i class="bi bi-info-circle"></i><span>Sobre</span></a>
-        <a href="#"><i class="bi bi-escape"></i></i><span>Sair</span></a>
+        <a href="#"><i class="bi bi-escape"></i><span>Sair</span></a>
     </div>
+
+    <!-- Conteúdo principal -->
     <div class="content" id="content">
-        <div class="header">
-            <h2>Perfil do Atleta</h2>
-            <i class="bi bi-person-circle user-icon"></i>
+        <div class="header mb-4 d-flex justify-content-between align-items-center">
+            <!-- Botão de voltar -->
+            <button class="back-btn" onclick="window.history.back()">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <h2 class="text-success"><i class="bi bi-person-circle me-2"></i>Perfil do Atleta</h2>
         </div>
-        <div class="card">
+
+        <!-- Card de perfil -->
+        <div class="card p-4">
             <div class="row">
+                <!-- Coluna da foto e nome -->
                 <div class="col-md-4 text-center">
-                    <img src="usuario-de-perfil.png" class="profile-img" alt="Foto do Perfil">
-                    <h4>Nome do Atleta</h4>
+                    <img src="img/homem.png" class="profile-img mb-3" alt="Foto do Perfil">
+                    <h4 class="text-success"><strong>Luan Carvalho</strong></h4>
+                    <p class="text-muted">Atleta Profissional</p>
                 </div>
+
+                <!-- Coluna das informações -->
                 <div class="col-md-8">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label>Peso:</label>
+                            <label class="text-success"><strong>Peso:</strong></label>
                             <p>70 kg</p>
                         </div>
                         <div class="col-md-6">
-                            <label>Idade:</label>
+                            <label class="text-success"><strong>Idade:</strong></label>
                             <p>25 anos</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label>Estado:</label>
-                            <p>São Paulo</p>
+                            <label class="text-success"><strong>Estado:</strong></label>
+                            <p>Pará</p>
                         </div>
                         <div class="col-md-6">
-                            <label>Cidade da Academia:</label>
-                            <p>Campinas</p>
+                            <label class="text-success"><strong>Cidade da Academia:</strong></label>
+                            <p>Belém</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label>Faixa:</label>
+                            <label class="text-success"><strong>Faixa:</strong></label>
                             <p>Preta</p>
                         </div>
                         <div class="col-md-6">
-                            <label>Advertência:</label>
+                            <label class="text-success"><strong>Advertência:</strong></label>
                             <p>Nenhuma</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label>Quantidade de Lutas:</label>
+                            <label class="text-success"><strong>Quantidade de Lutas:</strong></label>
                             <p>50</p>
                         </div>
                         <div class="col-md-6">
-                            <label>Vitórias:</label>
+                            <label class="text-success"><strong>Vitórias:</strong></label>
                             <p>40</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label>Derrotas:</label>
+                            <label class="text-success"><strong>Derrotas:</strong></label>
                             <p>8</p>
                         </div>
                         <div class="col-md-6">
-                            <label>Empates:</label>
+                            <label class="text-success"><strong>Empates:</strong></label>
                             <p>2</p>
                         </div>
                     </div>
-                    <button class="btn btn-pdf mt-3" onclick="exportToPDF()">
+                    <!-- Botão de exportar para PDF -->
+                    <button class="btn btn-pdf mt-3">
                         <i class="bi bi-file-earmark-pdf"></i> Exportar para PDF
                     </button>
                 </div>
@@ -235,7 +212,17 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="scripts/scripts.js"></script>
+    <!-- Bootstrap JS e MDB JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+    <script>
+        // Função para alternar a sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebar.classList.toggle('sidebar-hidden');
+            content.classList.toggle('content-expanded');
+        }
+    </script>
 </body>
 </html>

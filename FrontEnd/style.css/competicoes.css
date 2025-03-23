@@ -128,3 +128,7 @@ body {
     border-color: #198754;
     border-right-color: transparent;
 }
+
+.custom-modal {
+    border-radius: 0 !important;
+}
