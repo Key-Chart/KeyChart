@@ -111,16 +111,29 @@ body {
     display: inline-block;
 }
 
+.user-icon-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
 .user-icon {
     font-size: 24px;
-    cursor: pointer;
     color: #198754;
+}
+
+.arrow-icon {
+    font-size: 14px;
+    margin-left: 5px;
+    color: #198754;
+    transition: transform 0.3s ease; /* Adiciona animação à seta */
 }
 
 .dropdown-menu {
     display: none;
     position: absolute;
-    right: 0;
+    left: 0;
+    transform: translateX(-100%);
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -140,6 +153,12 @@ body {
     background-color: #f8f9fa;
 }
 
-.user-dropdown:hover .dropdown-menu {
+/* Rotaciona a seta quando o menu está aberto */
+.user-dropdown.active .arrow-icon {
+    transform: rotate(180deg);
+}
+
+/* Exibe o menu quando a classe 'active' está presente */
+.user-dropdown.active .dropdown-menu {
     display: block;
 }

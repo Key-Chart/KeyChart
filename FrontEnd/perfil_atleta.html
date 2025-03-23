@@ -100,6 +100,46 @@
         .content-expanded {
             margin-left: 60px;
         }
+        .info-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .info-card h5 {
+            color: #198754;
+            font-weight: bold;
+        }
+        .info-card p {
+            color: #555;
+            font-size: 16px;
+        }
+        .info-card i {
+            font-size: 24px;
+            color: #198754;
+            margin-right: 10px;
+        }
+        .stats-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .stats-card h5 {
+            color: #198754;
+            font-weight: bold;
+        }
+        .stats-card p {
+            color: #555;
+            font-size: 16px;
+        }
+        .stats-card i {
+            font-size: 24px;
+            color: #198754;
+            margin-right: 10px;
+        }
         @media (max-width: 768px) {
             .sidebar {
                 width: 60px;
@@ -141,8 +181,7 @@
             <h2 class="text-success"><i class="bi bi-person-circle me-2"></i>Perfil do Atleta</h2>
         </div>
 
-        <!-- Card de perfil -->
-        <div class="card p-4">
+        <div class="card p-4 mb-4">
             <div class="row">
                 <!-- Coluna da foto e nome -->
                 <div class="col-md-4 text-center">
@@ -150,56 +189,56 @@
                     <h4 class="text-success"><strong>Luan Carvalho</strong></h4>
                     <p class="text-muted">Atleta Profissional</p>
                 </div>
-
+        
                 <!-- Coluna das informações -->
                 <div class="col-md-8">
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="text-success"><strong>Peso:</strong></label>
+                            <label class="text-success"><i class="bi bi-speedometer me-2"></i><strong>Peso:</strong></label>
                             <p>70 kg</p>
                         </div>
                         <div class="col-md-6">
-                            <label class="text-success"><strong>Idade:</strong></label>
+                            <label class="text-success"><i class="bi bi-calendar me-2"></i><strong>Idade:</strong></label>
                             <p>25 anos</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="text-success"><strong>Estado:</strong></label>
+                            <label class="text-success"><i class="bi bi-geo-alt me-2"></i><strong>Estado:</strong></label>
                             <p>Pará</p>
                         </div>
                         <div class="col-md-6">
-                            <label class="text-success"><strong>Cidade da Academia:</strong></label>
+                            <label class="text-success"><i class="bi bi-building me-2"></i><strong>Cidade da Academia:</strong></label>
                             <p>Belém</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="text-success"><strong>Faixa:</strong></label>
+                            <label class="text-success"><i class="bi bi-award me-2"></i><strong>Faixa:</strong></label>
                             <p>Preta</p>
                         </div>
                         <div class="col-md-6">
-                            <label class="text-success"><strong>Advertência:</strong></label>
+                            <label class="text-success"><i class="bi bi-exclamation-triangle me-2"></i><strong>Advertência:</strong></label>
                             <p>Nenhuma</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="text-success"><strong>Quantidade de Lutas:</strong></label>
+                            <label class="text-success"><i class="bi bi-trophy me-2"></i><strong>Quantidade de Lutas:</strong></label>
                             <p>50</p>
                         </div>
                         <div class="col-md-6">
-                            <label class="text-success"><strong>Vitórias:</strong></label>
+                            <label class="text-success"><i class="bi bi-star me-2"></i><strong>Vitórias:</strong></label>
                             <p>40</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="text-success"><strong>Derrotas:</strong></label>
+                            <label class="text-success"><i class="bi bi-x-circle me-2"></i><strong>Derrotas:</strong></label>
                             <p>8</p>
                         </div>
                         <div class="col-md-6">
-                            <label class="text-success"><strong>Empates:</strong></label>
+                            <label class="text-success"><i class="bi bi-arrow-repeat me-2"></i><strong>Empates:</strong></label>
                             <p>2</p>
                         </div>
                     </div>
@@ -207,6 +246,26 @@
                     <button class="btn btn-pdf mt-3">
                         <i class="bi bi-file-earmark-pdf"></i> Exportar para PDF
                     </button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Cards de informações adicionais -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="info-card">
+                    <h5><i class="bi bi-info-circle"></i> Informações Adicionais</h5>
+                    <p><strong>Academia:</strong> Academia A</p>
+                    <p><strong>Graduação:</strong> Faixa Preta</p>
+                    <p><strong>Anos de Experiência:</strong> 10</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stats-card">
+                    <h5><i class="bi bi-bar-chart-line"></i> Estatísticas</h5>
+                    <p><strong>Taxa de Vitórias:</strong> 80%</p>
+                    <p><strong>Lutas por Ano:</strong> 10</p>
+                    <p><strong>Melhor Luta:</strong> Vitória por Nocaute</p>
                 </div>
             </div>
         </div>
