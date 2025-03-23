@@ -131,19 +131,30 @@ body {
         left: 20px;
     }
     .card img {
-        width: 40px; /* Ajustar o tamanho da imagem para celulares */
+        width: 40px;
         height: 40px;
     }
     .btn-custom {
-        padding: 3px 6px; /* Ajustar o padding para celulares */
-        font-size: 9px; /* Reduzir o tamanho da fonte para celulares */
+        padding: 3px 6px;
+        font-size: 9px;
     }
     .card-body .row {
-        flex-direction: column; /* Empilhar as colunas verticalmente em celulares */
+        flex-direction: column;
     }
     .card-body .row > div {
-        width: 100%; /* Garantir que as colunas ocupem toda a largura */
+        width: 100%; 
         text-align: center;
-        margin-bottom: 10px; /* Espaçamento entre as colunas */
+        margin-bottom: 10px;
     }
+}
+
+.back-icon {
+    font-size: 30px;
+    color: #198754;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.back-icon:hover {
+    color: #146c43;
 }

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- MDB Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
     <title>Equipes e Atletas</title>
     <link rel="stylesheet" href="style.css/equipe_atletas.css">
 </head>
@@ -72,37 +74,103 @@
                     <div class="card p-4">
                         <h5>📜 Listar e Gerenciar Atletas</h5>
                         <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
+                            <table class="table align-middle mb-0 bg-white">
+                                <thead class="bg-light">
                                     <tr>
-                                        <th>ID</th>
                                         <th>Nome</th>
                                         <th>Idade</th>
                                         <th>Categoria</th>
-                                        <th>Competição</th>
+                                        <th>Status</th>
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>1</td>
-                                        <td>João Silva</td>
-                                        <td>25</td>
-                                        <td>Kumite 🥊</td>
-                                        <td>Copa Regional 2025</td>
                                         <td>
-                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#editAthleteModal">Ver</button>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://mdbootstrap.com/img/new/avatars/8.jpg"
+                                                    alt=""
+                                                    style="width: 45px; height: 45px"
+                                                    class="rounded-circle"
+                                                />
+                                                <div class="ms-3">
+                                                    <p class="fw-bold mb-1">Luan Carvalho</p>
+                                                    <p class="text-muted mb-0">luan.carvalho@example.com</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p class="fw-normal mb-1">25 anos</p>
+                                        </td>
+                                        <td>
+                                            <p class="fw-normal mb-1">Kumite 🥊</p>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-success rounded-pill d-inline">Ativo</span>
+                                        </td>
+                                        <td>
+                                          <a href="perfil_atleta.html" class="btn btn-link btn-sm btn-rounded">
+                                            Ver
+                                          </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://mdbootstrap.com/img/new/avatars/6.jpg"
+                                                    class="rounded-circle"
+                                                    alt=""
+                                                    style="width: 45px; height: 45px"
+                                                />
+                                                <div class="ms-3">
+                                                    <p class="fw-bold mb-1">Maria Silva</p>
+                                                    <p class="text-muted mb-0">maria.silva@example.com</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p class="fw-normal mb-1">22 anos</p>
+                                        </td>
+                                        <td>
+                                            <p class="fw-normal mb-1">Kata 🏯</p>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-warning rounded-pill d-inline">Inativo</span>
+                                        </td>
+                                        <td>
+                                          <a href="perfil_atleta.html" class="btn btn-link btn-sm btn-rounded">
+                                            Ver
+                                          </a>
                                             
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>2</td>
-                                        <td>Maria Oliveira</td>
-                                        <td>22</td>
-                                        <td>Kata 🏯</td>
-                                        <td>Campeonato Estadual</td>
                                         <td>
-                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#editAthleteModal">Ver</button>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://mdbootstrap.com/img/new/avatars/7.jpg"
+                                                    class="rounded-circle"
+                                                    alt=""
+                                                    style="width: 45px; height: 45px"
+                                                />
+                                                <div class="ms-3">
+                                                    <p class="fw-bold mb-1">Carlos Souza</p>
+                                                    <p class="text-muted mb-0">carlos.souza@example.com</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p class="fw-normal mb-1">30 anos</p>
+                                        </td>
+                                        <td>
+                                            <p class="fw-normal mb-1">Kumite 🥊</p>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-success rounded-pill d-inline">Ativo</span>
+                                        </td>
+                                        <td>
+                                          <a href="perfil_atleta.html" class="btn btn-link btn-sm btn-rounded">
+                                            Ver
+                                          </a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -113,134 +181,6 @@
             </div>
         </main>
     </div>
-    <!-- Modal de Editar Atleta -->
-    <div class="modal fade" id="editAthleteModal" tabindex="-1" aria-labelledby="editAthleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editAthleteModalLabel">Editar Atleta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="row">
-                            <!-- Nome e Idade -->
-                            <div class="col-md-6 mb-3">
-                                <label for="editAthleteName" class="form-label">Nome Completo</label>
-                                <input type="text" class="form-control" id="editAthleteName" placeholder="Digite o nome completo" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editAthleteAge" class="form-label">Idade</label>
-                                <select class="form-select" id="editAthleteAge" required>
-                                    <option value="">Selecione a idade</option>
-                                    <option value="6-8">6-8 anos</option>
-                                    <option value="9-11">9-11 anos</option>
-                                    <option value="12-14">12-14 anos</option>
-                                    <option value="15-17">15-17 anos</option>
-                                    <option value="18-34">18-34 anos</option>
-                                    <option value="35-44">35-44 anos</option>
-                                    <option value="45+">45+ anos</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <!-- Peso e Faixa -->
-                            <div class="col-md-6 mb-3">
-                                <label for="editAthleteWeight" class="form-label">Peso</label>
-                                <select class="form-select" id="editAthleteWeight" required>
-                                    <option value="">Selecione o peso</option>
-                                    <option value="leve">Peso Leve (até 60 kg)</option>
-                                    <option value="medio">Peso Médio (60-75 kg)</option>
-                                    <option value="pesado">Peso Pesado (75+ kg)</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editAthleteBelt" class="form-label">Faixa (Graduação)</label>
-                                <select class="form-select" id="editAthleteBelt" required>
-                                    <option value="">Selecione a faixa</option>
-                                    <option value="branca">Faixa Branca</option>
-                                    <option value="amarela">Faixa Amarela</option>
-                                    <option value="vermelha">Faixa Vermelha</option>
-                                    <option value="laranja">Faixa Laranja</option>
-                                    <option value="verde">Faixa Verde</option>
-                                    <option value="roxa">Faixa Roxa</option>
-                                    <option value="marrom">Faixa Marrom</option>
-                                    <option value="preta">Faixa Preta</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <!-- Categoria e Academia/Clube -->
-                            <div class="col-md-6 mb-3">
-                                <label for="editAthleteCategory" class="form-label">Categoria</label>
-                                <select class="form-select" id="editAthleteCategory" required>
-                                    <option value="">Selecione a categoria</option>
-                                    <option value="kata">Kata 🏯</option>
-                                    <option value="kumite">Kumite 🥊</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editAthleteClub" class="form-label">Academia/Clube</label>
-                                <select class="form-select" id="editAthleteClub" required>
-                                    <option value="">Selecione a academia/clube</option>
-                                    <option value="academia1">Academia A</option>
-                                    <option value="academia2">Academia B</option>
-                                    <option value="academia3">Academia C</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <!-- Cidade/Estado e Ranking -->
-                            <div class="col-md-6 mb-3">
-                                <label for="editAthleteCityState" class="form-label">Cidade/Estado</label>
-                                <input type="text" class="form-control" id="editAthleteCityState" placeholder="Digite a cidade/estado" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editAthleteRanking" class="form-label">Ranking</label>
-                                <input type="text" class="form-control" id="editAthleteRanking" placeholder="Digite o ranking (se houver)">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <!-- Competição e Foto -->
-                            <div class="col-md-6 mb-3">
-                                <label for="editAthleteCompetition" class="form-label">Competição</label>
-                                <select class="form-select" id="editAthleteCompetition" required>
-                                    <option value="">Selecione a competição</option>
-                                    <option value="competition1">Copa Regional 2025</option>
-                                    <option value="competition2">Campeonato Estadual</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editAthletePhoto" class="form-label">Foto do Atleta</label>
-                                <input type="file" class="form-control" id="editAthletePhoto" accept="image/*">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-warning w-100">Salvar Alterações</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Excluir Atleta -->
-    <div class="modal fade" id="deleteAthleteModal" tabindex="-1" aria-labelledby="deleteAthleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteAthleteModalLabel">Excluir Atleta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Tem certeza de que deseja excluir este atleta?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger">Excluir</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="scripts/scripts.js"></script>
 </body>
