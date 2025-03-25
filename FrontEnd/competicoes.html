@@ -9,9 +9,25 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
     <!-- MDB Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="img/image.png" type="image/x-icon">
 
     <title>Competições</title>
     <link rel="stylesheet" href="style.css/competicoes.css">
+    <style>
+        .card {
+        position: relative;
+        overflow: hidden;
+    }
+    .card i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 5rem; /* Ajuste o tamanho do ícone */
+        opacity: 0.2; /* Torna o ícone mais sutil */
+        transform: translate(-50%, -50%);
+    }
+    </style>
 </head>
 <body>
     <button class="toggle-btn" onclick="toggleSidebar()">
@@ -41,24 +57,27 @@
     </div>
     <div class="content" id="content">
         <div class="header">
-            <h2>🏆 Competições</h2>
+            <h2><i class="fas fa-trophy"></i>Campeonatos</h2>
         </div>
         <main class="container-fluid mt-4">
             <div class="row text-center">
                 <div class="col-md-4 mb-3">
-                    <div class="card p-3 text-center bg-primary text-white">
+                    <div class="card p-4 text-center bg-primary text-white">
+                        <i class="fas fa-trophy"></i>
                         <h5>Total de Competições</h5>
                         <p class="fs-2">8</p>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <div class="card p-3 text-center bg-success text-white">
+                    <div class="card p-4 text-center bg-success text-white">
+                        <i class="fas fa-running"></i>
                         <h5>Competições Ativas</h5>
                         <p class="fs-2">5</p>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <div class="card p-3 text-center bg-warning text-dark">
+                    <div class="card p-4 text-center bg-warning text-dark">
+                        <i class="fas fa-flag-checkered"></i>
                         <h5>Competições Finalizadas</h5>
                         <p class="fs-2">3</p>
                     </div>
