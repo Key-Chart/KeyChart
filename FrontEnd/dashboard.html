@@ -14,33 +14,6 @@
     <title>Dashboard</title>
     <link rel="stylesheet" href="style.css/dashboard.css">
     <style>
-        /* Estilo para o chat fixo no canto */
-        .chat-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 350px;
-            z-index: 1000;
-            transition: transform 0.3s ease-in-out;
-            border: 2px solid #198754;
-            /*border-radius: 10px;*/
-        }
-
-        .chat-container.collapsed {
-            transform: translateY(calc(100% - 50px));
-        }
-
-        .chat-container.collapsed .card-body {
-            display: none;
-        }
-
-        .chat-toggle-btn {
-            position: absolute;
-            top: -40px;
-            right: 0;
-            z-index: 1001;
-        }
-
         @media (max-width: 768px) {
             .chat-container {
                 width: 90%;
@@ -190,7 +163,7 @@
     </div>
 
     <!-- Chat Container -->
-    <div class="chat-container" id="chatContainer">
+    <div class="chat-container collapsed" id="chatContainer">
         <button class="btn btn-success chat-toggle-btn" onclick="toggleChat()">
             <i class="bi bi-chat-dots"></i>
         </button>
@@ -210,7 +183,7 @@
                         <p class="small ms-3 mb-3 rounded-3 text-muted">23:58</p>
                     </div>
                 </div>
-                <!-- Outras mensagens do chat -->
+                
             </div>
             <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp" alt="avatar 3" style="width: 40px; height: 100%;">
@@ -235,6 +208,7 @@
         function toggleChat() {
             const chatContainer = document.getElementById('chatContainer');
             chatContainer.classList.toggle('collapsed');
+            
         }
 
         // Gráficos
