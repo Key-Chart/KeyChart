@@ -5,18 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="shortcut icon" href="img/image.png" type="image/x-icon">
     <title>Configurações - Sistema de Esportes</title>
     <style>
         body {
             display: flex;
             height: 100vh;
             margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .sidebar {
             width: 250px;
-            background-color: #198754; /* Cor da barra lateral */
+            background-color: #198754;
             color: white;
             height: 100vh;
             position: fixed;
@@ -38,7 +37,7 @@
             margin-right: 10px;
         }
         .sidebar a:hover {
-            background-color: #146c43; /* Cor mais escura para hover */
+            background-color: #146c43;
         }
         .content {
             margin-left: 250px;
@@ -47,6 +46,7 @@
             transition: margin-left 0.3s ease-in-out;
             overflow-y: auto;
             height: 100vh;
+            background-color: #f8f9fa;
         }
         .sidebar-hidden {
             width: 60px;
@@ -75,10 +75,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
         }
         .header h2 {
             margin: 0;
+            color: #146c43;
+            font-weight: 600;
         }
         .user-icon {
             font-size: 24px;
@@ -87,6 +91,60 @@
         .card {
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #146c43;
+            color: white;
+            border-radius: 12px 12px 0 0 !important;
+            font-weight: 500;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .btn-primary {
+            background-color: #146c43;
+            border-color: #146c43;
+        }
+        .btn-primary:hover {
+            background-color: #0d5032;
+            border-color: #0d5032;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #146c43;
+        }
+        .settings-section {
+            margin-bottom: 30px;
+        }
+        .settings-title {
+            color: #146c43;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .logo-preview {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: white;
+        }
+        .theme-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-right: 10px;
+            border: 2px solid #dee2e6;
+        }
+        .theme-color.selected {
+            border-color: #146c43;
+        }
+        .backup-list {
+            max-height: 300px;
+            overflow-y: auto;
         }
         @media (max-width: 768px) {
             .sidebar {
@@ -116,19 +174,6 @@
                 left: 20px;
             }
         }
-
-        #sidebar {
-            background: 
-                linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                url('../imgs/karate-sidebar-bg.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed; /* Efeito parallax opcional */
-        }
-        
-        #sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.26);
-        }
     </style>
 </head>
 <body>
@@ -150,16 +195,624 @@
         <a href="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
         <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
         <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
+        <a href="configuracoes.html"><i class="bi bi-gear-fill"></i><span>Configurações</span></a>
     </div>
 
     <div class="content" id="content">
-        <!-- Cabeçalho com título e ícone de usuário -->
         <div class="header">
-            
-            
+            <h2><i class="bi bi-gear-fill"></i> Configurações do Sistema</h2>
         </div>
-        <h1 style="color: rgb(107, 107, 107);">Em desenvolvimento...</h1>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Menu de Configurações
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="nav nav-pills flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="#geral" data-bs-toggle="pill">
+                                        <i class="bi bi-sliders"></i> Configurações Gerais
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#aparencia" data-bs-toggle="pill">
+                                        <i class="bi bi-palette"></i> Aparência
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#notificacoes" data-bs-toggle="pill">
+                                        <i class="bi bi-bell"></i> Notificações
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#backup" data-bs-toggle="pill">
+                                        <i class="bi bi-cloud-arrow-up"></i> Backup & Restauração
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#usuarios" data-bs-toggle="pill">
+                                        <i class="bi bi-people"></i> Usuários e Permissões
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#integracao" data-bs-toggle="pill">
+                                        <i class="bi bi-plug"></i> Integrações
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#sobre" data-bs-toggle="pill">
+                                        <i class="bi bi-info-circle"></i> Sobre o Sistema
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+                    <div class="tab-content">
+                        <!-- Configurações Gerais -->
+                        <div class="tab-pane fade show active" id="geral">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="bi bi-sliders"></i> Configurações Gerais do Sistema
+                                </div>
+                                <div class="card-body">
+                                    <form>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="nomeSistema" class="form-label">Nome do Sistema</label>
+                                                <input type="text" class="form-control" id="nomeSistema" value="KeyChart">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="timezone" class="form-label">Fuso Horário</label>
+                                                <select class="form-select" id="timezone">
+                                                    <option selected>America/Sao_Paulo</option>
+                                                    <option>America/New_York</option>
+                                                    <option>Europe/London</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="idioma" class="form-label">Idioma</label>
+                                                <select class="form-select" id="idioma">
+                                                    <option selected>Português (Brasil)</option>
+                                                    <option>English</option>
+                                                    <option>Español</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="formatoData" class="form-label">Formato de Data</label>
+                                                <select class="form-select" id="formatoData">
+                                                    <option selected>DD/MM/YYYY</option>
+                                                    <option>MM/DD/YYYY</option>
+                                                    <option>YYYY-MM-DD</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="manutencao" class="form-label">Modo Manutenção</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="manutencao">
+                                                <label class="form-check-label" for="manutencao">Ativar modo manutenção</label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-save"></i> Salvar Configurações
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Aparência -->
+                        <div class="tab-pane fade" id="aparencia">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="bi bi-palette"></i> Personalização da Aparência
+                                </div>
+                                <div class="card-body">
+                                    <form>
+                                        <div class="row mb-4">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Logo do Sistema</label>
+                                                <div class="mb-3">
+                                                    <img src="img/image.png" alt="Logo atual" class="logo-preview mb-2" id="logoPreview">
+                                                    <input type="file" class="form-control" id="uploadLogo" accept="image/*">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Favicon</label>
+                                                <div class="mb-3">
+                                                    <img src="img/image.png" alt="Favicon atual" class="logo-preview mb-2" style="width: 32px; height: 32px;">
+                                                    <input type="file" class="form-control" id="uploadFavicon" accept="image/*">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <label class="form-label">Tema de Cores</label>
+                                            <div class="d-flex">
+                                                <div class="theme-color selected" style="background-color: #146c43;" title="Verde padrão"></div>
+                                                <div class="theme-color" style="background-color: #0d6efd;" title="Azul"></div>
+                                                <div class="theme-color" style="background-color: #6610f2;" title="Roxo"></div>
+                                                <div class="theme-color" style="background-color: #d63384;" title="Rosa"></div>
+                                                <div class="theme-color" style="background-color: #dc3545;" title="Vermelho"></div>
+                                                <div class="theme-color" style="background-color: #fd7e14;" title="Laranja"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="temaEscuro" class="form-label">Modo Escuro</label>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="temaEscuro">
+                                                <label class="form-check-label" for="temaEscuro">Ativar modo escuro</label>
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-save"></i> Aplicar Aparência
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notificações -->
+                        <div class="tab-pane fade" id="notificacoes">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="bi bi-bell"></i> Configurações de Notificações
+                                </div>
+                                <div class="card-body">
+                                    <form>
+                                        <div class="mb-3">
+                                            <label class="form-label">Notificações por Email</label>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="emailResultados" checked>
+                                                <label class="form-check-label" for="emailResultados">Resultados de competições</label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="emailLembretes" checked>
+                                                <label class="form-check-label" for="emailLembretes">Lembretes de eventos</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="emailAtualizacoes">
+                                                <label class="form-check-label" for="emailAtualizacoes">Atualizações do sistema</label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Notificações no Sistema</label>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="notifNovosAtletas" checked>
+                                                <label class="form-check-label" for="notifNovosAtletas">Novos atletas cadastrados</label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="notifPartidas" checked>
+                                                <label class="form-check-label" for="notifPartidas">Próximas partidas</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="notifSistema" checked>
+                                                <label class="form-check-label" for="notifSistema">Alertas do sistema</label>
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-save"></i> Salvar Configurações
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Backup e Restauração -->
+                        <div class="tab-pane fade" id="backup">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="bi bi-cloud-arrow-up"></i> Backup e Restauração
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="settings-section">
+                                                <h5 class="settings-title">Criar Backup</h5>
+                                                <p>Crie um backup completo do sistema incluindo todos os dados.</p>
+                                                <button class="btn btn-primary">
+                                                    <i class="bi bi-download"></i> Criar Backup Agora
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="settings-section">
+                                                <h5 class="settings-title">Restaurar Backup</h5>
+                                                <div class="mb-3">
+                                                    <input type="file" class="form-control" id="arquivoBackup">
+                                                </div>
+                                                <button class="btn btn-primary">
+                                                    <i class="bi bi-upload"></i> Restaurar Backup
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="settings-section">
+                                        <h5 class="settings-title">Backups Automáticos</h5>
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="backupAuto" checked>
+                                            <label class="form-check-label" for="backupAuto">Ativar backups automáticos</label>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label for="freqBackup" class="form-label">Frequência</label>
+                                                <select class="form-select" id="freqBackup">
+                                                    <option>Diariamente</option>
+                                                    <option selected>Semanalmente</option>
+                                                    <option>Mensalmente</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="horaBackup" class="form-label">Hora</label>
+                                                <input type="time" class="form-control" id="horaBackup" value="02:00">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="manterBackup" class="form-label">Manter por</label>
+                                                <select class="form-select" id="manterBackup">
+                                                    <option>1 semana</option>
+                                                    <option selected>1 mês</option>
+                                                    <option>3 meses</option>
+                                                    <option>6 meses</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="settings-section">
+                                        <h5 class="settings-title">Backups Existentes</h5>
+                                        <div class="backup-list">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Data</th>
+                                                        <th>Tamanho</th>
+                                                        <th>Ações</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>2023-11-15 02:00</td>
+                                                        <td>45 MB</td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-outline-primary">
+                                                                <i class="bi bi-download"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2023-11-08 02:00</td>
+                                                        <td>42 MB</td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-outline-primary">
+                                                                <i class="bi bi-download"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Usuários e Permissões -->
+                        <div class="tab-pane fade" id="usuarios">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="bi bi-people"></i> Gerenciamento de Usuários
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-4">
+                                        <button class="btn btn-primary mb-3">
+                                            <i class="bi bi-plus-circle"></i> Adicionar Novo Usuário
+                                        </button>
+                                        
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nome</th>
+                                                    <th>Email</th>
+                                                    <th>Perfil</th>
+                                                    <th>Status</th>
+                                                    <th>Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Admin Master</td>
+                                                    <td>admin@keychart.com</td>
+                                                    <td>Administrador</td>
+                                                    <td><span class="badge bg-success">Ativo</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Organizador Eventos</td>
+                                                    <td>organizador@keychart.com</td>
+                                                    <td>Organizador</td>
+                                                    <td><span class="badge bg-success">Ativo</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Juiz Principal</td>
+                                                    <td>juiz@keychart.com</td>
+                                                    <td>Juiz</td>
+                                                    <td><span class="badge bg-warning text-dark">Inativo</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <div class="settings-section">
+                                        <h5 class="settings-title">Perfis de Acesso</h5>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="card mb-3">
+                                                    <div class="card-header">
+                                                        Administrador
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <p>Acesso completo a todas as funcionalidades do sistema.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card mb-3">
+                                                    <div class="card-header">
+                                                        Organizador
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <p>Pode gerenciar competições, atletas e partidas, mas não tem acesso às configurações do sistema.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card mb-3">
+                                                    <div class="card-header">
+                                                        Juiz
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <p>Pode registrar resultados e avaliar atletas, mas não pode modificar configurações de competições.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card mb-3">
+                                                    <div class="card-header">
+                                                        Visualizador
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <p>Apenas visualização de dados, sem permissão para modificar qualquer informação.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Integrações -->
+                        <div class="tab-pane fade" id="integracao">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="bi bi-plug"></i> Integrações com Outros Sistemas
+                                </div>
+                                <div class="card-body">
+                                    <div class="settings-section">
+                                        <h5 class="settings-title">API do Sistema</h5>
+                                        <div class="mb-3">
+                                            <label class="form-label">Chave da API</label>
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control" value="sk_test_51Hx8..." readonly>
+                                                <button class="btn btn-outline-secondary" type="button" id="copiarApiKey">
+                                                    <i class="bi bi-clipboard"></i> Copiar
+                                                </button>
+                                                <button class="btn btn-outline-secondary" type="button" id="gerarNovaApiKey">
+                                                    <i class="bi bi-arrow-repeat"></i> Gerar Nova
+                                                </button>
+                                            </div>
+                                            <small class="text-muted">Use esta chave para integrar com outros sistemas.</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="settings-section">
+                                        <h5 class="settings-title">Serviços Externos</h5>
+                                        <div class="mb-3">
+                                            <div class="card mb-3">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <h6>Google Calendar</h6>
+                                                            <p class="mb-0">Sincronize eventos e competições com o Google Calendar</p>
+                                                        </div>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" id="googleCalendar">
+                                                            <label class="form-check-label" for="googleCalendar"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card mb-3">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <h6>Mailchimp</h6>
+                                                            <p class="mb-0">Envie newsletters e comunicações por email</p>
+                                                        </div>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" id="mailchimp">
+                                                            <label class="form-check-label" for="mailchimp"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <h6>Pagamentos Online</h6>
+                                                            <p class="mb-0">Integração com Mercado Pago para inscrições</p>
+                                                        </div>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" id="mercadoPago">
+                                                            <label class="form-check-label" for="mercadoPago"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sobre o Sistema -->
+                        <div class="tab-pane fade" id="sobre">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="bi bi-info-circle"></i> Informações do Sistema
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-4">
+                                        <img src="img/image.png" alt="Logo KeyChart" style="height: 80px;">
+                                        <h3 class="mt-3">KeyChart</h3>
+                                        <p class="text-muted">Sistema de Gerenciamento de Competições Esportivas</p>
+                                    </div>
+                                    
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="card mb-3">
+                                                <div class="card-header">
+                                                    Versão
+                                                </div>
+                                                <div class="card-body">
+                                                    <p><strong>Versão atual:</strong> 2.1.0</p>
+                                                    <p><strong>Última atualização:</strong> 15/11/2023</p>
+                                                    <button class="btn btn-outline-primary">
+                                                        <i class="bi bi-arrow-down-circle"></i> Verificar Atualizações
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card mb-3">
+                                                <div class="card-header">
+                                                    Licença
+                                                </div>
+                                                <div class="card-body">
+                                                    <p><strong>Tipo:</strong> Licença Anual</p>
+                                                    <p><strong>Expira em:</strong> 15/11/2024</p>
+                                                    <button class="btn btn-outline-primary">
+                                                        <i class="bi bi-credit-card"></i> Renovar Licença
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            Suporte
+                                        </div>
+                                        <div class="card-body">
+                                            <p><i class="bi bi-envelope"></i> <strong>Email:</strong> suporte@keychart.com</p>
+                                            <p><i class="bi bi-telephone"></i> <strong>Telefone:</strong> (11) 1234-5678</p>
+                                            <p><i class="bi bi-clock"></i> <strong>Horário de atendimento:</strong> Seg-Sex, 9h-18h</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card">
+                                        <div class="card-header">
+                                            Desenvolvedores
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Sistema desenvolvido por <strong>KeyChart Solutions</strong></p>
+                                            <p>&copy; 2023 Todos os direitos reservados</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="scripts/scripts.js"></script>
+    <script>
+        // Função para alternar a barra lateral
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            
+            sidebar.classList.toggle('sidebar-hidden');
+            content.classList.toggle('content-expanded');
+        }
+        
+        // Visualização da logo antes de upload
+        document.getElementById('uploadLogo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('logoPreview').src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Seleção de tema de cores
+        document.querySelectorAll('.theme-color').forEach(color => {
+            color.addEventListener('click', function() {
+                document.querySelectorAll('.theme-color').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                // Aqui você adicionaria o código para aplicar o tema selecionado
+            });
+        });
+        
+        // Copiar chave da API
+        document.getElementById('copiarApiKey').addEventListener('click', function() {
+            const apiKey = document.querySelector('input[value^="sk_test"]');
+            apiKey.select();
+            document.execCommand('copy');
+            alert('Chave da API copiada para a área de transferência!');
+        });
+    </script>
 </body>
 </html>

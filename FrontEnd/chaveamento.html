@@ -8,7 +8,53 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="shortcut icon" href="img/image.png" type="image/x-icon">
     <title>Chaveamento</title>
-<link rel="stylesheet" href="style.css/chaveamento.css">
+    <link rel="stylesheet" href="style.css/chaveamento.css">
+    <style>
+        .bracket {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .round {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .match {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
+        .player {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+        }
+        .player.winner {
+            font-weight: bold;
+            color: #146c43;
+        }
+        .vs {
+            text-align: center;
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        .nav-tabs .nav-link.active {
+            font-weight: bold;
+            border-bottom: 3px solid #146c43;
+        }
+        .category-title {
+            background-color: #146c43;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .card-header.bg-primary {
+            background-color: #146c43 !important;
+        }
+    </style>
 </head>
 <body>
     <button class="toggle-btn" onclick="toggleSidebar()">
@@ -35,105 +81,235 @@
         <div class="header">
             <h2>🔗 Chaveamento e Tabelas</h2>
         </div>
-        <main class="container-fluid mt-4">
-            <div class="card p-3 mb-4">
-                <h5>🏆 Gerar chaveamento automático</h5>
-                <p>Selecione a competição para gerar o chaveamento automaticamente:</p>
-                <button class="btn btn-success">Gerar Chaveamento</button>
-            </div>
-            <div class="card p-3 mb-4">
-                <h5>✍️ Criar chaveamento manualmente</h5>
-                <form>
-                    <div class="mb-3">
-                        <label for="competiçao" class="form-label">Selecione a Competição</label>
-                        <select class="form-select" id="competiçao" required>
-                            <option value="">Escolha a Competição</option>
-                            <option value="competicao1">Campeonato A</option>
-                            <option value="competicao2">Campeonato B</option>
-                        </select>
+
+        <div class="container mt-4">
+            <ul class="nav nav-tabs" id="chaveamentoTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="kata-tab" data-bs-toggle="tab" data-bs-target="#kata" type="button" role="tab">Kata</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="kumite-tab" data-bs-toggle="tab" data-bs-target="#kumite" type="button" role="tab">Kumite</button>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-3" id="chaveamentoContent">
+                <!-- Tab de Kata -->
+                <div class="tab-pane fade show active" id="kata" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">Chaveamento de Kata</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <h5 class="category-title">Categoria: Kata Individual Masculino - Faixa Preta</h5>
+                                <div class="bracket">
+                                    <!-- Final -->
+                                    <div class="round">
+                                        <h6>Final</h6>
+                                        <div class="match">
+                                            <div class="player winner">João Silva (8.7)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Carlos Oliveira (8.5)</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Semifinal -->
+                                    <div class="round">
+                                        <h6>Semifinal</h6>
+                                        <div class="match">
+                                            <div class="player winner">João Silva (8.6)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Pedro Santos (8.4)</div>
+                                        </div>
+                                        <div class="match">
+                                            <div class="player winner">Carlos Oliveira (8.5)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Miguel Costa (8.3)</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Quartas -->
+                                    <div class="round">
+                                        <h6>Quartas de Final</h6>
+                                        <div class="match">
+                                            <div class="player winner">João Silva (8.5)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Lucas Pereira (8.2)</div>
+                                        </div>
+                                        <div class="match">
+                                            <div class="player winner">Pedro Santos (8.4)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Rafael Alves (8.1)</div>
+                                        </div>
+                                        <div class="match">
+                                            <div class="player winner">Carlos Oliveira (8.4)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">André Lima (8.0)</div>
+                                        </div>
+                                        <div class="match">
+                                            <div class="player winner">Miguel Costa (8.3)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Felipe Sousa (7.9)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h5 class="category-title">Categoria: Kata Individual Feminino - Faixa Preta</h5>
+                                <div class="bracket">
+                                    <!-- Final -->
+                                    <div class="round">
+                                        <h6>Final</h6>
+                                        <div class="match">
+                                            <div class="player winner">Ana Oliveira (8.8)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Mariana Santos (8.6)</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Semifinal -->
+                                    <div class="round">
+                                        <h6>Semifinal</h6>
+                                        <div class="match">
+                                            <div class="player winner">Ana Oliveira (8.7)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Juliana Costa (8.5)</div>
+                                        </div>
+                                        <div class="match">
+                                            <div class="player winner">Mariana Santos (8.6)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Patrícia Alves (8.4)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="fase" class="form-label">Selecione a Fase</label>
-                        <select class="form-select" id="fase" required>
-                            <option value="">Escolha a Fase</option>
-                            <option value="fase1">Fase de Grupos</option>
-                            <option value="fase2">Quartas de Final</option>
-                        </select>
+                </div>
+
+                <!-- Tab de Kumite -->
+                <div class="tab-pane fade" id="kumite" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header bg-danger text-white">
+                            <h4 class="mb-0">Chaveamento de Kumite</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <h5 class="category-title" style="background-color: #dc3545;">Categoria: Kumite Masculino -67kg</h5>
+                                <div class="bracket">
+                                    <!-- Final -->
+                                    <div class="round">
+                                        <h6>Final</h6>
+                                        <div class="match">
+                                            <div class="player winner" style="color: #dc3545;">Rodrigo Silva (5-3)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Marcos Oliveira (4-5)</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Semifinal -->
+                                    <div class="round">
+                                        <h6>Semifinal</h6>
+                                        <div class="match">
+                                            <div class="player winner" style="color: #dc3545;">Rodrigo Silva (8-2)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Gustavo Santos (2-8)</div>
+                                        </div>
+                                        <div class="match">
+                                            <div class="player winner" style="color: #dc3545;">Marcos Oliveira (6-4)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Fernando Costa (4-6)</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Quartas -->
+                                    <div class="round">
+                                        <h6>Quartas de Final</h6>
+                                        <div class="match">
+                                            <div class="player winner" style="color: #dc3545;">Rodrigo Silva (7-3)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Lucas Pereira (3-7)</div>
+                                        </div>
+                                        <div class="match">
+                                            <div class="player winner" style="color: #dc3545;">Gustavo Santos (5-4)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Rafael Alves (4-5)</div>
+                                        </div>
+                                        <div class="match">
+                                            <div class="player winner" style="color: #dc3545;">Marcos Oliveira (6-3)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">André Lima (3-6)</div>
+                                        </div>
+                                        <div class="match">
+                                            <div class="player winner" style="color: #dc3545;">Fernando Costa (5-4)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Felipe Sousa (4-5)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h5 class="category-title" style="background-color: #dc3545;">Categoria: Kumite Feminino -55kg</h5>
+                                <div class="bracket">
+                                    <!-- Final -->
+                                    <div class="round">
+                                        <h6>Final</h6>
+                                        <div class="match">
+                                            <div class="player winner" style="color: #dc3545;">Camila Oliveira (4-2)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Bianca Santos (2-4)</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Semifinal -->
+                                    <div class="round">
+                                        <h6>Semifinal</h6>
+                                        <div class="match">
+                                            <div class="player winner" style="color: #dc3545;">Camila Oliveira (3-1)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Juliana Costa (1-3)</div>
+                                        </div>
+                                        <div class="match">
+                                            <div class="player winner" style="color: #dc3545;">Bianca Santos (2-1)</div>
+                                            <div class="vs">vs</div>
+                                            <div class="player">Patrícia Alves (1-2)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="times" class="form-label">Selecione os Times Participantes</label>
-                        <select class="form-select" id="times" multiple required>
-                            <option value="time1">Equipe A</option>
-                            <option value="time2">Equipe B</option>
-                            <option value="time3">Equipe C</option>
-                            <option value="time4">Equipe D</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Criar Chaveamento</button>
-                </form>
-            </div>
-            <div class="card p-3 mb-4">
-                <h5>📊 Visualizar tabelas de classificação</h5>
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Posição</th>
-                                <th>Equipe</th>
-                                <th>Pontos</th>
-                                <th>V</th>
-                                <th>E</th>
-                                <th>D</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Equipe A</td>
-                                <td>12</td>
-                                <td>4</td>
-                                <td>0</td>
-                                <td>0</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Equipe B</td>
-                                <td>10</td>
-                                <td>3</td>
-                                <td>1</td>
-                                <td>0</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
-
-            <div class="card p-3">
-                <h5>🎯 Atualizar pontuações</h5>
-                <form>
-                    <div class="mb-3">
-                        <label for="partida" class="form-label">Selecione a Partida</label>
-                        <select class="form-select" id="partida" required>
-                            <option value="">Escolha a partida</option>
-                            <option value="partida1">Equipe A vs Equipe B</option>
-                            <option value="partida2">Equipe C vs Equipe D</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="pontosEquipe1" class="form-label">Pontos Equipe 1</label>
-                        <input type="number" class="form-control" id="pontosEquipe1" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="pontosEquipe2" class="form-label">Pontos Equipe 2</label>
-                        <input type="number" class="form-control" id="pontosEquipe2" required>
-                    </div>
-                    <button type="submit" class="btn btn-warning">Atualizar Pontuações</button>
-                </form>
-            </div>
-        </main>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="scripts/scripts.js"></script>
+    <script>
+        // Função para carregar os chaveamentos via AJAX
+        function carregarChaveamentos() {
+            // Simulando dados do backend - substitua por chamadas reais ao seu backend
+            console.log("Carregando chaveamentos...");
+            
+            // Aqui você faria chamadas AJAX para buscar os dados reais
+            // fetch('/api/chaveamento/kata/')
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         // Processar dados de Kata
+            //     });
+            
+            // fetch('/api/chaveamento/kumite/')
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         // Processar dados de Kumite
+            //     });
+        }
+        
+        // Carrega os chaveamentos quando a página é aberta
+        document.addEventListener('DOMContentLoaded', carregarChaveamentos);
+    </script>
 </body>
 </html>
