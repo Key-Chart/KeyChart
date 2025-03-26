@@ -30,10 +30,11 @@
             background-position: center;
             background-repeat: no-repeat;
             color: white;
-            transition: all 0.3s ease;
+            transition: width 0.3s ease-in-out;
             z-index: 1000;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
+            padding-top: 20px;
         }
 
         .sidebar.collapsed {
@@ -41,26 +42,21 @@
         }
 
         .sidebar a {
-            display: flex;
-            align-items: center;
+            padding: 15px;
+            display: block;
             color: white;
-            padding: 12px 15px;
             text-decoration: none;
-            transition: all 0.3s;
-            border-left: 3px solid transparent;
             white-space: nowrap;
+            font-size: 18px;
         }
 
         .sidebar a:hover {
             background-color: rgba(255, 255, 255, 0.1);
-            border-left: 3px solid #198754;
         }
 
         .sidebar a i {
+            font-size: 24px;
             margin-right: 10px;
-            font-size: 1.2rem;
-            min-width: 25px;
-            text-align: center;
         }
 
         .sidebar.collapsed a span {
@@ -464,6 +460,10 @@
         <a href="equipe_atletas.html">
             <i class="bi bi-person-lines-fill"></i>
             <span>Equipes e Atletas</span>
+        </a>
+        <a href="inscricoes.html">
+            <i class="bi bi-pencil-square"></i>
+            <span>Inscrições</span>
         </a>
         <a href="partidas.html">
             <i class="bi bi-calendar-check"></i>
