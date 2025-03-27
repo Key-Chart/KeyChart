@@ -723,8 +723,8 @@
                                                 <div class="card-body">
                                                     <p><strong>Versão atual:</strong> 2.1.0</p>
                                                     <p><strong>Última atualização:</strong> 15/11/2023</p>
-                                                    <button class="btn btn-outline-primary">
-                                                        <i class="bi bi-arrow-down-circle"></i> Verificar Atualizações
+                                                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#verificarAtualizacoesModal">
+                                                        <i class="bi bi-credit-card"></i> Renovar Licença
                                                     </button>
                                                 </div>
                                             </div>
@@ -737,7 +737,7 @@
                                                 <div class="card-body">
                                                     <p><strong>Tipo:</strong> Licença Anual</p>
                                                     <p><strong>Expira em:</strong> 15/11/2024</p>
-                                                    <button class="btn btn-outline-primary">
+                                                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#renovarLicencaModal">
                                                         <i class="bi bi-credit-card"></i> Renovar Licença
                                                     </button>
                                                 </div>
@@ -762,13 +762,271 @@
                                         </div>
                                         <div class="card-body">
                                             <p>Sistema desenvolvido por <strong>KeyChart Solutions</strong></p>
-                                            <p>&copy; 2023 Todos os direitos reservados</p>
+                                            
+                                            <div class="row mt-4">
+                                                <!-- Desenvolvedor 1 -->
+                                                <div class="col-md-3 col-sm-6 text-center mb-4">
+                                                    <img src="img/homem.png" alt="Foto Desenvolvedor 1" class="img-fluid rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                                                    <h5>Rafael Góes</h5>
+                                                    <p class="text-muted">Full Stack Developer</p>
+                                                    <p class="small">Especialista em JavaScript e arquitetura de sistemas.</p>
+                                                    <div class="social-links">
+                                                        <a href="https://linkedin.com/in/joaosilva" target="_blank" class="text-primary mx-1"><i class="fab fa-linkedin"></i></a>
+                                                        <a href="https://github.com/joaosilva" target="_blank" class="text-dark mx-1"><i class="fab fa-github"></i></a>
+                                                        <a href="https://instagram.com/joaosilva.dev" target="_blank" class="text-danger mx-1"><i class="fab fa-instagram"></i></a>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Desenvolvedor 2 -->
+                                                <div class="col-md-3 col-sm-6 text-center mb-4">
+                                                    <img src="img/homem.png" alt="Foto Desenvolvedor 2" class="img-fluid rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                                                    <h5>Rafael Góes</h5>
+                                                    <p class="text-muted">Frontend Specialist</p>
+                                                    <p class="small">Expert em React e design de interfaces responsivas.</p>
+                                                    <div class="social-links">
+                                                        <a href="https://linkedin.com/in/mariasouza" target="_blank" class="text-primary mx-1"><i class="fab fa-linkedin"></i></a>
+                                                        <a href="https://github.com/mariasouza" target="_blank" class="text-dark mx-1"><i class="fab fa-github"></i></a>
+                                                        <a href="https://instagram.com/mariasouza.dev" target="_blank" class="text-danger mx-1"><i class="fab fa-instagram"></i></a>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Desenvolvedor 3 -->
+                                                <div class="col-md-3 col-sm-6 text-center mb-4">
+                                                    <img src="img/homem.png" alt="Foto Desenvolvedor 3" class="img-fluid rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                                                    <h5>Rafael Góes</h5>
+                                                    <p class="text-muted">Backend Engineer</p>
+                                                    <p class="small">Focado em Node.js e arquitetura de bancos de dados.</p>
+                                                    <div class="social-links">
+                                                        <a href="https://linkedin.com/in/carlosoliveira" target="_blank" class="text-primary mx-1"><i class="fab fa-linkedin"></i></a>
+                                                        <a href="https://github.com/carlosoliveira" target="_blank" class="text-dark mx-1"><i class="fab fa-github"></i></a>
+                                                        <a href="https://instagram.com/carlos.dev" target="_blank" class="text-danger mx-1"><i class="fab fa-instagram"></i></a>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Desenvolvedor 4 -->
+                                                <div class="col-md-3 col-sm-6 text-center mb-4">
+                                                    <img src="img/homem.png" alt="Foto Desenvolvedor 4" class="img-fluid rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                                                    <h5>Rafael Góes</h5>
+                                                    <p class="text-muted">UX/UI Designer</p>
+                                                    <p class="small">Especialista em experiência do usuário e design thinking.</p>
+                                                    <div class="social-links">
+                                                        <a href="https://linkedin.com/in/anapereira" target="_blank" class="text-primary mx-1"><i class="fab fa-linkedin"></i></a>
+                                                        <a href="https://github.com/anapereira" target="_blank" class="text-dark mx-1"><i class="fab fa-github"></i></a>
+                                                        <a href="https://instagram.com/ana.design" target="_blank" class="text-danger mx-1"><i class="fab fa-instagram"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <p class="mt-3">&copy; 2025 Todos os direitos reservados</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Renovação de Licença -->
+    <div class="modal fade" id="renovarLicencaModal" tabindex="-1" aria-labelledby="renovarLicencaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="renovarLicencaModalLabel">
+                        <i class="bi bi-credit-card"></i> Renovar Licença
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">Licença Atual</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Tipo de Licença
+                                            <span class="badge bg-primary">Anual</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Data de Ativação
+                                            <span>15/11/2022</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Data de Expiração
+                                            <span class="badge bg-danger">15/11/2023</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Dias Restantes
+                                            <span class="badge bg-warning text-dark">5 dias</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">Opções de Renovação</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" name="tipoLicenca" id="licencaAnual" checked>
+                                        <label class="form-check-label d-flex justify-content-between" for="licencaAnual">
+                                            <span>
+                                                <strong>Licença Anual</strong><br>
+                                                <small class="text-muted">Renovação por 12 meses</small>
+                                            </span>
+                                            <span class="text-success">R$ 1.200,00</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" name="tipoLicenca" id="licencaBienal">
+                                        <label class="form-check-label d-flex justify-content-between" for="licencaBienal">
+                                            <span>
+                                                <strong>Licença Bienal</strong><br>
+                                                <small class="text-muted">Renovação por 24 meses (15% de desconto)</small>
+                                            </span>
+                                            <span class="text-success">R$ 2.040,00</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="tipoLicenca" id="licencaPerpetua">
+                                        <label class="form-check-label d-flex justify-content-between" for="licencaPerpetua">
+                                            <span>
+                                                <strong>Licença Perpétua</strong><br>
+                                                <small class="text-muted">Acesso vitalício (economize 50%)</small>
+                                            </span>
+                                            <span class="text-success">R$ 3.000,00</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="mb-0">Informações de Pagamento</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="nomeCartao" class="form-label">Nome no Cartão</label>
+                                <input type="text" class="form-control" id="nomeCartao" placeholder="Como impresso no cartão">
+                            </div>
+                            <div class="mb-3">
+                                <label for="numeroCartao" class="form-label">Número do Cartão</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="numeroCartao" placeholder="1234 5678 9012 3456">
+                                    <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validadeCartao" class="form-label">Validade</label>
+                                    <input type="text" class="form-control" id="validadeCartao" placeholder="MM/AA">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cvvCartao" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvvCartao" placeholder="123">
+                                </div>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="salvarCartao">
+                                <label class="form-check-label" for="salvarCartao">Salvar informações do cartão para pagamentos futuros</label>
+                            </div>
+                            <div class="alert alert-info">
+                                <i class="bi bi-lock-fill"></i> Todas as transações são seguras e criptografadas.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="btnFinalizarRenovacao">
+                        <i class="bi bi-check-circle"></i> Finalizar Renovação
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Verificar Atualizações -->
+    <div class="modal fade" id="verificarAtualizacoesModal" tabindex="-1" aria-labelledby="verificarAtualizacoesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="verificarAtualizacoesModalLabel">
+                        <i class="bi bi-arrow-down-circle"></i> Verificar Atualizações
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-cloud-arrow-down" style="font-size: 3rem; color: #0d6efd;"></i>
+                        <h4>Verificando atualizações disponíveis...</h4>
+                    </div>
+                    
+                    <div id="atualizacaoStatus">
+                        <div class="d-flex justify-content-center mb-3">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                        </div>
+                        <p class="text-center">Conectando ao servidor de atualizações...</p>
+                    </div>
+                    
+                    <div id="atualizacaoDisponivel" style="display: none;">
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle-fill"></i> Nova versão disponível!
+                        </div>
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                Detalhes da Atualização
+                            </div>
+                            <div class="card-body">
+                                <h5>KeyChart v2.2.0</h5>
+                                <p class="text-muted">Lançado em: 20/11/2023</p>
+                                <ul>
+                                    <li>Novo sistema de gerenciamento de torneios</li>
+                                    <li>Integração com redes sociais aprimorada</li>
+                                    <li>Correções de segurança importantes</li>
+                                    <li>Melhorias na performance do sistema</li>
+                                </ul>
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle-fill"></i> <strong>Tamanho da atualização:</strong> 45 MB
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" id="btnBaixarAtualizacao">
+                                <i class="bi bi-download"></i> Baixar e Instalar Atualização
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="semAtualizacao" style="display: none;">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle-fill"></i> Seu sistema já está atualizado com a versão mais recente.
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                Informações da Versão Atual
+                            </div>
+                            <div class="card-body">
+                                <h5>KeyChart v2.1.0</h5>
+                                <p class="text-muted">Instalado em: 15/11/2023</p>
+                                <p>Esta é a versão mais recente disponível. Por favor, verifique novamente em algumas semanas para novas atualizações.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                 </div>
             </div>
         </div>
@@ -812,6 +1070,83 @@
             apiKey.select();
             document.execCommand('copy');
             alert('Chave da API copiada para a área de transferência!');
+        });
+
+        // Script para controlar os modais
+        document.addEventListener('DOMContentLoaded', function() {
+            // Modal de Verificar Atualizações
+            const verificarAtualizacoesBtn = document.querySelector('button[data-bs-target="#verificarAtualizacoesModal"]');
+            if (verificarAtualizacoesBtn) {
+                verificarAtualizacoesBtn.addEventListener('click', function() {
+                    const modal = new bootstrap.Modal(document.getElementById('verificarAtualizacoesModal'));
+                    modal.show();
+                    
+                    // Simular verificação de atualizações
+                    setTimeout(function() {
+                        document.getElementById('atualizacaoStatus').style.display = 'none';
+                        
+                        // Simular que há uma atualização disponível (50% de chance)
+                        if (Math.random() > 0.5) {
+                            document.getElementById('atualizacaoDisponivel').style.display = 'block';
+                            
+                            // Simular download da atualização
+                            document.getElementById('btnBaixarAtualizacao').addEventListener('click', function() {
+                                this.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> Baixando...';
+                                this.disabled = true;
+                                
+                                setTimeout(function() {
+                                    document.getElementById('btnBaixarAtualizacao').innerHTML = '<i class="bi bi-check-circle"></i> Atualização instalada com sucesso!';
+                                    document.getElementById('btnBaixarAtualizacao').className = 'btn btn-success';
+                                }, 3000);
+                            });
+                        } else {
+                            document.getElementById('semAtualizacao').style.display = 'block';
+                        }
+                    }, 2000);
+                });
+            }
+            
+            // Modal de Renovar Licença
+            const renovarLicencaBtn = document.querySelector('button[data-bs-target="#renovarLicencaModal"]');
+            if (renovarLicencaBtn) {
+                renovarLicencaBtn.addEventListener('click', function() {
+                    
+                    modal.show();
+                    
+                    // Atualizar preço quando selecionar outro tipo de licença
+                    document.querySelectorAll('input[name="tipoLicenca"]').forEach(radio => {
+                        radio.addEventListener('change', function() {
+                            // Aqui você pode adicionar lógica para atualizar valores
+                        });
+                    });
+                    
+                    // Simular pagamento
+                    document.getElementById('btnFinalizarRenovacao').addEventListener('click', function() {
+                        this.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> Processando pagamento...';
+                        this.disabled = true;
+                        
+                        setTimeout(function() {
+                            const modalInstance = bootstrap.Modal.getInstance(document.getElementById('verificarAtualizacoesModal'));
+                            modalInstance.hide();
+                            
+                            // Mostrar alerta de sucesso
+                            const alertDiv = document.createElement('div');
+                            alertDiv.className = 'alert alert-success alert-dismissible fade show fixed-top m-3';
+                            alertDiv.innerHTML = `
+                                <i class="bi bi-check-circle-fill"></i> <strong>Licença renovada com sucesso!</strong> Sua licença agora é válida até 15/11/2024.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            `;
+                            document.body.appendChild(alertDiv);
+                            
+                            // Atualizar o texto da licença na página
+                            const licencaText = document.querySelector('#sobre .card-body p strong:contains("Expira em:")').nextSibling;
+                            if (licencaText) {
+                                licencaText.textContent = ' 15/11/2024';
+                            }
+                        }, 2000);
+                    });
+                });
+            }
         });
     </script>
 </body>
