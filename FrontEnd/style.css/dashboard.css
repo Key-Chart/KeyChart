@@ -1,7 +1,15 @@
+/* Adicione isso no início do seu CSS */
+html {
+    font-size: 16px;
+    zoom: 1;
+}
+
 body {
-    display: flex;
-    height: 100vh;
+    font-size: 1rem;
+    zoom: 1;
     margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 .sidebar {
     width: 250px;
@@ -37,6 +45,8 @@ body {
     transition: margin-left 0.3s ease-in-out;
     overflow-y: auto;
     height: 100vh;
+    zoom: 1; /* Adicione esta linha */
+    transform: scale(1); /* Adicione esta linha */
 }
 .sidebar-hidden {
     width: 60px;

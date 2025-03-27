@@ -465,10 +465,6 @@
             <i class="bi bi-pencil-square"></i>
             <span>Inscrições</span>
         </a>
-        <a href="inscricoes.html">
-            <i class="bi bi-pencil-square"></i>
-            <span>Inscrições</span>
-        </a>
         <a href="partidas.html">
             <i class="bi bi-calendar-check"></i>
             <span>Partidas</span>
@@ -669,7 +665,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Nome Completo <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="nome-atleta" required>
+                                <input type="text" class="form-control" id="nome-atleta" placeholder="Digite o nome completo do atleta..." required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Data de Nascimento <span class="text-danger">*</span></label>
@@ -687,9 +683,16 @@
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label class="form-label">Peso (kg)</label>
-                                <input type="number" step="0.1" class="form-control" id="peso-atleta">
+                                <label class="form-label">Idade</label>
+                                <input type="number" step="0.1" class="form-control" id="idade-atleta" placeholder="Digite a idade...">
                             </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Peso (kg)</label>
+                                <input type="number" step="0.1" class="form-control" id="peso-atleta" placeholder="Digite o peso...">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Faixa <span class="text-danger">*</span></label>
                                 <select class="form-select" id="faixa-atleta" required>
@@ -702,6 +705,43 @@
                                     <option value="roxa">Roxa</option>
                                     <option value="marrom">Marrom</option>
                                     <option value="preta">Preta</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Cidade <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="cidade-atleta" placeholder="Digite a cidade..." required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Estado <span class="text-danger">*</span></label>
+                                <select class="form-select" id="estado-atleta" required>
+                                    <option value="">Selecione</option>
+                                    <option value="AC">Acre</option>
+                                    <option value="AL">Alagoas</option>
+                                    <option value="AP">Amapá</option>
+                                    <option value="AM">Amazonas</option>
+                                    <option value="BA">Bahia</option>
+                                    <option value="CE">Ceará</option>
+                                    <option value="DF">Distrito Federal</option>
+                                    <option value="ES">Espírito Santo</option>
+                                    <option value="GO">Goiás</option>
+                                    <option value="MA">Maranhão</option>
+                                    <option value="MT">Mato Grosso</option>
+                                    <option value="MS">Mato Grosso do Sul</option>
+                                    <option value="MG">Minas Gerais</option>
+                                    <option value="PA">Pará</option>
+                                    <option value="PB">Paraíba</option>
+                                    <option value="PR">Paraná</option>
+                                    <option value="PE">Pernambuco</option>
+                                    <option value="PI">Piauí</option>
+                                    <option value="RJ">Rio de Janeiro</option>
+                                    <option value="RN">Rio Grande do Norte</option>
+                                    <option value="RS">Rio Grande do Sul</option>
+                                    <option value="RO">Rondônia</option>
+                                    <option value="RR">Roraima</option>
+                                    <option value="SC">Santa Catarina</option>
+                                    <option value="SP">São Paulo</option>
+                                    <option value="SE">Sergipe</option>
+                                    <option value="TO">Tocantins</option>
                                 </select>
                             </div>
                         </div>
@@ -757,9 +797,11 @@
                             <h6>Dados do Atleta</h6>
                             <p><strong>Nome:</strong> <span id="confirm-nome">João da Silva</span></p>
                             <p><strong>Data Nasc.:</strong> <span id="confirm-nascimento">15/08/1995</span></p>
+                            <p><strong>Idade:</strong> <span id="confirm-idade">29 anos</span></p>
                             <p><strong>Sexo:</strong> <span id="confirm-sexo">Masculino</span></p>
                             <p><strong>Peso:</strong> <span id="confirm-peso">-</span></p>
                             <p><strong>Faixa:</strong> <span id="confirm-faixa">Preta</span></p>
+                            <p><strong>Cidade/Estado:</strong> <span id="confirm-cidade">São Paulo</span>/<span id="confirm-estado">SP</span></p>
                             <p><strong>Academia:</strong> <span id="confirm-academia">Academia Central</span></p>
                         </div>
                     </div>

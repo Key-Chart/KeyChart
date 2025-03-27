@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,35 +16,42 @@
             flex-direction: column;
             gap: 20px;
         }
+
         .round {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
+
         .match {
             border: 1px solid #dee2e6;
             border-radius: 5px;
             padding: 10px;
             background-color: #f8f9fa;
         }
+
         .player {
             display: flex;
             justify-content: space-between;
             padding: 5px;
         }
+
         .player.winner {
             font-weight: bold;
             color: #146c43;
         }
+
         .vs {
             text-align: center;
             margin: 5px 0;
             font-weight: bold;
         }
+
         .nav-tabs .nav-link.active {
             font-weight: bold;
             border-bottom: 3px solid #146c43;
         }
+
         .category-title {
             background-color: #146c43;
             color: white;
@@ -51,11 +59,13 @@
             border-radius: 5px;
             margin-bottom: 15px;
         }
+
         .card-header.bg-primary {
             background-color: #146c43 !important;
         }
     </style>
 </head>
+
 <body>
     <button class="toggle-btn" onclick="toggleSidebar()">
         <i class="bi bi-list"></i>
@@ -69,7 +79,8 @@
         background-repeat: no-repeat;
     ">
         <br>
-        <a href="dashboard.html"><i><img src="img/image.png" style="height: 35px;" id="img-logo"></i><span>KeyChart</span></a>
+        <a href="dashboard.html"><i><img src="img/image.png" style="height: 35px;"
+                    id="img-logo"></i><span>KeyChart</span></a>
         <a href="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
         <a href="equipe_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
         <a href="inscricoes.html"><i class="bi bi-pencil-square"></i><span>Inscrições</span></a>
@@ -77,19 +88,137 @@
         <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
         <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
     </div>
-    
+
     <div class="content" id="content">
         <div class="header">
             <h2>🔗 Chaveamento e Tabelas</h2>
+        </div>
+        <!-- Adicione esta seção dentro da div.content, após o header e antes do container -->
+        <div class="container mt-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Lista de Categorias</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Sexo</th>
+                                    <th>Nome</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Kata Individual Masculino -->
+                                <tr>
+                                    <td>Masculino</td>
+                                    <td>Kata Individual - Faixa Preta</td>
+                                    <td>Kata</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="verCategoria(1)">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <!-- Kata Individual Feminino -->
+                                <tr>
+                                    <td>Feminino</td>
+                                    <td>Kata Individual - Faixa Preta</td>
+                                    <td>Kata</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="verCategoria(2)">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <!-- Kumite Masculino -->
+                                <tr>
+                                    <td>Masculino</td>
+                                    <td>Kumite -67kg</td>
+                                    <td>Kumite</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="verCategoria(3)">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <!-- Kumite Feminino -->
+                                <tr>
+                                    <td>Feminino</td>
+                                    <td>Kumite -55kg</td>
+                                    <td>Kumite</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="verCategoria(4)">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <!-- Outras categorias de exemplo -->
+                                <tr>
+                                    <td>Masculino</td>
+                                    <td>Kata Individual - Faixa Marrom</td>
+                                    <td>Kata</td>
+                                    <td><span class="badge bg-warning text-dark">Pendente</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="verCategoria(5)">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Feminino</td>
+                                    <td>Kumite -61kg</td>
+                                    <td>Kumite</td>
+                                    <td><span class="badge bg-secondary">Inativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="verCategoria(6)">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginação -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Próximo</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
         </div>
 
         <div class="container mt-4">
             <ul class="nav nav-tabs" id="chaveamentoTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="kata-tab" data-bs-toggle="tab" data-bs-target="#kata" type="button" role="tab">Kata</button>
+                    <button class="nav-link active" id="kata-tab" data-bs-toggle="tab" data-bs-target="#kata"
+                        type="button" role="tab">Kata</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="kumite-tab" data-bs-toggle="tab" data-bs-target="#kumite" type="button" role="tab">Kumite</button>
+                    <button class="nav-link" id="kumite-tab" data-bs-toggle="tab" data-bs-target="#kumite" type="button"
+                        role="tab">Kumite</button>
                 </li>
             </ul>
 
@@ -113,7 +242,7 @@
                                             <div class="player">Carlos Oliveira (8.5)</div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Semifinal -->
                                     <div class="round">
                                         <h6>Semifinal</h6>
@@ -128,7 +257,7 @@
                                             <div class="player">Miguel Costa (8.3)</div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Quartas -->
                                     <div class="round">
                                         <h6>Quartas de Final</h6>
@@ -155,7 +284,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="mb-4">
                                 <h5 class="category-title">Categoria: Kata Individual Feminino - Faixa Preta</h5>
                                 <div class="bracket">
@@ -168,7 +297,7 @@
                                             <div class="player">Mariana Santos (8.6)</div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Semifinal -->
                                     <div class="round">
                                         <h6>Semifinal</h6>
@@ -197,7 +326,8 @@
                         </div>
                         <div class="card-body">
                             <div class="mb-4">
-                                <h5 class="category-title" style="background-color: #dc3545;">Categoria: Kumite Masculino -67kg</h5>
+                                <h5 class="category-title" style="background-color: #dc3545;">Categoria: Kumite
+                                    Masculino -67kg</h5>
                                 <div class="bracket">
                                     <!-- Final -->
                                     <div class="round">
@@ -208,7 +338,7 @@
                                             <div class="player">Marcos Oliveira (4-5)</div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Semifinal -->
                                     <div class="round">
                                         <h6>Semifinal</h6>
@@ -218,12 +348,13 @@
                                             <div class="player">Gustavo Santos (2-8)</div>
                                         </div>
                                         <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Marcos Oliveira (6-4)</div>
+                                            <div class="player winner" style="color: #dc3545;">Marcos Oliveira (6-4)
+                                            </div>
                                             <div class="vs">vs</div>
                                             <div class="player">Fernando Costa (4-6)</div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Quartas -->
                                     <div class="round">
                                         <h6>Quartas de Final</h6>
@@ -233,42 +364,48 @@
                                             <div class="player">Lucas Pereira (3-7)</div>
                                         </div>
                                         <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Gustavo Santos (5-4)</div>
+                                            <div class="player winner" style="color: #dc3545;">Gustavo Santos (5-4)
+                                            </div>
                                             <div class="vs">vs</div>
                                             <div class="player">Rafael Alves (4-5)</div>
                                         </div>
                                         <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Marcos Oliveira (6-3)</div>
+                                            <div class="player winner" style="color: #dc3545;">Marcos Oliveira (6-3)
+                                            </div>
                                             <div class="vs">vs</div>
                                             <div class="player">André Lima (3-6)</div>
                                         </div>
                                         <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Fernando Costa (5-4)</div>
+                                            <div class="player winner" style="color: #dc3545;">Fernando Costa (5-4)
+                                            </div>
                                             <div class="vs">vs</div>
                                             <div class="player">Felipe Sousa (4-5)</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="mb-4">
-                                <h5 class="category-title" style="background-color: #dc3545;">Categoria: Kumite Feminino -55kg</h5>
+                                <h5 class="category-title" style="background-color: #dc3545;">Categoria: Kumite Feminino
+                                    -55kg</h5>
                                 <div class="bracket">
                                     <!-- Final -->
                                     <div class="round">
                                         <h6>Final</h6>
                                         <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Camila Oliveira (4-2)</div>
+                                            <div class="player winner" style="color: #dc3545;">Camila Oliveira (4-2)
+                                            </div>
                                             <div class="vs">vs</div>
                                             <div class="player">Bianca Santos (2-4)</div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Semifinal -->
                                     <div class="round">
                                         <h6>Semifinal</h6>
                                         <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Camila Oliveira (3-1)</div>
+                                            <div class="player winner" style="color: #dc3545;">Camila Oliveira (3-1)
+                                            </div>
                                             <div class="vs">vs</div>
                                             <div class="player">Juliana Costa (1-3)</div>
                                         </div>
@@ -294,23 +431,39 @@
         function carregarChaveamentos() {
             // Simulando dados do backend - substitua por chamadas reais ao seu backend
             console.log("Carregando chaveamentos...");
-            
+
             // Aqui você faria chamadas AJAX para buscar os dados reais
             // fetch('/api/chaveamento/kata/')
             //     .then(response => response.json())
             //     .then(data => {
             //         // Processar dados de Kata
             //     });
-            
+
             // fetch('/api/chaveamento/kumite/')
             //     .then(response => response.json())
             //     .then(data => {
             //         // Processar dados de Kumite
             //     });
         }
-        
+
         // Carrega os chaveamentos quando a página é aberta
         document.addEventListener('DOMContentLoaded', carregarChaveamentos);
+        function verCategoria(id) {
+            // Implemente a lógica para visualizar a categoria
+            console.log("Visualizando categoria ID:", id);
+            // Aqui você pode redirecionar para a página de detalhes ou abrir um modal
+            // Exemplo: window.location.href = `/categoria/${id}`;
+
+            // Alternativamente, você pode ativar a tab correspondente
+            if (id === 1 || id === 2 || id === 5) {
+                const kataTab = new bootstrap.Tab(document.getElementById('kata-tab'));
+                kataTab.show();
+            } else {
+                const kumiteTab = new bootstrap.Tab(document.getElementById('kumite-tab'));
+                kumiteTab.show();
+            }
+        }
     </script>
 </body>
+
 </html>
