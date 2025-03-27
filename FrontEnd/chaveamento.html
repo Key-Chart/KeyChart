@@ -63,6 +63,109 @@
         .card-header.bg-primary {
             background-color: #146c43 !important;
         }
+
+        /* ESTILOS PARA O CHAVEAMENTO */
+        .category-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+        }
+
+        .category-header {
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .bracket-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .round {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .round-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        .round-header i {
+            font-size: 1.2rem;
+        }
+
+        .gold-icon { color: #ffd700; }
+        .silver-icon { color: #c0c0c0; }
+        .bronze-icon { color: #cd7f32; }
+
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .match-card {
+            background-color: white;
+            border-radius: 6px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
+        }
+
+        .match-card.champion {
+            border: 2px solid #ffd700;
+            background-color: #fffdf5;
+        }
+
+        .player-card {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+
+        .player-card.winner {
+            font-weight: 600;
+            color: #146c43;
+        }
+
+        .vs-divider {
+            text-align: center;
+            margin: 5px 0;
+            color: #6c757d;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .player-name {
+            flex-grow: 1;
+        }
+
+        .player-score {
+            font-weight: 600;
+            color: #495057;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .matches-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
     </style>
 </head>
 
@@ -104,6 +207,7 @@
                         <table class="table table-striped table-hover">
                             <thead>
                                 <tr>
+                                    <th>Campeonato</th>
                                     <th>Sexo</th>
                                     <th>Nome</th>
                                     <th>Tipo</th>
@@ -114,6 +218,7 @@
                             <tbody>
                                 <!-- Kata Individual Masculino -->
                                 <tr>
+                                    <td>Copa Regional 2025</td>
                                     <td>Masculino</td>
                                     <td>Kata Individual - Faixa Preta</td>
                                     <td>Kata</td>
@@ -127,6 +232,7 @@
 
                                 <!-- Kata Individual Feminino -->
                                 <tr>
+                                    <td>Campeonato Estadual</td>
                                     <td>Feminino</td>
                                     <td>Kata Individual - Faixa Preta</td>
                                     <td>Kata</td>
@@ -140,6 +246,7 @@
 
                                 <!-- Kumite Masculino -->
                                 <tr>
+                                    <td>Copa Regional 2025</td>
                                     <td>Masculino</td>
                                     <td>Kumite -67kg</td>
                                     <td>Kumite</td>
@@ -153,6 +260,7 @@
 
                                 <!-- Kumite Feminino -->
                                 <tr>
+                                    <td>Campeonato Estadual</td>
                                     <td>Feminino</td>
                                     <td>Kumite -55kg</td>
                                     <td>Kumite</td>
@@ -166,6 +274,7 @@
 
                                 <!-- Outras categorias de exemplo -->
                                 <tr>
+                                    <td>Copa Regional 2025</td>
                                     <td>Masculino</td>
                                     <td>Kata Individual - Faixa Marrom</td>
                                     <td>Kata</td>
@@ -178,6 +287,7 @@
                                 </tr>
 
                                 <tr>
+                                    <td>Campeonato Estadual</td>
                                     <td>Feminino</td>
                                     <td>Kumite -61kg</td>
                                     <td>Kumite</td>
@@ -223,93 +333,193 @@
             </ul>
 
             <div class="tab-content mt-3" id="chaveamentoContent">
-                <!-- Tab de Kata -->
+    
+                <!-- ABA DE KATA -->
                 <div class="tab-pane fade show active" id="kata" role="tabpanel">
-                    <div class="card">
+                    <div class="card shadow-sm">
                         <div class="card-header bg-primary text-white">
-                            <h4 class="mb-0">Chaveamento de Kata</h4>
+                            <h4 class="mb-0">
+                                <i class="bi bi-trophy-fill me-2"></i>Chaveamento de Kata
+                            </h4>
                         </div>
-                        <div class="card-body">
-                            <div class="mb-4">
-                                <h5 class="category-title">Categoria: Kata Individual Masculino - Faixa Preta</h5>
-                                <div class="bracket">
-                                    <!-- Final -->
-                                    <div class="round">
-                                        <h6>Final</h6>
-                                        <div class="match">
-                                            <div class="player winner">João Silva (8.7)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Carlos Oliveira (8.5)</div>
+                        
+                        <div class="card-body p-4">
+                            
+                            <!-- CATEGORIA KATA MASCULINO -->
+                            <div class="category-section mb-5">
+                                <div class="category-header d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="m-0">
+                                        <i class="bi bi-gender-male me-2"></i>
+                                        Kata Individual Masculino - Faixa Preta
+                                    </h5>
+                                    <span class="badge bg-dark">8 participantes</span>
+                                </div>
+                                
+                                <div class="bracket-container">
+                                    
+                                    <!-- FINAL -->
+                                    <div class="round final-round">
+                                        <div class="round-header">
+                                            <i class="bi bi-award-fill gold-icon me-2"></i>
+                                            <h6 class="m-0">Final</h6>
+                                        </div>
+                                        <div class="match-card champion">
+                                            <div class="player-card winner">
+                                                <span class="player-name">João Silva</span>
+                                                <span class="player-score">8.7</span>
+                                            </div>
+                                            <div class="vs-divider">vs</div>
+                                            <div class="player-card">
+                                                <span class="player-name">Carlos Oliveira</span>
+                                                <span class="player-score">8.5</span>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <!-- Semifinal -->
-                                    <div class="round">
-                                        <h6>Semifinal</h6>
-                                        <div class="match">
-                                            <div class="player winner">João Silva (8.6)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Pedro Santos (8.4)</div>
+                                    
+                                    <!-- SEMIFINAIS -->
+                                    <div class="round semifinal-round">
+                                        <div class="round-header">
+                                            <i class="bi bi-award silver-icon me-2"></i>
+                                            <h6 class="m-0">Semifinais</h6>
                                         </div>
-                                        <div class="match">
-                                            <div class="player winner">Carlos Oliveira (8.5)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Miguel Costa (8.3)</div>
+                                        <div class="match-card">
+                                            <div class="player-card winner">
+                                                <span class="player-name">João Silva</span>
+                                                <span class="player-score">8.6</span>
+                                            </div>
+                                            <div class="vs-divider">vs</div>
+                                            <div class="player-card">
+                                                <span class="player-name">Pedro Santos</span>
+                                                <span class="player-score">8.4</span>
+                                            </div>
+                                        </div>
+                                        <div class="match-card">
+                                            <div class="player-card winner">
+                                                <span class="player-name">Carlos Oliveira</span>
+                                                <span class="player-score">8.5</span>
+                                            </div>
+                                            <div class="vs-divider">vs</div>
+                                            <div class="player-card">
+                                                <span class="player-name">Miguel Costa</span>
+                                                <span class="player-score">8.3</span>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <!-- Quartas -->
-                                    <div class="round">
-                                        <h6>Quartas de Final</h6>
-                                        <div class="match">
-                                            <div class="player winner">João Silva (8.5)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Lucas Pereira (8.2)</div>
+                                    
+                                    <!-- QUARTAS -->
+                                    <div class="round quarterfinal-round">
+                                        <div class="round-header">
+                                            <i class="bi bi-award bronze-icon me-2"></i>
+                                            <h6 class="m-0">Quartas de Final</h6>
                                         </div>
-                                        <div class="match">
-                                            <div class="player winner">Pedro Santos (8.4)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Rafael Alves (8.1)</div>
-                                        </div>
-                                        <div class="match">
-                                            <div class="player winner">Carlos Oliveira (8.4)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">André Lima (8.0)</div>
-                                        </div>
-                                        <div class="match">
-                                            <div class="player winner">Miguel Costa (8.3)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Felipe Sousa (7.9)</div>
+                                        <div class="matches-grid">
+                                            <div class="match-card">
+                                                <div class="player-card winner">
+                                                    <span class="player-name">João Silva</span>
+                                                    <span class="player-score">8.5</span>
+                                                </div>
+                                                <div class="vs-divider">vs</div>
+                                                <div class="player-card">
+                                                    <span class="player-name">Lucas Pereira</span>
+                                                    <span class="player-score">8.2</span>
+                                                </div>
+                                            </div>
+                                            <div class="match-card">
+                                                <div class="player-card winner">
+                                                    <span class="player-name">Pedro Santos</span>
+                                                    <span class="player-score">8.4</span>
+                                                </div>
+                                                <div class="vs-divider">vs</div>
+                                                <div class="player-card">
+                                                    <span class="player-name">Rafael Alves</span>
+                                                    <span class="player-score">8.1</span>
+                                                </div>
+                                            </div>
+                                            <div class="match-card">
+                                                <div class="player-card winner">
+                                                    <span class="player-name">Carlos Oliveira</span>
+                                                    <span class="player-score">8.4</span>
+                                                </div>
+                                                <div class="vs-divider">vs</div>
+                                                <div class="player-card">
+                                                    <span class="player-name">André Lima</span>
+                                                    <span class="player-score">8.0</span>
+                                                </div>
+                                            </div>
+                                            <div class="match-card">
+                                                <div class="player-card winner">
+                                                    <span class="player-name">Miguel Costa</span>
+                                                    <span class="player-score">8.3</span>
+                                                </div>
+                                                <div class="vs-divider">vs</div>
+                                                <div class="player-card">
+                                                    <span class="player-name">Felipe Sousa</span>
+                                                    <span class="player-score">7.9</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="mb-4">
-                                <h5 class="category-title">Categoria: Kata Individual Feminino - Faixa Preta</h5>
-                                <div class="bracket">
-                                    <!-- Final -->
-                                    <div class="round">
-                                        <h6>Final</h6>
-                                        <div class="match">
-                                            <div class="player winner">Ana Oliveira (8.8)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Mariana Santos (8.6)</div>
+                            
+                            <!-- CATEGORIA KATA FEMININO -->
+                            <div class="category-section">
+                                <div class="category-header d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="m-0">
+                                        <i class="bi bi-gender-female me-2"></i>
+                                        Kata Individual Feminino - Faixa Preta
+                                    </h5>
+                                    <span class="badge bg-dark">4 participantes</span>
+                                </div>
+                                
+                                <div class="bracket-container">
+                                    
+                                    <!-- FINAL -->
+                                    <div class="round final-round">
+                                        <div class="round-header">
+                                            <i class="bi bi-award-fill gold-icon me-2"></i>
+                                            <h6 class="m-0">Final</h6>
+                                        </div>
+                                        <div class="match-card champion">
+                                            <div class="player-card winner">
+                                                <span class="player-name">Ana Oliveira</span>
+                                                <span class="player-score">8.8</span>
+                                            </div>
+                                            <div class="vs-divider">vs</div>
+                                            <div class="player-card">
+                                                <span class="player-name">Mariana Santos</span>
+                                                <span class="player-score">8.6</span>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <!-- Semifinal -->
-                                    <div class="round">
-                                        <h6>Semifinal</h6>
-                                        <div class="match">
-                                            <div class="player winner">Ana Oliveira (8.7)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Juliana Costa (8.5)</div>
+                                    
+                                    <!-- SEMIFINAIS -->
+                                    <div class="round semifinal-round">
+                                        <div class="round-header">
+                                            <i class="bi bi-award silver-icon me-2"></i>
+                                            <h6 class="m-0">Semifinais</h6>
                                         </div>
-                                        <div class="match">
-                                            <div class="player winner">Mariana Santos (8.6)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Patrícia Alves (8.4)</div>
+                                        <div class="match-card">
+                                            <div class="player-card winner">
+                                                <span class="player-name">Ana Oliveira</span>
+                                                <span class="player-score">8.7</span>
+                                            </div>
+                                            <div class="vs-divider">vs</div>
+                                            <div class="player-card">
+                                                <span class="player-name">Juliana Costa</span>
+                                                <span class="player-score">8.5</span>
+                                            </div>
+                                        </div>
+                                        <div class="match-card">
+                                            <div class="player-card winner">
+                                                <span class="player-name">Mariana Santos</span>
+                                                <span class="player-score">8.6</span>
+                                            </div>
+                                            <div class="vs-divider">vs</div>
+                                            <div class="player-card">
+                                                <span class="player-name">Patrícia Alves</span>
+                                                <span class="player-score">8.4</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -317,102 +527,193 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Tab de Kumite -->
+                
+                <!-- ABA DE KUMITE -->
                 <div class="tab-pane fade" id="kumite" role="tabpanel">
-                    <div class="card">
+                    <div class="card shadow-sm">
                         <div class="card-header bg-danger text-white">
-                            <h4 class="mb-0">Chaveamento de Kumite</h4>
+                            <h4 class="mb-0">
+                                <i class="bi bi-shield-fill me-2"></i>Chaveamento de Kumite
+                            </h4>
                         </div>
-                        <div class="card-body">
-                            <div class="mb-4">
-                                <h5 class="category-title" style="background-color: #dc3545;">Categoria: Kumite
-                                    Masculino -67kg</h5>
-                                <div class="bracket">
-                                    <!-- Final -->
-                                    <div class="round">
-                                        <h6>Final</h6>
-                                        <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Rodrigo Silva (5-3)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Marcos Oliveira (4-5)</div>
+                        
+                        <div class="card-body p-4">
+                            
+                            <!-- CATEGORIA KUMITE MASCULINO -->
+                            <div class="category-section mb-5">
+                                <div class="category-header d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="m-0">
+                                        <i class="bi bi-gender-male me-2"></i>
+                                        Kumite Masculino -67kg
+                                    </h5>
+                                    <span class="badge bg-dark">8 participantes</span>
+                                </div>
+                                
+                                <div class="bracket-container">
+                                    
+                                    <!-- FINAL -->
+                                    <div class="round final-round">
+                                        <div class="round-header">
+                                            <i class="bi bi-award-fill gold-icon me-2"></i>
+                                            <h6 class="m-0">Final</h6>
+                                        </div>
+                                        <div class="match-card champion">
+                                            <div class="player-card winner">
+                                                <span class="player-name">Rodrigo Silva</span>
+                                                <span class="player-score">5-3</span>
+                                            </div>
+                                            <div class="vs-divider">vs</div>
+                                            <div class="player-card">
+                                                <span class="player-name">Marcos Oliveira</span>
+                                                <span class="player-score">4-5</span>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <!-- Semifinal -->
-                                    <div class="round">
-                                        <h6>Semifinal</h6>
-                                        <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Rodrigo Silva (8-2)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Gustavo Santos (2-8)</div>
+                                    
+                                    <!-- SEMIFINAIS -->
+                                    <div class="round semifinal-round">
+                                        <div class="round-header">
+                                            <i class="bi bi-award silver-icon me-2"></i>
+                                            <h6 class="m-0">Semifinais</h6>
                                         </div>
-                                        <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Marcos Oliveira (6-4)
+                                        <div class="match-card">
+                                            <div class="player-card winner">
+                                                <span class="player-name">Rodrigo Silva</span>
+                                                <span class="player-score">8-2</span>
                                             </div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Fernando Costa (4-6)</div>
+                                            <div class="vs-divider">vs</div>
+                                            <div class="player-card">
+                                                <span class="player-name">Gustavo Santos</span>
+                                                <span class="player-score">2-8</span>
+                                            </div>
+                                        </div>
+                                        <div class="match-card">
+                                            <div class="player-card winner">
+                                                <span class="player-name">Marcos Oliveira</span>
+                                                <span class="player-score">6-4</span>
+                                            </div>
+                                            <div class="vs-divider">vs</div>
+                                            <div class="player-card">
+                                                <span class="player-name">Fernando Costa</span>
+                                                <span class="player-score">4-6</span>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <!-- Quartas -->
-                                    <div class="round">
-                                        <h6>Quartas de Final</h6>
-                                        <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Rodrigo Silva (7-3)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Lucas Pereira (3-7)</div>
+                                    
+                                    <!-- QUARTAS -->
+                                    <div class="round quarterfinal-round">
+                                        <div class="round-header">
+                                            <i class="bi bi-award bronze-icon me-2"></i>
+                                            <h6 class="m-0">Quartas de Final</h6>
                                         </div>
-                                        <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Gustavo Santos (5-4)
+                                        <div class="matches-grid">
+                                            <div class="match-card">
+                                                <div class="player-card winner">
+                                                    <span class="player-name">Rodrigo Silva</span>
+                                                    <span class="player-score">7-3</span>
+                                                </div>
+                                                <div class="vs-divider">vs</div>
+                                                <div class="player-card">
+                                                    <span class="player-name">Lucas Pereira</span>
+                                                    <span class="player-score">3-7</span>
+                                                </div>
                                             </div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Rafael Alves (4-5)</div>
-                                        </div>
-                                        <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Marcos Oliveira (6-3)
+                                            <div class="match-card">
+                                                <div class="player-card winner">
+                                                    <span class="player-name">Gustavo Santos</span>
+                                                    <span class="player-score">5-4</span>
+                                                </div>
+                                                <div class="vs-divider">vs</div>
+                                                <div class="player-card">
+                                                    <span class="player-name">Rafael Alves</span>
+                                                    <span class="player-score">4-5</span>
+                                                </div>
                                             </div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">André Lima (3-6)</div>
-                                        </div>
-                                        <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Fernando Costa (5-4)
+                                            <div class="match-card">
+                                                <div class="player-card winner">
+                                                    <span class="player-name">Marcos Oliveira</span>
+                                                    <span class="player-score">6-3</span>
+                                                </div>
+                                                <div class="vs-divider">vs</div>
+                                                <div class="player-card">
+                                                    <span class="player-name">André Lima</span>
+                                                    <span class="player-score">3-6</span>
+                                                </div>
                                             </div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Felipe Sousa (4-5)</div>
+                                            <div class="match-card">
+                                                <div class="player-card winner">
+                                                    <span class="player-name">Fernando Costa</span>
+                                                    <span class="player-score">5-4</span>
+                                                </div>
+                                                <div class="vs-divider">vs</div>
+                                                <div class="player-card">
+                                                    <span class="player-name">Felipe Sousa</span>
+                                                    <span class="player-score">4-5</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="mb-4">
-                                <h5 class="category-title" style="background-color: #dc3545;">Categoria: Kumite Feminino
-                                    -55kg</h5>
-                                <div class="bracket">
-                                    <!-- Final -->
-                                    <div class="round">
-                                        <h6>Final</h6>
-                                        <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Camila Oliveira (4-2)
+                            
+                            <!-- CATEGORIA KUMITE FEMININO -->
+                            <div class="category-section">
+                                <div class="category-header d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="m-0">
+                                        <i class="bi bi-gender-female me-2"></i>
+                                        Kumite Feminino -55kg
+                                    </h5>
+                                    <span class="badge bg-dark">4 participantes</span>
+                                </div>
+                                
+                                <div class="bracket-container">
+                                    
+                                    <!-- FINAL -->
+                                    <div class="round final-round">
+                                        <div class="round-header">
+                                            <i class="bi bi-award-fill gold-icon me-2"></i>
+                                            <h6 class="m-0">Final</h6>
+                                        </div>
+                                        <div class="match-card champion">
+                                            <div class="player-card winner">
+                                                <span class="player-name">Camila Oliveira</span>
+                                                <span class="player-score">4-2</span>
                                             </div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Bianca Santos (2-4)</div>
+                                            <div class="vs-divider">vs</div>
+                                            <div class="player-card">
+                                                <span class="player-name">Bianca Santos</span>
+                                                <span class="player-score">2-4</span>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <!-- Semifinal -->
-                                    <div class="round">
-                                        <h6>Semifinal</h6>
-                                        <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Camila Oliveira (3-1)
-                                            </div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Juliana Costa (1-3)</div>
+                                    
+                                    <!-- SEMIFINAIS -->
+                                    <div class="round semifinal-round">
+                                        <div class="round-header">
+                                            <i class="bi bi-award silver-icon me-2"></i>
+                                            <h6 class="m-0">Semifinais</h6>
                                         </div>
-                                        <div class="match">
-                                            <div class="player winner" style="color: #dc3545;">Bianca Santos (2-1)</div>
-                                            <div class="vs">vs</div>
-                                            <div class="player">Patrícia Alves (1-2)</div>
+                                        <div class="match-card">
+                                            <div class="player-card winner">
+                                                <span class="player-name">Camila Oliveira</span>
+                                                <span class="player-score">3-1</span>
+                                            </div>
+                                            <div class="vs-divider">vs</div>
+                                            <div class="player-card">
+                                                <span class="player-name">Juliana Costa</span>
+                                                <span class="player-score">1-3</span>
+                                            </div>
+                                        </div>
+                                        <div class="match-card">
+                                            <div class="player-card winner">
+                                                <span class="player-name">Bianca Santos</span>
+                                                <span class="player-score">2-1</span>
+                                            </div>
+                                            <div class="vs-divider">vs</div>
+                                            <div class="player-card">
+                                                <span class="player-name">Patrícia Alves</span>
+                                                <span class="player-score">1-2</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

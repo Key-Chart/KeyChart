@@ -3,34 +3,310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MDB CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <!-- MDB Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
-    <!-- MDB Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="img/image.png" type="image/x-icon">
-
-    <title>Competições</title>
-    <link rel="stylesheet" href="style.css/competicoes.css">
+    <title>Competições | KeyChart</title>
     <style>
+        :root {
+            --primary-color: #146c43;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ffc107;
+            --dark-color: #343a40;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        
+        .sidebar {
+            width: 250px;
+            background-color: #198754;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .sidebar a {
+            padding: 15px;
+            display: block;
+            color: white;
+            text-decoration: none;
+            white-space: nowrap;
+            font-size: 18px;
+        }
+
+        .sidebar a i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        .sidebar a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        #img-logo {
+            height: 35px;
+            margin-right: 10px;
+        }
+        
+        /* Conteúdo Principal */
+        .content {
+            margin-left: 280px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .header h2 {
+            font-weight: 600;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header h2 i {
+            margin-right: 12px;
+        }
+        
+        /* Cards */
         .card {
-        position: relative;
-        overflow: hidden;
-    }
-    .card i {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        font-size: 5rem; /* Ajuste o tamanho do ícone */
-        opacity: 0.2; /* Torna o ícone mais sutil */
-        transform: translate(-50%, -50%);
-    }
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            border-bottom: none;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Cards de Estatísticas */
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            color: white;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            height: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card i {
+            position: absolute;
+            font-size: 4.5rem;
+            opacity: 0.2;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .stat-card .label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        /* Tabela */
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            border-bottom: 2px solid #e9ecef;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+        }
+        
+        .table tbody tr {
+            transition: all 0.2s;
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(20, 108, 67, 0.05);
+        }
+        
+        .table td, .table th {
+            vertical-align: middle;
+            padding: 1rem;
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 6px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .badge-active {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .badge-finished {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+        
+        .badge-upcoming {
+            background-color: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+        
+        /* Botão Toggle */
+        .toggle-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1050;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        
+        .toggle-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+        
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .custom-spinner {
+            width: 3rem;
+            height: 3rem;
+            color: var(--primary-color);
+        }
+        
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .content {
+                margin-left: 0;
+            }
+            
+            .toggle-btn {
+                left: 20px;
+                top: 20px;
+            }
+        }
+        
+        /* Animação */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .table tbody tr {
+            animation: fadeIn 0.3s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        .table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+        .table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+        .table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+        .table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+        
+        /* Modal Customizado */
+        .custom-modal .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .custom-modal .modal-footer .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="spinner-border custom-spinner" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+    </div>
+    
     <button class="toggle-btn" onclick="toggleSidebar()">
         <i class="bi bi-list"></i>
     </button>
@@ -51,84 +327,172 @@
         <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
         <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
     </div>
-    
-    <div id="loading-screen">
-        <div class="spinner-border custom-spinner" role="status">
-            <span class="visually-hidden">Carregando...</span>
-        </div>
-    </div>
+
+    <!-- Conteúdo Principal -->
     <div class="content" id="content">
+        <!-- Header -->
         <div class="header">
-            <h2><i class="fas fa-trophy"></i>Campeonatos</h2>
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2><i class="bi bi-trophy"></i> Competições</h2>
+                    <button class="btn btn-outline-light btn-sm" data-mdb-toggle="modal" data-mdb-target="#createModal">
+                        <i class="bi bi-plus-lg"></i> Nova Competição
+                    </button>
+                </div>
+            </div>
         </div>
-        <main class="container-fluid mt-4">
-            <div class="row text-center">
+        
+        <!-- Conteúdo -->
+        <main class="container-fluid py-4">
+            <!-- Cards de Estatísticas -->
+            <div class="row mb-4">
                 <div class="col-md-4 mb-3">
-                    <div class="card p-4 text-center bg-primary text-white">
+                    <div class="stat-card bg-primary">
                         <i class="fas fa-trophy"></i>
-                        <h5>Total de Competições</h5>
-                        <p class="fs-2">8</p>
+                        <div class="label">Total de Competições</div>
+                        <div class="number">8</div>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <div class="card p-4 text-center bg-success text-white">
+                    <div class="stat-card bg-success">
                         <i class="fas fa-running"></i>
-                        <h5>Competições Ativas</h5>
-                        <p class="fs-2">5</p>
+                        <div class="label">Competições Ativas</div>
+                        <div class="number">5</div>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <div class="card p-4 text-center bg-warning text-dark">
+                    <div class="stat-card bg-warning text-dark">
                         <i class="fas fa-flag-checkered"></i>
-                        <h5>Competições Finalizadas</h5>
-                        <p class="fs-2">3</p>
+                        <div class="label">Competições Finalizadas</div>
+                        <div class="number">3</div>
                     </div>
                 </div>
             </div>
             
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="card p-3">
-                        <h5>📋 Lista de Competições</h5>
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Nome</th>
-                                        <th>Data de Início</th>
-                                        <th>Status</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><a href="categoria.html" data-link="categoria.html">Copa Regional 2025</a></td>
-                                        <td>10/03/2025</td>
-                                        <td><span class="badge bg-success">Ativa</span></td>
-                                        <td>
-                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewModal">🔍 Ver</button>
-                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal">✏️ Editar</button>
-                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">🗑️ Excluir</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="categoria.html" data-link="categoria.html">Campeonato Estadual</a></td>
-                                        <td>15/02/2025</td>
-                                        <td><span class="badge bg-danger">Finalizada</span></td>
-                                        <td>
-                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewModal">🔍 Ver</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+            <!-- Filtros -->
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Buscar competição...">
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <select class="form-select">
+                        <option selected>Todos os status</option>
+                        <option>Ativas</option>
+                        <option>Finalizadas</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <input type="date" class="form-control">
+                </div>
+            </div>
+            
+            <!-- Tabela de Competições -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-list-check me-2"></i>Lista de Competições
+                        </h5>
+                        <div>
+                            <button class="btn btn-sm btn-light me-2">
+                                <i class="bi bi-printer"></i> Imprimir
+                            </button>
+                            <button class="btn btn-sm btn-light">
+                                <i class="bi bi-download"></i> Exportar
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="row mt-4">
-                <div class="col-12 text-center">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">➕ Criar Nova Competição</button>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Data de Início</th>
+                                    <th>Local</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="categoria.html" class="text-decoration-none fw-bold text-primary">Copa Regional 2025</a>
+                                        <div class="text-muted small">Modalidade: Futebol</div>
+                                    </td>
+                                    <td>10/03/2025</td>
+                                    <td>Estádio Municipal</td>
+                                    <td><span class="badge badge-active">Ativa</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewModal" title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="modal" data-mdb-target="#editModal" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteModal" title="Excluir">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="categoria.html" class="text-decoration-none fw-bold text-primary">Campeonato Estadual</a>
+                                        <div class="text-muted small">Modalidade: Vôlei</div>
+                                    </td>
+                                    <td>15/02/2025</td>
+                                    <td>Ginásio Central</td>
+                                    <td><span class="badge badge-finished">Finalizada</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewModal" title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="categoria.html" class="text-decoration-none fw-bold text-primary">Torneio Aberto</a>
+                                        <div class="text-muted small">Modalidade: Basquete</div>
+                                    </td>
+                                    <td>05/04/2025</td>
+                                    <td>Quadra Poliesportiva</td>
+                                    <td><span class="badge badge-upcoming">Em breve</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewModal" title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="modal" data-mdb-target="#editModal" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted small">
+                            Mostrando 1 a 3 de 8 competições
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Próximo</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </main>
@@ -136,23 +500,34 @@
 
     <!-- Modal Ver Competição -->
     <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content custom-modal">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="viewModalLabel">Ver Competição</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="viewModalLabel"><i class="bi bi-trophy me-2"></i>Detalhes da Competição</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p><strong>Nome:</strong> Copa Regional 2025</p>
-                    <p><strong>Data e Horário:</strong> 10/03/2025 às 14:00</p>
-                    <p><strong>Local:</strong> Estádio Municipal</p>
-                    <p><strong>Regras Específicas:</strong> Regras detalhadas do campeonato.</p>
-                    <p><strong>Árbitros Responsáveis:</strong> João Silva, Maria Oliveira</p>
-                    <p><strong>Categorias:</strong> Adulto, Infantil</p>
-                    <p><strong>Status:</strong> Ativa</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong><i class="bi bi-card-heading me-2"></i>Nome:</strong> Copa Regional 2025</p>
+                            <p><strong><i class="bi bi-calendar me-2"></i>Data de Início:</strong> 10/03/2025</p>
+                            <p><strong><i class="bi bi-clock me-2"></i>Horário:</strong> 14:00</p>
+                            <p><strong><i class="bi bi-geo-alt me-2"></i>Local:</strong> Estádio Municipal</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong><i class="bi bi-list-check me-2"></i>Modalidade:</strong> Futebol</p>
+                            <p><strong><i class="bi bi-people me-2"></i>Categorias:</strong> Adulto, Infantil</p>
+                            <p><strong><i class="bi bi-person-badge me-2"></i>Árbitros:</strong> João Silva, Maria Oliveira</p>
+                            <p><strong><i class="bi bi-info-circle me-2"></i>Status:</strong> <span class="badge badge-active">Ativa</span></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <h6 class="fw-bold"><i class="bi bi-journal-text me-2"></i>Regras Específicas</h6>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary">Editar Competição</button>
                 </div>
             </div>
         </div>
@@ -162,61 +537,90 @@
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content custom-modal">
-                <div class="modal-header text-white custom-modal" style="background: #198754;">
-                    <h5 class="modal-title" id="editModalLabel">Editar Competição</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header text-white">
+                    <h5 class="modal-title" id="editModalLabel"><i class="bi bi-pencil-square me-2"></i>Editar Competição</h5>
+                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editCompetitionForm">
-                        <!-- Nome -->
-                        <div class="mb-3">
-                            <label for="editName" class="form-label">Nome da Competição</label>
-                            <input type="text" class="form-control" id="editName" value="Copa Regional 2025" required>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editName" class="form-label">Nome da Competição</label>
+                                <input type="text" class="form-control" id="editName" value="Copa Regional 2025" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editModality" class="form-label">Modalidade</label>
+                                <select class="form-select" id="editModality" required>
+                                    <option value="Futebol" selected>Futebol</option>
+                                    <option value="Vôlei">Vôlei</option>
+                                    <option value="Basquete">Basquete</option>
+                                    <option value="Tênis">Tênis</option>
+                                </select>
+                            </div>
                         </div>
-
-                        <!-- Data e Horário -->
-                        <div class="mb-3">
-                            <label for="editDateTime" class="form-label">Data e Horário</label>
-                            <input type="datetime-local" class="form-control" id="editDateTime" value="2025-03-10T14:00" required>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editDate" class="form-label">Data de Início</label>
+                                <input type="date" class="form-control" id="editDate" value="2025-03-10" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editTime" class="form-label">Horário</label>
+                                <input type="time" class="form-control" id="editTime" value="14:00" required>
+                            </div>
                         </div>
-
-                        <!-- Local -->
+                        
                         <div class="mb-3">
                             <label for="editLocation" class="form-label">Local</label>
                             <input type="text" class="form-control" id="editLocation" value="Estádio Municipal" required>
                         </div>
-
-                        <!-- Regras Específicas -->
-                        <div class="mb-3">
-                            <label for="editRules" class="form-label">Regras Específicas</label>
-                            <textarea class="form-control" id="editRules" rows="4" required>Regras detalhadas do campeonato.</textarea>
-                        </div>
-
-                        <!-- Árbitros Responsáveis -->
-                        <div class="mb-3">
-                            <label for="editReferees" class="form-label">Árbitros Responsáveis</label>
-                            <input type="text" class="form-control" id="editReferees" value="João Silva, Maria Oliveira" required>
-                        </div>
-
-                        <!-- Categorias -->
+                        
                         <div class="mb-3">
                             <label for="editCategories" class="form-label">Categorias</label>
-                            <input type="text" class="form-control" id="editCategories" value="Adulto, Infantil" required>
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editCategoryAdult" checked>
+                                    <label class="form-check-label" for="editCategoryAdult">Adulto</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editCategoryChild" checked>
+                                    <label class="form-check-label" for="editCategoryChild">Infantil</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editCategorySenior">
+                                    <label class="form-check-label" for="editCategorySenior">Sênior</label>
+                                </div>
+                            </div>
                         </div>
-
-                        <!-- Status -->
+                        
+                        <div class="mb-3">
+                            <label for="editReferees" class="form-label">Árbitros Responsáveis</label>
+                            <select class="form-select" id="editReferees" multiple>
+                                <option value="1" selected>João Silva</option>
+                                <option value="2" selected>Maria Oliveira</option>
+                                <option value="3">Carlos Souza</option>
+                                <option value="4">Ana Pereira</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editRules" class="form-label">Regras Específicas</label>
+                            <textarea class="form-control" id="editRules" rows="4" required>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.</textarea>
+                        </div>
+                        
                         <div class="mb-3">
                             <label for="editStatus" class="form-label">Status</label>
                             <select class="form-select" id="editStatus" required>
                                 <option value="Ativa" selected>Ativa</option>
                                 <option value="Finalizada">Finalizada</option>
+                                <option value="Em breve">Em breve</option>
                             </select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="saveChanges()" style="background: #198754;">Salvar Alterações</button>
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveChanges()">Salvar Alterações</button>
                 </div>
             </div>
         </div>
@@ -227,16 +631,18 @@
         <div class="modal-dialog">
             <div class="modal-content custom-modal">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Excluir Competição</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Tem certeza que deseja excluir a competição <strong>Copa Regional 2025</strong>?</p>
-                    <p>Esta ação não pode ser desfeita.</p>
+                    <p>Tem certeza que deseja excluir permanentemente a competição <strong>"Copa Regional 2025"</strong>?</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>Esta ação não pode ser desfeita e todos os dados associados serão perdidos.
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger">Excluir</button>
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger">Confirmar Exclusão</button>
                 </div>
             </div>
         </div>
@@ -246,78 +652,153 @@
     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content custom-modal">
-                <div class="modal-header text-white custom-modal" style="background: #198754;">
-                    <h5 class="modal-title" id="createModalLabel">Criar Nova Competição</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header text-white">
+                    <h5 class="modal-title" id="createModalLabel"><i class="bi bi-plus-circle me-2"></i>Criar Nova Competição</h5>
+                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="createCompetitionForm">
-                        <!-- Nome -->
-                        <div class="mb-3">
-                            <label for="createName" class="form-label">Nome da Competição</label>
-                            <input type="text" class="form-control" id="createName" placeholder="Nome da Competição" required>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="createName" class="form-label">Nome da Competição</label>
+                                <input type="text" class="form-control" id="createName" placeholder="Ex: Copa Regional 2025" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="createModality" class="form-label">Modalidade</label>
+                                <select class="form-select" id="createModality" required>
+                                    <option value="" selected disabled>Selecione uma modalidade</option>
+                                    <option value="Futebol">Futebol</option>
+                                    <option value="Vôlei">Vôlei</option>
+                                    <option value="Basquete">Basquete</option>
+                                    <option value="Tênis">Tênis</option>
+                                </select>
+                            </div>
                         </div>
-
-                        <!-- Data e Horário -->
-                        <div class="mb-3">
-                            <label for="createDateTime" class="form-label">Data e Horário</label>
-                            <input type="datetime-local" class="form-control" id="createDateTime" required>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="createDate" class="form-label">Data de Início</label>
+                                <input type="date" class="form-control" id="createDate" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="createTime" class="form-label">Horário</label>
+                                <input type="time" class="form-control" id="createTime" required>
+                            </div>
                         </div>
-
-                        <!-- Local -->
+                        
                         <div class="mb-3">
                             <label for="createLocation" class="form-label">Local</label>
-                            <input type="text" class="form-control" id="createLocation" placeholder="Local da Competição" required>
+                            <input type="text" class="form-control" id="createLocation" placeholder="Ex: Estádio Municipal" required>
                         </div>
-
-                        <!-- Regras Específicas -->
+                        
                         <div class="mb-3">
-                            <label for="createRules" class="form-label">Regras Específicas</label>
-                            <textarea class="form-control" id="createRules" rows="4" placeholder="Regras da Competição" required></textarea>
+                            <label for="createCategories" class="form-label">Categorias</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="createCategoryAdult">
+                                    <label class="form-check-label" for="createCategoryAdult">Adulto</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="createCategoryChild">
+                                    <label class="form-check-label" for="createCategoryChild">Infantil</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="createCategorySenior">
+                                    <label class="form-check-label" for="createCategorySenior">Sênior</label>
+                                </div>
+                            </div>
                         </div>
-
-                        <!-- Árbitros Responsáveis -->
+                        
                         <div class="mb-3">
                             <label for="createReferees" class="form-label">Árbitros Responsáveis</label>
-                            <select class="form-select" id="createReferees" required>
-                                <option value="">Selecione um árbitro</option>
+                            <select class="form-select" id="createReferees" multiple>
                                 <option value="1">João Silva</option>
                                 <option value="2">Maria Oliveira</option>
                                 <option value="3">Carlos Souza</option>
                                 <option value="4">Ana Pereira</option>
                             </select>
                         </div>
-
-                        <!-- Status -->
+                        
+                        <div class="mb-3">
+                            <label for="createRules" class="form-label">Regras Específicas</label>
+                            <textarea class="form-control" id="createRules" rows="4" placeholder="Descreva as regras específicas desta competição..." required></textarea>
+                        </div>
+                        
                         <div class="mb-3">
                             <label for="createStatus" class="form-label">Status</label>
                             <select class="form-select" id="createStatus" required>
-                                <option value="Ativa">Ativa</option>
+                                <option value="Ativa" selected>Ativa</option>
                                 <option value="Finalizada">Finalizada</option>
+                                <option value="Em breve">Em breve</option>
                             </select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-success" onclick="createCompetition()" style="background: #198754;">Criar Competição</button>
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" onclick="createCompetition()">Criar Competição</button>
                 </div>
             </div>
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="scripts/scripts.js"></script>
+    <!-- MDB JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
     <script>
-        document.querySelectorAll('a[data-link]').forEach(link => {
-            link.addEventListener('click', function (e) {
-                e.preventDefault(); 
-                document.getElementById('loading-screen').style.display = 'flex';
-                setTimeout(() => {
-                    window.location.href = this.getAttribute('data-link');
-                }, 900);
-            });
+        // Função para alternar a sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            
+            if (window.innerWidth <= 992) {
+                // Comportamento mobile
+                sidebar.classList.toggle('show');
+            } else {
+                // Comportamento desktop
+                if (sidebar.style.width === '280px') {
+                    sidebar.style.width = '80px';
+                    content.style.marginLeft = '80px';
+                    document.querySelectorAll('.sidebar a span').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                    document.querySelector('.sidebar .small').style.display = 'none';
+                } else {
+                    sidebar.style.width = '280px';
+                    content.style.marginLeft = '280px';
+                    document.querySelectorAll('.sidebar a span').forEach(el => {
+                        el.style.display = 'inline';
+                    });
+                    document.querySelector('.sidebar .small').style.display = 'block';
+                }
+            }
+        }
+        
+        // Fechar sidebar ao clicar no conteúdo (mobile)
+        document.getElementById('content').addEventListener('click', function() {
+            if (window.innerWidth <= 992) {
+                document.getElementById('sidebar').classList.remove('show');
+            }
         });
-    </script>
+        
+        // Atualizar ao redimensionar
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 992) {
+                document.getElementById('sidebar').style.width = '280px';
+                document.getElementById('content').style.marginLeft = '280px';
+                document.querySelectorAll('.sidebar a span').forEach(el => {
+                    el.style.display = 'inline';
+                });
+                document.querySelector('.sidebar .small').style.display = 'block';
+            }
+        });
+        
+        // Função para salvar alterações
+        function saveChanges() {
+            // Lógica para salvar alterações
+            alert('Alterações salvas com sucesso!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+            modal.hide();
+        }
+</script>
 </body>
-</html>
+</html>       
