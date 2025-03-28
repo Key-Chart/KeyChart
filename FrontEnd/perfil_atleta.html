@@ -3,22 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="img/image.png" type="image/x-icon">
-    <title>Perfil do Atleta</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- MDB CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="img/image.png" type="image/x-icon">
+    <title>Perfil do Atleta | KeyChart</title>
     <style>
-        body {
-            background-color: #f8f9fa; /* Fundo cinza claro */
-            font-family: Arial, sans-serif;
+        :root {
+            --primary-color: #146c43;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ffc107;
+            --dark-color: #343a40;
         }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+        
         .sidebar {
             width: 250px;
-            background-color: #198754; /* Verde escuro */
+            background-color: #198754;
             color: white;
             height: 100vh;
             position: fixed;
@@ -35,45 +43,136 @@
             white-space: nowrap;
             font-size: 18px;
         }
+
         .sidebar a i {
             font-size: 24px;
             margin-right: 10px;
         }
+        
         .sidebar a:hover {
-            background-color: #146c43; /* Verde mais escuro no hover */
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
         }
+        
+        
+        .sidebar a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        
+        #img-logo {
+            height: 35px;
+            margin-right: 10px;
+        }
+        
+        /* Conteúdo Principal */
         .content {
-            margin-left: 250px;
-            padding: 20px;
-            transition: margin-left 0.3s ease-in-out;
+            margin-left: 280px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
         }
-        .profile-img {
+        
+        /* Header */
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .header h2 {
+            font-weight: 600;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header h2 i {
+            margin-right: 12px;
+        }
+        
+        /* Botão Voltar */
+        .btn-back {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-back:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        /* Avatar */
+        .avatar {
             width: 200px;
             height: 200px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #198754;
+            border: 5px solid white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
+        
+        /* Cards */
         .card {
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            background-color: #ffffff;
-            color: #333;
-        }
-        .btn-pdf {
-            background-color: #dc3545;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
             color: white;
-            transition: background-color 0.3s ease;
+            padding: 1.25rem 1.5rem;
+            border-bottom: none;
         }
-        .btn-pdf:hover {
-            background-color: #c82333;
+        
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
         }
-        .btn-pdf i {
-            margin-right: 8px;
+        
+        /* Badges */
+        .badge {
+            padding: 6px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
         }
+        
+        .badge-black-belt {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: #000;
+        }
+        
+        .badge-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+        
+        .badge-success {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .badge-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+        
         .toggle-btn {
             position: fixed;
             top: 10px;
@@ -85,72 +184,92 @@
             cursor: pointer;
             z-index: 1050;
         }
-        .back-btn {
-            background: none;
+        
+        /* Botão PDF */
+        .btn-pdf {
+            background-color: #dc3545;
+            color: white;
             border: none;
-            color: #198754;
-            font-size: 24px;
-            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
         }
-        .sidebar-hidden {
-            width: 60px;
+        
+        .btn-pdf:hover {
+            background-color: #c82333;
+            color: white;
         }
-        .sidebar-hidden a span {
-            display: none;
+        
+        /* Progress Bar */
+        .progress {
+            height: 10px;
+            border-radius: 5px;
         }
-        .content-expanded {
-            margin-left: 60px;
+        
+        .progress-bar {
+            background-color: var(--primary-color);
         }
-        .info-card {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .info-card h5 {
-            color: #198754;
-            font-weight: bold;
-        }
-        .info-card p {
-            color: #555;
-            font-size: 16px;
-        }
-        .info-card i {
-            font-size: 24px;
-            color: #198754;
-            margin-right: 10px;
-        }
-        .stats-card {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .stats-card h5 {
-            color: #198754;
-            font-weight: bold;
-        }
-        .stats-card p {
-            color: #555;
-            font-size: 16px;
-        }
-        .stats-card i {
-            font-size: 24px;
-            color: #198754;
-            margin-right: 10px;
-        }
-        @media (max-width: 768px) {
+        
+        /* Responsividade */
+        @media (max-width: 992px) {
             .sidebar {
-                width: 60px;
+                transform: translateX(-100%);
+                width: 280px;
             }
-            .sidebar a span {
-                display: none;
+            
+            .sidebar.show {
+                transform: translateX(0);
             }
+            
             .content {
-                margin-left: 60px;
+                margin-left: 0;
             }
+            
+            .toggle-btn {
+                left: 20px;
+                top: 20px;
+            }
+        }
+        
+        /* Stats Card */
+        .stats-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+        
+        .stats-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .stats-card .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        /* Info Section */
+        .info-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+        
+        .info-section .info-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-section .info-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
         }
     </style>
 </head>
@@ -158,6 +277,7 @@
     <button class="toggle-btn" onclick="toggleSidebar()">
         <i class="bi bi-list"></i>
     </button>
+
     <div class="sidebar" id="sidebar" style="
         background: 
             linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
@@ -176,110 +296,262 @@
         <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
     </div>
 
-    <!-- Conteúdo principal -->
+    <!-- Conteúdo Principal -->
     <div class="content" id="content">
-        <div class="header mb-4 d-flex justify-content-between align-items-center">
-            <!-- Botão de voltar -->
-            <button class="back-btn" onclick="window.history.back()">
-                <i class="bi bi-arrow-left"></i>
-            </button>
-            <h2 class="text-black"><i></i>Perfil do Atleta</h2>
-        </div>
-
-        <div class="card p-4 mb-4">
-            <div class="row">
-                <!-- Coluna da foto e nome -->
-                <div class="col-md-4 text-center">
-                    <img src="img/homem.png" class="profile-img mb-3" alt="Foto do Perfil">
-                    <h4 class="text-success"><strong>Luan Carvalho</strong></h4>
-                    <p class="text-muted">Atleta Profissional</p>
-                </div>
-        
-                <!-- Coluna das informações -->
-                <div class="col-md-8">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="text-success"><i class="bi bi-speedometer me-2"></i><strong>Peso:</strong></label>
-                            <p>70 kg</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="text-success"><i class="bi bi-calendar me-2"></i><strong>Idade:</strong></label>
-                            <p>25 anos</p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="text-success"><i class="bi bi-geo-alt me-2"></i><strong>Estado:</strong></label>
-                            <p>Pará</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="text-success"><i class="bi bi-building me-2"></i><strong>Cidade da Academia:</strong></label>
-                            <p>Belém</p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="text-success"><i class="bi bi-award me-2"></i><strong>Faixa:</strong></label>
-                            <p>Preta</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="text-success"><i class="bi bi-exclamation-triangle me-2"></i><strong>Advertência:</strong></label>
-                            <p>Nenhuma</p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="text-success"><i class="bi bi-trophy me-2"></i><strong>Quantidade de Lutas:</strong></label>
-                            <p>50</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="text-success"><i class="bi bi-star me-2"></i><strong>Vitórias:</strong></label>
-                            <p>40</p>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="text-success"><i class="bi bi-x-circle me-2"></i><strong>Derrotas:</strong></label>
-                            <p>8</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="text-success"><i class="bi bi-arrow-repeat me-2"></i><strong>Empates:</strong></label>
-                            <p>2</p>
-                        </div>
-                    </div>
-                    <!-- Botão de exportar para PDF -->
-                    <button class="btn btn-pdf mt-3">
-                        <i class="bi bi-file-earmark-pdf"></i> Exportar para PDF
+        <!-- Header -->
+        <div class="header">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-back me-3" onclick="window.history.back()">
+                        <i class="bi bi-arrow-left"></i>
                     </button>
+                    <h2><i class="bi bi-person-badge me-2"></i>Perfil do Atleta</h2>
                 </div>
             </div>
         </div>
-    
-        <!-- Cards de informações adicionais -->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="info-card">
-                    <h5><i class="bi bi-info-circle"></i> Informações Adicionais</h5>
-                    <p><strong>Academia:</strong> Academia A</p>
-                    <p><strong>Graduação:</strong> Faixa Preta</p>
-                    <p><strong>Anos de Experiência:</strong> 10</p>
+        
+        <!-- Conteúdo -->
+        <main class="container-fluid py-4">
+            <!-- Perfil Principal -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Coluna da Foto -->
+                        <div class="col-md-4 text-center">
+                            <img src="https://mdbootstrap.com/img/new/avatars/8.jpg" class="avatar mb-4" alt="Luan Carvalho">
+                            <h4 class="mb-1">Luan Carvalho</h4>
+                            <p class="text-muted mb-3">Atleta Profissional</p>
+                            <button class="btn btn-pdf">
+                                <i class="bi bi-file-earmark-pdf me-2"></i>Exportar para PDF
+                            </button>
+                        </div>
+                        
+                        <!-- Coluna das Informações -->
+                        <div class="col-md-8">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-speedometer2 me-2 text-primary"></i>Peso</h6>
+                                        <p>70 kg</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-calendar me-2 text-primary"></i>Idade</h6>
+                                        <p>25 anos</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-geo-alt me-2 text-primary"></i>Estado</h6>
+                                        <p>Pará</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-building me-2 text-primary"></i>Cidade da Academia</h6>
+                                        <p>Belém</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-award me-2 text-primary"></i>Faixa</h6>
+                                        <p><span class="badge badge-black-belt">Preta</span></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-exclamation-triangle me-2 text-primary"></i>Advertências</h6>
+                                        <p><span class="badge badge-success">Nenhuma</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="stats-card">
-                    <h5><i class="bi bi-bar-chart-line"></i> Estatísticas</h5>
-                    <p><strong>Taxa de Vitórias:</strong> 80%</p>
-                    <p><strong>Lutas por Ano:</strong> 10</p>
-                    <p><strong>Melhor Luta:</strong> Vitória por Nocaute</p>
+            
+            <!-- Estatísticas e Informações -->
+            <div class="row">
+                <!-- Estatísticas de Lutas -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-bar-chart me-2"></i>Estatísticas de Lutas</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center mb-4">
+                                <div class="col-md-4">
+                                    <div class="stats-card">
+                                        <div class="stat-value">50</div>
+                                        <div class="stat-label">Total de Lutas</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stats-card">
+                                        <div class="stat-value">40</div>
+                                        <div class="stat-label">Vitórias</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stats-card">
+                                        <div class="stat-value">80%</div>
+                                        <div class="stat-label">Taxa de Vitórias</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress mb-3">
+                                <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Vitórias (40)</span>
+                                <span>Derrotas (8)</span>
+                                <span>Empates (2)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Informações Adicionais -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-info-circle me-2"></i>Informações Adicionais</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-section">
+                                <div class="info-item">
+                                    <h6><i class="bi bi-building me-2 text-primary"></i>Academia</h6>
+                                    <p>Academia Central de Karatê</p>
+                                </div>
+                                <div class="info-item">
+                                    <h6><i class="bi bi-award me-2 text-primary"></i>Graduação</h6>
+                                    <p>Faixa Preta - 2º Dan</p>
+                                </div>
+                                <div class="info-item">
+                                    <h6><i class="bi bi-calendar3 me-2 text-primary"></i>Anos de Experiência</h6>
+                                    <p>10 anos</p>
+                                </div>
+                                <div class="info-item">
+                                    <h6><i class="bi bi-trophy me-2 text-primary"></i>Melhor Luta</h6>
+                                    <p>Vitória por Nocaute (Torneio Nacional 2023)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+            
+            <!-- Histórico de Competições -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="bi bi-trophy me-2"></i>Histórico de Competições</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Competição</th>
+                                    <th>Data</th>
+                                    <th>Categoria</th>
+                                    <th>Resultado</th>
+                                    <th>Pontuação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Torneio Nacional 2023</td>
+                                    <td>15/05/2023</td>
+                                    <td>Kumite -70kg</td>
+                                    <td><span class="badge badge-success">1º Lugar</span></td>
+                                    <td>8.5</td>
+                                </tr>
+                                <tr>
+                                    <td>Copa Estadual 2023</td>
+                                    <td>22/03/2023</td>
+                                    <td>Kumite -70kg</td>
+                                    <td><span class="badge badge-success">2º Lugar</span></td>
+                                    <td>7.8</td>
+                                </tr>
+                                <tr>
+                                    <td>Campeonato Regional 2022</td>
+                                    <td>10/11/2022</td>
+                                    <td>Kumite -70kg</td>
+                                    <td><span class="badge badge-success">1º Lugar</span></td>
+                                    <td>8.2</td>
+                                </tr>
+                                <tr>
+                                    <td>Torneio Aberto 2022</td>
+                                    <td>05/08/2022</td>
+                                    <td>Kumite -70kg</td>
+                                    <td><span class="badge badge-danger">Eliminado</span></td>
+                                    <td>6.5</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <!-- Bootstrap JS e MDB JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
-
-    <script src="scripts/scripts.js"></script>
+    <!-- MDB JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
+    <script>
+        // Função para alternar a sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            
+            if (window.innerWidth <= 992) {
+                // Comportamento mobile
+                sidebar.classList.toggle('show');
+            } else {
+                // Comportamento desktop
+                if (sidebar.style.width === '280px') {
+                    sidebar.style.width = '80px';
+                    content.style.marginLeft = '80px';
+                    document.querySelectorAll('.sidebar a span').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                    document.querySelector('.sidebar .small').style.display = 'none';
+                } else {
+                    sidebar.style.width = '280px';
+                    content.style.marginLeft = '280px';
+                    document.querySelectorAll('.sidebar a span').forEach(el => {
+                        el.style.display = 'inline';
+                    });
+                    document.querySelector('.sidebar .small').style.display = 'block';
+                }
+            }
+        }
+        
+        // Fechar sidebar ao clicar no conteúdo (mobile)
+        document.getElementById('content').addEventListener('click', function() {
+            if (window.innerWidth <= 992) {
+                document.getElementById('sidebar').classList.remove('show');
+            }
+        });
+        
+        // Atualizar ao redimensionar
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 992) {
+                document.getElementById('sidebar').style.width = '280px';
+                document.getElementById('content').style.marginLeft = '280px';
+                document.querySelectorAll('.sidebar a span').forEach(el => {
+                    el.style.display = 'inline';
+                });
+                document.querySelector('.sidebar .small').style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>

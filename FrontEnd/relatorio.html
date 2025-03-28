@@ -3,149 +3,574 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- MDB CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <!-- MDB Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
-    <!-- MDB Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="img/image.png" type="image/x-icon">
-    <title>Relatórios</title>
-<link rel="stylesheet" href="style.css/relatorio.css">
+    <title>Relatórios | KeyChart</title>
+    <style>
+        :root {
+            --primary-color: #146c43;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ffc107;
+            --dark-color: #343a40;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        /* Sidebar Estilizado */
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            position: fixed;
+            background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('img/sidebar.jpeg');
+            background-size: cover;
+            background-position: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar a {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            margin: 4px 10px;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar a:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .sidebar a i {
+            font-size: 1.2rem;
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .sidebar a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        #img-logo {
+            height: 35px;
+            margin-right: 10px;
+        }
+        
+        /* Conteúdo Principal */
+        .content {
+            margin-left: 280px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .header h2 {
+            font-weight: 600;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header h2 i {
+            margin-right: 12px;
+        }
+        
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            border-bottom: none;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Formulários */
+        .form-label {
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(20, 108, 67, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0d5634;
+            border-color: #0d5634;
+            transform: translateY(-2px);
+        }
+        
+        /* Badges */
+        .badge-report {
+            padding: 8px 12px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            background-color: rgba(20, 108, 67, 0.1);
+            color: var(--primary-color);
+        }
+        
+        /* Botão Toggle */
+        .toggle-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1050;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        
+        .toggle-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+        
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .content {
+                margin-left: 0;
+            }
+            
+            .toggle-btn {
+                left: 20px;
+                top: 20px;
+            }
+        }
+        
+        /* Animação */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
 </head>
 <body>
-    <button class="toggle-btn" onclick="toggleSidebar()">
+    <!-- Botão de Toggle -->
+    <button class="toggle-btn" id="toggleSidebar">
         <i class="bi bi-list"></i>
     </button>
-    <div class="sidebar" id="sidebar" style="
-        background: 
-            linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-            url('img/sidebar.jpeg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    ">
-        <br>
-        <a href="dashboard.html"><i><img src="img/image.png" style="height: 35px;" id="img-logo"></i><span>KeyChart</span></a>
-        <a href="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
-        <a href="equipe_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
-        <a href="inscricoes.html"><i class="bi bi-pencil-square"></i><span>Inscrições</span></a>
-        <a href="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
-        <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
-        <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
-    </div>
-    
-    <div class="content" id="content">
-        <!-- Cabeçalho com título e ícone de usuário -->
-        <div class="header">
-            <h2>📜 Relatórios</h2>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="d-flex flex-column h-100">
+            <div class="p-4">
+                <a href="dashboard.html" class="d-flex align-items-center mb-4 text-decoration-none">
+                    <i><img src="img/image.png" id="img-logo" alt="Logo"></i>
+                    <span class="fs-5 fw-bold">KeyChart</span>
+                </a>
+            </div>
+            
+            <nav class="flex-grow-1">
+                <a href="competicoes.html">
+                    <i class="bi bi-trophy"></i>
+                    <span>Competições</span>
+                </a>
+                <a href="equipe_atletas.html">
+                    <i class="bi bi-person-lines-fill"></i>
+                    <span>Equipes e Atletas</span>
+                </a>
+                <a href="inscricoes.html">
+                    <i class="bi bi-pencil-square"></i>
+                    <span>Inscrições</span>
+                </a>
+                <a href="partidas.html">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Partidas</span>
+                </a>
+                <a href="chaveamento.html">
+                    <i class="bi bi-link-45deg"></i>
+                    <span>Chaveamento</span>
+                </a>
+                <a href="relatorio.html" class="active">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Relatórios</span>
+                </a>
+            </nav>
+            
+            <div class="p-3">
+                <div class="text-white-50 small">Versão 1.0.0</div>
+            </div>
         </div>
-        <main class="container-fluid mt-4">
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="content" id="content">
+        <!-- Header -->
+        <div class="header">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2><i class="bi bi-file-earmark-text"></i> Relatórios</h2>
+                    <button class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-question-circle"></i> Ajuda
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Conteúdo -->
+        <main class="container-fluid py-4">
+            <!-- Filtros Gerais -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Buscar relatório...">
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <select class="form-select">
+                        <option selected>Todas as competições</option>
+                        <option>Copa Regional 2025</option>
+                        <option>Torneio Estadual</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <input type="date" class="form-control">
+                </div>
+            </div>
+            
             <!-- Relatório de Desempenho das Equipes -->
-            <div class="card p-3 mb-4">
-                <h5>📑 Relatório de desempenho das equipes</h5>
-                <p>Selecione a competição e a data para gerar o relatório de desempenho das equipes:</p>
-                <form>
-                    <div class="mb-3">
-                        <label for="competicaoRelatorio" class="form-label">Selecione a Competição</label>
-                        <select class="form-select" id="competicaoRelatorio" required>
-                            <option value="">Escolha a Competição</option>
-                            <option value="competicao1">Campeonato A</option>
-                            <option value="competicao2">Campeonato B</option>
-                        </select>
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-graph-up me-2"></i>Desempenho das Equipes
+                        </h5>
+                        <span class="badge-report">Análise</span>
                     </div>
-                    <div class="mb-3">
-                        <label for="dataRelatorio" class="form-label">Selecione o Período</label>
-                        <input type="date" class="form-control" id="dataRelatorio" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Gerar Relatório</button>
-                </form>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Selecione a competição e o período para gerar o relatório de desempenho das equipes:</p>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="competicaoRelatorio" class="form-label">Competição</label>
+                                <select class="form-select" id="competicaoRelatorio" required>
+                                    <option value="">Escolha a Competição</option>
+                                    <option value="competicao1">Campeonato A</option>
+                                    <option value="competicao2">Campeonato B</option>
+                                    <option value="competicao3">Copa Regional 2025</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="dataRelatorio" class="form-label">Período</label>
+                                <input type="date" class="form-control" id="dataRelatorio" required>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-file-earmark-bar-graph me-1"></i> Gerar Relatório
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary">
+                                <i class="bi bi-download me-1"></i> Exportar
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <!-- Relatório de Desempenho Individual dos Jogadores -->
-            <div class="card p-3 mb-4">
-                <h5>👤 Relatório de desempenho individual dos jogadores</h5>
-                <p>Selecione o jogador e a competição para gerar o relatório de desempenho:</p>
-                <form>
-                    <div class="mb-3">
-                        <label for="jogadorRelatorio" class="form-label">Selecione o Jogador</label>
-                        <select class="form-select" id="jogadorRelatorio" required>
-                            <option value="">Escolha o Jogador</option>
-                            <option value="jogador1">Jogador A</option>
-                            <option value="jogador2">Jogador B</option>
-                        </select>
+            <!-- Relatório de Desempenho Individual -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-person-lines-fill me-2"></i>Desempenho Individual
+                        </h5>
+                        <span class="badge-report">Detalhado</span>
                     </div>
-                    <div class="mb-3">
-                        <label for="competicaoJogador" class="form-label">Selecione a Competição</label>
-                        <select class="form-select" id="competicaoJogador" required>
-                            <option value="">Escolha a Competição</option>
-                            <option value="competicao1">Campeonato A</option>
-                            <option value="competicao2">Campeonato B</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Gerar Relatório</button>
-                </form>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Selecione o jogador e a competição para gerar o relatório de desempenho individual:</p>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="jogadorRelatorio" class="form-label">Jogador</label>
+                                <select class="form-select" id="jogadorRelatorio" required>
+                                    <option value="">Escolha o Jogador</option>
+                                    <option value="jogador1">Jogador A</option>
+                                    <option value="jogador2">Jogador B</option>
+                                    <option value="jogador3">Jogador C</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="competicaoJogador" class="form-label">Competição</label>
+                                <select class="form-select" id="competicaoJogador" required>
+                                    <option value="">Escolha a Competição</option>
+                                    <option value="competicao1">Campeonato A</option>
+                                    <option value="competicao2">Campeonato B</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-file-earmark-person me-1"></i> Gerar Relatório
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary">
+                                <i class="bi bi-download me-1"></i> Exportar
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <!-- Relatório de Partidas -->
-            <div class="card p-3 mb-4">
-                <h5>Relatório de partidas</h5>
-                <p>Selecione a data ou a competição para gerar o relatório de partidas (placares e estatísticas):</p>
-                <form>
-                    <div class="mb-3">
-                        <label for="competicaoPartidas" class="form-label">Selecione a Competição</label>
-                        <select class="form-select" id="competicaoPartidas" required>
-                            <option value="">Escolha a Competição</option>
-                            <option value="competicao1">Campeonato A</option>
-                            <option value="competicao2">Campeonato B</option>
-                        </select>
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-calendar-check me-2"></i>Partidas
+                        </h5>
+                        <span class="badge-report">Estatísticas</span>
                     </div>
-                    <div class="mb-3">
-                        <label for="dataPartidas" class="form-label">Selecione a Data</label>
-                        <input type="date" class="form-control" id="dataPartidas" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Gerar Relatório</button>
-                </form>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Selecione a data ou a competição para gerar o relatório de partidas (placares e estatísticas):</p>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="competicaoPartidas" class="form-label">Competição</label>
+                                <select class="form-select" id="competicaoPartidas" required>
+                                    <option value="">Escolha a Competição</option>
+                                    <option value="competicao1">Campeonato A</option>
+                                    <option value="competicao2">Campeonato B</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="dataPartidas" class="form-label">Data</label>
+                                <input type="date" class="form-control" id="dataPartidas" required>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Gerar Relatório
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary">
+                                <i class="bi bi-download me-1"></i> Exportar
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <!-- Relatório de Cartões e Penalizações -->
-            <div class="card p-3 mb-4">
-                <h5>🟥 Relatório de cartões e penalizações</h5>
-                <p>Selecione a competição para gerar o relatório de cartões e penalizações:</p>
-                <form>
-                    <div class="mb-3">
-                        <label for="competicaoCartoes" class="form-label">Selecione a Competição</label>
-                        <select class="form-select" id="competicaoCartoes" required>
-                            <option value="">Escolha a Competição</option>
-                            <option value="competicao1">Campeonato A</option>
-                            <option value="competicao2">Campeonato B</option>
-                        </select>
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Cartões e Penalizações
+                        </h5>
+                        <span class="badge-report">Disciplinar</span>
                     </div>
-                    <button type="submit" class="btn btn-primary">Gerar Relatório</button>
-                </form>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Selecione a competição para gerar o relatório de cartões e penalizações:</p>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="competicaoCartoes" class="form-label">Competição</label>
+                                <select class="form-select" id="competicaoCartoes" required>
+                                    <option value="">Escolha a Competição</option>
+                                    <option value="competicao1">Campeonato A</option>
+                                    <option value="competicao2">Campeonato B</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="tipoCartoes" class="form-label">Tipo de Cartão</label>
+                                <select class="form-select" id="tipoCartoes">
+                                    <option value="">Todos</option>
+                                    <option value="amarelo">Amarelo</option>
+                                    <option value="vermelho">Vermelho</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-file-earmark-medical me-1"></i> Gerar Relatório
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary">
+                                <i class="bi bi-download me-1"></i> Exportar
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <!-- Relatório Financeiro -->
-            <div class="card p-3 mb-4">
-                <h5>💰 Relatório financeiro</h5>
-                <p>Se houver taxas de inscrição, você pode gerar o relatório financeiro aqui:</p>
-                <form>
-                    <div class="mb-3">
-                        <label for="competicaoFinanceiro" class="form-label">Selecione a Competição</label>
-                        <select class="form-select" id="competicaoFinanceiro" required>
-                            <option value="">Escolha a Competição</option>
-                            <option value="competicao1">Campeonato A</option>
-                            <option value="competicao2">Campeonato B</option>
-                        </select>
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-cash-stack me-2"></i>Financeiro
+                        </h5>
+                        <span class="badge-report">Monetário</span>
                     </div>
-                    <button type="submit" class="btn btn-primary">Gerar Relatório Financeiro</button>
-                </form>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Se houver taxas de inscrição, você pode gerar o relatório financeiro aqui:</p>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="competicaoFinanceiro" class="form-label">Competição</label>
+                                <select class="form-select" id="competicaoFinanceiro" required>
+                                    <option value="">Escolha a Competição</option>
+                                    <option value="competicao1">Campeonato A</option>
+                                    <option value="competicao2">Campeonato B</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="periodoFinanceiro" class="form-label">Período</label>
+                                <input type="month" class="form-control" id="periodoFinanceiro">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-file-earmark-bar-graph me-1"></i> Gerar Relatório
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary">
+                                <i class="bi bi-download me-1"></i> Exportar
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="scripts/scripts.js"></script>
+    <!-- MDB JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
+    <script>
+        // Função para alternar a sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            
+            if (window.innerWidth <= 992) {
+                // Comportamento mobile
+                sidebar.classList.toggle('show');
+            } else {
+                // Comportamento desktop
+                if (sidebar.style.width === '280px') {
+                    sidebar.style.width = '80px';
+                    content.style.marginLeft = '80px';
+                    document.querySelectorAll('.sidebar a span').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                    document.querySelector('.sidebar .small').style.display = 'none';
+                } else {
+                    sidebar.style.width = '280px';
+                    content.style.marginLeft = '280px';
+                    document.querySelectorAll('.sidebar a span').forEach(el => {
+                        el.style.display = 'inline';
+                    });
+                    document.querySelector('.sidebar .small').style.display = 'block';
+                }
+            }
+        }
+        
+        // Event listener para o botão toggle
+        document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
+        
+        // Fechar sidebar ao clicar no conteúdo (mobile)
+        document.getElementById('content').addEventListener('click', function() {
+            if (window.innerWidth <= 992) {
+                document.getElementById('sidebar').classList.remove('show');
+            }
+        });
+        
+        // Atualizar ao redimensionar
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 992) {
+                document.getElementById('sidebar').style.width = '280px';
+                document.getElementById('content').style.marginLeft = '280px';
+                document.querySelectorAll('.sidebar a span').forEach(el => {
+                    el.style.display = 'inline';
+                });
+                document.querySelector('.sidebar .small').style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>
