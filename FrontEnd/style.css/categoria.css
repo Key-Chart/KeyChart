@@ -1,10 +1,18 @@
-body {
-    display: flex;
-    height: 100vh;
-    margin: 0;
+
+:root {
+    --primary-color: #146c43;
+    --secondary-color: #f8f9fa;
+    --accent-color: #ffc107;
+    --dark-color: #343a40;
 }
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+}
+
 .sidebar {
-    width: 250px;
+    width: 280px;
     background-color: #198754;
     color: white;
     height: 100vh;
@@ -14,6 +22,7 @@ body {
     padding-top: 20px;
     transition: width 0.3s ease-in-out;
 }
+
 .sidebar a {
     padding: 15px;
     display: block;
@@ -22,33 +31,161 @@ body {
     white-space: nowrap;
     font-size: 18px;
 }
+
 .sidebar a i {
     font-size: 24px;
     margin-right: 10px;
 }
+
 .sidebar a:hover {
-    background-color: #146c43;
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+    transform: translateX(5px);
 }
+
+
+.sidebar a.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+#img-logo {
+    height: 35px;
+    margin-right: 10px;
+}
+
+/* Conteúdo Principal */
 .content {
-    margin-left: 250px;
-    flex-grow: 1;
-    padding: 20px;
-    transition: margin-left 0.3s ease-in-out;
-    overflow-y: auto;
-    height: 100vh;
+    margin-left: 280px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 100vh;
 }
-.sidebar-hidden {
-    width: 60px;
+
+/* Header */
+.header {
+    background: var(--primary-color);
+    color: white;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: relative;
 }
-.sidebar-hidden a {
-    text-align: center;
+
+.header h2 {
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
 }
-.sidebar-hidden a span {
-    display: none;
+
+.header h2 i {
+    margin-right: 12px;
 }
-.content-expanded {
-    margin-left: 60px;
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+    margin-bottom: 2rem;
+    overflow: hidden;
 }
+
+.card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    border-bottom: none;
+}
+
+.card-title {
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Formulários */
+.form-control, .form-select {
+    border-radius: 8px;
+    padding: 10px 15px;
+}
+
+/* Tabelas */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+}
+
+.table tbody tr {
+    transition: all 0.2s;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(20, 108, 67, 0.05);
+}
+
+.table td, .table th {
+    vertical-align: middle;
+    padding: 1rem;
+}
+
+/* Badges */
+.badge {
+    padding: 6px 10px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.badge-active {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: var(--primary-color);
+}
+
+.badge-finished {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.badge-suspended {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.badge-male {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+}
+
+.badge-female {
+    background-color: rgba(214, 51, 132, 0.1);
+    color: #d63384;
+}
+
+.badge-kata {
+    background-color: rgba(111, 66, 193, 0.1);
+    color: #6f42c1;
+}
+
+.badge-kumite {
+    background-color: rgba(253, 126, 20, 0.1);
+    color: #fd7e14;
+}
+
 .toggle-btn {
     position: fixed;
     top: 10px;
@@ -59,74 +196,65 @@ body {
     font-size: 24px;
     cursor: pointer;
     z-index: 1050;
+} 
+
+/* Botão Voltar */
+.btn-back {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+    border: none;
+    transition: all 0.3s;
 }
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+
+.btn-back:hover {
+    background-color: rgba(255,255,255,0.2);
 }
-.header h2 {
-    margin: 0;
-}
-.user-icon {
-    font-size: 24px;
-    cursor: pointer;
-}
-.card {
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-@media (max-width: 768px) {
-    .sidebar {
-        width: 60px;
-    }
-    .sidebar a span {
-        display: none;
-    }
-    .content {
-        margin-left: 60px;
-    }
-    .toggle-btn {
-        display: block;
-    }
-}
-@media (max-width: 576px) {
+
+/* Responsividade */
+@media (max-width: 992px) {
     .sidebar {
         transform: translateX(-100%);
+        width: 280px;
     }
-    .sidebar-hidden {
+    
+    .sidebar.show {
         transform: translateX(0);
     }
+    
     .content {
         margin-left: 0;
     }
+    
     .toggle-btn {
         left: 20px;
+        top: 20px;
     }
 }
 
-.custom-modal {
-    border-radius: 0 !important;
+/* Animação */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.back-btn {
-    background: none;
-    border: none;
-    color: #198754;
-    font-size: 24px;
-    cursor: pointer;
+.table tbody tr {
+    animation: fadeIn 0.3s ease-out forwards;
+    opacity: 0;
 }
 
-#sidebar {
-    background: 
-        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-        url('../imgs/karate-sidebar-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed; /* Efeito parallax opcional */
+.table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+.table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+.table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+.table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+.table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+
+/* Modal Customizado */
+.custom-modal .modal-header {
+    background-color: var(--primary-color);
+    color: white;
 }
 
-#sidebar a:hover {
-    background-color: rgba(255, 255, 255, 0.26);
+.custom-modal .modal-footer .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
 }
