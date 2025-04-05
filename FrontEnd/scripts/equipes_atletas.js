@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Validação do nome (se preenchido)
         if (filterName.value.trim() !== '') {
             if (filterName.value.trim().length < 3) {
-                showError(filterName, 'O nome deve ter pelo menos 3 caracteres');
+                showError(filterName, 'O nome deve ter pelo menos 3 caractere');
                 isValid = false;
             } else {
                 clearError(filterName);
