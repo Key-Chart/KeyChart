@@ -10,270 +10,32 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="img/image.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css/competicoes.css">
     <title>Relatórios | KeyChart</title>
     <style>
-        :root {
-            --primary-color: #146c43;
-            --secondary-color: #f8f9fa;
-            --accent-color: #ffc107;
-            --dark-color: #343a40;
-        }
         
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-        }
-        
-        /* Sidebar Estilizado */
-        .sidebar {
-            width: 280px;
-            height: 100vh;
-            position: fixed;
-            background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('img/sidebar.jpeg');
-            background-size: cover;
-            background-position: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        
-        .sidebar a {
-            color: rgba(255,255,255,0.8);
-            padding: 12px 20px;
-            margin: 4px 10px;
-            border-radius: 6px;
-            transition: all 0.3s;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-        }
-        
-        .sidebar a:hover {
-            background-color: rgba(255,255,255,0.1);
-            color: white;
-            transform: translateX(5px);
-        }
-        
-        .sidebar a i {
-            font-size: 1.2rem;
-            margin-right: 12px;
-            width: 24px;
-            text-align: center;
-        }
-        
-        .sidebar a.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        #img-logo {
-            height: 35px;
-            margin-right: 10px;
-        }
-        
-        /* Conteúdo Principal */
-        .content {
-            margin-left: 280px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            min-height: 100vh;
-        }
-        
-        /* Header */
-        .header {
-            background: var(--primary-color);
-            color: white;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        
-        .header h2 {
-            font-weight: 600;
-            margin-bottom: 0;
-            display: flex;
-            align-items: center;
-        }
-        
-        .header h2 i {
-            margin-right: 12px;
-        }
-        
-        /* Cards */
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            transition: all 0.3s;
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-        
-        .card:hover {
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        
-        .card-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 1.25rem 1.5rem;
-            border-bottom: none;
-        }
-        
-        .card-title {
-            font-weight: 600;
-            margin-bottom: 0;
-            display: flex;
-            align-items: center;
-        }
-        
-        /* Formulários */
-        .form-label {
-            font-weight: 500;
-            color: var(--dark-color);
-        }
-        
-        .form-control, .form-select {
-            border-radius: 8px;
-            padding: 10px 15px;
-            border: 1px solid #e0e0e0;
-            transition: all 0.3s;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(20, 108, 67, 0.25);
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary:hover {
-            background-color: #0d5634;
-            border-color: #0d5634;
-            transform: translateY(-2px);
-        }
-        
-        /* Badges */
-        .badge-report {
-            padding: 8px 12px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.8rem;
-            background-color: rgba(20, 108, 67, 0.1);
-            color: var(--primary-color);
-        }
-        
-        /* Botão Toggle */
-        .toggle-btn {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1050;
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
-        }
-        
-        .toggle-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.05);
-        }
-        
-        /* Responsividade */
-        @media (max-width: 992px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 280px;
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            
-            .content {
-                margin-left: 0;
-            }
-            
-            .toggle-btn {
-                left: 20px;
-                top: 20px;
-            }
-        }
-        
-        /* Animação */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .card {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
     </style>
 </head>
 <body>
-    <!-- Botão de Toggle -->
-    <button class="toggle-btn" id="toggleSidebar">
+    <button class="toggle-btn" onclick="toggleSidebar()">
         <i class="bi bi-list"></i>
     </button>
-
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="d-flex flex-column h-100">
-            <div class="p-4">
-                <a href="dashboard.html" class="d-flex align-items-center mb-4 text-decoration-none">
-                    <i><img src="img/image.png" id="img-logo" alt="Logo"></i>
-                    <span class="fs-5 fw-bold">KeyChart</span>
-                </a>
-            </div>
-            
-            <nav class="flex-grow-1">
-                <a href="competicoes.html">
-                    <i class="bi bi-trophy"></i>
-                    <span>Competições</span>
-                </a>
-                <a href="equipe_atletas.html">
-                    <i class="bi bi-person-lines-fill"></i>
-                    <span>Equipes e Atletas</span>
-                </a>
-                <a href="inscricoes.html">
-                    <i class="bi bi-pencil-square"></i>
-                    <span>Inscrições</span>
-                </a>
-                <a href="partidas.html">
-                    <i class="bi bi-calendar-check"></i>
-                    <span>Partidas</span>
-                </a>
-                <a href="chaveamento.html">
-                    <i class="bi bi-link-45deg"></i>
-                    <span>Chaveamento</span>
-                </a>
-                <a href="relatorio.html" class="active">
-                    <i class="bi bi-file-earmark-text"></i>
-                    <span>Relatórios</span>
-                </a>
-            </nav>
-            
-            <div class="p-3">
-                <div class="text-white-50 small">Versão 1.0.0</div>
-            </div>
-        </div>
+    <div class="sidebar" id="sidebar" style="
+        background: 
+            linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+            url('img/sidebar.jpeg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    ">
+        <br>
+        <a href="dashboard.html"><i><img src="img/image.png" style="height: 35px;" id="img-logo"></i><span>KeyChart</span></a>
+        <a href="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
+        <a href="equipe_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
+        <a href="inscricoes.html"><i class="bi bi-pencil-square"></i><span>Inscrições</span></a>
+        <a href="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
+        <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
+        <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
     </div>
 
     <!-- Conteúdo Principal -->

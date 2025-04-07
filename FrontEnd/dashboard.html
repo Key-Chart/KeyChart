@@ -16,15 +16,12 @@
     <title>Dashboard</title>
     <link rel="stylesheet" href="style.css/dashboard.css">
     <style>
-
         @media (max-width: 768px) {
             .chat-container {
                 width: 90%;
                 right: 5%;
             }
-        }
-
-        
+        }      
         
         #sidebar {
             background: 
@@ -38,6 +35,91 @@
         #sidebar a:hover {
             background-color: rgba(255, 255, 255, 0.26);
         }
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            border-bottom: none;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Stats Cards */
+        .stat-card {
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            transition: all 0.3s;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+            z-index: 1;
+        }
+        
+        .stat-card-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stat-card h5 {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card .fs-2 {
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        /* Header */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0px;
+        right: 0;
+        height: 60px;
+        background: #000000;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 900;
+        transition: all 0.3s;
+    }
+        
     </style>
 </head>
 <body>
@@ -62,7 +144,7 @@
         <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
     </div>
     <div class="content" id="content">
-        <div class="header">
+        <div class="header" style="background: #057A55">
             <h2><i class="fas fa-trophy"></i> Dashboard - KeyChart</h2>
             <div class="user-dropdown">
                 <div class="user-icon-container">
@@ -76,30 +158,52 @@
                 </div>
             </div>
         </div>
+        <br>
         <main class="container-fluid mt-4">
-            <div class="row text-center">
-                <div class="col-12 col-md-3 mb-3">
-                    <div class="card text-white p-3" style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(img/total-campeonato.jpeg); background-size: cover;">
-                        <h5>Total de Campeonatos</h5>
-                        <p class="fs-2">12</p>
+            <!-- Cards de Estatísticas -->
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="stat-card" style="background-image: url('img/total-campeonato.jpeg'); background-size: cover;">
+                        <div class="stat-card-content">
+                            <h5><i class="bi bi-trophy-fill me-2"></i>Total de Campeonatos</h5>
+                            <p class="fs-2">12</p>
+                            <small class="d-flex align-items-center">
+                                <i class="bi bi-arrow-up-circle-fill me-1"></i> 2 novos este mês
+                            </small>
+                        </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-3 mb-3">
-                    <div class="card text-white p-3" style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(img/equipes-atletas.jpeg); background-size: cover;">
-                        <h5>Equipes Cadastradas</h5>
-                        <p class="fs-2">48</p>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="stat-card" style="background-image: url('img/equipes-atletas.jpeg'); background-size: cover;">
+                        <div class="stat-card-content">
+                            <h5><i class="bi bi-people-fill me-2"></i>Equipes Cadastradas</h5>
+                            <p class="fs-2">48</p>
+                            <small class="d-flex align-items-center">
+                                <i class="bi bi-arrow-up-circle-fill me-1"></i> 5 novas esta semana
+                            </small>
+                        </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-3 mb-3">
-                    <div class="card text-white p-3" style="background: linear-gradient(rgba(0, 0, 0, 0.774), rgba(0, 0, 0, 0.5)), url(img/atletas-registrados.jpeg); background-size: cover;">
-                        <h5>Atletas Registrados</h5>
-                        <p class="fs-2">256</p>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="stat-card" style="background-image: url('img/atletas-registrados.jpeg'); background-size: cover;">
+                        <div class="stat-card-content">
+                            <h5><i class="bi bi-person-badge-fill me-2"></i>Atletas Registrados</h5>
+                            <p class="fs-2">256</p>
+                            <small class="d-flex align-items-center">
+                                <i class="bi bi-arrow-up-circle-fill me-1"></i> 12 novos hoje
+                            </small>
+                        </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-3 mb-3">
-                    <div class="card text-white p-3" style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(img/partidas-hoje.jpeg); background-size: cover;">
-                        <h5>Partidas Hoje</h5>
-                        <p class="fs-2">6</p>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="stat-card" style="background-image: url('img/partidas-hoje.jpeg'); background-size: cover;">
+                        <div class="stat-card-content">
+                            <h5><i class="bi bi-calendar-event-fill me-2"></i>Partidas Hoje</h5>
+                            <p class="fs-2">6</p>
+                            <small class="d-flex align-items-center">
+                                <i class="bi bi-clock-fill me-1"></i> 2 em andamento
+                            </small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -122,65 +226,171 @@
             <div class="row mt-4">
                 <div class="col-12">
                     <div class="card p-3">
-                        <h5>📅 Próximas Partidas</h5>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Equipe 1</th>
-                                    <th>Equipe 2</th>
-                                    <th>Local</th>
-                                    <th>Árbitro</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>20/03/2025</td>
-                                    <td>Equipe A</td>
-                                    <td>Equipe B</td>
-                                    <td>Estádio Central</td>
-                                    <td>Pai Erminio</td>
-                                </tr>
-                                <tr>
-                                    <td>21/03/2025</td>
-                                    <td>Equipe C</td>
-                                    <td>Equipe D</td>
-                                    <td>Estádio Norte</td>
-                                    <td>Alan</td>
-                                </tr>
-                                <tr>
-                                    <td>22/03/2025</td>
-                                    <td>Equipe E</td>
-                                    <td>Equipe F</td>
-                                    <td>Estádio Sul</td>
-                                    <td>Luan</td>
-                                </tr>
-                                <tr>
-                                    <td>23/03/2025</td>
-                                    <td>Equipe G</td>
-                                    <td>Equipe H</td>
-                                    <td>Estádio Leste</td>
-                                    <td>Marcus</td>
-                                </tr>
-                                <tr>
-                                    <td>24/03/2025</td>
-                                    <td>Equipe I</td>
-                                    <td>Equipe J</td>
-                                    <td>Estádio Oeste</td>
-                                    <td>Emanuel</td>
-                                </tr>
-                                <tr>
-                                    <td>24/03/2025</td>
-                                    <td>Equipe I</td>
-                                    <td>Equipe J</td>
-                                    <td>Estádio Oeste</td>
-                                    <td>Rafael</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <h5 class="mb-3"><i class="fas fa-calendar-alt me-2"></i> Próximas Partidas</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead class="" style="background: #057A55;">
+                                    <tr>
+                                        <th class="text-center align-middle">Data</th>
+                                        <th class="text-center align-middle">Equipe 1</th>
+                                        <th class="text-center align-middle">Equipe 2</th>
+                                        <th class="text-center align-middle">Local</th>
+                                        <th class="text-center align-middle">Árbitro</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-nowrap text-center align-middle">
+                                            <span class="badge bg-primary rounded-pill">20/03/2025</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users me-2 text-primary"></i>
+                                                <span>Equipe A</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users me-2 text-danger"></i>
+                                                <span>Equipe B</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
+                                            Estádio Central
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="badge bg-warning text-dark">Pai Erminio</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-nowrap text-center align-middle">
+                                            <span class="badge bg-primary rounded-pill">21/03/2025</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users me-2 text-primary"></i>
+                                                <span>Equipe C</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users me-2 text-danger"></i>
+                                                <span>Equipe D</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
+                                            Estádio Norte
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="badge bg-warning text-dark">Alan</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-nowrap text-center align-middle">
+                                            <span class="badge bg-primary rounded-pill">22/03/2025</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users me-2 text-primary"></i>
+                                                <span>Equipe E</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users me-2 text-danger"></i>
+                                                <span>Equipe F</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
+                                            Estádio Sul
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="badge bg-warning text-dark">Luan</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-nowrap text-center align-middle">
+                                            <span class="badge bg-primary rounded-pill">23/03/2025</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users me-2 text-primary"></i>
+                                                <span>Equipe G</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users me-2 text-danger"></i>
+                                                <span>Equipe H</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
+                                            Estádio Leste
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="badge bg-warning text-dark">Marcus</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-nowrap text-center align-middle">
+                                            <span class="badge bg-primary rounded-pill">24/03/2025</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users me-2 text-primary"></i>
+                                                <span>Equipe I</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users me-2 text-danger"></i>
+                                                <span>Equipe J</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
+                                            Estádio Oeste
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="badge bg-warning text-dark">Emanuel</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-nowrap text-center align-middle">
+                                            <span class="badge bg-primary rounded-pill">24/03/2025</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users me-2 text-primary"></i>
+                                                <span>Equipe I</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-users me-2 text-danger"></i>
+                                                <span>Equipe J</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
+                                            Estádio Oeste
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="badge bg-warning text-dark">Rafael</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+        </main>
+    </div>
         </main>
     </div>
 
