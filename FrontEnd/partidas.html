@@ -35,23 +35,14 @@
         <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
         <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
     </div>
-            
-            <div class="p-3">
-                <div class="text-white-50 small">Versão 1.0.0</div>
-            </div>
-        </div>
-    </div>
 
     <!-- Conteúdo Principal -->
     <div class="content" id="content">
         <!-- Header -->
-        <div class="header" style="background: #057A55;">
+        <div class="header" style="background: #000000;">
             <div class="container-fluid">
                 <div class="d-flex justify-content-between align-items-center">
                     <h2><i class="bi bi-calendar-check"></i> Histórico de Partidas</h2>
-                    <button class="btn btn-outline-light btn-sm">
-                        <i class="bi bi-plus-lg"></i> Nova Partida
-                    </button>
                 </div>
             </div>
         </div>
@@ -90,7 +81,7 @@
             
             <!-- Tabela de Partidas -->
             <div class="card">
-                <div class="card-header">
+                <div class="card-header" style="background-color: black;">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-clock-history me-2"></i>Últimas Partidas
@@ -280,53 +271,6 @@
 
     <!-- MDB JS -->
     <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
-    <script>
-        // Função para alternar a sidebar
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const content = document.getElementById('content');
-            
-            if (window.innerWidth <= 992) {
-                // Comportamento mobile
-                sidebar.classList.toggle('show');
-            } else {
-                // Comportamento desktop
-                if (sidebar.style.width === '280px') {
-                    sidebar.style.width = '80px';
-                    content.style.marginLeft = '80px';
-                    document.querySelectorAll('.sidebar a span').forEach(el => {
-                        el.style.display = 'none';
-                    });
-                    document.querySelector('.sidebar .small').style.display = 'none';
-                } else {
-                    sidebar.style.width = '280px';
-                    content.style.marginLeft = '280px';
-                    document.querySelectorAll('.sidebar a span').forEach(el => {
-                        el.style.display = 'inline';
-                    });
-                    document.querySelector('.sidebar .small').style.display = 'block';
-                }
-            }
-        }
-        
-        // Fechar sidebar ao clicar no conteúdo (mobile)
-        document.getElementById('content').addEventListener('click', function() {
-            if (window.innerWidth <= 992) {
-                document.getElementById('sidebar').classList.remove('show');
-            }
-        });
-        
-        // Atualizar ao redimensionar
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 992) {
-                document.getElementById('sidebar').style.width = '280px';
-                document.getElementById('content').style.marginLeft = '280px';
-                document.querySelectorAll('.sidebar a span').forEach(el => {
-                    el.style.display = 'inline';
-                });
-                document.querySelector('.sidebar .small').style.display = 'block';
-            }
-        });
-    </script>
+    <script src="scripts/partidas.js"></script>
 </body>
 </html>

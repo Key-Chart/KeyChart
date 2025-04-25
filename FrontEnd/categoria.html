@@ -11,8 +11,266 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="img/image.png" type="image/x-icon">
     <title>Categorias | KeyChart</title>
-    <link rel="stylesheet" href="style.css/categoria.css">
-    
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ffc107;
+            --dark-color: #343a40;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background-color: #198754;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .sidebar a {
+            padding: 15px;
+            display: block;
+            color: white;
+            text-decoration: none;
+            white-space: nowrap;
+            font-size: 18px;
+        }
+
+        .sidebar a i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        .sidebar a:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        
+        .sidebar a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        #img-logo {
+            height: 35px;
+            margin-right: 10px;
+        }
+        
+        /* Conteúdo Principal */
+        .content {
+            margin-left: 280px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--primary-color);
+            color: #F5F7FA;
+            padding: 1.5rem;
+            position: relative;
+        }
+        
+        .header h2 {
+            font-weight: 600;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header h2 i {
+            margin-right: 12px;
+        }
+        
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            background-color: white;
+            color: rgb(0, 0, 0);
+            padding: 1.25rem 1.5rem;
+            border-bottom: none;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Formulários */
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 10px 15px;
+        }
+        
+        /* Tabelas */
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            border-bottom: 2px solid #e9ecef;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+        }
+        
+        .table tbody tr {
+            transition: all 0.2s;
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(20, 108, 67, 0.05);
+        }
+        
+        .table td, .table th {
+            vertical-align: middle;
+            padding: 1rem;
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 6px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .badge-active {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .badge-finished {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+        
+        .badge-suspended {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+        
+        .badge-male {
+            background-color: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+        
+        .badge-female {
+            background-color: rgba(214, 51, 132, 0.1);
+            color: #d63384;
+        }
+        
+        .badge-kata {
+            background-color: rgba(111, 66, 193, 0.1);
+            color: #6f42c1;
+        }
+        
+        .badge-kumite {
+            background-color: rgba(253, 126, 20, 0.1);
+            color: #fd7e14;
+        }
+        
+        .toggle-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1050;
+        } 
+        
+        /* Botão Voltar */
+        .btn-back {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-back:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .content {
+                margin-left: 0;
+            }
+            
+            .toggle-btn {
+                left: 20px;
+                top: 20px;
+            }
+        }
+        
+        /* Animação */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .table tbody tr {
+            animation: fadeIn 0.3s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        .table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+        .table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+        .table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+        .table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+        
+        /* Modal Customizado */
+        .custom-modal .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .custom-modal .modal-footer .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+    </style>
 </head>
 <body>
     <button class="toggle-btn" onclick="toggleSidebar()">
@@ -40,16 +298,17 @@
     <!-- Conteúdo Principal -->
     <div class="content" id="content">
         <!-- Header -->
-        <div class="header">
+        <div class="header" style="background: rgb(0, 0, 0); color: #ffffff;">
             <div class="container-fluid">
                 <div class="d-flex align-items-center">
                     <button class="btn btn-back me-3" onclick="window.history.back()">
-                        <i class="bi bi-arrow-left"></i>
+                        <i class="bi bi-arrow-left" style="color: #ffffff;"></i>
                     </button>
                     <h2><i class="bi bi-trophy me-2"></i> Copa Regional 2025</h2>
                 </div>
             </div>
         </div>
+
         
         <!-- Conteúdo -->
         <main class="container-fluid py-4">
@@ -61,14 +320,20 @@
                         <div class="card-header">
                             <h5 class="card-title mb-0"><i class="bi bi-tag me-2"></i>Cadastro de Categorias</h5>
                         </div>
+                        <hr>
                         <div class="card-body">
                             <form id="categoryForm">
-                                <div class="mb-3">
-                                    <label for="categoryName" class="form-label">Nome da Categoria</label>
-                                    <input type="text" class="form-control" id="categoryName" placeholder="Ex: Adulto Masculino" required>
-                                </div>
+                                <div class="col-md-12 mb-3">
+                                        <label for="editModality" class="form-label">Categorias</label>
+                                        <select class="form-select" id="editModality" required>
+                                            <option value="" selected disabled>Selecione</option>
+                                            <option value="Adulto">Adulto</option>
+                                            <option value="Infantil">Infantil</option>
+                                            <option value="Sênior">Sênior</option>  
+                                        </select>
+                                    </div>
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-12 mb-3">
                                         <label for="categoryGender" class="form-label">Sexo</label>
                                         <select class="form-select" id="categoryGender" required>
                                             <option value="" selected disabled>Selecione</option>
@@ -77,14 +342,14 @@
                                             <option value="MX">Misto</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="categoryType" class="form-label">Tipo</label>
-                                        <select class="form-select" id="categoryType" required>
-                                            <option value="" selected disabled>Selecione</option>
-                                            <option value="kata">Kata</option>
-                                            <option value="kumite">Kumite</option>
-                                        </select>
-                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="categoryType" class="form-label">Tipo</label>
+                                    <select class="form-select" id="categoryType" required>
+                                        <option value="" selected disabled>Selecione</option>
+                                        <option value="kata">Kata</option>
+                                        <option value="kumite">Kumite</option>
+                                    </select>
                                 </div>
                                 <button type="submit" class="btn btn-success w-100">
                                     <i class="bi bi-plus-circle me-2"></i>Cadastrar Categoria
@@ -100,6 +365,7 @@
                         <div class="card-header">
                             <h5 class="card-title mb-0"><i class="bi bi-building me-2"></i>Cadastro de Academias</h5>
                         </div>
+                        <hr>
                         <div class="card-body">
                             <form id="academyForm">
                                 <div class="mb-3">
@@ -134,7 +400,7 @@
                 </div>
             </div>
 
-            <!-- Tabelas de Dados -->
+            <!-- Categorias cadastradas -->
             <div class="row">
                 <!-- Tabela de Categorias -->
                 <div class="col-lg-6 mb-4">
@@ -164,14 +430,13 @@
                                             <td><span class="badge badge-kata">Kata</span></td>
                                             <td><span class="badge badge-active">Ativa</span></td>
                                             <td>
-                                                <a href="detalhes.html" class="btn btn-sm btn-outline-primary me-1" data-mdb-tooltip="tooltip" title="Visualizar">
+                                                <a href="detalhes.html" class="btn btn-sm btn-outline-primary me-1"
+                                                data-mdb-tooltip="tooltip" title="Visualizar">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                
-                                                <a href="excluir_categoria.html" class="btn btn-sm btn-outline-danger" data-mdb-tooltip="tooltip" title="Excluir">
+                                                <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteCategoryModal" data-mdb-tooltip="tooltip" title="Excluir">
                                                     <i class="bi bi-trash"></i>
-                                                </a>
-                                                
+                                                </button>
                                             </td>
                                         </tr>
                                         <tr>
@@ -180,9 +445,11 @@
                                             <td><span class="badge badge-kumite">Kumite</span></td>
                                             <td><span class="badge badge-finished">Finalizada</span></td>
                                             <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewCategoryModal" data-mdb-tooltip="tooltip" title="Visualizar">
+                                                <a href="detalhes.html" class="btn btn-sm btn-outline-primary me-1"
+                                                data-mdb-tooltip="tooltip" title="Visualizar">
                                                     <i class="bi bi-eye"></i>
-                                                </button>
+                                                </a>
+
                                                 <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteCategoryModal" data-mdb-tooltip="tooltip" title="Excluir">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
@@ -228,6 +495,7 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0"><i class="bi bi-building me-2"></i>Academias Cadastradas</h5>
+                               
                                 <span class="badge bg-primary">2 registros</span>
                             </div>
                         </div>
@@ -296,41 +564,6 @@
                 </div>
             </div>
         </main>
-    </div>
-
-    <!-- Modal Visualizar Categoria -->
-    <div class="modal fade" id="viewCategoryModal" tabindex="-1" aria-labelledby="viewCategoryModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header text-white" style="background-color: var(--primary-color);">
-                    <h5 class="modal-title" id="viewCategoryModalLabel"><i class="bi bi-tag me-2"></i>Detalhes da Categoria</h5>
-                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <p class="mb-1"><strong>Nome:</strong></p>
-                        <p>Categoria Master</p>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <p class="mb-1"><strong>Sexo:</strong></p>
-                            <p><span class="badge badge-male">Masculino</span></p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <p class="mb-1"><strong>Tipo:</strong></p>
-                            <p><span class="badge badge-kata">Kata</span></p>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <p class="mb-1"><strong>Status:</strong></p>
-                        <p><span class="badge badge-active">Ativa</span></p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Modal Editar Categoria -->

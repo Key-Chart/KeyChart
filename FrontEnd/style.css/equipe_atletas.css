@@ -5,7 +5,7 @@ body {
 }
 .sidebar {
     width: 250px;
-    background-color: #198754;
+    background-color: #000000;
     color: white;
     height: 100vh;
     position: fixed;
@@ -27,7 +27,7 @@ body {
     margin-right: 10px;
 }
 .sidebar a:hover {
-    background-color: #146c43;
+    background-color: #000000;
 }
 .content {
     margin-left: 250px;
@@ -124,7 +124,7 @@ body {
     width: 5rem;
     height: 5rem;
     border-width: 0.5rem;
-    border-color: #198754;
+    border-color: #000000;
     border-right-color: transparent;
 }
 

@@ -15,112 +15,6 @@
     <link rel="shortcut icon" href="img/image.png" type="image/x-icon">
     <title>Dashboard</title>
     <link rel="stylesheet" href="style.css/dashboard.css">
-    <style>
-        @media (max-width: 768px) {
-            .chat-container {
-                width: 90%;
-                right: 5%;
-            }
-        }      
-        
-        #sidebar {
-            background: 
-                linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                url('../imgs/karate-sidebar-bg.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed; /* Efeito parallax opcional */
-        }
-        
-        #sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.26);
-        }
-        /* Cards */
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            transition: all 0.3s;
-            margin-bottom: 2rem;
-            overflow: hidden;
-            height: 100%;
-        }
-        
-        .card:hover {
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        
-        .card-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 1.25rem 1.5rem;
-            border-bottom: none;
-        }
-        
-        .card-title {
-            font-weight: 600;
-            margin-bottom: 0;
-            display: flex;
-            align-items: center;
-        }
-        
-        /* Stats Cards */
-        .stat-card {
-            color: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            position: relative;
-            overflow: hidden;
-            height: 100%;
-            transition: all 0.3s;
-        }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
-            z-index: 1;
-        }
-        
-        .stat-card-content {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .stat-card h5 {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-card .fs-2 {
-            font-weight: 700;
-            margin-bottom: 0;
-        }
-
-        /* Header */
-    .header {
-        position: fixed;
-        top: 0;
-        left: 0px;
-        right: 0;
-        height: 60px;
-        background: #000000;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        z-index: 900;
-        transition: all 0.3s;
-    }
-        
-    </style>
 </head>
 <body>
     <button class="toggle-btn" onclick="toggleSidebar()">
@@ -144,17 +38,17 @@
         <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
     </div>
     <div class="content" id="content">
-        <div class="header" style="background: #057A55">
-            <h2><i class="fas fa-trophy"></i> Dashboard - KeyChart</h2>
+        <div class="header">
+            <h2 style="color: black;"><i class="fas fa-trophy"></i> Dashboard - KeyChart</h2>
             <div class="user-dropdown">
                 <div class="user-icon-container">
                     <i class="bi bi-person-circle user-icon"></i>
                     <i class="bi bi-chevron-down arrow-icon"></i>
                 </div>
                 <div class="dropdown-menu">
-                    <a href="#">Ver perfil</a>
-                    <a href="configuracoes.html">Configurações</a>
-                    <a href="login.html">Sair</a>
+                    <a href="#"><i class="fas fa-user"></i> Ver perfil</a>
+                    <a href="configuracoes.html"><i class="fas fa-cog"></i> Configurações</a>
+                    <a href="login.html"><i class="fas fa-sign-out-alt"></i> Sair</a>
                 </div>
             </div>
         </div>
@@ -229,13 +123,13 @@
                         <h5 class="mb-3"><i class="fas fa-calendar-alt me-2"></i> Próximas Partidas</h5>
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
-                                <thead class="" style="background: #057A55;">
+                                <thead class="" style="background: #000000;">
                                     <tr>
-                                        <th class="text-center align-middle">Data</th>
-                                        <th class="text-center align-middle">Equipe 1</th>
-                                        <th class="text-center align-middle">Equipe 2</th>
-                                        <th class="text-center align-middle">Local</th>
-                                        <th class="text-center align-middle">Árbitro</th>
+                                        <th class="text-center align-middle" style="color: white;">Data</th>
+                                        <th class="text-center align-middle" style="color: white;">Equipe 1</th>
+                                        <th class="text-center align-middle" style="color: white;">Equipe 2</th>
+                                        <th class="text-center align-middle" style="color: white;">Local</th>
+                                        <th class="text-center align-middle" style="color: white;">Árbitro</th>
                                     </tr>
                                 </thead>
                                 <tbody>

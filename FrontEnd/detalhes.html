@@ -86,7 +86,7 @@
                     <div class="row align-items-center">
                         <div class="col-12 col-md-2 text-center">
                             <img src="img/homem.png" class="rounded-circle athlete-avatar mb-2" alt="Foto do Atleta">
-                            <h5 class="card-title mb-0">João Silva</h5>
+                            <h5 class="card-title mb-0">Emanuel</h5>
                             <small class="text-muted">ID: #12345</small>
                         </div>
                         <div class="col-12 col-md-5">
@@ -129,7 +129,7 @@
                         </div>
                         <div class="col-12 col-md-1">
                             <div class="d-flex flex-md-column gap-2 justify-content-center">
-                                <button class="btn btn-edit btn-custom text-white rounded-2">
+                                <button class="btn btn-edit btn-custom text-white rounded-2" style="background: #198754;">
                                     <i class="bi bi-pencil"></i> <span class="d-none d-md-inline"></span>
                                 </button>
                                 <button class="btn btn-delete btn-custom text-white rounded-2">
@@ -146,8 +146,8 @@
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-12 col-md-2 text-center">
-                            <img src="img/mulher.png" class="rounded-circle athlete-avatar mb-2" alt="Foto do Atleta">
-                            <h5 class="card-title mb-0">Maria Oliveira</h5>
+                            <img src="img/homem.png" class="rounded-circle athlete-avatar mb-2" alt="Foto do Atleta">
+                            <h5 class="card-title mb-0">Marcus Batista</h5>
                             <small class="text-muted">ID: #12346</small>
                         </div>
                         <div class="col-12 col-md-5">
@@ -190,7 +190,67 @@
                         </div>
                         <div class="col-12 col-md-1">
                             <div class="d-flex flex-md-column gap-2 justify-content-center">
-                                <button class="btn btn-edit btn-custom text-white rounded-2">
+                                <button class="btn btn-edit btn-custom text-white rounded-2" style="background: #198754;">
+                                    <i class="bi bi-pencil"></i> <span class="d-none d-md-inline"></span>
+                                </button>
+                                <button class="btn btn-delete btn-custom text-white rounded-2">
+                                    <i class="bi bi-trash"></i> <span class="d-none d-md-inline"></span>
+                                </button>
+                            </div>
+                        </div>                          
+                    </div>
+                </div>
+            </div>
+
+            <div class="card athlete-card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-12 col-md-2 text-center">
+                            <img src="img/homem.png" class="rounded-circle athlete-avatar mb-2" alt="Foto do Atleta">
+                            <h5 class="card-title mb-0">Luan Carvalho</h5>
+                            <small class="text-muted">ID: #12346</small>
+                        </div>
+                        <div class="col-12 col-md-5">
+                            <div class="row">
+                                <div class="col-6 col-md-3 text-center mb-3">
+                                    <div class="info-label">PESO</div>
+                                    <div class="info-value">58 kg</div>
+                                </div>
+                                <div class="col-6 col-md-3 text-center mb-3">
+                                    <div class="info-label">FAIXA</div>
+                                    <div class="info-value text-uppercase">Preta</div>
+                                </div>
+                                <div class="col-6 col-md-3 text-center mb-3">
+                                    <div class="info-label">ESTADO</div>
+                                    <div class="info-value">SP</div>
+                                </div>
+                                <div class="col-6 col-md-3 text-center mb-3">
+                                    <div class="info-label">IDADE</div>
+                                    <div class="info-value">28</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="row">
+                                <div class="col-6 text-center mb-3">
+                                    <div class="info-label">CIDADE</div>
+                                    <div class="info-value">São Paulo</div>
+                                </div>
+                                <div class="col-6 text-center mb-3">
+                                    <div class="info-label">ACADEMIA</div>
+                                    <div class="info-value">Top Karate</div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <span class="badge bg-primary">Kata</span>
+                                        <span class="badge bg-danger">Kumite -55kg</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-1">
+                            <div class="d-flex flex-md-column gap-2 justify-content-center">
+                                <button class="btn btn-edit btn-custom text-white rounded-2" style="background: #198754;">
                                     <i class="bi bi-pencil"></i> <span class="d-none d-md-inline"></span>
                                 </button>
                                 <button class="btn btn-delete btn-custom text-white rounded-2">
@@ -207,12 +267,12 @@
         <div class="container mt-5 mb-5">
             <div class="row justify-content-center g-3">
                 <div class="col-md-5 col-12 text-center">
-                    <a href="chaveamento_kata.html" class="btn btn-generate text-white w-100">
+                    <a href="chaveamento_kata.html" class="btn btn-generate text-white w-100" style="background: #198754;">
                         <i class="fas fa-project-diagram"></i> Gerar Chaveamento KATA
                     </a>
                 </div>
                 <div class="col-md-5 col-12 text-center">
-                    <a href="chaveamento_gerado.html" class="btn btn-generate text-white w-100">
+                    <a href="chaveamento_gerado.html" class="btn btn-generate text-white w-100" style="background: #198754;">
                         <i class="fas fa-people-arrows"></i> Gerar Chaveamento KUMITE
                     </a>
                 </div>
@@ -229,7 +289,6 @@
             content.classList.toggle('collapsed');
         }
     </script>
-    
-    
+    <script src="scripts/detalhes.js"></script>
 </body>
 </html>

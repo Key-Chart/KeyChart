@@ -13,7 +13,6 @@ body {
 }
 .sidebar {
     width: 250px;
-    background-color: #198754;
     color: white;
     height: 100vh;
     position: fixed;
@@ -22,6 +21,7 @@ body {
     padding-top: 20px;
     transition: width 0.3s ease-in-out;
 }
+
 .sidebar a {
     padding: 15px;
     display: block;
@@ -35,9 +35,7 @@ body {
     font-size: 24px;
     margin-right: 10px;
 }
-.sidebar a:hover {
-    background-color: #146c43;
-}
+
 .content {
     margin-left: 250px;
     flex-grow: 1;
@@ -142,13 +140,13 @@ body {
 
 .user-icon {
     font-size: 24px;
-    color: #ffffff;
+    color: #000000;
 }
 
 .arrow-icon {
     font-size: 14px;
     margin-left: 5px;
-    color: #ffffff;
+    color: #000000;
     transition: transform 0.3s ease; /* Adiciona animação à seta */
 }
 
@@ -232,4 +230,108 @@ body {
 
 .chat-container:not(.collapsed) .card {
     display: block; 
+}
+
+@media (max-width: 768px) {
+    .chat-container {
+        width: 90%;
+        right: 5%;
+    }
+}      
+
+#sidebar {
+    background: 
+        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+        url('../imgs/karate-sidebar-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Efeito parallax opcional */
+}
+
+#sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.26);
+}
+/* Cards */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    height: 100%;
+}
+
+.card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    border-bottom: none;
+}
+
+.card-title {
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Stats Cards */
+.stat-card {
+    color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    transition: all 0.3s;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+    z-index: 1;
+}
+
+.stat-card-content {
+    position: relative;
+    z-index: 2;
+}
+
+.stat-card h5 {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card .fs-2 {
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0px;
+    right: 0;
+    height: 60px;
+    background: #ffffff;
+    color: rgb(0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    
+    z-index: 900;
+    transition: all 0.3s;
 }
