@@ -655,7 +655,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Passo 3: Cadastrar Atleta (inicialmente oculto) -->
             <div class="card mb-4 d-none" id="step3-content">
                 <div class="card-header">
@@ -690,6 +689,21 @@
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Peso (kg)</label>
                                 <input type="number" step="0.1" class="form-control" id="peso-atleta" placeholder="Digite o peso...">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Altura (cm)</label>
+                                <input type="number" class="form-control" id="altura-atleta" placeholder="Digite a altura em cm...">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">E-mail <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email-atleta" placeholder="Digite o e-mail..." required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Telefone <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="telefone-atleta" placeholder="Digite o telefone..." required>
                             </div>
                         </div>
                         
@@ -777,6 +791,7 @@
                     </form>
                 </div>
             </div>
+            
 
             <!-- Passo 4: Confirmar Inscrição (inicialmente oculto) -->
             <div class="card mb-4 d-none" id="step4-content">
