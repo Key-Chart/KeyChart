@@ -153,12 +153,13 @@
         .dropdown-menu {
             display: none;
             position: absolute;
-            right: 0;
+            left: 0;
+            transform: translateX(-100%);
             background-color: white;
             border: 1px solid #ddd;
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            min-width: 200px;
+            min-width: 150px;
             z-index: 1000;
         }
 
@@ -386,33 +387,6 @@
             margin-bottom: 1.5rem;
         }
         
-        /* Login */
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f8f9fa;
-        }
-        
-        .login-card {
-            width: 100%;
-            max-width: 400px;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            background-color: white;
-        }
-        
-        .login-logo {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .login-logo img {
-            max-width: 150px;
-        }
-        
         /* Notificações */
         .notification-item {
             padding: 1rem;
@@ -447,62 +421,7 @@
             border-radius: 5px;
             margin-top: 0.5rem;
         }
-        
-        /* Calendário */
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        
-        .calendar-nav {
-            display: flex;
-            align-items: center;
-        }
-        
-        .calendar-nav button {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-        
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-        }
-        
-        .calendar-day-header {
-            text-align: center;
-            font-weight: bold;
-            padding: 0.5rem;
-        }
-        
-        .calendar-day {
-            border: 1px solid #eee;
-            padding: 0.5rem;
-            min-height: 80px;
-        }
-        
-        .calendar-day.empty {
-            background-color: #f8f9fa;
-        }
-        
-        .calendar-day.today {
-            background-color: #e6f7ff;
-        }
-        
-        .calendar-event {
-            font-size: 0.8rem;
-            padding: 2px 5px;
-            margin-bottom: 2px;
-            border-radius: 3px;
-            background-color: #e3f2fd;
-            cursor: pointer;
-        }
-        
+         
         /* Paginação */
         .pagination {
             justify-content: center;
@@ -511,107 +430,8 @@
     </style>
 </head>
 <body>
-    <!-- Tela de Login -->
-    <div id="login-screen" class="screen">
-        <div class="login-container">
-            <div class="login-card">
-                <div class="login-logo">
-                    <img src="https://via.placeholder.com/150x50?text=Portal+Atleta" alt="Portal do Atleta">
-                </div>
-                <h2 class="text-center mb-4">Acesse sua conta</h2>
-                <form id="login-form">
-                    <div class="mb-3">
-                        <label for="login-email" class="form-label">E-mail</label>
-                        <input type="email" class="form-control" id="login-email" placeholder="seu@email.com" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="login-password" class="form-label">Senha</label>
-                        <input type="password" class="form-control" id="login-password" placeholder="Sua senha" required>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="remember-me">
-                        <label class="form-check-label" for="remember-me">Lembrar de mim</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
-                    <div class="text-center mt-3">
-                        <a href="#forgot-password" id="forgot-password-link">Esqueceu sua senha?</a>
-                    </div>
-                </form>
-                <div class="text-center mt-4">
-                    <p>Não tem uma conta? <a href="#register" id="register-link">Cadastre-se</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tela de Recuperação de Senha -->
-    <div id="forgot-password-screen" class="screen">
-        <div class="login-container">
-            <div class="login-card">
-                <div class="login-logo">
-                    <img src="https://via.placeholder.com/150x50?text=Portal+Atleta" alt="Portal do Atleta">
-                </div>
-                <h2 class="text-center mb-4">Recuperar senha</h2>
-                <form id="forgot-password-form">
-                    <div class="mb-3">
-                        <label for="recovery-email" class="form-label">E-mail cadastrado</label>
-                        <input type="email" class="form-control" id="recovery-email" placeholder="seu@email.com" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Enviar link de recuperação</button>
-                    <div class="text-center mt-3">
-                        <a href="#login" id="back-to-login-link">Voltar para o login</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tela de Cadastro -->
-    <div id="register-screen" class="screen">
-        <div class="login-container">
-            <div class="login-card">
-                <div class="login-logo">
-                    <img src="https://via.placeholder.com/150x50?text=Portal+Atleta" alt="Portal do Atleta">
-                </div>
-                <h2 class="text-center mb-4">Criar nova conta</h2>
-                <form id="register-form">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="register-first-name" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="register-first-name" placeholder="Nome" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="register-last-name" class="form-label">Sobrenome</label>
-                            <input type="text" class="form-control" id="register-last-name" placeholder="Sobrenome" required>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="register-email" class="form-label">E-mail</label>
-                        <input type="email" class="form-control" id="register-email" placeholder="seu@email.com" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="register-password" class="form-label">Senha</label>
-                        <input type="password" class="form-control" id="register-password" placeholder="Crie uma senha" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="register-confirm-password" class="form-label">Confirme a senha</label>
-                        <input type="password" class="form-control" id="register-confirm-password" placeholder="Repita a senha" required>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="accept-terms" required>
-                        <label class="form-check-label" for="accept-terms">Eu li e aceito os <a href="#terms">Termos de Uso</a></label>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
-                    <div class="text-center mt-3">
-                        <a href="#login" id="back-to-login-from-register">Já tem uma conta? Faça login</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Painel Principal -->
-    <div id="main-screen" class="screen">
+    <div id="main-screen" class="screen active">
         <button class="toggle-btn" onclick="toggleSidebar()">
             <i class="bi bi-list"></i>
         </button>
@@ -630,10 +450,7 @@
             <a href="#" data-screen="desempenho"><i class="bi bi-speedometer2"></i><span>Desempenho</span></a>
             <a href="#" data-screen="competicoes"><i class="bi bi-trophy"></i><span>Competições</span></a>
             <a href="#" data-screen="resultados"><i class="bi bi-clipboard-data"></i><span>Resultados</span></a>
-            <a href="#" data-screen="treinos"><i class="bi bi-calendar-check"></i><span>Treinos</span></a>
-            <a href="#" data-screen="mensagens"><i class="bi bi-envelope"></i><span>Mensagens</span></a>
             <a href="#" data-screen="notificacoes"><i class="bi bi-bell"></i><span>Notificações</span></a>
-            <a href="#" data-screen="calendario"><i class="bi bi-calendar-event"></i><span>Calendário</span></a>
             <a href="#" data-screen="configuracoes"><i class="bi bi-gear"></i><span>Configurações</span></a>
         </div>
         <div class="content" id="content">
@@ -647,7 +464,7 @@
                     <div class="dropdown-menu">
                         <a href="#" data-screen="perfil"><i class="fas fa-user"></i> Meu Perfil</a>
                         <a href="#" data-screen="configuracoes"><i class="fas fa-cog"></i> Configurações</a>
-                        <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Sair</a>
+                        <a href="login.html" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Sair</a>
                     </div>
                 </div>
             </div>
@@ -869,71 +686,67 @@
                         </div>
                     </div>
                 </div>
-            </main>
-
-
-
-            <div class="col-md-12 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">
-                            <i class="bi bi-award"></i> Meus Certificados
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover table-bordered align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th style="width: 10%;">#</th>
-                                        <th>Nome do Certificado</th>
-                                        <th>Data de Emissão</th>
-                                        <th>Validade</th>
-                                        <th style="width: 20%;">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Certificado de Graduação - Faixa Preta</td>
-                                        <td>20/04/2024</td>
-                                        <td>20/04/2029</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <a href="#" class="btn btn-success btn-sm">
-                                                    <i class="bi bi-download"></i> Baixar
-                                                </a>
-                                                <a href="#" class="btn btn-secondary btn-sm">
-                                                    <i class="bi bi-eye"></i> Visualizar
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Participação no Campeonato Estadual</td>
-                                        <td>15/02/2023</td>
-                                        <td>Indeterminado</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <a href="#" class="btn btn-success btn-sm">
-                                                    <i class="bi bi-download"></i> Baixar
-                                                </a>
-                                                <a href="#" class="btn btn-secondary btn-sm">
-                                                    <i class="bi bi-eye"></i> Visualizar
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Você pode adicionar mais linhas aqui -->
-                                </tbody>
-                            </table>
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">
+                                    <i class="bi bi-award"></i> Meus Certificados
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-bordered align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="width: 10%;">#</th>
+                                                <th>Nome do Certificado</th>
+                                                <th>Data de Emissão</th>
+                                                <th>Validade</th>
+                                                <th style="width: 20%;">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Certificado de Graduação - Faixa Preta</td>
+                                                <td>20/04/2024</td>
+                                                <td>20/04/2029</td>
+                                                <td class="text-center">
+                                                    <div class="d-flex justify-content-center gap-2">
+                                                        <a href="#" class="btn btn-success btn-sm">
+                                                            <i class="bi bi-download"></i> Baixar
+                                                        </a>
+                                                        <a href="#" class="btn btn-secondary btn-sm">
+                                                            <i class="bi bi-eye"></i> Visualizar
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>Participação no Campeonato Estadual</td>
+                                                <td>15/02/2023</td>
+                                                <td>Indeterminado</td>
+                                                <td class="text-center">
+                                                    <div class="d-flex justify-content-center gap-2">
+                                                        <a href="#" class="btn btn-success btn-sm">
+                                                            <i class="bi bi-download"></i> Baixar
+                                                        </a>
+                                                        <a href="#" class="btn btn-secondary btn-sm">
+                                                            <i class="bi bi-eye"></i> Visualizar
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-          
+            </main>
 
             <!-- Estatísticas -->
             <main class="container-fluid mt-4" id="estatisticas-screen" data-screen-content style="display: none;">
@@ -1431,197 +1244,7 @@
                     </div>
                 </div>
             </main>
-            
-            <!-- Treinos -->
-            <main class="container-fluid mt-4" id="treinos-screen" data-screen-content style="display: none;">
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title"><i class="bi bi-calendar-check"></i> Plano de Treinos</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Data</th>
-                                                <th>Horário</th>
-                                                <th>Tipo de Treino</th>
-                                                <th>Local</th>
-                                                <th>Professor</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Segunda-feira</td>
-                                                <td>19:00 - 21:00</td>
-                                                <td>Técnico</td>
-                                                <td>Dojô Central</td>
-                                                <td>Sensei Takashi</td>
-                                                <td><span class="badge bg-success">Regular</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Quarta-feira</td>
-                                                <td>19:00 - 21:00</td>
-                                                <td>Kata</td>
-                                                <td>Dojô Central</td>
-                                                <td>Sensei Takashi</td>
-                                                <td><span class="badge bg-success">Regular</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Sexta-feira</td>
-                                                <td>19:00 - 21:00</td>
-                                                <td>Kumite</td>
-                                                <td>Dojô Central</td>
-                                                <td>Sensei Takashi</td>
-                                                <td><span class="badge bg-success">Regular</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Sábado</td>
-                                                <td>09:00 - 11:00</td>
-                                                <td>Físico</td>
-                                                <td>Academia Bushido</td>
-                                                <td>Preparador Físico</td>
-                                                <td><span class="badge bg-info">Complementar</span></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="mt-3">
-                                    <h6><i class="bi bi-journal-check"></i> Objetivos do Mês</h6>
-                                    <ul class="list-group">
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Melhorar velocidade de execução do kata Bassai Dai
-                                            <span class="badge bg-primary rounded-pill">Em andamento</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Aumentar resistência para combates longos
-                                            <span class="badge bg-primary rounded-pill">Em andamento</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            Aperfeiçoar técnica de Gyaku-Zuki
-                                            <span class="badge bg-success rounded-pill">Concluído</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title"><i class="bi bi-graph-up"></i> Frequência de Treinos</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="chart-container">
-                                    <canvas id="attendanceChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title"><i class="bi bi-calendar-week"></i> Próximos Treinos</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="list-group">
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">Treino Técnico</h6>
-                                            <small class="text-muted">Amanhã</small>
-                                        </div>
-                                        <p class="mb-1">19:00 - 21:00 | Dojô Central</p>
-                                        <small class="text-muted">Sensei Takashi</small>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">Treino de Kata</h6>
-                                            <small class="text-muted">Quarta-feira</small>
-                                        </div>
-                                        <p class="mb-1">19:00 - 21:00 | Dojô Central</p>
-                                        <small class="text-muted">Sensei Takashi</small>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">Treino de Kumite</h6>
-                                            <small class="text-muted">Sexta-feira</small>
-                                        </div>
-                                        <p class="mb-1">19:00 - 21:00 | Dojô Central</p>
-                                        <small class="text-muted">Sensei Takashi</small>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-            
-            <!-- Mensagens -->
-            <main class="container-fluid mt-4" id="mensagens-screen" data-screen-content style="display: none;">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card h-100">
-                            <div class="card-header">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title mb-0"><i class="bi bi-envelope"></i> Caixa de Entrada</h5>
-                                    <button class="btn btn-sm btn-primary">Nova Mensagem</button>
-                                </div>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="list-group list-group-flush">
-                                    <a href="#" class="list-group-item list-group-item-action message-item unread" data-message-id="1">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">Sensei Takashi</h6>
-                                            <small>15 min atrás</small>
-                                        </div>
-                                        <p class="mb-1">Plano de treinos para a semana</p>
-                                        <small>Confira o plano de treinos atualizado...</small>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action message-item" data-message-id="2">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">Federação Paulista</h6>
-                                            <small>2 horas atrás</small>
-                                        </div>
-                                        <p class="mb-1">Confirmação de inscrição</p>
-                                        <small>Sua inscrição no Campeonato Paulista...</small>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action message-item" data-message-id="3">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">Equipe Bushido</h6>
-                                            <small>1 dia atrás</small>
-                                        </div>
-                                        <p class="mb-1">Reunião de equipe</p>
-                                        <small>Lembramos da reunião mensal no próximo...</small>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card h-100">
-                            <div class="card-header">
-                                <h5 class="card-title" id="message-subject">Selecione uma mensagem</h5>
-                            </div>
-                            <div class="card-body" id="message-content">
-                                <div class="text-center text-muted py-5">
-                                    <i class="bi bi-envelope-open" style="font-size: 3rem;"></i>
-                                    <p class="mt-3">Selecione uma mensagem para ler</p>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-white d-none" id="message-actions">
-                                <button class="btn btn-sm btn-outline-secondary">Responder</button>
-                                <button class="btn btn-sm btn-outline-danger float-end">Excluir</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-            
+
             <!-- Notificações -->
             <main class="container-fluid mt-4" id="notificacoes-screen" data-screen-content style="display: none;">
                 <div class="row">
@@ -1703,162 +1326,6 @@
                                         </li>
                                     </ul>
                                 </nav>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-            
-            <!-- Calendário -->
-            <main class="container-fluid mt-4" id="calendario-screen" data-screen-content style="display: none;">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title mb-0"><i class="bi bi-calendar-event"></i> Calendário</h5>
-                                    <div>
-                                        <button class="btn btn-sm btn-outline-primary">Hoje</button>
-                                        <button class="btn btn-sm btn-outline-secondary">Adicionar Evento</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="calendar-header">
-                                    <h4 id="current-month">Junho 2025</h4>
-                                    <div class="calendar-nav">
-                                        <button id="prev-month"><i class="bi bi-chevron-left"></i></button>
-                                        <button id="next-month" class="ms-2"><i class="bi bi-chevron-right"></i></button>
-                                    </div>
-                                </div>
-                                <div class="calendar-grid mt-3">
-                                    <div class="calendar-day-header">Dom</div>
-                                    <div class="calendar-day-header">Seg</div>
-                                    <div class="calendar-day-header">Ter</div>
-                                    <div class="calendar-day-header">Qua</div>
-                                    <div class="calendar-day-header">Qui</div>
-                                    <div class="calendar-day-header">Sex</div>
-                                    <div class="calendar-day-header">Sáb</div>
-                                    
-                                    <!-- Dias do mês serão preenchidos via JavaScript -->
-                                    <div class="calendar-day empty"></div>
-                                    <div class="calendar-day empty"></div>
-                                    <div class="calendar-day">1</div>
-                                    <div class="calendar-day">2</div>
-                                    <div class="calendar-day">3</div>
-                                    <div class="calendar-day">4</div>
-                                    <div class="calendar-day">5</div>
-                                    
-                                    <div class="calendar-day">6</div>
-                                    <div class="calendar-day">7</div>
-                                    <div class="calendar-day">8</div>
-                                    <div class="calendar-day">9</div>
-                                    <div class="calendar-day">10</div>
-                                    <div class="calendar-day">11</div>
-                                    <div class="calendar-day">12</div>
-                                    
-                                    <div class="calendar-day today">13</div>
-                                    <div class="calendar-day">14</div>
-                                    <div class="calendar-day">15
-                                        <div class="calendar-event">Campeonato Paulista</div>
-                                    </div>
-                                    <div class="calendar-day">16</div>
-                                    <div class="calendar-day">17</div>
-                                    <div class="calendar-day">18
-                                        <div class="calendar-event">Treino Técnico</div>
-                                    </div>
-                                    <div class="calendar-day">19</div>
-                                    
-                                    <div class="calendar-day">20</div>
-                                    <div class="calendar-day">21</div>
-                                    <div class="calendar-day">22
-                                        <div class="calendar-event">Avaliação de Faixa</div>
-                                    </div>
-                                    <div class="calendar-day">23</div>
-                                    <div class="calendar-day">24</div>
-                                    <div class="calendar-day">25</div>
-                                    <div class="calendar-day">26</div>
-                                    
-                                    <div class="calendar-day">27</div>
-                                    <div class="calendar-day">28</div>
-                                    <div class="calendar-day">29</div>
-                                    <div class="calendar-day">30</div>
-                                    <div class="calendar-day empty"></div>
-                                    <div class="calendar-day empty"></div>
-                                    <div class="calendar-day empty"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title"><i class="bi bi-list-check"></i> Eventos do Mês</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="list-group">
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">Campeonato Paulista</h6>
-                                            <small class="text-muted">15/06</small>
-                                        </div>
-                                        <p class="mb-1">São Paulo/SP - Adulto -75kg</p>
-                                        <small class="text-muted">Competição confirmada</small>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">Treino Técnico</h6>
-                                            <small class="text-muted">18/06</small>
-                                        </div>
-                                        <p class="mb-1">19:00 - 21:00 | Dojô Central</p>
-                                        <small class="text-muted">Sensei Takashi</small>
-                                    </a>
-                                    <a href="#" class="list-group-item list-group-item-action">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1">Avaliação de Faixa</h6>
-                                            <small class="text-muted">22/06</small>
-                                        </div>
-                                        <p class="mb-1">09:00 - 12:00 | Academia Bushido</p>
-                                        <small class="text-muted">Pendente de confirmação</small>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title"><i class="bi bi-calendar-plus"></i> Adicionar Evento</h5>
-                            </div>
-                            <div class="card-body">
-                                <form>
-                                    <div class="mb-3">
-                                        <label for="event-title" class="form-label">Título do Evento</label>
-                                        <input type="text" class="form-control" id="event-title" placeholder="Ex: Treino Técnico">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="event-date" class="form-label">Data</label>
-                                        <input type="date" class="form-control" id="event-date">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="event-time" class="form-label">Horário</label>
-                                        <input type="time" class="form-control" id="event-time">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="event-type" class="form-label">Tipo de Evento</label>
-                                        <select class="form-select" id="event-type">
-                                            <option selected>Selecione...</option>
-                                            <option>Treino</option>
-                                            <option>Competição</option>
-                                            <option>Exame</option>
-                                            <option>Reunião</option>
-                                            <option>Outro</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Adicionar Evento</button>
-                                </form>
                             </div>
                         </div>
                     </div>
@@ -2069,21 +1536,6 @@
         });
 
         // Navegação entre telas
-        function showScreen(screenId) {
-            // Esconde todas as telas
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.style.display = 'none';
-            });
-            
-            // Mostra a tela selecionada
-            document.getElementById(screenId + '-screen').style.display = 'block';
-            
-            // Se for a tela principal, mostra o conteúdo apropriado
-            if (screenId === 'main') {
-                showScreenContent('dashboard');
-            }
-        }
-        
         function showScreenContent(contentId) {
             // Esconde todos os conteúdos
             document.querySelectorAll('[data-screen-content]').forEach(content => {
@@ -2101,10 +1553,7 @@
                 'desempenho': '<i class="fas fa-tachometer-alt"></i> Desempenho',
                 'competicoes': '<i class="fas fa-trophy"></i> Competições',
                 'resultados': '<i class="fas fa-clipboard-list"></i> Resultados',
-                'treinos': '<i class="fas fa-calendar-check"></i> Treinos',
-                'mensagens': '<i class="fas fa-envelope"></i> Mensagens',
                 'notificacoes': '<i class="fas fa-bell"></i> Notificações',
-                'calendario': '<i class="fas fa-calendar-alt"></i> Calendário',
                 'configuracoes': '<i class="fas fa-cog"></i> Configurações'
             };
             
@@ -2152,157 +1601,14 @@
             });
         });
         
-        // Links de login/recuperação/cadastro
-        document.getElementById('forgot-password-link').addEventListener('click', function(e) {
-            e.preventDefault();
-            showScreen('forgot-password');
+        
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializa os gráficos
+            initCharts();
         });
-        
-        document.getElementById('back-to-login-link').addEventListener('click', function(e) {
-            e.preventDefault();
-            showScreen('login');
-        });
-        
-        document.getElementById('register-link').addEventListener('click', function(e) {
-            e.preventDefault();
-            showScreen('register');
-        });
-        
-        document.getElementById('back-to-login-from-register').addEventListener('click', function(e) {
-            e.preventDefault();
-            showScreen('login');
-        });
-        
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', function(e) {
-            e.preventDefault();
-            showScreen('login');
-        });
-        
-        // Mensagens
-        document.querySelectorAll('.message-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Remove a classe active de todas as mensagens
-                document.querySelectorAll('.message-item').forEach(msg => {
-                    msg.classList.remove('active');
-                });
-                
-                // Adiciona a classe active na mensagem clicada
-                this.classList.add('active');
-                
-                // Mostra o conteúdo da mensagem (simulado)
-                const messageId = this.getAttribute('data-message-id');
-                const messageContents = {
-                    '1': {
-                        subject: 'Plano de treinos para a semana',
-                        content: `
-                            <div class="message-header mb-4">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h5>Sensei Takashi</h5>
-                                        <small class="text-muted">takashi@bushido.com.br</small>
-                                    </div>
-                                    <small>15/06/2025 14:30</small>
-                                </div>
-                            </div>
-                            <div class="message-body">
-                                <h6>Prezado Carlos,</h6>
-                                <p>Segue o plano de treinos para esta semana:</p>
-                                <ul>
-                                    <li><strong>Segunda-feira:</strong> Treino técnico - Ênfase em bases e deslocamentos</li>
-                                    <li><strong>Quarta-feira:</strong> Kata Bassai Dai - Correção de detalhes</li>
-                                    <li><strong>Sexta-feira:</strong> Kumite - Preparação para o Campeonato Paulista</li>
-                                </ul>
-                                <p>Por favor, não se esqueça de trazer seu equipamento completo na sexta-feira.</p>
-                                <p>Atenciosamente,<br>Sensei Takashi</p>
-                            </div>
-                        `
-                    },
-                    '2': {
-                        subject: 'Confirmação de inscrição',
-                        content: `
-                            <div class="message-header mb-4">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h5>Federação Paulista</h5>
-                                        <small class="text-muted">contato@fkarate.com.br</small>
-                                    </div>
-                                    <small>15/06/2025 12:15</small>
-                                </div>
-                            </div>
-                            <div class="message-body">
-                                <h6>Prezado Atleta,</h6>
-                                <p>Sua inscrição no <strong>Campeonato Paulista de Karatê 2025</strong> foi confirmada.</p>
-                                <p><strong>Detalhes da competição:</strong></p>
-                                <ul>
-                                    <li><strong>Data:</strong> 15/06/2025</li>
-                                    <li><strong>Local:</strong> Ginásio do Ibirapuera - São Paulo/SP</li>
-                                    <li><strong>Categoria:</strong> Adulto Masculino -75kg</li>
-                                    <li><strong>Horário de pesagem:</strong> 08:00</li>
-                                </ul>
-                                <p>Por favor, apresente-se com pelo menos 1 hora de antecedência.</p>
-                                <p>Atenciosamente,<br>Federação Paulista de Karatê</p>
-                            </div>
-                        `
-                    },
-                    '3': {
-                        subject: 'Reunião de equipe',
-                        content: `
-                            <div class="message-header mb-4">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h5>Equipe Bushido</h5>
-                                        <small class="text-muted">equipe@bushido.com.br</small>
-                                    </div>
-                                    <small>14/06/2025 09:30</small>
-                                </div>
-                            </div>
-                            <div class="message-body">
-                                <h6>Olá Carlos,</h6>
-                                <p>Lembramos que na próxima terça-feira, dia 20/06, teremos nossa reunião mensal de equipe.</p>
-                                <p><strong>Detalhes:</strong></p>
-                                <ul>
-                                    <li><strong>Data:</strong> 20/06/2025</li>
-                                    <li><strong>Horário:</strong> 19:30</li>
-                                    <li><strong>Local:</strong> Sede da Academia Bushido</li>
-                                    <li><strong>Assunto:</strong> Preparação para o Campeonato Brasileiro</li>
-                                </ul>
-                                <p>Sua presença é muito importante!</p>
-                                <p>Atenciosamente,<br>Equipe Bushido Karatê</p>
-                            </div>
-                        `
-                    }
-                };
-                
-                const message = messageContents[messageId] || {
-                    subject: 'Mensagem não encontrada',
-                    content: '<p>O conteúdo desta mensagem não está disponível.</p>'
-                };
-                
-                document.getElementById('message-subject').textContent = message.subject;
-                document.getElementById('message-content').innerHTML = message.content;
-                document.getElementById('message-actions').classList.remove('d-none');
-            });
-        });
-        
-        // Calendário
-        function updateCalendar() {
-            // Esta função seria expandida para gerar o calendário dinamicamente
-            // Por enquanto, está usando HTML estático
-        }
-        
-        document.getElementById('prev-month').addEventListener('click', function() {
-            // Lógica para mês anterior
-            updateCalendar();
-        });
-        
-        document.getElementById('next-month').addEventListener('click', function() {
-            // Lógica para próximo mês
-            updateCalendar();
-        });
-        
+
         // Gráficos
         function initCharts() {
             // Gráfico de desempenho no dashboard
@@ -2446,9 +1752,8 @@
                 }
             });
             
-            // Gráfico de progresso anual
-            const annualProgressCtx = document.getElementById('annualProgressChart').getContext('2d');
-            new Chart(annualProgressCtx, {
+                        // Gráfico de progresso anual (continuação)
+                        new Chart(annualProgressCtx, {
                 type: 'radar',
                 data: {
                     labels: ['Força', 'Velocidade', 'Resistência', 'Técnica', 'Flexibilidade', 'Estratégia'],
@@ -2481,70 +1786,7 @@
                     }
                 }
             });
-            
-            // Gráfico de frequência de treinos
-            const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
-            new Chart(attendanceCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-                    datasets: [{
-                        label: 'Treinos Realizados',
-                        data: [12, 10, 14, 15, 13, 8],
-                        backgroundColor: 'rgba(40, 167, 69, 0.7)',
-                        borderColor: 'rgba(40, 167, 69, 1)',
-                        borderWidth: 1
-                    }, {
-                        label: 'Treinos Programados',
-                        data: [16, 16, 16, 16, 16, 12],
-                        backgroundColor: 'rgba(108, 117, 125, 0.5)',
-                        borderColor: 'rgba(108, 117, 125, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
         }
-        
-        // Login form
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Simula o login
-            showScreen('main');
-        });
-        
-        // Forgot password form
-        document.getElementById('forgot-password-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Um e-mail com instruções para redefinir sua senha foi enviado.');
-            showScreen('login');
-        });
-        
-        // Register form
-        document.getElementById('register-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Cadastro realizado com sucesso! Faça login para continuar.');
-            showScreen('login');
-        });
-        
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mostra a tela de login por padrão
-            showScreen('login');
-            
-            // Inicializa os gráficos
-            initCharts();
-            
-            // Inicializa o calendário
-            updateCalendar();
-        });
     </script>
 </body>
 </html>
