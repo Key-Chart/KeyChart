@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="shortcut icon" href="../img/icone_keychart.png" type="image/x-icon">
+    <link rel="stylesheet" href="../css/inscricoes.css">
+    <title>Inscrições</title>
+</head>
+<body>
+    <!-- Botão de Toggle -->
+    <button class="toggle-btn" id="toggleSidebar">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Barra Lateral -->
+    <div class="sidebar" id="sidebar">
+        <br>
+        <a href="dashboard.html">
+            <i><img src="../img/icone_keychart.png" id="img-logo" alt="Logo"></i>
+            <span>KeyChart</span>
+        </a>
+        <a href="competicoes.html">
+            <i class="bi bi-trophy"></i>
+            <span>Competições</span>
+        </a>
+        <a href="equipes_atletas.html">
+            <i class="bi bi-person-lines-fill"></i>
+            <span>Equipes e Atletas</span>
+        </a>
+        <a href="inscricoes.html">
+            <i class="bi bi-pencil-square"></i>
+            <span>Inscrições</span>
+        </a>
+        <a href="partidas.html">
+            <i class="bi bi-calendar-check"></i>
+            <span>Partidas</span>
+        </a>
+        <a href="chaveamento.html">
+            <i class="bi bi-link-45deg"></i>
+            <span>Chaveamento</span>
+        </a>
+        <a href="relatorio.html">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>Relatórios</span>
+        </a>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="content" id="content">
+        <div class="header">
+            <h2 style="color: #343A40;"><i class="bi bi-pencil-square" style="color: #343A40;"></i> Inscrições</h2>
+        </div>
+
+        <div class="container-fluid mt-4">
+            <!-- Passos do Processo -->
+            <div class="step-indicator">
+                <div class="step active" id="step1">
+                    <div class="step-number" style="background: #343A40;">1</div>
+                    <div class="step-title">Selecionar Competição</div>
+                    <div class="step-connector"></div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-number" style="background: #343A40;">2</div>
+                    <div class="step-title">Selecionar Categoria</div>
+                    <div class="step-connector"></div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-number" style="background: #343A40;">3</div>
+                    <div class="step-title">Cadastrar Atleta</div>
+                    <div class="step-connector"></div>
+                </div>
+                <div class="step" id="step4">
+                    <div class="step-number" style="background: #343A40;">4</div>
+                    <div class="step-title">Confirmar Inscrição</div>
+                </div>
+            </div>
+
+            <!-- Passo 1: Selecionar Competição -->
+            <div class="card mb-4" id="step1-content">
+                <div class="card-header">
+                    <h5 class="mb-0">Passo 1: Selecionar Competição</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Data</th>
+                                    <th>Local</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Copa Regional 2025</td>
+                                    <td>10/03/2025</td>
+                                    <td>Ginásio Municipal</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="nextStep(1, 'Copa Regional 2025')">
+                                            Selecionar <i class="bi bi-arrow-right"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Campeonato Estadual</td>
+                                    <td>15/04/2025</td>
+                                    <td>Centro Esportivo</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="nextStep(1, 'Campeonato Estadual')">
+                                            Selecionar <i class="bi bi-arrow-right"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Torneio Aberto</td>
+                                    <td>22/05/2025</td>
+                                    <td>Clube de Artes Marciais</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="nextStep(1, 'Torneio Aberto')">
+                                            Selecionar <i class="bi bi-arrow-right"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Passo 2: Selecionar Categoria (inicialmente oculto) -->
+            <div class="card mb-4 d-none" id="step2-content">
+                <div class="card-header">
+                    <h5 class="mb-0">Passo 2: Selecionar Categoria - <span id="competicao-selecionada">Copa Regional 2025</span></h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tipo de Categoria</label>
+                            <select class="form-select" id="tipo-categoria" onchange="filterCategories()">
+                                <option value="">Todos</option>
+                                <option value="kata">Kata</option>
+                                <option value="kumite">Kumite</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sexo</label>
+                            <select class="form-select" id="sexo-categoria" onchange="filterCategories()">
+                                <option value="">Todos</option>
+                                <option value="masculino">Masculino</option>
+                                <option value="feminino">Feminino</option>
+                                <option value="misto">Misto</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="categorias-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Tipo</th>
+                                    <th>Sexo</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-tipo="kata" data-sexo="masculino">
+                                    <td>Kata Individual - Faixa Preta</td>
+                                    <td>Kata</td>
+                                    <td>Masculino</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="nextStep(2, 'Kata Individual - Faixa Preta (Masculino)')">
+                                            Selecionar <i class="bi bi-arrow-right"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr data-tipo="kumite" data-sexo="feminino">
+                                    <td>Kumite -67kg</td>
+                                    <td>Kumite</td>
+                                    <td>Feminino</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="nextStep(2, 'Kumite -67kg (Feminino)')">
+                                            Selecionar <i class="bi bi-arrow-right"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr data-tipo="kata" data-sexo="feminino">
+                                    <td>Kata Individual - Faixa Preta</td>
+                                    <td>Kata</td>
+                                    <td>Feminino</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="nextStep(2, 'Kata Individual - Faixa Preta (Feminino)')">
+                                            Selecionar <i class="bi bi-arrow-right"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr data-tipo="kumite" data-sexo="masculino">
+                                    <td>Kumite -75kg</td>
+                                    <td>Kumite</td>
+                                    <td>Masculino</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="nextStep(2, 'Kumite -75kg (Masculino)')">
+                                            Selecionar <i class="bi bi-arrow-right"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr data-tipo="kumite" data-sexo="misto">
+                                    <td>Kumite por Equipes</td>
+                                    <td>Kumite</td>
+                                    <td>Misto</td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="nextStep(2, 'Kumite por Equipes (Misto)')">
+                                            Selecionar <i class="bi bi-arrow-right"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Passo 3: Cadastrar Atleta (inicialmente oculto) -->
+            <div class="card mb-4 d-none" id="step3-content">
+                <div class="card-header">
+                    <h5 class="mb-0">Passo 3: Cadastrar Atleta - <span id="categoria-selecionada">Kata Individual - Faixa Preta (Masculino)</span></h5>
+                </div>
+                <div class="card-body">
+                    <form id="form-atleta">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nome Completo <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="nome-atleta" placeholder="Digite o nome completo do atleta..." required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Data de Nascimento <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="nascimento-atleta" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Sexo <span class="text-danger">*</span></label>
+                                <select class="form-select" id="sexo-atleta" required>
+                                    <option value="">Selecione</option>
+                                    <option value="masculino">Masculino</option>
+                                    <option value="feminino">Feminino</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Idade</label>
+                                <input type="number" step="0.1" class="form-control" id="idade-atleta" placeholder="Digite a idade...">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Peso (kg)</label>
+                                <input type="number" step="0.1" class="form-control" id="peso-atleta" placeholder="Digite o peso...">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Altura (cm)</label>
+                                <input type="number" class="form-control" id="altura-atleta" placeholder="Digite a altura em cm...">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">E-mail <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email-atleta" placeholder="Digite o e-mail..." required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Telefone <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="telefone-atleta" placeholder="Digite o telefone..." required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Faixa <span class="text-danger">*</span></label>
+                                <select class="form-select" id="faixa-atleta" required>
+                                    <option value="">Selecione</option>
+                                    <option value="branca">Branca</option>
+                                    <option value="azul">Azul</option>
+                                    <option value="amarela">Amarela</option>
+                                    <option value="laranja">Laranja</option>
+                                    <option value="verde">Verde</option>
+                                    <option value="roxa">Roxa</option>
+                                    <option value="marrom">Marrom</option>
+                                    <option value="preta">Preta</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Cidade <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="cidade-atleta" placeholder="Digite a cidade..." required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Estado <span class="text-danger">*</span></label>
+                                <select class="form-select" id="estado-atleta" required>
+                                    <option value="">Selecione</option>
+                                    <option value="AC">Acre</option>
+                                    <option value="AL">Alagoas</option>
+                                    <option value="AP">Amapá</option>
+                                    <option value="AM">Amazonas</option>
+                                    <option value="BA">Bahia</option>
+                                    <option value="CE">Ceará</option>
+                                    <option value="DF">Distrito Federal</option>
+                                    <option value="ES">Espírito Santo</option>
+                                    <option value="GO">Goiás</option>
+                                    <option value="MA">Maranhão</option>
+                                    <option value="MT">Mato Grosso</option>
+                                    <option value="MS">Mato Grosso do Sul</option>
+                                    <option value="MG">Minas Gerais</option>
+                                    <option value="PA">Pará</option>
+                                    <option value="PB">Paraíba</option>
+                                    <option value="PR">Paraná</option>
+                                    <option value="PE">Pernambuco</option>
+                                    <option value="PI">Piauí</option>
+                                    <option value="RJ">Rio de Janeiro</option>
+                                    <option value="RN">Rio Grande do Norte</option>
+                                    <option value="RS">Rio Grande do Sul</option>
+                                    <option value="RO">Rondônia</option>
+                                    <option value="RR">Roraima</option>
+                                    <option value="SC">Santa Catarina</option>
+                                    <option value="SP">São Paulo</option>
+                                    <option value="SE">Sergipe</option>
+                                    <option value="TO">Tocantins</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Academia/Clube <span class="text-danger">*</span></label>
+                                <select class="form-select" id="academia-atleta" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Academia Central">Academia Central</option>
+                                    <option value="Clube de Artes Marciais">Clube de Artes Marciais</option>
+                                    <option value="Dojo Samurai">Dojo Samurai</option>
+                                    <option value="Centro de Treinamento Fight">Centro de Treinamento Fight</option>
+                                    <option value="Academia Top Karate">Academia Top Karate</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Foto do Atleta</label>
+                                <input type="file" class="form-control" id="foto-atleta" accept="image/*">
+                                <small class="text-muted">Tamanho máximo: 2MB (opcional)</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary" onclick="prevStep(3)">
+                                <i class="bi bi-arrow-left"></i> Voltar
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                Próximo <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+
+            <!-- Passo 4: Confirmar Inscrição (inicialmente oculto) -->
+            <div class="card mb-4 d-none" id="step4-content">
+                <div class="card-header">
+                    <h5 class="mb-0">Passo 4: Confirmar Inscrição</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <h5><i class="bi bi-check-circle"></i> Confira os dados da inscrição:</h5>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Dados da Competição</h6>
+                            <p><strong>Nome:</strong> <span id="confirm-competicao">Copa Regional 2025</span></p>
+                            <p><strong>Categoria:</strong> <span id="confirm-categoria">Kata Individual - Faixa Preta (Masculino)</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Dados do Atleta</h6>
+                            <p><strong>Nome:</strong> <span id="confirm-nome">João da Silva</span></p>
+                            <p><strong>Data Nasc.:</strong> <span id="confirm-nascimento">15/08/1995</span></p>
+                            <p><strong>Idade:</strong> <span id="confirm-idade">29 anos</span></p>
+                            <p><strong>Sexo:</strong> <span id="confirm-sexo">Masculino</span></p>
+                            <p><strong>Peso:</strong> <span id="confirm-peso">-</span></p>
+                            <p><strong>Faixa:</strong> <span id="confirm-faixa">Preta</span></p>
+                            <p><strong>Cidade/Estado:</strong> <span id="confirm-cidade">São Paulo</span>/<span id="confirm-estado">SP</span></p>
+                            <p><strong>Academia:</strong> <span id="confirm-academia">Academia Central</span></p>
+                        </div>
+                    </div>
+                    
+                    <div id="foto-preview-container" class="text-center mb-4 d-none">
+                        <h6>Foto do Atleta</h6>
+                        <img id="foto-preview" src="#" alt="Preview da Foto" class="img-thumbnail" style="max-height: 200px;">
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(4)">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </button>
+                        <div>
+                            <button type="button" class="btn btn-primary me-2" onclick="openEmailModal()">
+                                <i class="bi bi-envelope"></i> Enviar por Email
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="finalizarInscricao()">
+                                <i class="bi bi-check-lg"></i> Confirmar Inscrição
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para enviar por email -->
+    <div id="emailModal" class="modal-email">
+        <div class="modal-content">
+            <span class="close" onclick="closeEmailModal()">&times;</span>
+            <h4><i class="bi bi-envelope"></i> Enviar ficha de inscrição por email</h4>
+            <form id="emailForm">
+                <div class="mb-3">
+                    <label for="emailDestino" class="form-label">Email de destino <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="emailDestino" required>
+                </div>
+                <div class="mb-3">
+                    <label for="assuntoEmail" class="form-label">Assunto <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="assuntoEmail" value="Ficha de Inscrição - Copa Regional 2025" required>
+                </div>
+                <div class="mb-3">
+                    <label for="mensagemEmail" class="form-label">Mensagem <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="mensagemEmail" rows="4" required>Segue em anexo a ficha de inscrição para a competição.</textarea>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary me-2" onclick="closeEmailModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <span id="emailSubmitText">Enviar Email</span>
+                        <span id="emailLoadingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de sucesso -->
+    <div id="successModal" class="modal-email">
+        <div class="modal-content text-center">
+            <div class="mb-3">
+                <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+            </div>
+            <h4 class="text-success">Inscrição realizada com sucesso!</h4>
+            <p id="successMessage">O atleta foi inscrito na competição com sucesso.</p>
+            <div class="d-flex justify-content-center mt-4">
+                <button type="button" class="btn btn-success me-2" onclick="window.location.href='competicoes.html'">
+                    <i class="bi bi-trophy"></i> Voltar para Competições
+                </button>
+                <button type="button" class="btn btn-primary" onclick="window.location.href='inscricoes.html'">
+                    <i class="bi bi-plus-circle"></i> Nova Inscrição
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/inscricoes.js"></script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../img/icone_keychart.png" type="image/x-icon">
+    <link rel="stylesheet" href="../css/login.css">
+    <title>Login - KeyChart</title>
+</head>
+<body>
+    <!-- Efeito de partículas -->
+    <div id="particles-js"></div>
+    
+    <!-- Ícones decorativos de karatê -->
+    <i class="fas fa-user-ninja karate-icon karate-icon-1"></i>
+    <i class="fas fa-fist-raised karate-icon karate-icon-2"></i>
+    
+    <!-- Container principal -->
+    <div class="login-container">
+        <!-- Formulário de login -->
+        <div class="login-form">
+            <div class="logo-login">
+                <img src="../img/icone_keychart.png" alt="KeyChart Logo">
+            </div>
+            <h1 class="login-title">KEYCHART</h1>
+            <p class="login-subtitle">Sistema de Gerenciamento de Competições de Karatê</p>
+            
+            <form>
+                <div class="form-group">
+                    <label for="username" class="form-label">Usuário</label>
+                    <input type="text" class="form-control" id="username" placeholder="Digite seu usuário" required>
+                </div>
+                
+                <div class="form-group password-toggle">
+                    <label for="password" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="password" placeholder="Digite sua senha" required>
+                    <i class="fas fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
+                </div>
+                
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="remember">
+                    <label class="form-check-label" for="remember">Lembrar de mim</label>
+                </div>
+                
+                <button type="submit" class="btn btn-login">Entrar</button>
+                
+                <div class="login-links">
+                    <a href="#" class="login-link" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Esqueceu a senha?</a>
+                    <a href="#" class="login-link" data-bs-toggle="modal" data-bs-target="#createAccountModal">Criar conta</a>
+                </div>
+                
+                <div class="divider">
+                    <span class="divider-text">OU</span>
+                </div>
+                
+                <button type="button" class="btn btn-register" onclick="window.location.href='register.html'">
+                    Cadastre-se agora
+                </button>
+            </form>
+        </div>
+        
+        <!-- Imagem decorativa -->
+        <div class="login-image">
+            <div class="image-caption">
+                <h3>Domine o Chaveamento</h3>
+                <p>Sistema profissional para gerenciamento de competições de karatê</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal: Esqueceu a Senha -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">Recuperar Senha</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="recoveryEmail" class="form-label">E-mail</label>
+                            <input type="email" class="form-control" id="recoveryEmail" placeholder="Digite seu e-mail cadastrado" required>
+                        </div>
+                        <button type="submit" class="btn btn-login">Enviar Link de Recuperação</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal: Criar Conta -->
+    <div class="modal fade" id="createAccountModal" tabindex="-1" aria-labelledby="createAccountModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createAccountModalLabel">Criar Nova Conta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="fullName" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="fullName" placeholder="Digite seu nome completo" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email" class="form-label">E-mail</label>
+                            <input type="email" class="form-control" id="email" placeholder="Digite seu e-mail" required>
+                        </div>
+                        
+                        <div class="form-group password-toggle">
+                            <label for="newPassword" class="form-label">Senha</label>
+                            <input type="password" class="form-control" id="newPassword" placeholder="Crie uma senha forte" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('newPassword', this)"></i>
+                        </div>
+                        
+                        <div class="form-group password-toggle">
+                            <label for="confirmPassword" class="form-label">Confirmar Senha</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirme sua senha" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmPassword', this)"></i>
+                        </div>
+                        
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="terms" required>
+                            <label class="form-check-label" for="terms">Eu concordo com os <a href="#" style="color: var(--primary-color);">Termos de Serviço</a></label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-login">Criar Conta</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+    <script src="../js/login.js"></script>
+</body>
+</html>

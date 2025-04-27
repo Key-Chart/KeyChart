@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="../img/icone_keychart.png" type="image/x-icon">
+    <link rel="stylesheet" href="../css/competicoes.css">
+    <title>Competições | KeyChart</title>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="spinner-border custom-spinner" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+    </div>
+    
+    <button class="toggle-btn" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+    <div class="sidebar" id="sidebar" style="
+        background: 
+            linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+            url('../img/sidebar.jpeg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    ">
+        <br>
+        <a href="dashboard.html"><i><img src="../img/icone_keychart.png" style="height: 35px;" id="img-logo"></i><span>KeyChart</span></a>
+        <a href="competicoes.html"><i class="bi bi-trophy"></i><span>Competições</span></a>
+        <a href="equipes_atletas.html"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
+        <a href="inscricoes.html"><i class="bi bi-pencil-square"></i><span>Inscrições</span></a>
+        <a href="partidas.html"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
+        <a href="chaveamento.html"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
+        <a href="relatorio.html"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="content" id="content">
+        <!-- Header -->
+        <div class="header" style="background: #ffffff; color: #343A40;">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2><i class="bi bi-trophy"></i> Competições</h2>
+                    <button class="btn btn-outline-black btn-sm" data-mdb-toggle="modal" data-mdb-target="#createModal">
+                        <i class="bi bi-plus-lg"></i> Nova Competição
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Conteúdo -->
+        <main class="container-fluid py-4">
+            <!-- Cards de Estatísticas -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3">
+                    <div class="stat-card bg-primary">
+                        <i class="fas fa-trophy"></i>
+                        <div class="label">Total de Competições</div>
+                        <div class="number">8</div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="stat-card bg-success">
+                        <i class="fas fa-running"></i>
+                        <div class="label">Competições Ativas</div>
+                        <div class="number">5</div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="stat-card bg-warning text-dark">
+                        <i class="fas fa-flag-checkered"></i>
+                        <div class="label">Competições Finalizadas</div>
+                        <div class="number">3</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filtros -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Buscar competição...">
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <select class="form-select">
+                        <option selected>Todos os status</option>
+                        <option>Ativa</option>
+                        <option>Finalizadas</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <input type="date" class="form-control">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <button type="button" class="btn btn-secondary w-100">
+                        <i class="bi me-2"></i>Buscar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tabela de Competições -->
+            <div class="card">
+                <div class="card-header" style="background: #ffffff; color: #343A40;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-list-check me-2"></i>Lista de Competições
+                        </h5>
+                        <div>
+                            <button class="btn btn-sm btn-light me-2">
+                                <i class="bi bi-printer"></i> Imprimir
+                            </button>
+                            <button class="btn btn-sm btn-light">
+                                <i class="bi bi-download"></i> Exportar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Data de Início</th>
+                                    <th>Local</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="categoria.html" class="text-decoration-none fw-bold text-primary">Copa Regional 2025</a>
+                                        <div class="text-muted small">Modalidade: Futebol</div>
+                                    </td>
+                                    <td>10/03/2025</td>
+                                    <td>Estádio Municipal</td>
+                                    <td><span class="badge badge-active">Ativa</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewModal" title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="modal" data-mdb-target="#editModal" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteModal" title="Excluir">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="categoria.html" class="text-decoration-none fw-bold text-primary">Campeonato Estadual</a>
+                                        <div class="text-muted small">Modalidade: Vôlei</div>
+                                    </td>
+                                    <td>15/02/2025</td>
+                                    <td>Ginásio Central</td>
+                                    <td><span class="badge badge-finished">Finalizada</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewModal" title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="categoria.html" class="text-decoration-none fw-bold text-primary">Torneio Aberto</a>
+                                        <div class="text-muted small">Modalidade: Basquete</div>
+                                    </td>
+                                    <td>05/04/2025</td>
+                                    <td>Quadra Poliesportiva</td>
+                                    <td><span class="badge badge-upcoming">Em breve</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewModal" title="Visualizar">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="modal" data-mdb-target="#editModal" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted small">
+                            Mostrando 1 a 3 de 8 competições
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Próximo</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Ver Competição -->
+    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content custom-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewModalLabel"><i class="bi bi-trophy me-2"></i>Detalhes da Competição</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong><i class="bi bi-card-heading me-2"></i>Nome:</strong> Copa Regional 2025</p>
+                            <p><strong><i class="bi bi-calendar me-2"></i>Data de Início:</strong> 10/03/2025</p>
+                            <p><strong><i class="bi bi-clock me-2"></i>Horário:</strong> 14:00</p>
+                            <p><strong><i class="bi bi-geo-alt me-2"></i>Local:</strong> Estádio Municipal</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong><i class="bi bi-list-check me-2"></i>Modalidade:</strong> Futebol</p>
+                            <p><strong><i class="bi bi-people me-2"></i>Categorias:</strong> Adulto, Infantil</p>
+                            <p><strong><i class="bi bi-person-badge me-2"></i>Árbitros:</strong> João Silva, Maria Oliveira</p>
+                            <p><strong><i class="bi bi-info-circle me-2"></i>Status:</strong> <span class="badge badge-active">Ativa</span></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <h6 class="fw-bold"><i class="bi bi-journal-text me-2"></i>Regras Específicas</h6>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary">Editar Competição</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Competição -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content custom-modal">
+                <div class="modal-header text-white">
+                    <h5 class="modal-title" id="editModalLabel"><i class="bi bi-pencil-square me-2"></i>Editar Competição</h5>
+                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCompetitionForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editName" class="form-label">Nome da Competição</label>
+                                <input type="text" class="form-control" id="editName" value="Copa Regional 2025" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editModality" class="form-label">Modalidade</label>
+                                <select class="form-select" id="editModality" required>
+                                    <option value="Futebol" selected>Futebol</option>
+                                    <option value="Vôlei">Vôlei</option>
+                                    <option value="Basquete">Basquete</option>
+                                    <option value="Tênis">Tênis</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editDate" class="form-label">Data de Início</label>
+                                <input type="date" class="form-control" id="editDate" value="2025-03-10" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editTime" class="form-label">Horário</label>
+                                <input type="time" class="form-control" id="editTime" value="14:00" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editLocation" class="form-label">Local</label>
+                            <input type="text" class="form-control" id="editLocation" value="Estádio Municipal" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editCategories" class="form-label">Categorias</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editCategoryAdult" checked>
+                                    <label class="form-check-label" for="editCategoryAdult">Adulto</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editCategoryChild" checked>
+                                    <label class="form-check-label" for="editCategoryChild">Infantil</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editCategorySenior">
+                                    <label class="form-check-label" for="editCategorySenior">Sênior</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editReferees" class="form-label">Árbitros Responsáveis</label>
+                            <select class="form-select" id="editReferees" multiple>
+                                <option value="1" selected>João Silva</option>
+                                <option value="2" selected>Maria Oliveira</option>
+                                <option value="3">Carlos Souza</option>
+                                <option value="4">Ana Pereira</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editRules" class="form-label">Regras Específicas</label>
+                            <textarea class="form-control" id="editRules" rows="4" required>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editStatus" required>
+                                <option value="Ativa" selected>Ativa</option>
+                                <option value="Finalizada">Finalizada</option>
+                                <option value="Em breve">Em breve</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveChanges()">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Excluir Competição -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content custom-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir permanentemente a competição <strong>"Copa Regional 2025"</strong>?</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>Esta ação não pode ser desfeita e todos os dados associados serão perdidos.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger">Confirmar Exclusão</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Criar Nova Competição -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content custom-modal">
+                <div class="modal-header text-white" style="background: #343A40;">
+                    <h5 class="modal-title" id="createModalLabel"><i class="bi bi-plus-circle me-2"></i>Criar Nova Competição</h5>
+                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createCompetitionForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="createName" class="form-label">Nome da Competição</label>
+                                <input type="text" class="form-control" id="createName" placeholder="Ex: Copa Regional 2025" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="createModality" class="form-label">Modalidade</label>
+                                <select class="form-select" id="createModality" required>
+                                    <option value="" selected disabled>Selecione uma modalidade</option>
+                                    <option value="Futebol">Futebol</option>
+                                    <option value="Vôlei">Vôlei</option>
+                                    <option value="Basquete">Basquete</option>
+                                    <option value="Tênis">Tênis</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="createDate" class="form-label">Data de Início</label>
+                                <input type="date" class="form-control" id="createDate" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="createTime" class="form-label">Horário</label>
+                                <input type="time" class="form-control" id="createTime" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="createLocation" class="form-label">Local</label>
+                            <input type="text" class="form-control" id="createLocation" placeholder="Ex: Estádio Municipal" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="createStatus" class="form-label">Árbitros Responsáveis</label>
+                            <select class="form-select" id="createStatus" required>
+                                <option value="1" selected>Selecione...</option>
+                                <option value="2">João Silva</option>
+                                <option value="3">Carlos Souza</option>
+                                <option value="4">Maria Oliveira</option>
+                                <option value="5">Ana Pereira</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="createRules" class="form-label">Regras Específicas</label>
+                            <textarea class="form-control" id="createRules" rows="4" placeholder="Descreva as regras específicas desta competição..." required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="createStatus" class="form-label">Status</label>
+                            <select class="form-select" id="createStatus" required>
+                                <option value="Ativa" selected>Ativa</option>
+                                <option value="Finalizada">Finalizada</option>
+                                <option value="Em breve">Em breve</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" onclick="createCompetition()">Criar Competição</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MDB JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/competicoes.js"></script>
+</body>
+</html>       

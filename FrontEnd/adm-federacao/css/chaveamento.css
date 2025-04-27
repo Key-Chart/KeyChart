@@ -1,0 +1,155 @@
+.bracket {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.round {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.match {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f8f9fa;
+}
+
+.player {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+.player.winner {
+    font-weight: bold;
+    color: #146c43;
+}
+
+.vs {
+    text-align: center;
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+.nav-tabs .nav-link.active {
+    font-weight: bold;
+    border-bottom: 3px solid #146c43;
+}
+
+.category-title {
+    background-color: #146c43;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.card-header.bg-primary {
+    background-color: #0000 !important;
+}
+
+/* ESTILOS PARA O CHAVEAMENTO */
+.category-section {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+}
+
+.category-header {
+    padding-bottom: 10px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.bracket-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.round {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.round-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    color: #495057;
+}
+
+.round-header i {
+    font-size: 1.2rem;
+}
+
+.gold-icon { color: #ffd700; }
+.silver-icon { color: #c0c0c0; }
+.bronze-icon { color: #cd7f32; }
+
+.matches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.match-card {
+    background-color: white;
+    border-radius: 6px;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+}
+
+.match-card.champion {
+    border: 2px solid #ffd700;
+    background-color: #fffdf5;
+}
+
+.player-card {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+}
+
+.player-card.winner {
+    font-weight: 600;
+    color: #146c43;
+}
+
+.vs-divider {
+    text-align: center;
+    margin: 5px 0;
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.player-name {
+    flex-grow: 1;
+}
+
+.player-score {
+    font-weight: 600;
+    color: #495057;
+    min-width: 50px;
+    text-align: right;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .matches-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .category-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
