@@ -10,49 +10,133 @@
     <link rel="stylesheet" href="../css/competicoes.css">
     <title>Competições | KeyChart</title>
     <style>
-        /* Modal Imprimir e Exportar */
-        .modal-custom {
-            display: none;
-            position: fixed;
-            z-index: 1050;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            backdrop-filter: blur(3px);
+        /* Estilos adicionais */
+        .badge-active {
+            background-color: #28a745;
+            color: white;
         }
         
-        .modal-custom-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 30px;
-            border: none;
-            width: 90%;
-            max-width: 500px;
+        .badge-finished {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .badge-upcoming {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        
+        .badge-inscricoes-abertas {
+            background-color: #17a2b8;
+            color: white;
+        }
+        
+        .badge-inscricoes-fechadas {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .stat-card {
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            animation: modalFadeIn 0.3s;
+            padding: 20px;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
-        @keyframes modalFadeIn {
-            from {opacity: 0; transform: translateY(-20px);}
-            to {opacity: 1; transform: translateY(0);}
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
         }
         
-        .modal-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
+        .stat-card .number {
+            font-size: 1.8rem;
+            font-weight: bold;
         }
         
-        .modal-title {
-            margin-bottom: 15px;
-            font-weight: 600;
+        .custom-modal .modal-header {
+            background: #343A40;
+            color: white;
         }
         
-        .modal-message {
-            margin-bottom: 25px;
-            color: #555;
+        .toggle-btn {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .sidebar {
+            width: 250px;
+            position: fixed;
+            left: -250px;
+            top: 0;
+            bottom: 0;
+            z-index: 999;
+            transition: all 0.3s;
+            padding-top: 20px;
+            overflow-y: auto;
+        }
+        
+        .sidebar.active {
+            left: 0;
+        }
+        
+        .sidebar a {
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin: 5px 0;
+        }
+        
+        .sidebar a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .sidebar a i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .content {
+            margin-left: 0;
+            transition: all 0.3s;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+        
+        .content.active {
+            margin-left: 250px;
+        }
+        
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .custom-spinner {
+            width: 3rem;
+            height: 3rem;
         }
     </style>
 </head>
@@ -88,13 +172,13 @@
     <!-- Conteúdo Principal -->
     <div class="content" id="content">
         <!-- Header -->
-        <div class="header" style="background: #343A40; color: #ffffff;">
+        <div class="header" style="background: #ffffff; color: #343A40;">
             <div class="container-fluid">
                 <div class="d-flex justify-content-between align-items-center">
                     <h2><i class="bi bi-trophy"></i> Competições</h2>
-                    <button class="btn btn-white btn-sm" data-mdb-toggle="modal" data-mdb-target="#createModal" style="background: white;">
+                    <button class="btn btn-outline-black btn-sm" data-mdb-toggle="modal" data-mdb-target="#createModal">
                         <i class="bi bi-plus-lg"></i> Nova Competição
-                    </button>                    
+                    </button>
                 </div>
             </div>
         </div>
@@ -103,25 +187,32 @@
         <main class="container-fluid py-4">
             <!-- Cards de Estatísticas -->
             <div class="row mb-4">
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
                     <div class="stat-card bg-primary">
                         <i class="fas fa-trophy"></i>
                         <div class="label">Total de Competições</div>
                         <div class="number">8</div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
                     <div class="stat-card bg-success">
                         <i class="fas fa-running"></i>
                         <div class="label">Competições Ativas</div>
                         <div class="number">5</div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
                     <div class="stat-card bg-warning text-dark">
                         <i class="fas fa-flag-checkered"></i>
                         <div class="label">Competições Finalizadas</div>
                         <div class="number">3</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card bg-info">
+                        <i class="fas fa-user-plus"></i>
+                        <div class="label">Inscrições Abertas</div>
+                        <div class="number">4</div>
                     </div>
                 </div>
             </div>
@@ -142,27 +233,31 @@
                     </select>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <input type="date" class="form-control">
+                    <select class="form-select">
+                        <option selected>Todas inscrições</option>
+                        <option>Inscrições abertas</option>
+                        <option>Inscrições fechadas</option>
+                    </select>
                 </div>
                 <div class="col-md-2 mb-3">
-                    <button type="button" class="btn btn-info w-100 d-inline-flex align-items-center justify-content-center">
-                        <i class="bi bi-search me-2"></i> Buscar
+                    <button type="button" class="btn btn-secondary w-100">
+                        <i class="bi me-2"></i>Buscar
                     </button>
                 </div>
             </div>
             
             <!-- Tabela de Competições -->
             <div class="card">
-                <div class="card-header" style="background: #343A40; color: #ffffff;">
+                <div class="card-header" style="background: #ffffff; color: #343A40;">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-list-check me-2"></i>Lista de Competições
                         </h5>
                         <div>
-                            <button class="btn btn-sm btn-primary me-2 border border-white" onclick="abrirModalImprimir()">
+                            <button class="btn btn-sm btn-light me-2">
                                 <i class="bi bi-printer"></i> Imprimir
                             </button>
-                            <button class="btn btn-sm btn-success border border-white" onclick="abrirModalExportar()">
+                            <button class="btn btn-sm btn-light">
                                 <i class="bi bi-download"></i> Exportar
                             </button>
                         </div>
@@ -240,9 +335,27 @@
                         </table>
                     </div>
                 </div>
+                <div class="card-footer bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted small">
+                            Mostrando 1 a 3 de 8 competições
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Próximo</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
             </div>
-            
-            
         </main>
     </div>
 
@@ -252,7 +365,7 @@
             <div class="modal-content custom-modal">
                 <div class="modal-header">
                     <h5 class="modal-title" id="viewModalLabel"><i class="bi bi-trophy me-2"></i>Detalhes da Competição</h5>
-                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -269,12 +382,32 @@
                             <p><strong><i class="bi bi-info-circle me-2"></i>Status:</strong> <span class="badge badge-active">Ativa</span></p>
                         </div>
                     </div>
+                    
                     <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold"><i class="bi bi-pencil-square me-2"></i>Configurações de Inscrições</h6>
+                            <p><strong>Status:</strong> <span class="badge badge-inscricoes-abertas">Abertas</span></p>
+                            <p><strong>Período:</strong> 01/02/2025 a 05/03/2025</p>
+                            <p><strong>Taxa:</strong> R$ 120,00</p>
+                            <p><strong>Pagamento obrigatório:</strong> Sim</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold"><i class="bi bi-link me-2"></i>Links</h6>
+                            <p><strong>Página de Inscrição:</strong> <a href="#" class="text-decoration-none">keychart.com/inscricao/123</a></p>
+                            <p><strong>Regulamento:</strong> <a href="#" class="text-decoration-none">Download PDF</a></p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
                     <h6 class="fw-bold"><i class="bi bi-journal-text me-2"></i>Regras Específicas</h6>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-mdb-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" data-mdb-dismiss="modal" data-mdb-toggle="modal" data-mdb-target="#editModal">Editar Competição</button>
                 </div>
             </div>
         </div>
@@ -323,6 +456,24 @@
                         </div>
                         
                         <div class="mb-3">
+                            <label for="editCategories" class="form-label">Categorias</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editCategoryAdult" checked>
+                                    <label class="form-check-label" for="editCategoryAdult">Adulto</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editCategoryChild" checked>
+                                    <label class="form-check-label" for="editCategoryChild">Infantil</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editCategorySenior">
+                                    <label class="form-check-label" for="editCategorySenior">Sênior</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
                             <label for="editReferees" class="form-label">Árbitros Responsáveis</label>
                             <select class="form-select" id="editReferees" multiple>
                                 <option value="1" selected>João Silva</option>
@@ -330,6 +481,45 @@
                                 <option value="3">Carlos Souza</option>
                                 <option value="4">Ana Pereira</option>
                             </select>
+                        </div>
+                        
+                        <!-- Seção de Configurações de Inscrições -->
+                        <div class="mb-3">
+                            <label class="form-label">Configurações de Inscrições</label>
+                            <div class="card p-3">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="editInscricoesAtivas" checked>
+                                    <label class="form-check-label" for="editInscricoesAtivas">Inscrições abertas para atletas</label>
+                                </div>
+                                
+                                <div id="editInscricoesConfig">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="editInicioInscricoes" class="form-label">Data de início das inscrições</label>
+                                            <input type="datetime-local" class="form-control" id="editInicioInscricoes" value="2025-02-01T00:00">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="editFimInscricoes" class="form-label">Data de término das inscrições</label>
+                                            <input type="datetime-local" class="form-control" id="editFimInscricoes" value="2025-03-05T23:59">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="editTaxaInscricao" class="form-label">Taxa de inscrição (R$)</label>
+                                        <input type="number" step="0.01" class="form-control" id="editTaxaInscricao" value="120.00">
+                                    </div>
+                                    
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="editPagamentoObrigatorio" checked>
+                                        <label class="form-check-label" for="editPagamentoObrigatorio">Pagamento obrigatório para confirmação</label>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="editLinkRegulamento" class="form-label">Link para regulamento</label>
+                                        <input type="url" class="form-control" id="editLinkRegulamento" value="https://example.com/regulamento.pdf">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="mb-3">
@@ -348,8 +538,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-mdb-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-success" onclick="saveChanges()">Salvar Alterações</button>
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveChanges()">Salvar Alterações</button>
                 </div>
             </div>
         </div>
@@ -361,7 +551,7 @@
             <div class="modal-content custom-modal">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Confirmar Exclusão</h5>
-                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>Tem certeza que deseja excluir permanentemente a competição <strong>"Copa Regional 2025"</strong>?</p>
@@ -431,6 +621,45 @@
                             </select>
                         </div>
                         
+                        <!-- Seção de Configurações de Inscrições -->
+                        <div class="mb-3">
+                            <label class="form-label">Configurações de Inscrições</label>
+                            <div class="card p-3">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="createInscricoesAtivas">
+                                    <label class="form-check-label" for="createInscricoesAtivas">Inscrições abertas para atletas</label>
+                                </div>
+                                
+                                <div id="createInscricoesConfig" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="createInicioInscricoes" class="form-label">Data de início das inscrições</label>
+                                            <input type="datetime-local" class="form-control" id="createInicioInscricoes">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="createFimInscricoes" class="form-label">Data de término das inscrições</label>
+                                            <input type="datetime-local" class="form-control" id="createFimInscricoes">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="createTaxaInscricao" class="form-label">Taxa de inscrição (R$)</label>
+                                        <input type="number" step="0.01" class="form-control" id="createTaxaInscricao" placeholder="0,00">
+                                    </div>
+                                    
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="createPagamentoObrigatorio">
+                                        <label class="form-check-label" for="createPagamentoObrigatorio">Pagamento obrigatório para confirmação</label>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="createLinkRegulamento" class="form-label">Link para regulamento (opcional)</label>
+                                        <input type="url" class="form-control" id="createLinkRegulamento" placeholder="https://">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="mb-3">
                             <label for="createRules" class="form-label">Regras Específicas</label>
                             <textarea class="form-control" id="createRules" rows="4" placeholder="Descreva as regras específicas desta competição..." required></textarea>
@@ -453,191 +682,46 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal Imprimir -->
-    <div id="modalImprimir" class="modal-custom">
-        <div class="modal-custom-content text-center">
-            <div class="modal-icon text-primary">
-                <i class="bi bi-printer"></i>
-            </div>
-            <h4 class="modal-title text-primary">Preparando impressão</h4>
-            <p class="modal-message">Estamos gerando o relatório para impressão. Por favor, aguarde...</p>
-            <div class="progress mb-3" style="height: 6px;">
-                <div id="printProgress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
-            </div>
-            <div class="d-flex justify-content-center gap-3">
-                <button type="button" class="btn btn-secondary" onclick="cancelarImpressao()">
-                    <i class="bi bi-x-circle me-2"></i>Cancelar
-                </button>
-                <button type="button" class="btn btn-primary" onclick="iniciarImpressao()">
-                    <i class="bi bi-printer me-2"></i>Imprimir
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modal Exportar -->
-    <div id="modalExportar" class="modal-custom">
-        <div class="modal-custom-content text-center">
-            <div class="modal-icon text-success">
-                <i class="bi bi-download"></i>
-            </div>
-            <h4 class="modal-title text-success">Exportar Dados</h4>
-            <p class="modal-message">Selecione o formato para exportação:</p>
-            
-            <div class="form-group mb-4 text-start">
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exportFormat" id="exportPDF" value="pdf" checked>
-                    <label class="form-check-label" for="exportPDF">
-                        PDF (Documento Portátil)
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exportFormat" id="exportExcel" value="excel">
-                    <label class="form-check-label" for="exportExcel">
-                        Excel (Planilha Eletrônica)
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exportFormat" id="exportCSV" value="csv">
-                    <label class="form-check-label" for="exportCSV">
-                        CSV (Valores Separados por Vírgula)
-                    </label>
-                </div>
-            </div>
-            
-            <div class="progress mb-3" style="height: 6px; display: none;" id="exportProgressContainer">
-                <div id="exportProgress" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%"></div>
-            </div>
-            
-            <div class="d-flex justify-content-center gap-3">
-                <button type="button" class="btn btn-secondary" onclick="fecharModal('modalExportar')">
-                    <i class="bi bi-x-circle me-2"></i>Cancelar
-                </button>
-                <button type="button" class="btn btn-success" onclick="iniciarExportacao()">
-                    <i class="bi bi-download me-2"></i>Exportar
-                </button>
-            </div>
-        </div>
-    </div>
-
     
     <!-- MDB JS -->
     <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
     <script src="../js/dashboard.js"></script>
-    <script src="../js/competicoes.js"></script>
     <script>
-        // Funções para os modais de impressão e exportação
-        function abrirModalImprimir() {
-            document.getElementById('modalImprimir').style.display = 'block';
-            document.getElementById('printProgress').style.width = '0%';
+        // Função para alternar a sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebar.classList.toggle('active');
+            content.classList.toggle('active');
         }
         
-        function abrirModalExportar() {
-            document.getElementById('modalExportar').style.display = 'block';
-            document.getElementById('exportProgress').style.width = '0%';
-            document.getElementById('exportProgressContainer').style.display = 'none';
-        }
+        // Simular carregamento
+        setTimeout(() => {
+            document.getElementById('loading-screen').style.display = 'none';
+        }, 1000);
         
-        function fecharModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        
-        function cancelarImpressao() {
-            fecharModal('modalImprimir');
-            // Lógica adicional de cancelamento se necessário
-        }
-        
-        function iniciarImpressao() {
-            const progressBar = document.getElementById('printProgress');
-            let progress = 0;
+        // Controle das configurações de inscrição
+        document.addEventListener('DOMContentLoaded', function() {
+            const inscricoesAtivas = document.getElementById('createInscricoesAtivas');
+            const inscricoesConfig = document.getElementById('createInscricoesConfig');
             
-            const interval = setInterval(() => {
-                progress += 10;
-                progressBar.style.width = `${progress}%`;
-                
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        fecharModal('modalImprimir');
-                        // Aqui você pode adicionar a lógica real de impressão
-                        window.print();
-                    }, 500);
+            inscricoesAtivas.addEventListener('change', function() {
+                if(this.checked) {
+                    inscricoesConfig.style.display = 'block';
+                } else {
+                    inscricoesConfig.style.display = 'none';
                 }
-            }, 200);
-        }
-        
-        function iniciarExportacao() {
-            const format = document.querySelector('input[name="exportFormat"]:checked').value;
-            const progressContainer = document.getElementById('exportProgressContainer');
-            const progressBar = document.getElementById('exportProgress');
+            });
             
-            progressContainer.style.display = 'block';
-            let progress = 0;
+            // Para o modal de edição
+            const editInscricoesAtivas = document.getElementById('editInscricoesAtivas');
+            const editInscricoesConfig = document.getElementById('editInscricoesConfig');
             
-            const interval = setInterval(() => {
-                progress += 10;
-                progressBar.style.width = `${progress}%`;
-                
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        fecharModal('modalExportar');
-                        // Lógica de exportação baseada no formato selecionado
-                        exportarDados(format);
-                    }, 500);
+            editInscricoesAtivas.addEventListener('change', function() {
+                if(this.checked) {
+                    editInscricoesConfig.style.display = 'block';
+                } else {
+                    editInscricoesConfig.style.display = 'none';
                 }
-            }, 200);
-        }
-        
-        function exportarDados(format) {
-            // Simulação de exportação - substitua pela sua lógica real
-            let blob;
-            let filename;
-            let mimeType;
-            
-            switch(format) {
-                case 'pdf':
-                    // Simular geração de PDF
-                    mimeType = 'application/pdf';
-                    filename = 'competicoes.pdf';
-                    blob = new Blob(['Conteúdo do PDF simulado'], {type: mimeType});
-                    break;
-                case 'excel':
-                    // Simular geração de Excel
-                    mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                    filename = 'competicoes.xlsx';
-                    blob = new Blob(['Conteúdo do Excel simulado'], {type: mimeType});
-                    break;
-                case 'csv':
-                    // Simular geração de CSV
-                    mimeType = 'text/csv';
-                    filename = 'competicoes.csv';
-                    blob = new Blob(['Nome,Data,Local\nCopa Regional,10/03/2025,Estádio Municipal'], {type: mimeType});
-                    break;
-            }
-            
-            // Criar link de download
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            // Mostrar mensagem de sucesso
-            alert(`Arquivo ${filename} exportado com sucesso!`);
-        }
-        
-        // Fechar modal ao clicar fora do conteúdo
-        window.onclick = function(event) {
-            if (event.target.className === 'modal-custom') {
-                event.target.style.display = 'none';
-            }
-        }
-        </script>
-        
-</body>
-</html>       
+            });
+        });

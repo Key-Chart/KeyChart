@@ -40,12 +40,6 @@ body {
     color: white;
 }
 
-
-.sidebar a.active {
-    background-color: var(--primary-color);
-    color: white;
-}
-
 #img-logo {
     height: 35px;
     margin-right: 10px;
@@ -57,8 +51,6 @@ body {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     min-height: 100vh;
 }
-
-
 
 .header h2 {
     font-weight: 600;
@@ -79,11 +71,6 @@ body {
     transition: all 0.3s;
     margin-bottom: 2rem;
     overflow: hidden;
-}
-
-.card:hover {
-    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-    transform: translateY(-2px);
 }
 
 .card-header {
@@ -218,3 +205,53 @@ body {
 .table tbody tr:nth-child(1) { animation-delay: 0.1s; }
 .table tbody tr:nth-child(2) { animation-delay: 0.2s; }
 .table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+
+/* Modal Imprimir e Exportar */
+.modal-custom {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(3px);
+}
+
+.modal-custom-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 30px;
+    border: none;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+    from {opacity: 0; transform: translateY(-20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.modal-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.modal-message {
+    margin-bottom: 25px;
+    color: #555;
+}
+
+.sidebar a.active {
+    background-color: rgba(255, 255, 255, 0.4);
+    color: #ffd700; /* Amarelo ouro pra destacar */
+}

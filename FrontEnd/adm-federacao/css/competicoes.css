@@ -94,11 +94,6 @@ body {
     overflow: hidden;
 }
 
-/* Efeito hover nos cards */
-.card:hover {
-    box-shadow: 0 8px 30px #343A40;
-}
-
 /* Header do card */
 .card-header {
     background-color: var(--primary-color);
@@ -331,4 +326,57 @@ body {
 .custom-modal .modal-footer .btn-primary {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
+}
+
+/* Estilos adicionais */
+.badge-active {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-finished {
+    background-color: #6c757d;
+    color: white;
+}
+
+.badge-upcoming {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-inscricoes-abertas {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.badge-inscricoes-fechadas {
+    background-color: #dc3545;
+    color: white;
+}
+
+.stat-card {
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.stat-card i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.stat-card .number {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.custom-modal .modal-header {
+    background: #343A40;
+    color: white;
+}
+
+.sidebar a.active {
+    background-color: rgba(255, 255, 255, 0.4);
+    color: #ffd700; /* Amarelo ouro pra destacar */
 }

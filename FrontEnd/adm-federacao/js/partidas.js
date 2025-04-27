@@ -94,3 +94,26 @@ document.addEventListener("DOMContentLoaded", function () {
     selectCompeticao.addEventListener("change", aplicarFiltro);
     inputData.addEventListener("change", aplicarFiltro);
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const links = document.querySelectorAll('.sidebar a');
+    const activeLink = localStorage.getItem('activeLink');
+
+    // Se tiver algo salvo, marca o link
+    if (activeLink) {
+        links.forEach(link => {
+            if (link.href === activeLink) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // Quando clicar, salva o link clicado
+    links.forEach(link => {
+        link.addEventListener('click', function() {
+            links.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            localStorage.setItem('activeLink', this.href);
+        });
+    });
+});

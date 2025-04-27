@@ -428,3 +428,8 @@ body {
         font-size: 0.875rem;
     }
 }
+
+.sidebar a.active {
+    background-color: rgba(255, 255, 255, 0.4);
+    color: #ffd700; /* Amarelo ouro pra destacar */
+}
