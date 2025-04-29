@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sidebar</title>
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/css/sidebar.css' %}">
     <style>
         .sidebar {
             background:
@@ -16,7 +16,27 @@
             background-position: center;
             background-repeat: no-repeat;
         }
-    </style>
+        /* Estilo da sidebar */
+        .sidebar {
+            width: 250px;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            transition: width 0.3s ease-in-out;
+        }
+
+        /* Sidebar quando minimizada */
+        .sidebar-hidden {
+            width: 60px;
+        }
+        /* Ajusta a margem do conteúdo com a sidebar minimizada */
+        .content-expanded {
+            margin-left: 60px;
+        }
+  </style>
 </head>
 <body>
     <button class="toggle-btn" onclick="toggleSidebar()">
