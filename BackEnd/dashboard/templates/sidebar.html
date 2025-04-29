@@ -16,6 +16,7 @@
             background-position: center;
             background-repeat: no-repeat;
         }
+
         /* Estilo da sidebar */
         .sidebar {
             width: 250px;
@@ -28,6 +29,20 @@
             transition: width 0.3s ease-in-out;
         }
 
+        /* Botão de toggle da sidebar */
+        .toggle-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1050;
+        }
+
+
         /* Sidebar quando minimizada */
         .sidebar-hidden {
             width: 60px;
@@ -36,6 +51,7 @@
         .content-expanded {
             margin-left: 60px;
         }
+        
   </style>
 </head>
 <body>
