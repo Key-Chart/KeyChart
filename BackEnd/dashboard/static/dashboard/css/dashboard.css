@@ -1,0 +1,308 @@
+/* Define o tamanho da fonte e zoom padrão */
+html {
+    font-size: 16px;
+    zoom: 1;
+}
+
+/* Configurações básicas do body */
+body {
+    font-size: 1rem;
+    zoom: 1;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Área principal de conteúdo */
+.content {
+    margin-left: 250px;
+    flex-grow: 1;
+    padding: 20px;
+    transition: margin-left 0.3s ease-in-out;
+    overflow-y: auto;
+    height: 100vh;
+    zoom: 1;
+    transform: scale(1);
+}
+
+/* Ajusta a margem do conteúdo com a sidebar minimizada */
+.content-expanded {
+    margin-left: 60px;
+}
+
+/* Botão de toggle da sidebar */
+.toggle-btn {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1050;
+}
+
+/* Cabeçalho (Header) */
+.header {
+    background: var(--primary-color);
+    color: white;
+    padding: 1.5rem;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Título do header */
+.header h2 {
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Ícone ao lado do título */
+.header h2 i {
+    margin-right: 12px;
+}
+
+/* Ícone do usuário no header */
+.user-icon {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Dropdown do usuário */
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Container do ícone do usuário */
+.user-icon-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Ícone do usuário */
+.user-icon {
+    font-size: 24px;
+    color: #000000;
+}
+
+/* Ícone de seta no dropdown */
+.arrow-icon {
+    font-size: 14px;
+    margin-left: 5px;
+    color: #000000;
+    transition: transform 0.3s ease;
+}
+
+/* Menu dropdown */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    left: 0;
+    transform: translateX(-100%);
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    z-index: 1000;
+}
+
+/* Estilo dos links do dropdown */
+.dropdown-menu a {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+}
+
+/* Hover nos links do dropdown */
+.dropdown-menu a:hover {
+    background-color: #f8f9fa;
+}
+
+/* Rotaciona a seta quando o dropdown está aberto */
+.user-dropdown.active .arrow-icon {
+    transform: rotate(180deg);
+}
+
+/* Mostra o menu quando ativo */
+.user-dropdown.active .dropdown-menu {
+    display: block;
+}
+
+/* Container do chat */
+.chat-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+    border: none;
+}
+
+/* Estilo do card do chat aberto */
+.chat-container:not(.collapsed) .card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Botão de toggle do chat */
+.chat-toggle-btn {
+    position: absolute;
+    top: -50px;
+    right: 0;
+    z-index: 1001;
+    background-color: #198754 !important;
+    border-radius: 50% !important;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border: none;
+}
+
+/* Chat colapsado */
+.chat-container.collapsed {
+    transform: translateY(0);
+    height: auto;
+    border: none;
+}
+
+/* Esconde o card do chat colapsado */
+.chat-container.collapsed .card {
+    display: none;
+}
+
+/* Mostra o card do chat aberto */
+.chat-container:not(.collapsed) .card {
+    display: block;
+}
+
+/* Responsividade para tablets */
+@media (max-width: 768px) {
+    .content {
+        margin-left: 60px;
+    }
+    .toggle-btn {
+        display: block;
+    }
+    .chat-container {
+        width: 90%;
+        right: 5%;
+    }
+}
+
+/* Responsividade para celulares */
+@media (max-width: 576px) {
+    .content {
+        margin-left: 0;
+    }
+    .toggle-btn {
+        left: 20px;
+    }
+}
+
+/* Estilo geral dos cards */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    height: 100%;
+}
+
+/* Hover nos cards */
+.card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+/* Cabeçalho dos cards */
+.card-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    border-bottom: none;
+}
+
+/* Título dos cards */
+.card-title {
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Estilo dos cards de estatísticas */
+.stat-card {
+    color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    transition: all 0.3s;
+}
+
+
+
+/* Fundo escuro nas estatísticas */
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+    z-index: 1;
+}
+
+/* Conteúdo acima do fundo escuro */
+.stat-card-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* Títulos das estatísticas */
+.stat-card h5 {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Valores das estatísticas */
+.stat-card .fs-2 {
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+/* Header fixo e reformulado */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0px;
+    right: 0;
+    height: 60px;
+    background: #ffffff;
+    color: rgb(0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 900;
+    transition: all 0.3s;
+}
+
+

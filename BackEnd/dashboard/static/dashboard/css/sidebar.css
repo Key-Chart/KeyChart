@@ -1,0 +1,56 @@
+/* Links da sidebar */
+.sidebar a {
+    padding: 15px;
+    display: block;
+    color: white;
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: 18px;
+}
+
+/* Ícones dos links */
+.sidebar a i {
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+/* Sidebar minimizada */
+.sidebar-hidden {
+    width: 60px;
+}
+
+/* Centralizar texto dos links minimizados */
+.sidebar-hidden a {
+    text-align: center;
+}
+
+/* Esconder texto dos links minimizados */
+.sidebar-hidden a span {
+    display: none;
+}
+
+/* Hover nos links da sidebar */
+.sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.26);
+}
+
+
+/* Responsividade para tablets */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+    }
+    .sidebar a span {
+        display: none;
+    }
+}
+
+/* Responsividade para celulares */
+@media (max-width: 576px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    .sidebar-hidden {
+        transform: translateX(0);
+    }
+}
