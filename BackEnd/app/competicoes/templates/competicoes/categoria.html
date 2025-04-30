@@ -1,0 +1,465 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'competicoes/css/categoria.css' %}">
+    <title>Categorias | KeyChart</title>
+</head>
+<body>
+
+    {% include 'sidebar.html' %}
+
+    <!-- Conteúdo Principal -->
+    <div class="content" id="content">
+        <!-- Header -->
+        <div class="header" style="background: #343A40; color: #ffffff;">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-back me-3" onclick="window.history.back()">
+                        <i class="bi bi-arrow-left" style="color: #ffffff;"></i>
+                    </button>
+                    <h2><i class="bi bi-trophy me-2"></i> Copa Regional 2025</h2>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- Conteúdo -->
+        <main class="container-fluid py-4">
+            <!-- Formulários de Cadastro -->
+            <div class="row mb-4">
+                <!-- Cadastro de Categorias -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-tag me-2"></i>Cadastro de Categorias</h5>
+                        </div>
+                        <hr>
+                        <div class="card-body">
+                            <form id="categoryForm">
+                                <div class="col-md-12 mb-3">
+                                        <label for="editModality" class="form-label">Categorias</label>
+                                        <select class="form-select" id="editModality" required>
+                                            <option value="" selected disabled>Selecione</option>
+                                            <option value="Adulto">Adulto</option>
+                                            <option value="Infantil">Infantil</option>
+                                            <option value="Sênior">Sênior</option>  
+                                        </select>
+                                    </div>
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="categoryGender" class="form-label">Sexo</label>
+                                        <select class="form-select" id="categoryGender" required>
+                                            <option value="" selected disabled>Selecione</option>
+                                            <option value="M">Masculino</option>
+                                            <option value="F">Feminino</option>
+                                            <option value="MX">Misto</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="categoryType" class="form-label">Tipo</label>
+                                    <select class="form-select" id="categoryType" required>
+                                        <option value="" selected disabled>Selecione</option>
+                                        <option value="kata">Kata</option>
+                                        <option value="kumite">Kumite</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="bi bi-plus-circle me-2"></i>Cadastrar Categoria
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cadastro de Academias -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-building me-2"></i>Cadastro de Academias</h5>
+                        </div>
+                        <hr>
+                        <div class="card-body">
+                            <form id="academyForm">
+                                <div class="mb-3">
+                                    <label for="academyName" class="form-label">Nome da Academia</label>
+                                    <input type="text" class="form-control" id="academyName" placeholder="Ex: Academia Central" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="academyCity" class="form-label">Cidade</label>
+                                        <input type="text" class="form-control" id="academyCity" placeholder="Ex: São Paulo" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="academyState" class="form-label">Estado</label>
+                                        <select class="form-select" id="academyState" required>
+                                            <option value="" selected disabled>Selecione</option>
+                                            <option value="SP">São Paulo</option>
+                                            <option value="RJ">Rio de Janeiro</option>
+                                            <option value="MG">Minas Gerais</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="academyAddress" class="form-label">Endereço</label>
+                                    <input type="text" class="form-control" id="academyAddress" placeholder="Ex: Rua Principal, 123" required>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="bi bi-plus-circle me-2"></i>Cadastrar Academia
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categorias cadastradas -->
+            <div class="row">
+                <!-- Tabela de Categorias -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0"><i class="bi bi-list-check me-2"></i>Categorias Cadastradas</h5>
+                                <span class="badge bg-primary">3 registros</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Sexo</th>
+                                            <th>Nome</th>
+                                            <th>Tipo</th>
+                                            <th>Status</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="badge badge-male">M</span></td>
+                                            <td>Categoria Master</td>
+                                            <td><span class="badge badge-kata">Kata</span></td>
+                                            <td><span class="badge badge-active">Ativa</span></td>
+                                            <td>
+                                                <a href="atletas_categoria.html" class="btn btn-sm btn-outline-primary me-1"
+                                                data-mdb-tooltip="tooltip" title="Visualizar">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteCategoryModal" data-mdb-tooltip="tooltip" title="Excluir">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-female">F</span></td>
+                                            <td>Juvenil</td>
+                                            <td><span class="badge badge-kumite">Kumite</span></td>
+                                            <td><span class="badge badge-finished">Finalizada</span></td>
+                                            <td>
+                                                <a href="atletas_categoria.html" class="btn btn-sm btn-outline-primary me-1"
+                                                data-mdb-tooltip="tooltip" title="Visualizar">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+
+                                                <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteCategoryModal" data-mdb-tooltip="tooltip" title="Excluir">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge badge-male">M</span></td>
+                                            <td>Juvenil</td>
+                                            <td><span class="badge badge-kata">Kata</span></td>
+                                            <td><span class="badge badge-suspended">Suspenso</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewCategoryModal" data-mdb-tooltip="tooltip" title="Visualizar">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteCategoryModal" data-mdb-tooltip="tooltip" title="Excluir">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <nav>
+                                <ul class="pagination pagination-sm mb-0 justify-content-center">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">Próximo</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Academias -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0"><i class="bi bi-building me-2"></i>Academias Cadastradas</h5>
+                               
+                                <span class="badge bg-primary">2 registros</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nome</th>
+                                            <th>Cidade</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Academia A</td>
+                                            <td>São Paulo/SP</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewAcademyModal" data-mdb-tooltip="tooltip" title="Visualizar">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="modal" data-mdb-target="#editAcademyModal" data-mdb-tooltip="tooltip" title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteAcademyModal" data-mdb-tooltip="tooltip" title="Excluir">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Academia B</td>
+                                            <td>Rio de Janeiro/RJ</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewAcademyModal" data-mdb-tooltip="tooltip" title="Visualizar">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="modal" data-mdb-target="#editAcademyModal" data-mdb-tooltip="tooltip" title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteAcademyModal" data-mdb-tooltip="tooltip" title="Excluir">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <nav>
+                                <ul class="pagination pagination-sm mb-0 justify-content-center">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">Próximo</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Editar Categoria -->
+    <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-white" style="background-color: var(--primary-color);">
+                    <h5 class="modal-title" id="editCategoryModalLabel"><i class="bi bi-pencil-square me-2"></i>Editar Categoria</h5>
+                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCategoryForm">
+                        <div class="mb-3">
+                            <label for="editCategoryName" class="form-label">Nome da Categoria</label>
+                            <input type="text" class="form-control" id="editCategoryName" value="Categoria Master" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editCategoryGender" class="form-label">Sexo</label>
+                                <select class="form-select" id="editCategoryGender" required>
+                                    <option value="M" selected>Masculino</option>
+                                    <option value="F">Feminino</option>
+                                    <option value="MX">Misto</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editCategoryType" class="form-label">Tipo</label>
+                                <select class="form-select" id="editCategoryType" required>
+                                    <option value="kata" selected>Kata</option>
+                                    <option value="kumite">Kumite</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCategoryStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editCategoryStatus" required>
+                                <option value="active" selected>Ativa</option>
+                                <option value="finished">Finalizada</option>
+                                <option value="suspended">Suspensa</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Excluir Categoria -->
+    <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteCategoryModalLabel"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir permanentemente a categoria <strong>"Categoria Master"</strong>?</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>Esta ação não pode ser desfeita e todos os dados associados serão perdidos.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger">Confirmar Exclusão</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Visualizar Academia -->
+    <div class="modal fade" id="viewAcademyModal" tabindex="-1" aria-labelledby="viewAcademyModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-white" style="background-color: var(--primary-color);">
+                    <h5 class="modal-title" id="viewAcademyModalLabel"><i class="bi bi-building me-2"></i>Detalhes da Academia</h5>
+                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <p class="mb-1"><strong>Nome:</strong></p>
+                        <p>Academia A</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <p class="mb-1"><strong>Cidade:</strong></p>
+                            <p>São Paulo</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <p class="mb-1"><strong>Estado:</strong></p>
+                            <p>SP</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p class="mb-1"><strong>Endereço:</strong></p>
+                        <p>Rua A, 123</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" data-mdb-dismiss="modal" data-mdb-toggle="modal" data-mdb-target="#editAcademyModal">Editar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Academia -->
+    <div class="modal fade" id="editAcademyModal" tabindex="-1" aria-labelledby="editAcademyModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-white" style="background-color: var(--primary-color);">
+                    <h5 class="modal-title" id="editAcademyModalLabel"><i class="bi bi-pencil-square me-2"></i>Editar Academia</h5>
+                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editAcademyForm">
+                        <div class="mb-3">
+                            <label for="editAcademyName" class="form-label">Nome da Academia</label>
+                            <input type="text" class="form-control" id="editAcademyName" value="Academia A" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editAcademyCity" class="form-label">Cidade</label>
+                                <input type="text" class="form-control" id="editAcademyCity" value="São Paulo" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editAcademyState" class="form-label">Estado</label>
+                                <select class="form-select" id="editAcademyState" required>
+                                    <option value="SP" selected>São Paulo</option>
+                                    <option value="RJ">Rio de Janeiro</option>
+                                    <option value="MG">Minas Gerais</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editAcademyAddress" class="form-label">Endereço</label>
+                            <input type="text" class="form-control" id="editAcademyAddress" value="Rua A, 123" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Excluir Academia -->
+    <div class="modal fade" id="deleteAcademyModal" tabindex="-1" aria-labelledby="deleteAcademyModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteAcademyModalLabel"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir permanentemente a academia <strong>"Academia A"</strong>?</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>Esta ação não pode ser desfeita e todos os dados associados serão perdidos.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger">Confirmar Exclusão</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MDB JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
+    <script src="{% static 'competicoes/js/categoria.js' %}"></script>
+</body>
+</html>

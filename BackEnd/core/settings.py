@@ -20,9 +20,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'autenticacao',
-    'dashboard',
-    'competicoes',
+    'app.autenticacao',
+    'app.dashboard',
+    'app.competicoes',
 ]
 
 # Middlewares
@@ -43,8 +43,8 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Adiciona a pasta de templates no nível do projeto
+        'APP_DIRS': True,  # Isso permite que o Django procure templates dentro das apps
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -84,11 +84,14 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Arquivos estáticos
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'dashboard/static'),
-    os.path.join(BASE_DIR, 'competicoes/static'),
+    BASE_DIR / "static",
+    os.path.join(BASE_DIR, 'app/dashboard/static'),
+    os.path.join(BASE_DIR, 'app/competicoes/static'),
+    os.path.join(BASE_DIR, 'app/autenticacao/static'),
 ]
+
 
 # Tipo de chave primária padrão
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -1,10 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
-
-
-
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('keychart/', include('dashboard.urls')),
-    path('keychart/', include('competicoes.urls')),
-] 
+    path('keychart/dashboard/', include('app.dashboard.urls')),
+    path('keychart/competicoes/', include('app.competicoes.urls')),  # Isso corresponde a app/competicoes/urls.py
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
