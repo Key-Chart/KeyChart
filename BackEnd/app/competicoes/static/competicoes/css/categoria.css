@@ -18,7 +18,7 @@ body {
 
 /* Conteúdo Principal */
 .content {
-    margin-left: 280px;
+    margin-left: 250px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     min-height: 100vh;
 }

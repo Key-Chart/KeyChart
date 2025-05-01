@@ -17,7 +17,7 @@
     {% include 'sidebar.html' %}
 
     <!-- Conteúdo Principal -->
-    <div class="content" id="content">
+    <div class="content" id="content" style="margin-left: 250px;">
         <!-- Header -->
         <div class="header" style="background: #343A40; color: #ffffff;">
             <div class="container-fluid">
@@ -151,7 +151,7 @@
                                             <td><span class="badge badge-kata">Kata</span></td>
                                             <td><span class="badge badge-active">Ativa</span></td>
                                             <td>
-                                                <a href="atletas_categoria.html" class="btn btn-sm btn-outline-primary me-1"
+                                                <a href="{% url 'competicoes:atletas_categoria' %}" class="btn btn-sm btn-outline-primary me-1"
                                                 data-mdb-tooltip="tooltip" title="Visualizar">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
