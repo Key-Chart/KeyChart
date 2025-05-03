@@ -24,7 +24,7 @@
             background-color: rgba(0,0,0,0.5);
             backdrop-filter: blur(3px);
         }
-        
+
         .modal-custom-content {
             background-color: #fefefe;
             margin: 10% auto;
@@ -36,25 +36,60 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             animation: modalFadeIn 0.3s;
         }
-        
+
         @keyframes modalFadeIn {
             from {opacity: 0; transform: translateY(-20px);}
             to {opacity: 1; transform: translateY(0);}
         }
-        
-        .modal-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-        
+
         .modal-title {
             margin-bottom: 15px;
             font-weight: 600;
         }
-        
+
         .modal-message {
             margin-bottom: 25px;
             color: #555;
+        }
+
+        /* Modal customizado */
+        .custom-modal {
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: none;
+        }
+
+        .custom-modal .modal-header {
+            border-radius: 10px 10px 0 0;
+            background: #343A40;
+            color: white;
+        }
+
+        .badge-inscricoes-abertas {
+            background-color: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .badge-inscricoes-fechadas {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        /* Estilização dos filtros */
+        .input-group-text {
+            background-color: #f8f9fa !important;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .btn-filter {
+            transition: all 0.3s ease;
         }
     </style>
 </head>
@@ -65,7 +100,7 @@
             <span class="visually-hidden">Carregando...</span>
         </div>
     </div>
-    
+
     {% include 'sidebar.html' %}
 
     <!-- Conteúdo Principal -->
@@ -77,11 +112,20 @@
                     <h2><i class="bi bi-trophy"></i> Competições</h2>
                     <button class="btn btn-white btn-sm" data-mdb-toggle="modal" data-mdb-target="#createModal" style="background: white;">
                         <i class="bi bi-plus-lg"></i> Nova Competição
-                    </button>                    
+                    </button>
                 </div>
             </div>
         </div>
-        
+
+        {% if messages %}
+            {% for message in messages %}
+                <div id="alert-{{ forloop.counter }}" class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3 auto-dismiss" role="alert" data-delay="5000">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
         <!-- Conteúdo -->
         <main class="container-fluid py-4">
             <!-- Cards de Estatísticas -->
@@ -90,50 +134,70 @@
                     <div class="stat-card bg-primary">
                         <i class="fas fa-trophy"></i>
                         <div class="label">Total de Competições</div>
-                        <div class="number">8</div>
+                        <div class="number">{{ total_competicoes }}</div>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
                     <div class="stat-card bg-success">
                         <i class="fas fa-running"></i>
                         <div class="label">Competições Ativas</div>
-                        <div class="number">5</div>
+                        <div class="number">{{ competicoes_ativas }}</div>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
                     <div class="stat-card bg-warning text-dark">
                         <i class="fas fa-flag-checkered"></i>
                         <div class="label">Competições Finalizadas</div>
-                        <div class="number">3</div>
+                        <div class="number">{{ competicoes_finalizadas }}</div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Filtros -->
-            <div class="row mb-4">
-                <div class="col-md-4 mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" placeholder="Buscar competição...">
+            <form method="GET" action="{% url 'competicoes:home' %}" class="mb-4">
+                <div class="row g-3">
+                    <!-- Campo de Busca -->
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" class="form-control" name="q"
+                                   placeholder="Buscar por nome, local, modalidade ou árbitros..."
+                                   value="{{ request.GET.q }}">
+                        </div>
+                    </div>
+
+                    <!-- Filtro por Status -->
+                    <div class="col-md-3">
+                        <select class="form-select" name="status">
+                            <option value="">Todos os status</option>
+                            <option value="Ativa" {% if request.GET.status == 'Ativa' %}selected{% endif %}>Ativa</option>
+                            <option value="Finalizada" {% if request.GET.status == 'Finalizada' %}selected{% endif %}>Finalizada</option>
+                            <option value="Em breve" {% if request.GET.status == 'Em breve' %}selected{% endif %}>Em breve</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtro por Data -->
+                    <div class="col-md-3">
+                        <input type="date" class="form-control" name="data"
+                               value="{{ request.GET.data }}">
+                    </div>
+
+                    <!-- Botões -->
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-funnel me-2"></i>Filtrar
+                        </button>
+                        {% if request.GET %}
+                            <a href="{% url 'competicoes:home' %}" class="btn btn-outline-secondary w-100 mt-2">
+                                <i class="bi bi-x-circle me-2"></i>Limpar
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <select class="form-select">
-                        <option selected>Todos os status</option>
-                        <option>Ativa</option>
-                        <option>Finalizadas</option>
-                    </select>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <input type="date" class="form-control">
-                </div>
-                <div class="col-md-2 mb-3">
-                    <button type="button" class="btn btn-info w-100 d-inline-flex align-items-center justify-content-center">
-                        <i class="bi bi-search me-2"></i> Buscar
-                    </button>
-                </div>
-            </div>
-            
+            </form>
+
             <!-- Tabela de Competições -->
             <div class="card">
                 <div class="card-header" style="background: #343A40; color: #ffffff;">
@@ -165,96 +229,99 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <a href="{% url 'competicoes:categoria' %}" class="text-decoration-none fw-bold text-primary">Copa Regional 2025</a>
-                                        <div class="text-muted small">Modalidade: Futebol</div>
-                                    </td>
-                                    <td>10/03/2025</td>
-                                    <td>Estádio Municipal</td>
-                                    <td><span class="badge badge-active">Ativa</span></td>
-                                    <td><span class="badge badge-inscricoes-abertas">Abertas</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewModal" title="Visualizar">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="modal" data-mdb-target="#editModal" title="Editar">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteModal" title="Excluir">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <a href="categoria.html" class="text-decoration-none fw-bold text-primary">Campeonato Estadual</a>
-                                        <div class="text-muted small">Modalidade: Vôlei</div>
-                                    </td>
-                                    <td>15/02/2025</td>
-                                    <td>Ginásio Central</td>
-                                    <td><span class="badge badge-finished">Finalizada</span></td>
-                                    <td><span class="badge badge-inscricoes-fechadas">Fechadas</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewModal" title="Visualizar">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <a href="categoria.html" class="text-decoration-none fw-bold text-primary">Torneio Aberto</a>
-                                        <div class="text-muted small">Modalidade: Basquete</div>
-                                    </td>
-                                    <td>05/04/2025</td>
-                                    <td>Quadra Poliesportiva</td>
-                                    <td><span class="badge badge-upcoming">Em breve</span></td>
-                                    <td><span class="badge badge-inscricoes-abertas">Abertas</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewModal" title="Visualizar">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="modal" data-mdb-target="#editModal" title="Editar">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                {% for competicao in listar_competicoes %}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url 'competicoes:categoria' %}" class="text-decoration-none fw-bold text-primary">{{ competicao.nome }}</a>
+                                            <div class="text-muted small">Modalidade: {{ competicao.modalidade }}</div>
+                                        </td>
+                                        <td>{{ competicao.data_inicio }}</td>
+                                        <td>{{ competicao.local }}</td>
+                                        <td>
+                                            {% if competicao.status == "Ativa" %}
+                                                <span class="badge bg-success">{{ competicao.status }}</span>
+                                            {% elif competicao.status == "Finalizada" %}
+                                                <span class="badge bg-secondary">{{ competicao.status }}</span>
+                                            {% elif competicao.status == "Em breve" %}
+                                                <span class="badge bg-warning text-dark">{{ competicao.status }}</span>
+                                            {% else %}
+                                                <span class="badge bg-light text-dark">{{ competicao.status }}</span>
+                                            {% endif %}
+                                        </td>
+
+                                        <td>
+                                            {% if competicao.inscricoes_abertas %}
+                                                <span class="badge badge-inscricoes-abertas">Abertas</span>
+                                            {% else %}
+                                                <span class="badge badge-inscricoes-fechadas">Fechadas</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewModal{{ competicao.id }}" title="Visualizar">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="modal" data-mdb-target="#editModal{{ competicao.id }}" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteModal{{ competicao.id }}" title="Excluir">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            
-            
         </main>
     </div>
 
-    <!-- Modal Ver Competição -->
-    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+    {% for competicao in listar_competicoes %}
+    <!-- Modal Visualizar -->
+    <div class="modal fade" id="viewModal{{ competicao.id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ competicao.id }}" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content custom-modal">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewModalLabel"><i class="bi bi-trophy me-2"></i>Detalhes da Competição</h5>
+                <div class="modal-header text-white" style="background: #343A40;">
+                    <h5 class="modal-title" id="viewModalLabel{{ competicao.id }}"><i class="bi bi-trophy me-2"></i>Detalhes da Competição</h5>
                     <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <p><strong><i class="bi bi-card-heading me-2"></i>Nome:</strong> Copa Regional 2025</p>
-                            <p><strong><i class="bi bi-calendar me-2"></i>Data de Início:</strong> 10/03/2025</p>
-                            <p><strong><i class="bi bi-clock me-2"></i>Horário:</strong> 14:00</p>
-                            <p><strong><i class="bi bi-geo-alt me-2"></i>Local:</strong> Estádio Municipal</p>
+                            <p><strong><i class="bi bi-card-heading me-2"></i>Nome:</strong> {{ competicao.nome }}</p>
+                            <p><strong><i class="bi bi-calendar me-2"></i>Data de Início:</strong> {{ competicao.data_inicio|date:"d/m/Y" }}</p>
+                            <p><strong><i class="bi bi-clock me-2"></i>Horário:</strong> {{ competicao.horario }}</p>
+                            <p><strong><i class="bi bi-geo-alt me-2"></i>Local:</strong> {{ competicao.local }}</p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong><i class="bi bi-list-check me-2"></i>Modalidade:</strong> Futebol</p>
-                            <p><strong><i class="bi bi-people me-2"></i>Categorias:</strong> Adulto, Infantil</p>
-                            <p><strong><i class="bi bi-person-badge me-2"></i>Árbitros:</strong> João Silva, Maria Oliveira</p>
-                            <p><strong><i class="bi bi-info-circle me-2"></i>Status:</strong> <span class="badge badge-active">Ativa</span></p>
+                            <p><strong><i class="bi bi-list-check me-2"></i>Modalidade:</strong> {{ competicao.modalidade }}</p>
+                            <p><strong><i class="bi bi-people me-2"></i>Categorias:</strong>
+                                {% for categoria in competicao.categorias.all %}
+                                    {{ categoria.nome }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            <p><strong><i class="bi bi-person-badge me-2"></i>Árbitros:</strong>
+                                {% for arbitro in competicao.arbitros.all %}
+                                    {{ arbitro.nome }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            <p><strong><i class="bi bi-info-circle me-2"></i>Status:</strong>
+                                {% if competicao.status == "Ativa" %}
+                                    <span class="badge bg-success">{{ competicao.status }}</span>
+                                {% elif competicao.status == "Finalizada" %}
+                                    <span class="badge bg-secondary">{{ competicao.status }}</span>
+                                {% elif competicao.status == "Em breve" %}
+                                    <span class="badge bg-warning text-dark">{{ competicao.status }}</span>
+                                {% else %}
+                                    <span class="badge bg-light text-dark">{{ competicao.status }}</span>
+                                {% endif %}
+                            </p>
                         </div>
                     </div>
                     <hr>
                     <h6 class="fw-bold"><i class="bi bi-journal-text me-2"></i>Regras Específicas</h6>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.</p>
+                    <p>{{ competicao.regras_especificas|default:"Nenhuma regra específica definida." }}</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-mdb-dismiss="modal">Fechar</button>
@@ -263,103 +330,115 @@
         </div>
     </div>
 
-    <!-- Modal Editar Competição -->
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <!-- Modal Editar -->
+    <div class="modal fade" id="editModal{{ competicao.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ competicao.id }}" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content custom-modal">
-                <div class="modal-header text-white">
-                    <h5 class="modal-title" id="editModalLabel"><i class="bi bi-pencil-square me-2"></i>Editar Competição</h5>
+                <div class="modal-header text-white" style="background: #343A40;">
+                    <h5 class="modal-title" id="editModalLabel{{ competicao.id }}"><i class="bi bi-pencil-square me-2"></i>Editar Competição</h5>
                     <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editCompetitionForm">
+                    <form id="editCompetitionForm{{ competicao.id }}" method="POST" action="{% url 'competicoes:editar_competicao' competicao.id %}">
+                        {% csrf_token %}
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="editName" class="form-label">Nome da Competição</label>
-                                <input type="text" class="form-control" id="editName" value="Copa Regional 2025" required>
+                                <label for="editName{{ competicao.id }}" class="form-label">Nome da Competição</label>
+                                <input type="text" class="form-control" id="editName{{ competicao.id }}" name="nome" value="{{ competicao.nome }}" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="editModality" class="form-label">Modalidade</label>
-                                <select class="form-select" id="editModality" required>
-                                    <option value="Futebol" selected>Futebol</option>
-                                    <option value="Vôlei">Vôlei</option>
-                                    <option value="Basquete">Basquete</option>
-                                    <option value="Tênis">Tênis</option>
+                                <label for="editModality{{ competicao.id }}" class="form-label">Modalidade</label>
+                                <select class="form-select" id="editModality{{ competicao.id }}" name="modalidade" required>
+                                    <option value="Kata" {% if competicao.modalidade == "Kata" %}selected{% endif %}>Kata</option>
+                                    <option value="Kumitê" {% if competicao.modalidade == "Kumitê" %}selected{% endif %}>Kumitê</option>
+                                    <option value="Kata-Kumitê" {% if competicao.modalidade == "Kata-Kumitê" %}selected{% endif %}>Kata/Kumitê</option>
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="editDate" class="form-label">Data de Início</label>
-                                <input type="date" class="form-control" id="editDate" value="2025-03-10" required>
+                                <label for="editDate{{ competicao.id }}" class="form-label">Data de Início</label>
+                                <input type="date" class="form-control" id="editDate{{ competicao.id }}" name="data_inicio" value="{{ competicao.data_inicio|date:'Y-m-d' }}" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="editTime" class="form-label">Horário</label>
-                                <input type="time" class="form-control" id="editTime" value="14:00" required>
+                                <label for="editTime{{ competicao.id }}" class="form-label">Horário</label>
+                                <input type="time" class="form-control" id="editTime{{ competicao.id }}" name="horario" value="{{ competicao.horario }}" required>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
-                            <label for="editLocation" class="form-label">Local</label>
-                            <input type="text" class="form-control" id="editLocation" value="Estádio Municipal" required>
+                            <label for="editLocation{{ competicao.id }}" class="form-label">Local</label>
+                            <input type="text" class="form-control" id="editLocation{{ competicao.id }}" name="local" value="{{ competicao.local }}" required>
                         </div>
-                        
+
                         <div class="mb-3">
-                            <label for="editReferees" class="form-label">Árbitros Responsáveis</label>
-                            <select class="form-select" id="editReferees" multiple>
-                                <option value="1" selected>João Silva</option>
-                                <option value="2" selected>Maria Oliveira</option>
-                                <option value="3">Carlos Souza</option>
-                                <option value="4">Ana Pereira</option>
+                            <label for="editReferees{{ competicao.id }}" class="form-label">Árbitros Responsáveis</label>
+                            <select class="form-select" id="editReferees{{ competicao.id }}" name="arbitros" multiple>
+                                {% for arbitro in todos_arbitros %}
+                                    <option value="{{ arbitro.id }}" {% if arbitro in competicao.arbitros.all %}selected{% endif %}>{{ arbitro.nome }}</option>
+                                {% endfor %}
                             </select>
                         </div>
-                        
+
                         <div class="mb-3">
-                            <label for="editRules" class="form-label">Regras Específicas</label>
-                            <textarea class="form-control" id="editRules" rows="4" required>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.</textarea>
+                            <label for="editRules{{ competicao.id }}" class="form-label">Regras Específicas</label>
+                            <textarea class="form-control" id="editRules{{ competicao.id }}" name="regras_especificas" rows="4">{{ competicao.regras_especificas }}</textarea>
                         </div>
-                        
+
                         <div class="mb-3">
-                            <label for="editStatus" class="form-label">Status</label>
-                            <select class="form-select" id="editStatus" required>
-                                <option value="Ativa" selected>Ativa</option>
-                                <option value="Finalizada">Finalizada</option>
-                                <option value="Em breve">Em breve</option>
+                            <label for="editStatus{{ competicao.id }}" class="form-label">Status</label>
+                            <select class="form-select" id="editStatus{{ competicao.id }}" name="status" required>
+                                <option value="Ativa" {% if competicao.status == "Ativa" %}selected{% endif %}>Ativa</option>
+                                <option value="Finalizada" {% if competicao.status == "Finalizada" %}selected{% endif %}>Finalizada</option>
+                                <option value="Em breve" {% if competicao.status == "Em breve" %}selected{% endif %}>Em breve</option>
                             </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="editInscricoesAbertas{{ competicao.id }}" name="inscricoes_abertas" {% if competicao.inscricoes_abertas %}checked{% endif %}>
+                                <label class="form-check-label" for="editInscricoesAbertas{{ competicao.id }}">
+                                    Inscrições abertas
+                                </label>
+                            </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-mdb-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-success" onclick="saveChanges()">Salvar Alterações</button>
+                    <button type="submit" form="editCompetitionForm{{ competicao.id }}" class="btn btn-success">Salvar Alterações</button>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Modal Excluir Competição -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+
+    <!-- Modal Excluir -->
+    <div class="modal fade" id="deleteModal{{ competicao.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ competicao.id }}" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content custom-modal">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Confirmar Exclusão</h5>
+                    <h5 class="modal-title" id="deleteModalLabel{{ competicao.id }}"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Confirmar Exclusão</h5>
                     <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Tem certeza que deseja excluir permanentemente a competição <strong>"Copa Regional 2025"</strong>?</p>
+                    <p>Tem certeza que deseja excluir permanentemente a competição <strong>"{{ competicao.nome }}"</strong>?</p>
                     <div class="alert alert-warning">
                         <i class="bi bi-exclamation-circle me-2"></i>Esta ação não pode ser desfeita e todos os dados associados serão perdidos.
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger">Confirmar Exclusão</button>
+                    <form method="POST" action="{% url 'competicoes:excluir_competicao' competicao.id %}">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    
+    {% endfor %}
+
     <!-- Modal Criar Nova Competição -->
     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -369,69 +448,63 @@
                     <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="createCompetitionForm">
+                    <!-- Formulário nova Competição -->
+                    <form id="createCompetitionForm" method="POST" action="{% url 'competicoes:criar_competicao' %}"> {% csrf_token %}
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="createName" class="form-label">Nome da Competição</label>
-                                <input type="text" class="form-control" id="createName" placeholder="Ex: Copa Regional 2025" required>
+                                <input type="text" class="form-control" name="nome" id="createName" placeholder="Ex: Copa Regional 2025" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="createModality" class="form-label">Modalidade</label>
-                                <select class="form-select" id="createModality" required>
+                                <select class="form-select" name="modalidade" id="createModality" required>
                                     <option value="" selected disabled>Selecione uma modalidade</option>
-                                    <option value="Futebol">Futebol</option>
-                                    <option value="Vôlei">Vôlei</option>
-                                    <option value="Basquete">Basquete</option>
-                                    <option value="Tênis">Tênis</option>
+                                    <option value="Kata">Kata</option>
+                                    <option value="Kumitê">Kumitê</option>
+                                    <option value="Kata-Kumitê">Kata/Kumitê</option>
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="createDate" class="form-label">Data de Início</label>
-                                <input type="date" class="form-control" id="createDate" required>
+                                <input type="date" class="form-control" name="data_inicio" id="createDate" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="createTime" class="form-label">Horário</label>
-                                <input type="time" class="form-control" id="createTime" required>
+                                <input type="time" class="form-control" name="horario" id="createTime" required>
                             </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="createLocation" class="form-label">Local</label>
-                            <input type="text" class="form-control" id="createLocation" placeholder="Ex: Estádio Municipal" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="createStatus" class="form-label">Árbitros Responsáveis</label>
-                            <select class="form-select" id="createStatus" required>
-                                <option value="1" selected>Selecione...</option>
-                                <option value="2">João Silva</option>
-                                <option value="3">Carlos Souza</option>
-                                <option value="4">Maria Oliveira</option>
-                                <option value="5">Ana Pereira</option>
-                            </select>
+                            <label for="createLocation" class="form-label">Local</label>
+                            <input type="text" class="form-control" name="local" id="createLocation" placeholder="Ex: Estádio Municipal" required>
                         </div>
-                        
+
+                        <div class="mb-3">
+                            <label for="createReferees" class="form-label">Árbitros Responsáveis</label>
+                            <input type="text" class="form-control" name="arbitros" id="createLocation" placeholder="Árbitro..." required>
+                        </div>
+
                         <div class="mb-3">
                             <label for="createRules" class="form-label">Regras Específicas</label>
-                            <textarea class="form-control" id="createRules" rows="4" placeholder="Descreva as regras específicas desta competição..." required></textarea>
+                            <textarea class="form-control" name="regras_especificas" id="createRules" rows="4" placeholder="Descreva as regras específicas desta competição..."></textarea>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="createStatus" class="form-label">Status</label>
-                            <select class="form-select" id="createStatus" required>
+                            <select class="form-select" name="status" id="createStatus" required>
                                 <option value="Ativa" selected>Ativa</option>
                                 <option value="Finalizada">Finalizada</option>
                                 <option value="Em breve">Em breve</option>
                             </select>
                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success">Criar Competição</button>
+                        </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-success" onclick="createCompetition()">Criar Competição</button>
                 </div>
             </div>
         </div>
@@ -458,7 +531,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Modal Exportar -->
     <div id="modalExportar" class="modal-custom">
         <div class="modal-custom-content text-center">
@@ -467,7 +540,7 @@
             </div>
             <h4 class="modal-title text-success">Exportar Dados</h4>
             <p class="modal-message">Selecione o formato para exportação:</p>
-            
+
             <div class="form-group mb-4 text-start">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="exportFormat" id="exportPDF" value="pdf" checked>
@@ -488,11 +561,11 @@
                     </label>
                 </div>
             </div>
-            
+
             <div class="progress mb-3" style="height: 6px; display: none;" id="exportProgressContainer">
                 <div id="exportProgress" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%"></div>
             </div>
-            
+
             <div class="d-flex justify-content-center gap-3">
                 <button type="button" class="btn btn-secondary" onclick="fecharModal('modalExportar')">
                     <i class="bi bi-x-circle me-2"></i>Cancelar
@@ -507,5 +580,85 @@
     <!-- MDB JS -->
     <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
     <script src="{% static 'competicoes/js/competicoes.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.auto-dismiss');
+
+            alerts.forEach(alert => {
+                const delay = parseInt(alert.getAttribute('data-delay')) || 5000;
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                }, delay);
+            });
+
+            // Inicializar selects múltiplos
+            document.querySelectorAll('select[multiple]').forEach(select => {
+                new mdb.Select(select);
+            });
+        });
+
+        function abrirModalImprimir() {
+            document.getElementById('modalImprimir').style.display = 'block';
+            // Simular progresso
+            let progress = 0;
+            const progressBar = document.getElementById('printProgress');
+            const interval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = `${progress}%`;
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('modalImprimir').style.display = 'none';
+                        progressBar.style.width = '0%';
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        function cancelarImpressao() {
+            document.getElementById('modalImprimir').style.display = 'none';
+            document.getElementById('printProgress').style.width = '0%';
+        }
+
+        function iniciarImpressao() {
+            window.print();
+            document.getElementById('modalImprimir').style.display = 'none';
+            document.getElementById('printProgress').style.width = '0%';
+        }
+
+        function abrirModalExportar() {
+            document.getElementById('modalExportar').style.display = 'block';
+        }
+
+        function fecharModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            const progressBar = document.getElementById('exportProgress');
+            progressBar.style.width = '0%';
+            document.getElementById('exportProgressContainer').style.display = 'none';
+        }
+
+        function iniciarExportacao() {
+            const format = document.querySelector('input[name="exportFormat"]:checked').value;
+            const progressContainer = document.getElementById('exportProgressContainer');
+            const progressBar = document.getElementById('exportProgress');
+
+            progressContainer.style.display = 'block';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = `${progress}%`;
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        alert(`Exportação para ${format.toUpperCase()} concluída com sucesso!`);
+                        fecharModal('modalExportar');
+                    }, 500);
+                }
+            }, 100);
+        }
+    </script>
 </body>
-</html>       
+</html>
