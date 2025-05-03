@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaveamento Kumite - Copa Regional 2025</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="../img/icone_keychart.png" type="image/x-icon">
+    
+    <style>
+        :root {
+            --primary-color: #d32f2f;
+            --secondary-color: #f5f5f5;
+            --accent-color: #ff9800;
+            --dark-color: #212121;
+            --light-color: #ffffff;
+            --success-color: #4caf50;
+            --warning-color: #ffc107;
+            --info-color: #2196f3;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .sidebar {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../img/sidebar.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tournament-bracket {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+        
+        .bracket-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: 0;
+            font-weight: 600;
+        }
+        
+        .bracket-stage {
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .match-container {
+            display: flex;
+            flex-direction: column;
+            min-width: 280px;
+        }
+        
+        .match-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 0 0 5px 5px;
+            margin-bottom: 15px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .match-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .match-header {
+            background-color: #f5f5f5;
+            padding: 8px 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .match-time {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .match-status {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .status-scheduled {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status-in-progress {
+            background-color: #fff8e1;
+            color: #ff8f00;
+        }
+        
+        .status-completed {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .competitor {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .competitor:last-child {
+            border-bottom: none;
+        }
+        
+        .competitor-info {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+        
+        .competitor-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        
+        .competitor-name {
+            font-weight: 500;
+            margin-right: 8px;
+        }
+        
+        .competitor-club {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .score-control {
+            display: flex;
+            align-items: center;
+        }
+        
+        .score-display {
+            min-width: 30px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .score-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .score-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .score-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .winner {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+        
+        .match-actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .timer-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+        
+        .bracket-container {
+            display: flex;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+        
+        .bracket-round {
+            display: flex;
+            flex-direction: column;
+            min-width: 300px;
+            margin-right: 30px;
+        }
+        
+        .round-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .bracket-connector {
+            position: relative;
+            height: 50px;
+        }
+        
+        .bracket-connector::before, .bracket-connector::after {
+            content: '';
+            position: absolute;
+            border-left: 2px solid #999;
+        }
+        
+        .bracket-connector::before {
+            height: 50%;
+            top: 0;
+            left: -15px;
+        }
+        
+        .bracket-connector::after {
+            height: 50%;
+            bottom: 0;
+            left: -15px;
+        }
+        
+        .bracket-connector-line {
+            position: absolute;
+            top: 50%;
+            left: -15px;
+            width: 15px;
+            border-top: 2px solid #999;
+        }
+        
+        .judge-panel {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .judge-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .judge-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        
+        .penalty-controls {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        
+        .penalty-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .control-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            padding: 10px 20px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        @media (max-width: 768px) {
+            .competitor {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .score-control {
+                width: 100%;
+                justify-content: flex-end;
+                margin-top: 5px;
+            }
+            
+            .bracket-round {
+                min-width: 260px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    
+    <!-- Conteúdo Principal -->
+    <div class="content" id="content">
+        <div class="header d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-arrow-left back-icon me-3" onclick="window.history.back()"></i>
+                <div>
+                    <h2 class="mb-0 fw-bold">Chaveamento Kumite -67kg</h2>
+                    <small class="text-white-50">Copa Regional 2025 - Masculino</small>
+                </div>
+            </div>
+            <div class="d-flex align-items-center">
+                <span class="badge bg-light text-dark fs-6 me-3">
+                    <i class="bi bi-people-fill me-1"></i> 16 Atletas
+                </span>
+                <div class="timer-display">
+                    <i class="bi bi-stopwatch me-2"></i>
+                    <span id="match-timer">03:00</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container-fluid mt-4">
+            <div class="row">
+                <!-- Painel do Juiz -->
+                <div class="col-md-3">
+                    <div class="judge-panel sticky-top" style="top: 20px;">
+                        <div class="judge-info">
+                            <img src="../img/judge_avatar.jpg" alt="Juiz" class="judge-avatar">
+                            <div>
+                                <h5 class="mb-1">Juiz Carlos Silva</h5>
+                                <small class="text-muted">Árbitro Principal</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Partida Atual</label>
+                            <select class="form-select" id="current-match">
+                                <option value="match1">Quartas 1 - Emanuel vs Marcus</option>
+                                <option value="match2">Quartas 2 - Luan vs Ricardo</option>
+                                <option value="match3">Quartas 3 - Felipe vs André</option>
+                                <option value="match4">Quartas 4 - Pedro vs Lucas</option>
+                                <option value="semifinal1">Semifinal 1 - Vencedor Q1 vs Vencedor Q2</option>
+                                <option value="semifinal2">Semifinal 2 - Vencedor Q3 vs Vencedor Q4</option>
+                                <option value="final">Final - Vencedor SF1 vs Vencedor SF2</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Ações</label>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-success" id="start-match">
+                                    <i class="bi bi-play-fill me-2"></i>Iniciar Partida
+                                </button>
+                                <button class="btn btn-danger" id="stop-match" disabled>
+                                    <i class="bi bi-stop-fill me-2"></i>Encerrar Partida
+                                </button>
+                                <button class="btn btn-warning" id="reset-timer">
+                                    <i class="bi bi-arrow-counterclockwise me-2"></i>Reiniciar Tempo
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Controle de Penalidades</label>
+                            <div class="penalty-controls">
+                                <button class="btn btn-sm btn-outline-warning penalty-btn">CHUKOKU</button>
+                                <button class="btn btn-sm btn-outline-danger penalty-btn">KEIKOKU</button>
+                                <button class="btn btn-sm btn-outline-dark penalty-btn">HANSOKU</button>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info mt-3">
+                            <small>
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                Utilize os botões ao lado dos atletas para marcar os pontos. Clique em "Encerrar Partida" para declarar o vencedor.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Visualização do Chaveamento -->
+                <div class="col-md-9">
+                    <div class="bracket-container">
+                        <!-- Quartas de Final -->
+                        <div class="bracket-round">
+                            <div class="round-header">Quartas de Final</div>
+                            
+                            <!-- Partida 1 -->
+                            <div class="match-container" id="match1">
+                                <div class="match-card">
+                                    <div class="match-header">
+                                        <span>Quartas 1</span>
+                                        <span class="match-status status-scheduled">Agendada</span>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/foto_atleta.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Emanuel</div>
+                                                <div class="competitor-club">MM02 - Belém/PA</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/foto_atleta.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Marcus Batista</div>
+                                                <div class="competitor-club">Top Karate - São Paulo/SP</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="match-actions">
+                                        <small class="match-time"><i class="bi bi-clock me-1"></i> 10:00 - Quadra 1</small>
+                                        <button class="btn btn-sm btn-outline-primary">Detalhes</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Partida 2 -->
+                            <div class="match-container" id="match2">
+                                <div class="match-card">
+                                    <div class="match-header">
+                                        <span>Quartas 2</span>
+                                        <span class="match-status status-scheduled">Agendada</span>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/foto_atleta.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Luan Carvalho</div>
+                                                <div class="competitor-club">Top Karate - São Paulo/SP</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/foto_atleta.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Ricardo Almeida</div>
+                                                <div class="competitor-club">Bushido - Belém/PA</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="match-actions">
+                                        <small class="match-time"><i class="bi bi-clock me-1"></i> 10:15 - Quadra 1</small>
+                                        <button class="btn btn-sm btn-outline-primary">Detalhes</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Partida 3 -->
+                            <div class="match-container" id="match3">
+                                <div class="match-card">
+                                    <div class="match-header">
+                                        <span>Quartas 3</span>
+                                        <span class="match-status status-scheduled">Agendada</span>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/foto_atleta.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Felipe Costa</div>
+                                                <div class="competitor-club">Shinzen - Marabá/PA</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/foto_atleta.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">André Santos</div>
+                                                <div class="competitor-club">Nipo - Belém/PA</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="match-actions">
+                                        <small class="match-time"><i class="bi bi-clock me-1"></i> 10:30 - Quadra 1</small>
+                                        <button class="btn btn-sm btn-outline-primary">Detalhes</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Partida 4 -->
+                            <div class="match-container" id="match4">
+                                <div class="match-card">
+                                    <div class="match-header">
+                                        <span>Quartas 4</span>
+                                        <span class="match-status status-scheduled">Agendada</span>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/foto_atleta.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Pedro Henrique</div>
+                                                <div class="competitor-club">Seishin - Ananindeua/PA</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/foto_atleta.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Lucas Oliveira</div>
+                                                <div class="competitor-club">Kamikaze - Castanhal/PA</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="match-actions">
+                                        <small class="match-time"><i class="bi bi-clock me-1"></i> 10:45 - Quadra 1</small>
+                                        <button class="btn btn-sm btn-outline-primary">Detalhes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Semifinais -->
+                        <div class="bracket-round">
+                            <div class="bracket-connector"></div>
+                            <div class="round-header">Semifinais</div>
+                            
+                            <!-- Semifinal 1 -->
+                            <div class="match-container" id="semifinal1">
+                                <div class="match-card">
+                                    <div class="match-header">
+                                        <span>Semifinal 1</span>
+                                        <span class="match-status status-scheduled">Aguardando</span>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/avatar_placeholder.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Vencedor Q1</div>
+                                                <div class="competitor-club">-</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/avatar_placeholder.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Vencedor Q2</div>
+                                                <div class="competitor-club">-</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="match-actions">
+                                        <small class="match-time"><i class="bi bi-clock me-1"></i> 11:30 - Quadra 1</small>
+                                        <button class="btn btn-sm btn-outline-primary">Detalhes</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Semifinal 2 -->
+                            <div class="match-container" id="semifinal2">
+                                <div class="match-card">
+                                    <div class="match-header">
+                                        <span>Semifinal 2</span>
+                                        <span class="match-status status-scheduled">Aguardando</span>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/avatar_placeholder.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Vencedor Q3</div>
+                                                <div class="competitor-club">-</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/avatar_placeholder.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Vencedor Q4</div>
+                                                <div class="competitor-club">-</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="match-actions">
+                                        <small class="match-time"><i class="bi bi-clock me-1"></i> 11:45 - Quadra 1</small>
+                                        <button class="btn btn-sm btn-outline-primary">Detalhes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Final -->
+                        <div class="bracket-round">
+                            <div class="bracket-connector"></div>
+                            <div class="round-header">Final</div>
+                            
+                            <div class="match-container" id="final">
+                                <div class="match-card">
+                                    <div class="match-header">
+                                        <span>Final</span>
+                                        <span class="match-status status-scheduled">Aguardando</span>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/avatar_placeholder.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Vencedor SF1</div>
+                                                <div class="competitor-club">-</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="competitor">
+                                        <div class="competitor-info">
+                                            <img src="../img/avatar_placeholder.png" alt="Atleta" class="competitor-avatar">
+                                            <div>
+                                                <div class="competitor-name">Vencedor SF2</div>
+                                                <div class="competitor-club">-</div>
+                                            </div>
+                                        </div>
+                                        <div class="score-control">
+                                            <button class="score-btn minus-btn"><i class="bi bi-dash"></i></button>
+                                            <div class="score-display mx-2">0</div>
+                                            <button class="score-btn plus-btn"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="match-actions">
+                                        <small class="match-time"><i class="bi bi-clock me-1"></i> 13:00 - Quadra Central</small>
+                                        <button class="btn btn-sm btn-outline-primary">Detalhes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Campeão -->
+                        <div class="bracket-round">
+                            <div class="bracket-connector"></div>
+                            <div class="round-header" style="background-color: #ffc107; color: #000;">Campeão</div>
+                            
+                            <div class="match-container">
+                                <div class="match-card" style="border: 2px solid #ffc107;">
+                                    <div class="competitor text-center py-4">
+                                        <div class="competitor-info justify-content-center">
+                                            <img src="../img/trophy_icon.png" alt="Troféu" style="width: 60px; height: 60px; margin-bottom: 10px;">
+                                            <div>
+                                                <div class="competitor-name" style="font-size: 1.2rem; font-weight: bold;">A ser definido</div>
+                                                <div class="competitor-club">-</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Painel de Controle Fixo -->
+    <div class="control-panel">
+        <div class="d-flex align-items-center">
+            <span class="me-3"><strong>Partida Atual:</strong> Quartas 1 - Emanuel vs Marcus Batista</span>
+            <span class="badge bg-warning text-dark me-3"><i class="bi bi-exclamation-triangle me-1"></i> Aguardando início</span>
+        </div>
+        <div>
+            <button class="btn btn-sm btn-success me-2">
+                <i class="bi bi-check-circle me-1"></i> Salvar Alterações
+            </button>
+            <button class="btn btn-sm btn-secondary">
+                <i class="bi bi-printer me-1"></i> Imprimir Chaveamento
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Função para alternar a sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            sidebar.classList.toggle('active');
+            content.classList.toggle('active');
+        }
+        
+        // Controle de pontuação
+        document.querySelectorAll('.plus-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const scoreDisplay = this.parentElement.querySelector('.score-display');
+                let score = parseInt(scoreDisplay.textContent);
+                scoreDisplay.textContent = score + 1;
+                checkMatchWinner(this.closest('.match-card'));
+            });
+        });
+        
+        document.querySelectorAll('.minus-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const scoreDisplay = this.parentElement.querySelector('.score-display');
+                let score = parseInt(scoreDisplay.textContent);
+                if (score > 0) {
+                    scoreDisplay.textContent = score - 1;
+                    checkMatchWinner(this.closest('.match-card'));
+                }
+            });
+        });
+        
+        // Verificar vencedor da partida
+        function checkMatchWinner(matchCard) {
+            const scores = matchCard.querySelectorAll('.score-display');
+            const competitors = matchCard.querySelectorAll('.competitor');
+            
+            // Remove winner class from all competitors
+            competitors.forEach(competitor => {
+                competitor.classList.remove('winner');
+            });
+            
+            const score1 = parseInt(scores[0].textContent);
+            const score2 = parseInt(scores[1].textContent);
+            
+            if (score1 > score2) {
+                competitors[0].classList.add('winner');
+            } else if (score2 > score1) {
+                competitors[1].classList.add('winner');
+            }
+        }
+        
+        // Timer functionality
+        let timerInterval;
+        let secondsLeft = 180; // 3 minutes
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(secondsLeft / 60);
+            const seconds = secondsLeft % 60;
+            document.getElementById('match-timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        document.getElementById('start-match').addEventListener('click', function() {
+            this.disabled = true;
+            document.getElementById('stop-match').disabled = false;
+            
+            // Change match status
+            const currentMatchId = document.getElementById('current-match').value;
+            const matchHeader = document.querySelector(`#${currentMatchId} .match-header`);
+            matchHeader.querySelector('.match-status').className = 'match-status status-in-progress';
+            matchHeader.querySelector('.match-status').textContent = 'Em Andamento';
+            
+            // Update control panel
+            const controlPanel = document.querySelector('.control-panel');
+            controlPanel.querySelector('.badge').className = 'badge bg-success text-white me-3';
+            controlPanel.querySelector('.badge').innerHTML = '<i class="bi bi-play-fill me-1"></i> Em Andamento';
+            
+            // Start timer
+            timerInterval = setInterval(function() {
+                secondsLeft--;
+                updateTimerDisplay();
+                
+                if (secondsLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('stop-match').click();
+                }
+            }, 1000);
+        });
+        
+        document.getElementById('stop-match').addEventListener('click', function() {
+            clearInterval(timerInterval);
+            document.getElementById('start-match').disabled = false;
+            this.disabled = true;
+            
+            // Change match status
+            const currentMatchId = document.getElementById('current-match').value;
+            const matchHeader = document.querySelector(`#${currentMatchId} .match-header`);
+            matchHeader.querySelector('.match-status').className = 'match-status status-completed';
+            matchHeader.querySelector('.match-status').textContent = 'Concluída';
+            
+            // Update control panel
+            const controlPanel = document.querySelector('.control-panel');
+            controlPanel.querySelector('.badge').className = 'badge bg-secondary me-3';
+            controlPanel.querySelector('.badge').innerHTML = '<i class="bi bi-check-circle me-1"></i> Concluída';
+            
+            // Determine winner
+            const matchCard = document.querySelector(`#${currentMatchId} .match-card`);
+            checkMatchWinner(matchCard);
+            
+            // Update next matches with winner's info (simplified for demo)
+            if (currentMatchId === 'match1') {
+                updateNextMatchWithWinner('semifinal1', matchCard, 0);
+            } else if (currentMatchId === 'match2') {
+                updateNextMatchWithWinner('semifinal1', matchCard, 1);
+            }
+            // Add similar logic for other matches
+        });
+        
+        document.getElementById('reset-timer').addEventListener('click', function() {
+            clearInterval(timerInterval);
+            secondsLeft = 180;
+            updateTimerDisplay();
+            document.getElementById('start-match').disabled = false;
+            document.getElementById('stop-match').disabled = true;
+        });
+        
+        // Helper function to update next match with winner info
+        function updateNextMatchWithWinner(nextMatchId, currentMatchCard, competitorIndex) {
+            const nextMatch = document.getElementById(nextMatchId);
+            if (!nextMatch) return;
+            
+            const winnerCompetitor = currentMatchCard.querySelectorAll('.competitor')[competitorIndex];
+            const winnerName = winnerCompetitor.querySelector('.competitor-name').textContent;
+            const winnerClub = winnerCompetitor.querySelector('.competitor-club').textContent;
+            
+            // Find the appropriate competitor slot in next match
+            const nextCompetitors = nextMatch.querySelectorAll('.competitor-info');
+            for (let i = 0; i < nextCompetitors.length; i++) {
+                const nameElement = nextCompetitors[i].querySelector('.competitor-name');
+                if (nameElement.textContent.includes('Vencedor')) {
+                    nameElement.textContent = winnerName;
+                    nextCompetitors[i].querySelector('.competitor-club').textContent = winnerClub;
+                    nextCompetitors[i].querySelector('.competitor-avatar').src = '../img/foto_atleta.png';
+                    break;
+                }
+            }
+        }
+        
+        // Initialize timer display
+        updateTimerDisplay();
+    </script>
+</body>
+</html>

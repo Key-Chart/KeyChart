@@ -19,6 +19,15 @@ CREATE TABLE categorias (
     tipo VARCHAR(10) CHECK (tipo IN ('Kata', 'Kumitê')) NOT NULL
 );
 
+-- Associação entre Atletas e Categorias
+CREATE TABLE atletas_categorias (
+    id SERIAL PRIMARY KEY,
+    id_atleta INT NOT NULL REFERENCES atletas(id_atleta) ON DELETE CASCADE,
+    id_categoria INT NOT NULL REFERENCES categorias(id_categoria) ON DELETE CASCADE,
+    id_competicao INT NOT NULL REFERENCES competicoes(id_competicao) ON DELETE CASCADE,
+    UNIQUE (id_atleta, id_categoria, id_competicao)
+);
+
 -- Tabela de Academias
 CREATE TABLE academias (
     id_academia SERIAL PRIMARY KEY,
