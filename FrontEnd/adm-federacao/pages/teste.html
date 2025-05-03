@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Torneio de Eliminação - 50 Competidores</title>
+  
+  <!-- Fontes e ícones -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <!-- jQuery e jQuery Bracket -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-bracket@0.11.1/dist/jquery.bracket.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-bracket@0.11.1/dist/jquery.bracket.min.css">
+  
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --light-color: #ecf0f1;
+      --dark-color: #2c3e50;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --champion-color: #9b59b6;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background-color: #f5f7fa;
+      color: var(--dark-color);
+      line-height: 1.6;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 2rem 0;
+      text-align: center;
+      margin-bottom: 2rem;
+      border-radius: 8px;
+    }
+    
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .tournament-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+    
+    #tournament {
+      min-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    
+    .btn-reset {
+      background-color: var(--accent-color);
+    }
+    
+    .champion-container {
+      background-color: rgba(155, 89, 182, 0.1);
+      border: 2px solid var(--champion-color);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    
+    .champion-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--champion-color);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Torneio de Eliminação</h1>
+      <p>50 Competidores · Campeonato 2023</p>
+    </header>
+    
+    <section class="tournament-container">
+      <div class="controls">
+        <button id="randomize" class="btn"><i class="fas fa-random"></i> Sortear Times</button>
+        <button id="reset" class="btn btn-reset"><i class="fas fa-undo"></i> Reiniciar</button>
+      </div>
+      
+      <div id="tournament"></div>
+      
+      <div id="champion-display" class="champion-container" style="display: none;">
+        <div class="champion-name" id="champion-name"></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Gerar 50 nomes de competidores
+    function generateCompetitors() {
+      const firstNames = ["João", "Pedro", "Carlos", "Lucas", "Marcos", "André", "Felipe", "Rafael", "Daniel", "Gustavo", 
+                         "Ana", "Maria", "Julia", "Fernanda", "Patricia", "Camila", "Amanda", "Carolina", "Beatriz", "Isabela",
+                         "Alex", "Bruno", "Diego", "Eduardo", "Fabio", "Gabriel", "Henrique", "Igor", "Leonardo", "Miguel",
+                         "Ricardo", "Roberto", "Paulo", "Thiago", "Vitor", "Marcelo", "Sérgio", "Antônio", "Francisco", "Márcio",
+                         "Luana", "Mariana", "Vanessa", "Tatiana", "Priscila", "Letícia", "Bianca", "Claudia", "Renata", "Simone"];
+      
+      const lastNames = ["Silva", "Santos", "Oliveira", "Souza", "Pereira", "Costa", "Rodrigues", "Almeida", "Nascimento", "Lima",
+                       "Fernandes", "Carvalho", "Gomes", "Martins", "Rocha", "Ribeiro", "Alves", "Monteiro", "Mendes", "Barbosa"];
+      
+      const competitors = [];
+      for (let i = 0; i < 50; i++) {
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+        competitors.push(`${firstName} ${lastName}`);
+      }
+      return competitors;
+    }
+    
+    // Criar estrutura do torneio para 50 competidores (com 14 byes para completar 64)
+    function createTournamentStructure(competitors) {
+      // Adicionar byes para completar 64 competidores
+      const withByes = [...competitors];
+      while (withByes.length < 64) {
+        withByes.push("BYE");
+      }
+      
+      // Embaralhar os competidores
+      const shuffled = [...withByes].sort(() => 0.5 - Math.random());
+      
+      // Criar pares para a primeira rodada
+      const teams = [];
+      for (let i = 0; i < 32; i++) {
+        teams.push([shuffled[i*2], shuffled[i*2+1]]);
+      }
+      
+      return {
+        teams: teams,
+        results: [
+          [], // Rodada 1 (32 jogos)
+          [], // Rodada 2 (16 jogos)
+          [], // Rodada 3 (8 jogos)
+          [], // Quartas (4 jogos)
+          [], // Semifinal (2 jogos)
+          []  // Final (1 jogo)
+        ]
+      };
+    }
+    
+    // Inicializar o torneio
+    function initTournament() {
+      const competitors = generateCompetitors();
+      const tournamentData = createTournamentStructure(competitors);
+      
+      // Limpar o torneio anterior
+      $('#tournament').empty();
+      
+      // Inicializar o novo torneio
+      const bracket = $('#tournament').bracket({
+        init: tournamentData,
+        teamWidth: 120,
+        scoreWidth: 25,
+        matchMargin: 20,
+        roundMargin: 30
+      });
+      
+      // Mostrar o campeão se houver
+      const champion = bracket.data().current().finals[0][0];
+      if (champion && champion !== 'BYE') {
+        $('#champion-name').text(champion);
+        $('#champion-display').show();
+      } else {
+        $('#champion-display').hide();
+      }
+      
+      return bracket;
+    }
+    
+    $(document).ready(function() {
+      // Inicializar o torneio
+      let tournament = initTournament();
+      
+      // Botão para sortear novos times
+      $('#randomize').click(function() {
+        tournament = initTournament();
+      });
+      
+      // Botão para reiniciar o torneio
+      $('#reset').click(function() {
+        if (confirm('Tem certeza que deseja reiniciar o torneio?')) {
+          tournament = initTournament();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+-- Tabela de Competições
+CREATE TABLE competicoes (
+    id_competicao SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    modalidade VARCHAR(50) NOT NULL,
+    data_inicio DATE NOT NULL,
+    horario TIME NOT NULL,
+    local VARCHAR(150) NOT NULL,
+    arbitros TEXT,
+    regras_especificas TEXT,
+    status VARCHAR(20) CHECK (status IN ('Ativa', 'Finalizada', 'Em breve')) NOT NULL
+);
+
+-- Tabela de Categorias
+CREATE TABLE categorias (
+    id_categoria SERIAL PRIMARY KEY,
+    categoria VARCHAR(20) CHECK (categoria IN ('Adulto', 'Infantil', 'Sênior')) NOT NULL,
+    sexo VARCHAR(10) CHECK (sexo IN ('Masculino', 'Feminino')) NOT NULL,
+    tipo VARCHAR(10) CHECK (tipo IN ('Kata', 'Kumitê')) NOT NULL
+);
+
+-- Tabela de Academias
+CREATE TABLE academias (
+    id_academia SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    cidade VARCHAR(50),
+    estado VARCHAR(2),
+    endereco VARCHAR(150)
+);
+
+-- Tabela de Atletas
+CREATE TABLE atletas (
+    id_atleta SERIAL PRIMARY KEY,
+    nome_completo VARCHAR(100) NOT NULL,
+    data_nascimento DATE NOT NULL,
+    sexo VARCHAR(10) CHECK (sexo IN ('Masculino', 'Feminino')) NOT NULL,
+    idade INT,
+    peso NUMERIC(5,2),
+    altura NUMERIC(4,2),
+    email VARCHAR(100),
+    telefone VARCHAR(20),
+    faixa VARCHAR(30),
+    cidade VARCHAR(50),
+    estado VARCHAR(2),
+    id_academia INT REFERENCES academias(id_academia),
+    foto_url TEXT
+);
+
+-- Tabela de Inscrições
+CREATE TABLE inscricoes (
+    id_inscricao SERIAL PRIMARY KEY,
+    id_atleta INT REFERENCES atletas(id_atleta),
+    id_categoria INT REFERENCES categorias(id_categoria),
+    id_competicao INT REFERENCES competicoes(id_competicao),
+    status_inscricao VARCHAR(20) CHECK (status_inscricao IN ('Pendente', 'Confirmada', 'Cancelada')) DEFAULT 'Pendente',
+    UNIQUE(id_atleta, id_categoria, id_competicao)
+);
