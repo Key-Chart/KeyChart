@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
-from .models import Competicao
+from .models import Competicao, Categoria, Academia
 from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime
@@ -23,7 +23,7 @@ def criar_competicao(request):
 
         if len(nome_competicao) < 3:
             messages.error(request, 'Nome da competição muito curto.')
-            return redirect('competicoes:home')  # Ajusta para sua URL de criação
+            return redirect('competicoes:home')
 
         nova_competicao = Competicao(
             nome=nome_competicao,
@@ -39,7 +39,6 @@ def criar_competicao(request):
         messages.success(request, 'Competição criada com sucesso!')
         return redirect('competicoes:home')
 
-    # Caso não seja POST, redirecione ou mostre um erro
     return redirect('competicoes:home')
 
 def editar_competicao(request, competicao_id):
@@ -64,8 +63,7 @@ def editar_competicao(request, competicao_id):
         if len(nome) < 3:
             messages.error(request, 'Nome da competição muito curto.')
             return redirect('competicoes:home')
-
-        # Atualizar os dados da competição
+        
         competicao.nome = nome
         competicao.modalidade = modalidade
         competicao.data_inicio = data_inicio
@@ -80,8 +78,6 @@ def editar_competicao(request, competicao_id):
 
         messages.success(request, 'Competição atualizada com sucesso!')
         return redirect('competicoes:home')
-
-    # Se não for POST, redireciona para home
     return redirect('competicoes:home')
 
 def excluir_competicao(request, competicao_id):
@@ -96,10 +92,7 @@ def excluir_competicao(request, competicao_id):
             messages.error(request, f'Ocorreu um erro ao excluir a competição: {str(e)}')
 
         return redirect('competicoes:home')
-
-    # Se não for POST, redireciona para home
     return redirect('competicoes:home')
-
 
 def listar_competicoes(request):
     competicoes = Competicao.objects.all().order_by('-data_inicio')
@@ -143,9 +136,92 @@ def competicoes(request):
         'competicoes_finalizadas': competicoes_finalizadas,
         'listar_competicoes': listar_competicoes
     }
+
     return render(request, 'competicoes/competicoes.html', contex)
 
-def categoria(request):
+
+def categoria(request, competicao_id):
+    # Obter a competição ou retornar 404 se não existir
+    competicao = Competicao.objects.get(id=competicao_id)
+
+    # Obter todas as categorias e academias relacionadas a esta competição
+    categorias = Categoria.objects.filter(competicao=competicao)
+    academias = Academia.objects.all()  # Ou filtrar por alguma relação se necessário
+
+    # Processar formulário de categoria
+    if request.method == 'POST' and 'categoria_submit' in request.POST:
+        try:
+            nome = request.POST.get('nome')
+            sexo = request.POST.get('sexo')
+            tipo = request.POST.get('tipo')
+
+            # Criar nova categoria
+            Categoria.objects.create(
+                competicao=competicao,
+                nome=nome,
+                sexo=sexo,
+                tipo=tipo
+            )
+            messages.success(request, 'Categoria cadastrada com sucesso!')
+            return redirect('categoria', competicao_id=competicao_id)
+        except Exception as e:
+            messages.error(request, f'Erro ao cadastrar categoria: {str(e)}')
+
+    # Processar formulário de academia
+    if request.method == 'POST' and 'academia_submit' in request.POST:
+        try:
+            nome = request.POST.get('academyName')
+            cidade = request.POST.get('academyCity')
+            estado = request.POST.get('academyState')
+            endereco = request.POST.get('academyAddress')
+
+            # Criar nova academia
+            Academia.objects.create(
+                nome=nome,
+                cidade=cidade,
+                estado=estado,
+                endereco=endereco
+            )
+            messages.success(request, 'Academia cadastrada com sucesso!')
+            return redirect('categoria', competicao_id=competicao_id)
+        except Exception as e:
+            messages.error(request, f'Erro ao cadastrar academia: {str(e)}')
+
+    context = {
+        'competicao': competicao,
+        'categorias': categorias,
+        'academias': academias,
+    }
+    return render(request, 'competicoes/categoria.html', context)
+
+def excluir_categoria(request, categoria_id):
+    categoria = get_object_or_404(Categoria, id=categoria_id)
+    competicao_id = categoria.competicao.id
+    if request.method == 'POST':
+        categoria.delete()
+        messages.success(request, 'Categoria excluída com sucesso!')
+    return redirect('categoria', competicao_id=competicao_id)
+
+def editar_academia(request, academia_id):
+    academia = get_object_or_404(Academia, id=academia_id)
+    if request.method == 'POST':
+        academia.nome = request.POST.get('nome')
+        academia.cidade = request.POST.get('cidade')
+        academia.estado = request.POST.get('estado')
+        academia.endereco = request.POST.get('endereco')
+        academia.save()
+        messages.success(request, 'Academia atualizada com sucesso!')
+    return redirect('categoria', competicao_id=1)  # Ajuste conforme necessário
+
+def excluir_academia(request, academia_id):
+    academia = get_object_or_404(Academia, id=academia_id)
+    if request.method == 'POST':
+        academia.delete()
+        messages.success(request, 'Academia excluída com sucesso!')
+    return redirect('categoria', competicao_id=1)  # Ajuste conforme necessário
+
+def categoria_home(request):
+    # Lógica para quando não há competicao_id
     return render(request, 'competicoes/categoria.html')
 
 def atletas_categoria(request):

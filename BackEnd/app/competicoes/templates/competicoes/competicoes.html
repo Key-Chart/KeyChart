@@ -232,7 +232,7 @@
                                 {% for competicao in listar_competicoes %}
                                     <tr>
                                         <td>
-                                            <a href="{% url 'competicoes:categoria' %}" class="text-decoration-none fw-bold text-primary">{{ competicao.nome }}</a>
+                                            <a href="{% url 'competicoes:categoria' competicao_id=competicao.id %}" class="text-decoration-none fw-bold text-primary">{{ competicao.nome }}</a>
                                             <div class="text-muted small">Modalidade: {{ competicao.modalidade }}</div>
                                         </td>
                                         <td>{{ competicao.data_inicio }}</td>
