@@ -19,12 +19,12 @@ window.addEventListener('resize', function() {
 });
 
 // Funções para manipulação dos formulários
-document.getElementById('categoryForm').addEventListener('submit', function(e) {
+/*document.getElementById('categoryForm').addEventListener('submit', function(e) {
     e.preventDefault();
     // Lógica para cadastrar categoria
     alert('Categoria cadastrada com sucesso!');
     this.reset();
-});
+});*/
 
 document.getElementById('academyForm').addEventListener('submit', function(e) {
     e.preventDefault();

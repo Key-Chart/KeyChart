@@ -60,12 +60,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 # Banco de dados (SQLite por padrão)
+# Banco PostgreSQL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'Rafael#@2030',
+        'HOST': 'db.kixueapbpzdjlbszngnn.supabase.co',
+        'PORT': '5432',
     }
 }
+
 
 # Validação de senhas
 AUTH_PASSWORD_VALIDATORS = [

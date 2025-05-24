@@ -130,6 +130,7 @@ def categoria(request, competicao_id):
     competicao = Competicao.objects.get(id=competicao_id)
     categorias = Categoria.objects.filter(competicao=competicao)
     academias = Academia.objects.all()
+
     if request.method == 'POST' and 'categoria_submit' in request.POST:
         try:
             nome = request.POST.get('nome')
@@ -202,13 +203,55 @@ def excluir_academia(request, academia_id):
         messages.success(request, 'Academia excluída com sucesso!')
     return redirect('categoria', competicao_id=1)
 
+# Função para cadastrar categorias para cada competição
+def cadastrar_categoria(request, competicao_id):
+    if request.method == 'POST' and 'categoria_submit' in request.POST:
+        nome = request.POST.get('nome')
+        sexo = request.POST.get('sexo')
+        tipo = request.POST.get('tipo')
+
+        competicao = get_object_or_404(Competicao, id=competicao_id)
+
+        categoria = Categoria.objects.create(
+            nome=nome,
+            sexo=sexo,
+            tipo=tipo,
+            competicao=competicao
+        )
+        messages.success(request, f'Categoria "{nome}" cadastrada com sucesso!')
+        return redirect('competicoes:categoria', competicao_id=competicao.id)
+
+# Função para listar todas as competições cadastradas
+def listar_categorias(request, competicao_id):
+    competicao = get_object_or_404(Competicao, id=competicao_id)
+    categorias = Categoria.objects.filter(competicao=competicao)
+    return render(request, 'competicoes/listar_categorias.html', {
+        'competicao': competicao,
+        'categorias': categorias
+    })
+
+# Função para excluir Categoria
+def excluir_categoria(request, categoria_id):
+    if request.method == 'POST':
+        categoria = get_object_or_404(Categoria, id=categoria_id)
+        nome = categoria.nome
+        categoria.delete()
+        messages.success(request, f'Categoria "{nome}" excluída com sucesso!')
+    return redirect('competicoes:categoria', competicao_id=categoria.competicao.id)
 def categoria_home(request):
     # Lógica para quando não há competicao_id
     return render(request, 'competicoes/categoria.html')
 
 # Função responsavel por renderizar a pagina de Atletas
-def atletas_categoria(request):
-    return render(request, 'competicoes/atletas_categoria.html')
+def atletas_categoria(request, categoria_id):
+    # buscar categoria, atletas, ou qualquer lógica que queira
+    categoria = get_object_or_404(Categoria, id=categoria_id)
+    atletas = categoria.atletas.all()  # se categoria tiver relação com atletas
+
+    return render(request, 'competicoes/atletas_categoria.html', {
+        'categoria': categoria,
+        'atletas': atletas,
+    })
 
 # Função responsavel por renderizar a pagina de Chaveamento
 def chaveamento_kata(request):

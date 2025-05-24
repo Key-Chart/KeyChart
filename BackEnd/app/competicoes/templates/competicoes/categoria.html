@@ -73,16 +73,6 @@
         </div>
 
         <!-- Mensagens -->
-        {% if messages %}
-        <div class="container-fluid mt-3">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
 
         <!-- Conteúdo -->
         <main class="container-fluid py-4">
@@ -96,13 +86,25 @@
                         </div>
                         <hr>
                         <div class="card-body">
-                            <form method="POST" id="categoryForm">
+                            {% if messages %}
+                              {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                  {{ message }}
+                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                              {% endfor %}
+                            {% endif %}
+
+                            <form method="POST" id="#" action="{% url 'competicoes:cadastrar_categoria' competicao_id=competicao.id %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="categoria_submit" value="1">
+                                <input type="hidden" name="competicao_id" value="{{ competicao.id }}"> <!-- AQUI -->
+
                                 <div class="col-md-12 mb-3">
                                     <label for="nome" class="form-label">Nome da Categoria</label>
                                     <input type="text" class="form-control" id="nome" name="nome" required>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label for="sexo" class="form-label">Sexo</label>
@@ -114,6 +116,7 @@
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="col-md-12 mb-3">
                                     <label for="tipo" class="form-label">Tipo</label>
                                     <select class="form-select" id="tipo" name="tipo" required>
@@ -123,6 +126,7 @@
                                         <option value="ABS">Absolute</option>
                                     </select>
                                 </div>
+
                                 <button type="submit" class="btn btn-success w-100">
                                     <i class="bi bi-plus-circle me-2"></i>Cadastrar Categoria
                                 </button>
@@ -211,7 +215,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a href="{% url 'atletas_categoria' categoria.id %}" class="btn btn-sm btn-outline-primary me-1"
+                                                <a href="{% url 'competicoes:atletas_categoria' categoria.id %}" class="btn btn-sm btn-outline-primary me-1"
                                                 data-mdb-tooltip="tooltip" title="Visualizar">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
@@ -236,7 +240,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
-                                                        <form method="POST" action="{% url 'excluir_categoria' categoria.id %}">
+                                                        <form method="POST" action="{% url 'competicoes:excluir_categoria' categoria.id %}">
                                                             {% csrf_token %}
                                                             <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
                                                         </form>

@@ -9,11 +9,13 @@ class Competicao(models.Model):
     arbitros = models.TextField(blank=True, null=True)
     regras_especificas = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, default='Ativa')
+    inscricoes_abertas = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nome
 
 class Academia(models.Model):
+    competicao = models.ForeignKey(Competicao, on_delete=models.CASCADE, related_name='academias')
     nome = models.CharField(max_length=100, null=False, blank=False)
     cidade = models.CharField(max_length=100, null=False, blank=False)
     estado = models.CharField(max_length=2, null=False, blank=False)  # Assuming Brazil, using 2-letter codes
