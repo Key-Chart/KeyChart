@@ -9,7 +9,7 @@ class Competicao(models.Model):
     arbitros = models.TextField(blank=True, null=True)
     regras_especificas = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, default='Ativa')
-    inscricoes_abertas = models.BooleanField(default=False)
+    #inscricoes_abertas = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nome
