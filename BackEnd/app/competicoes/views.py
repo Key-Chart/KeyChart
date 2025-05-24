@@ -203,7 +203,7 @@ def excluir_academia(request, academia_id):
         messages.success(request, 'Academia excluída com sucesso!')
     return redirect('categoria', competicao_id=1)
 
-# Função para cadastrar categorias para cada competição
+# função para cadastrar categorias para cada competição
 def cadastrar_categoria(request, competicao_id):
     if request.method == 'POST' and 'categoria_submit' in request.POST:
         nome = request.POST.get('nome')
