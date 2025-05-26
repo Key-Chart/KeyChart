@@ -5,14 +5,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
     <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
-    <link rel="stylesheet" href="{% static 'competicoes/css/categoria.css' %}">
     <title>{{ competicao.nome }} | KeyChart</title>
     <style>
-        /* categoria.css */
+        :root {
+            --primary-color: #343A40;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ffc107;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+
+        .content {
+            margin-left: 250px;
+            transition: all 0.3s;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            background-color: white;
+            color: #000;
+            padding: 1.25rem 1.5rem;
+            border-bottom: none;
+        }
+
+        /* Badges */
         .badge-male {
             background-color: #0d6efd;
             color: white;
@@ -52,33 +92,39 @@
             background-color: #dc3545;
             color: white;
         }
+
+        /* Modal fixes */
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+
+        .modal {
+            z-index: 1050 !important;
+        }
     </style>
 </head>
 <body>
 
     {% include 'sidebar.html' %}
 
-    <!-- Conteúdo Principal -->
-    <div class="content" id="content" style="margin-left: 250px;">
+    <div class="content" id="content">
         <!-- Header -->
-        <div class="header" style="background: #343A40; color: #ffffff;">
+        <div class="header">
             <div class="container-fluid">
                 <div class="d-flex align-items-center">
                     <button class="btn btn-back me-3" onclick="window.history.back()">
-                        <i class="bi bi-arrow-left" style="color: #ffffff;"></i>
+                        <i class="bi bi-arrow-left text-white"></i>
                     </button>
                     <h2><i class="bi bi-trophy me-2"></i> {{ competicao.nome }}</h2>
                 </div>
             </div>
         </div>
 
-        <!-- Mensagens -->
-
-        <!-- Conteúdo -->
+        <!-- Main Content -->
         <main class="container-fluid py-4">
-            <!-- Formulários de Cadastro -->
+            <!-- Forms Row -->
             <div class="row mb-4">
-                <!-- Cadastro de Categorias -->
+                <!-- Category Form -->
                 <div class="col-lg-6 mb-4">
                     <div class="card h-100">
                         <div class="card-header">
@@ -87,18 +133,18 @@
                         <hr>
                         <div class="card-body">
                             {% if messages %}
-                              {% for message in messages %}
+                                {% for message in messages %}
                                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                  {{ message }}
-                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
-                              {% endfor %}
+                                {% endfor %}
                             {% endif %}
 
-                            <form method="POST" id="#" action="{% url 'competicoes:cadastrar_categoria' competicao_id=competicao.id %}">
+                            <form method="POST" action="{% url 'competicoes:cadastrar_categoria' competicao_id=competicao.id %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="categoria_submit" value="1">
-                                <input type="hidden" name="competicao_id" value="{{ competicao.id }}"> <!-- AQUI -->
+                                <input type="hidden" name="competicao_id" value="{{ competicao.id }}">
 
                                 <div class="col-md-12 mb-3">
                                     <label for="nome" class="form-label">Nome da Categoria</label>
@@ -135,7 +181,7 @@
                     </div>
                 </div>
 
-                <!-- Cadastro de Academias -->
+                <!-- Academy Form -->
                 <div class="col-lg-6 mb-4">
                     <div class="card h-100">
                         <div class="card-header">
@@ -178,9 +224,9 @@
                 </div>
             </div>
 
-            <!-- Categorias cadastradas -->
+            <!-- Tables Row -->
             <div class="row">
-                <!-- Tabela de Categorias -->
+                <!-- Categories Table -->
                 <div class="col-lg-6 mb-4">
                     <div class="card h-100">
                         <div class="card-header">
@@ -215,39 +261,19 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a href="{% url 'competicoes:atletas_categoria' categoria.id %}" class="btn btn-sm btn-outline-primary me-1"
-                                                data-mdb-tooltip="tooltip" title="Visualizar">
+                                                <a href="{% url 'competicoes:atletas_categoria' categoria.id %}"
+                                                   class="btn btn-sm btn-outline-primary me-1"
+                                                   title="Visualizar">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteCategoryModal{{ categoria.id }}" data-mdb-tooltip="tooltip" title="Excluir">
+                                                <button class="btn btn-sm btn-outline-danger"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteCategoryModal{{ categoria.id }}"
+                                                        title="Excluir">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </td>
                                         </tr>
-                                        <!-- Modal Excluir Categoria -->
-                                        <div class="modal fade" id="deleteCategoryModal{{ categoria.id }}" tabindex="-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="deleteCategoryModalLabel"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Confirmar Exclusão</h5>
-                                                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Tem certeza que deseja excluir permanentemente a categoria <strong>"{{ categoria.nome }}"</strong>?</p>
-                                                        <div class="alert alert-warning">
-                                                            <i class="bi bi-exclamation-circle me-2"></i>Esta ação não pode ser desfeita e todos os dados associados serão perdidos.
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
-                                                        <form method="POST" action="{% url 'competicoes:excluir_categoria' categoria.id %}">
-                                                            {% csrf_token %}
-                                                            <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                         {% empty %}
                                         <tr>
                                             <td colspan="4" class="text-center">Nenhuma categoria cadastrada</td>
@@ -260,7 +286,7 @@
                     </div>
                 </div>
 
-                <!-- Tabela de Academias -->
+                <!-- Academies Table -->
                 <div class="col-lg-6 mb-4">
                     <div class="card h-100">
                         <div class="card-header">
@@ -287,118 +313,26 @@
                                             <td>{{ academia.nome }}</td>
                                             <td>{{ academia.cidade }}/{{ academia.estado }}</td>
                                             <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewAcademyModal{{ academia.id }}" data-mdb-tooltip="tooltip" title="Visualizar">
+                                                <button class="btn btn-sm btn-outline-primary me-1"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#viewAcademyModal{{ academia.id }}"
+                                                        title="Visualizar">
                                                     <i class="bi bi-eye"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="modal" data-mdb-target="#editAcademyModal{{ academia.id }}" data-mdb-tooltip="tooltip" title="Editar">
+                                                <button class="btn btn-sm btn-outline-warning me-1"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editAcademyModal{{ academia.id }}"
+                                                        title="Editar">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteAcademyModal{{ academia.id }}" data-mdb-tooltip="tooltip" title="Excluir">
+                                                <button class="btn btn-sm btn-outline-danger"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteAcademyModal{{ academia.id }}"
+                                                        title="Excluir">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </td>
                                         </tr>
-                                        <!-- Modal Visualizar Academia -->
-                                        <div class="modal fade" id="viewAcademyModal{{ academia.id }}" tabindex="-1" aria-labelledby="viewAcademyModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header text-white" style="background-color: var(--primary-color);">
-                                                        <h5 class="modal-title" id="viewAcademyModalLabel"><i class="bi bi-building me-2"></i>Detalhes da Academia</h5>
-                                                        <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="mb-3">
-                                                            <p class="mb-1"><strong>Nome:</strong></p>
-                                                            <p>{{ academia.nome }}</p>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-6 mb-3">
-                                                                <p class="mb-1"><strong>Cidade:</strong></p>
-                                                                <p>{{ academia.cidade }}</p>
-                                                            </div>
-                                                            <div class="col-md-6 mb-3">
-                                                                <p class="mb-1"><strong>Estado:</strong></p>
-                                                                <p>{{ academia.estado }}</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <p class="mb-1"><strong>Endereço:</strong></p>
-                                                            <p>{{ academia.endereco }}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Fechar</button>
-                                                        <button type="button" class="btn btn-primary" data-mdb-dismiss="modal" data-mdb-toggle="modal" data-mdb-target="#editAcademyModal{{ academia.id }}">Editar</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Modal Editar Academia -->
-                                        <div class="modal fade" id="editAcademyModal{{ academia.id }}" tabindex="-1" aria-labelledby="editAcademyModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header text-white" style="background-color: var(--primary-color);">
-                                                        <h5 class="modal-title" id="editAcademyModalLabel"><i class="bi bi-pencil-square me-2"></i>Editar Academia</h5>
-                                                        <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <form method="POST" action="{% url 'editar_academia' academia.id %}">
-                                                        {% csrf_token %}
-                                                        <div class="modal-body">
-                                                            <div class="mb-3">
-                                                                <label for="editAcademyName{{ academia.id }}" class="form-label">Nome da Academia</label>
-                                                                <input type="text" class="form-control" id="editAcademyName{{ academia.id }}" name="nome" value="{{ academia.nome }}" required>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label for="editAcademyCity{{ academia.id }}" class="form-label">Cidade</label>
-                                                                    <input type="text" class="form-control" id="editAcademyCity{{ academia.id }}" name="cidade" value="{{ academia.cidade }}" required>
-                                                                </div>
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label for="editAcademyState{{ academia.id }}" class="form-label">Estado</label>
-                                                                    <select class="form-select" id="editAcademyState{{ academia.id }}" name="estado" required>
-                                                                        <option value="SP" {% if academia.estado == 'SP' %}selected{% endif %}>São Paulo</option>
-                                                                        <option value="RJ" {% if academia.estado == 'RJ' %}selected{% endif %}>Rio de Janeiro</option>
-                                                                        <option value="MG" {% if academia.estado == 'MG' %}selected{% endif %}>Minas Gerais</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label for="editAcademyAddress{{ academia.id }}" class="form-label">Endereço</label>
-                                                                <input type="text" class="form-control" id="editAcademyAddress{{ academia.id }}" name="endereco" value="{{ academia.endereco }}" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
-                                                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Modal Excluir Academia -->
-                                        <div class="modal fade" id="deleteAcademyModal{{ academia.id }}" tabindex="-1" aria-labelledby="deleteAcademyModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="deleteAcademyModalLabel"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Confirmar Exclusão</h5>
-                                                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Tem certeza que deseja excluir permanentemente a academia <strong>"{{ academia.nome }}"</strong>?</p>
-                                                        <div class="alert alert-warning">
-                                                            <i class="bi bi-exclamation-circle me-2"></i>Esta ação não pode ser desfeita e todos os dados associados serão perdidos.
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
-                                                        <form method="POST" action="{% url 'excluir_academia' academia.id %}">
-                                                            {% csrf_token %}
-                                                            <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                         {% empty %}
                                         <tr>
                                             <td colspan="4" class="text-center">Nenhuma academia cadastrada</td>
@@ -414,8 +348,156 @@
         </main>
     </div>
 
-    <!-- MDB JS -->
-    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
+    <!-- Modals Section - Deve ficar no final do body -->
+    {% for categoria in categorias %}
+    <!-- Delete Category Modal -->
+    <div class="modal fade" id="deleteCategoryModal{{ categoria.id }}" tabindex="-1" aria-labelledby="deleteCategoryModalLabel{{ categoria.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteCategoryModalLabel{{ categoria.id }}">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Exclusão
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir permanentemente a categoria <strong>"{{ categoria.nome }}"</strong>?</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>Esta ação não pode ser desfeita e todos os dados associados serão perdidos.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                    </button>
+                    <form method="POST" action="{% url 'competicoes:excluir_categoria' categoria.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-1"></i> Confirmar Exclusão
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% for academia in academias %}
+    <!-- View Academy Modal -->
+    <div class="modal fade" id="viewAcademyModal{{ academia.id }}" tabindex="-1" aria-labelledby="viewAcademyModalLabel{{ academia.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-white" style="background-color: var(--primary-color);">
+                    <h5 class="modal-title" id="viewAcademyModalLabel{{ academia.id }}">
+                        <i class="bi bi-building me-2"></i>Detalhes da Academia
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <p class="mb-1"><strong>Nome:</strong></p>
+                        <p>{{ academia.nome }}</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <p class="mb-1"><strong>Cidade:</strong></p>
+                            <p>{{ academia.cidade }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <p class="mb-1"><strong>Estado:</strong></p>
+                            <p>{{ academia.estado }}</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <p class="mb-1"><strong>Endereço:</strong></p>
+                        <p>{{ academia.endereco }}</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#editAcademyModal{{ academia.id }}">Editar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Academy Modal -->
+    <div class="modal fade" id="editAcademyModal{{ academia.id }}" tabindex="-1" aria-labelledby="editAcademyModalLabel{{ academia.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-white" style="background-color: var(--primary-color);">
+                    <h5 class="modal-title" id="editAcademyModalLabel{{ academia.id }}">
+                        <i class="bi bi-pencil-square me-2"></i>Editar Academia
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{% url 'editar_academia' academia.id %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="editAcademyName{{ academia.id }}" class="form-label">Nome da Academia</label>
+                            <input type="text" class="form-control" id="editAcademyName{{ academia.id }}" name="nome" value="{{ academia.nome }}" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editAcademyCity{{ academia.id }}" class="form-label">Cidade</label>
+                                <input type="text" class="form-control" id="editAcademyCity{{ academia.id }}" name="cidade" value="{{ academia.cidade }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editAcademyState{{ academia.id }}" class="form-label">Estado</label>
+                                <select class="form-select" id="editAcademyState{{ academia.id }}" name="estado" required>
+                                    <option value="SP" {% if academia.estado == 'SP' %}selected{% endif %}>São Paulo</option>
+                                    <option value="RJ" {% if academia.estado == 'RJ' %}selected{% endif %}>Rio de Janeiro</option>
+                                    <option value="MG" {% if academia.estado == 'MG' %}selected{% endif %}>Minas Gerais</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editAcademyAddress{{ academia.id }}" class="form-label">Endereço</label>
+                            <input type="text" class="form-control" id="editAcademyAddress{{ academia.id }}" name="endereco" value="{{ academia.endereco }}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Academy Modal -->
+    <div class="modal fade" id="deleteAcademyModal{{ academia.id }}" tabindex="-1" aria-labelledby="deleteAcademyModalLabel{{ academia.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteAcademyModalLabel{{ academia.id }}">
+                        <i class="bi bi-exclamation-triangle me-2 text-danger"></i>Confirmar Exclusão
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir permanentemente a academia <strong>"{{ academia.nome }}"</strong>?</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>Esta ação não pode ser desfeita e todos os dados associados serão perdidos.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form method="POST" action="{% url 'excluir_academia' academia.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JS -->
     <script src="{% static 'competicoes/js/categoria.js' %}"></script>
 </body>
 </html>

@@ -40,3 +40,4 @@ document.addEventListener('DOMContentLoaded', function() {
         return new mdb.Tooltip(tooltipTriggerEl);
     });
 });
+
