@@ -183,7 +183,7 @@ def excluir_categoria(request, categoria_id):
         messages.success(request, 'Categoria excluída com sucesso!')
     return redirect('categoria', competicao_id=competicao_id)
 
-
+# Função para cadastrar Acadêmia
 def cadastrar_academia(request):
     if request.method == 'POST':
         competicao_id = request.POST.get('competicao_id')
@@ -211,7 +211,7 @@ def cadastrar_academia(request):
 
         return redirect('competicoes:categoria', competicao_id=competicao_id)
 
-
+# Função para editar Acadêmia
 def editar_academia(request, academia_id):
     academia = get_object_or_404(Academia, id=academia_id)
 
@@ -225,7 +225,7 @@ def editar_academia(request, academia_id):
 
     return redirect('competicoes:categoria', competicao_id=academia.competicao.id)
 
-
+# Função para excluir Acadêmia
 def excluir_academia(request, academia_id):
     academia = get_object_or_404(Academia, id=academia_id)
     competicao_id = academia.competicao.id
