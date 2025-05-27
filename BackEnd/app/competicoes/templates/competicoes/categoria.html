@@ -1,17 +1,12 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Favicon -->
     <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
     <title>{{ competicao.nome }} | KeyChart</title>
     <style>
@@ -52,7 +47,6 @@
             border-bottom: none;
         }
 
-        /* Badges */
         .badge-male {
             background-color: #0d6efd;
             color: white;
@@ -93,7 +87,6 @@
             color: white;
         }
 
-        /* Modal fixes */
         .modal-backdrop {
             z-index: 1040 !important;
         }
@@ -108,23 +101,29 @@
     {% include 'sidebar.html' %}
 
     <div class="content" id="content">
-        <!-- Header -->
         <div class="header">
             <div class="container-fluid">
                 <div class="d-flex align-items-center">
-                    <button class="btn btn-back me-3" onclick="window.history.back()">
+                    <button class="btn btn-back me-3" onclick="window.location.href='http://127.0.0.1:8000/keychart/competicoes/'">
                         <i class="bi bi-arrow-left text-white"></i>
                     </button>
+
                     <h2><i class="bi bi-trophy me-2"></i> {{ competicao.nome }}</h2>
                 </div>
             </div>
         </div>
 
-        <!-- Main Content -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
         <main class="container-fluid py-4">
-            <!-- Forms Row -->
             <div class="row mb-4">
-                <!-- Category Form -->
                 <div class="col-lg-6 mb-4">
                     <div class="card h-100">
                         <div class="card-header">
@@ -132,25 +131,15 @@
                         </div>
                         <hr>
                         <div class="card-body">
-                            {% if messages %}
-                                {% for message in messages %}
-                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                                {% endfor %}
-                            {% endif %}
 
                             <form method="POST" action="{% url 'competicoes:cadastrar_categoria' competicao_id=competicao.id %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="categoria_submit" value="1">
                                 <input type="hidden" name="competicao_id" value="{{ competicao.id }}">
-
                                 <div class="col-md-12 mb-3">
                                     <label for="nome" class="form-label">Nome da Categoria</label>
                                     <input type="text" class="form-control" id="nome" name="nome" required>
                                 </div>
-
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label for="sexo" class="form-label">Sexo</label>
@@ -162,7 +151,6 @@
                                         </select>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12 mb-3">
                                     <label for="tipo" class="form-label">Tipo</label>
                                     <select class="form-select" id="tipo" name="tipo" required>
@@ -172,7 +160,6 @@
                                         <option value="ABS">Absolute</option>
                                     </select>
                                 </div>
-
                                 <button type="submit" class="btn btn-success w-100">
                                     <i class="bi bi-plus-circle me-2"></i>Cadastrar Categoria
                                 </button>
@@ -181,53 +168,61 @@
                     </div>
                 </div>
 
-                <!-- Academy Form -->
                 <div class="col-lg-6 mb-4">
                     <div class="card h-100">
                         <div class="card-header">
-                            <h5 class="card-title mb-0"><i class="bi bi-building me-2"></i>Cadastro de Academias</h5>
-                        </div>
-                        <hr>
-                        <div class="card-body">
-                            <form method="POST" id="academyForm">
-                                {% csrf_token %}
-                                <input type="hidden" name="academia_submit" value="1">
-                                <div class="mb-3">
-                                    <label for="academyName" class="form-label">Nome da Academia</label>
-                                    <input type="text" class="form-control" id="academyName" name="academyName" placeholder="Ex: Academia Central" required>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="academyCity" class="form-label">Cidade</label>
-                                        <input type="text" class="form-control" id="academyCity" name="academyCity" placeholder="Ex: São Paulo" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="academyState" class="form-label">Estado</label>
-                                        <select class="form-select" id="academyState" name="academyState" required>
-                                            <option value="" selected disabled>Selecione</option>
-                                            <option value="SP">São Paulo</option>
-                                            <option value="RJ">Rio de Janeiro</option>
-                                            <option value="MG">Minas Gerais</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="academyAddress" class="form-label">Endereço</label>
-                                    <input type="text" class="form-control" id="academyAddress" name="academyAddress" placeholder="Ex: Rua Principal, 123" required>
-                                </div>
-                                <button type="submit" class="btn btn-success w-100">
-                                    <i class="bi bi-plus-circle me-2"></i>Cadastrar Academia
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0"><i class="bi bi-building me-2"></i>Academias Cadastradas</h5>
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAcademyModal">
+                                    <i class="bi bi-plus-lg me-1"></i> Nova Academia
                                 </button>
-                            </form>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nome</th>
+                                            <th>Cidade/Estado</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for academia in competicao.academias.all %}
+                                        <tr>
+                                            <td>{{ academia.id }}</td>
+                                            <td>{{ academia.nome }}</td>
+                                            <td>{{ academia.cidade }}/{{ academia.estado }}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#viewAcademyModal{{ academia.id }}" title="Visualizar">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" data-bs-toggle="modal" data-bs-target="#editAcademyModal{{ academia.id }}" title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAcademyModal{{ academia.id }}" title="Excluir">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="4" class="text-center">Nenhuma academia cadastrada</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+         <!-- Categories Table -->
 
-            <!-- Tables Row -->
             <div class="row">
-                <!-- Categories Table -->
-                <div class="col-lg-6 mb-4">
+                <div class="col-lg-12 mb-4">
                     <div class="card h-100">
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
@@ -285,71 +280,9 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Academies Table -->
-                <div class="col-lg-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0"><i class="bi bi-building me-2"></i>Academias Cadastradas</h5>
-                                <span class="badge bg-primary">{{ academias.count }} registros</span>
-                            </div>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Nome</th>
-                                            <th>Cidade</th>
-                                            <th>Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for academia in academias %}
-                                        <tr>
-                                            <td>{{ academia.id }}</td>
-                                            <td>{{ academia.nome }}</td>
-                                            <td>{{ academia.cidade }}/{{ academia.estado }}</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#viewAcademyModal{{ academia.id }}"
-                                                        title="Visualizar">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning me-1"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#editAcademyModal{{ academia.id }}"
-                                                        title="Editar">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#deleteAcademyModal{{ academia.id }}"
-                                                        title="Excluir">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        {% empty %}
-                                        <tr>
-                                            <td colspan="4" class="text-center">Nenhuma academia cadastrada</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-        </main>
-    </div>
 
-    <!-- Modals Section - Deve ficar no final do body -->
-    {% for categoria in categorias %}
+        {% for categoria in categorias %}
     <!-- Delete Category Modal -->
     <div class="modal fade" id="deleteCategoryModal{{ categoria.id }}" tabindex="-1" aria-labelledby="deleteCategoryModalLabel{{ categoria.id }}" aria-hidden="true">
         <div class="modal-dialog">
@@ -381,9 +314,57 @@
         </div>
     </div>
     {% endfor %}
+        </main>
+    </div>
 
-    {% for academia in academias %}
-    <!-- View Academy Modal -->
+    <!-- Modal de Cadastro de Academia -->
+    <div class="modal fade" id="addAcademyModal" tabindex="-1" aria-labelledby="addAcademyModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{% url 'competicoes:cadastrar_academia' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="competicao_id" value="{{ competicao.id }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addAcademyModalLabel">Cadastrar Academia</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="nome" name="nome" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cidade" class="form-label">Cidade</label>
+                                <input type="text" class="form-control" id="cidade" name="cidade" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="estado" class="form-label">Estado</label>
+                                <select class="form-select" id="estado" name="estado" required>
+                                    <option value="" selected disabled>Selecione</option>
+                                    <option value="SP">São Paulo</option>
+                                    <option value="RJ">Rio de Janeiro</option>
+                                    <option value="MG">Minas Gerais</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="endereco" class="form-label">Endereço</label>
+                            <input type="text" class="form-control" id="endereco" name="endereco">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Cadastrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals para cada Academia -->
+    {% for academia in competicao.academias.all %}
+    <!-- Modal de Visualização -->
     <div class="modal fade" id="viewAcademyModal{{ academia.id }}" tabindex="-1" aria-labelledby="viewAcademyModalLabel{{ academia.id }}" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -421,7 +402,7 @@
         </div>
     </div>
 
-    <!-- Edit Academy Modal -->
+    <!-- Modal de Edição -->
     <div class="modal fade" id="editAcademyModal{{ academia.id }}" tabindex="-1" aria-labelledby="editAcademyModalLabel{{ academia.id }}" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -431,8 +412,9 @@
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="POST" action="{% url 'editar_academia' academia.id %}">
+                <form method="POST" action="{% url 'competicoes:editar_academia' academia.id %}">
                     {% csrf_token %}
+                    <input type="hidden" name="competicao_id" value="{{ competicao.id }}">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="editAcademyName{{ academia.id }}" class="form-label">Nome da Academia</label>
@@ -454,7 +436,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="editAcademyAddress{{ academia.id }}" class="form-label">Endereço</label>
-                            <input type="text" class="form-control" id="editAcademyAddress{{ academia.id }}" name="endereco" value="{{ academia.endereco }}" required>
+                            <input type="text" class="form-control" id="editAcademyAddress{{ academia.id }}" name="endereco" value="{{ academia.endereco }}">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -466,7 +448,7 @@
         </div>
     </div>
 
-    <!-- Delete Academy Modal -->
+    <!-- Modal de Exclusão -->
     <div class="modal fade" id="deleteAcademyModal{{ academia.id }}" tabindex="-1" aria-labelledby="deleteAcademyModalLabel{{ academia.id }}" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -484,8 +466,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <form method="POST" action="{% url 'excluir_academia' academia.id %}">
+                    <form method="POST" action="{% url 'competicoes:excluir_academia' academia.id %}">
                         {% csrf_token %}
+                        <input type="hidden" name="competicao_id" value="{{ competicao.id }}">
                         <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
                     </form>
                 </div>
@@ -496,8 +479,5 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Custom JS -->
-    <script src="{% static 'competicoes/js/categoria.js' %}"></script>
 </body>
 </html>

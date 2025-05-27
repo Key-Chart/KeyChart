@@ -183,25 +183,58 @@ def excluir_categoria(request, categoria_id):
         messages.success(request, 'Categoria excluída com sucesso!')
     return redirect('categoria', competicao_id=competicao_id)
 
-# Função para Editar Academia
+
+def cadastrar_academia(request):
+    if request.method == 'POST':
+        competicao_id = request.POST.get('competicao_id')
+        nome = request.POST.get('nome')
+        cidade = request.POST.get('cidade')
+        estado = request.POST.get('estado')
+        endereco = request.POST.get('endereco', '')
+
+        if not all([competicao_id, nome, cidade, estado]):
+            messages.error(request, 'Preencha todos os campos obrigatórios.')
+            return redirect('competicoes:categoria', competicao_id=competicao_id)
+
+        try:
+            competicao = get_object_or_404(Competicao, id=competicao_id)
+            Academia.objects.create(
+                competicao=competicao,
+                nome=nome,
+                cidade=cidade,
+                estado=estado,
+                endereco=endereco
+            )
+            messages.success(request, 'Academia cadastrada com sucesso!')
+        except Exception as e:
+            messages.error(request, f'Erro ao cadastrar: {str(e)}')
+
+        return redirect('competicoes:categoria', competicao_id=competicao_id)
+
+
 def editar_academia(request, academia_id):
     academia = get_object_or_404(Academia, id=academia_id)
+
     if request.method == 'POST':
         academia.nome = request.POST.get('nome')
         academia.cidade = request.POST.get('cidade')
         academia.estado = request.POST.get('estado')
-        academia.endereco = request.POST.get('endereco')
+        academia.endereco = request.POST.get('endereco', '')
         academia.save()
         messages.success(request, 'Academia atualizada com sucesso!')
-    return redirect('categoria', competicao_id=1)
 
-# Função para Excluir Academia
+    return redirect('competicoes:categoria', competicao_id=academia.competicao.id)
+
+
 def excluir_academia(request, academia_id):
     academia = get_object_or_404(Academia, id=academia_id)
+    competicao_id = academia.competicao.id
+
     if request.method == 'POST':
         academia.delete()
         messages.success(request, 'Academia excluída com sucesso!')
-    return redirect('categoria', competicao_id=1)
+
+    return redirect('competicoes:categoria', competicao_id=competicao_id)
 
 # função para cadastrar categorias para cada competição
 def cadastrar_categoria(request, competicao_id):
@@ -244,7 +277,7 @@ def categoria_home(request):
 
 # Função responsavel por renderizar a pagina de Atletas
 def atletas_categoria(request, categoria_id):
-    # buscar categoria, atletas, ou qualquer lógica que queira
+    # buscar c ategoria, atletas, ou qualquer lógica que queira
     categoria = get_object_or_404(Categoria, id=categoria_id)
     atletas = categoria.atletas.all()  # se categoria tiver relação com atletas
 

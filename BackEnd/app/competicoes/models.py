@@ -14,15 +14,16 @@ class Competicao(models.Model):
     def __str__(self):
         return self.nome
 
+
 class Academia(models.Model):
-    competicao = models.ForeignKey(Competicao, on_delete=models.CASCADE, related_name='academias')
-    nome = models.CharField(max_length=100, null=False, blank=False)
-    cidade = models.CharField(max_length=100, null=False, blank=False)
-    estado = models.CharField(max_length=2, null=False, blank=False)  # Assuming Brazil, using 2-letter codes
-    endereco = models.CharField(max_length=200, null=False, blank=False)
+    competicao = models.ForeignKey('Competicao', on_delete=models.CASCADE, related_name='academias')
+    nome = models.CharField(max_length=100)
+    cidade = models.CharField(max_length=100)
+    estado = models.CharField(max_length=2)  # Sigla do estado (ex: SP, RJ)
+    endereco = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
-        return self.nome
+        return f"{self.nome} ({self.cidade}/{self.estado})"
 
 class Categoria(models.Model):
     SEXO_CHOICES = [
