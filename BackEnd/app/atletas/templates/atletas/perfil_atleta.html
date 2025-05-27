@@ -1,0 +1,365 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- MDB CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'atletas/css/perfil_atleta.css' %}">
+    <title>Perfil do Atleta | KeyChart</title>
+</head>
+<body>
+
+    {% include 'sidebar.html' %}
+
+    <!-- Conteúdo Principal -->
+    <div class="content" id="content">
+        <!-- Header -->
+        <div class="header">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-back me-3" onclick="window.history.back()">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                    <h2><i class="bi bi-person-badge me-2"></i>Perfil do Atleta</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Conteúdo -->
+        <main class="container-fluid py-4">
+            <!-- Perfil Principal -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Coluna da Foto -->
+                        <div class="col-md-4 text-center">
+                            <img src="https://mdbootstrap.com/img/new/avatars/8.jpg" class="avatar mb-4" alt="Luan Carvalho">
+                            <h4 class="mb-1">Luan Carvalho</h4>
+                            <p class="text-muted mb-3">Atleta Profissional</p>
+                            <button class="btn btn-pdf">
+                                <i class="bi bi-file-earmark-pdf me-2"></i>Exportar para PDF
+                            </button>
+                        </div>
+                        
+                        <!-- Coluna das Informações -->
+                        <div class="col-md-8">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-speedometer2 me-2 text-primary"></i>Peso</h6>
+                                        <p>70 kg</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-calendar me-2 text-primary"></i>Idade</h6>
+                                        <p>25 anos</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-geo-alt me-2 text-primary"></i>Estado</h6>
+                                        <p>Pará</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-building me-2 text-primary"></i>Cidade da Academia</h6>
+                                        <p>Belém</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-award me-2 text-primary"></i>Faixa</h6>
+                                        <p><span class="badge badge-black-belt">Preta</span></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-exclamation-triangle me-2 text-primary"></i>Advertências</h6>
+                                        <p><span class="badge badge-success">Nenhuma</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Novos campos adicionados -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-calendar-date me-2 text-primary"></i>Data de Nascimento</h6>
+                                        <p>15/03/1998</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-file-text me-2 text-primary"></i>CPF</h6>
+                                        <p>123.456.789-00</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-file-earmark-text me-2 text-primary"></i>RG</h6>
+                                        <p>12.345.678-9</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <h6><i class="bi bi-envelope me-2 text-primary"></i>E-mail</h6>
+                                        <p>exemplo@email.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estatísticas e Informações -->
+            <div class="row">
+                <!-- Estatísticas de Lutas -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-bar-chart me-2"></i>Estatísticas de Lutas</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center mb-4">
+                                <div class="col-md-4">
+                                    <div class="stats-card">
+                                        <div class="stat-value">50</div>
+                                        <div class="stat-label">Total de Lutas</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stats-card">
+                                        <div class="stat-value">40</div>
+                                        <div class="stat-label">Vitórias</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stats-card">
+                                        <div class="stat-value">80%</div>
+                                        <div class="stat-label">Taxa de Vitórias</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="progress mb-3">
+                                <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Vitórias (40)</span>
+                                <span>Derrotas (8)</span>
+                                <span>Empates (2)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Informações Adicionais -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-info-circle me-2"></i>Informações Adicionais</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-section">
+                                <div class="info-item">
+                                    <h6><i class="bi bi-building me-2 text-primary"></i>Academia</h6>
+                                    <p>Academia Central de Karatê</p>
+                                </div>
+                                <div class="info-item">
+                                    <h6><i class="bi bi-award me-2 text-primary"></i>Graduação</h6>
+                                    <p>Faixa Preta - 2º Dan</p>
+                                </div>
+                                <div class="info-item">
+                                    <h6><i class="bi bi-calendar3 me-2 text-primary"></i>Anos de Experiência</h6>
+                                    <p>10 anos</p>
+                                </div>
+                                <div class="info-item">
+                                    <h6><i class="bi bi-trophy me-2 text-primary"></i>Melhor Luta</h6>
+                                    <p>Vitória por Nocaute (Torneio Nacional 2023)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Certificados do Atleta -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="bi bi-award me-2"></i>Certificados e Conquistas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Certificado 1 -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card certificate-card h-100">
+                                <div class="card-body">
+                                    <span class="badge bg-success certificate-badge">Válido</span>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="bi bi-award-fill certificate-icon me-3"></i>
+                                        <div>
+                                            <h5 class="mb-1">Faixa Preta - 2º Dan</h5>
+                                            <p class="text-muted mb-0">Federação Brasileira de Karatê</p>
+                                        </div>
+                                    </div>
+                                    <p class="card-text">Certificado de graduação para faixa preta 2º Dan, concedido após exame técnico e comprovação de tempo de prática.</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Emitido em: 15/03/2023</small>
+                                        <button class="btn btn-sm btn-outline-primary">Visualizar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Certificado 2 -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card certificate-card h-100">
+                                <div class="card-body">
+                                    <span class="badge bg-success certificate-badge">Válido</span>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="bi bi-trophy-fill certificate-icon me-3"></i>
+                                        <div>
+                                            <h5 class="mb-1">Campeão Nacional 2023</h5>
+                                            <p class="text-muted mb-0">Confederação Brasileira de Karatê</p>
+                                        </div>
+                                    </div>
+                                    <p class="card-text">Certificado de campeão nacional na categoria Kumite -70kg no Torneio Nacional de Karatê 2023.</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Emitido em: 20/05/2023</small>
+                                        <button class="btn btn-sm btn-outline-primary">Visualizar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Certificado 3 -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card certificate-card h-100">
+                                <div class="card-body">
+                                    <span class="badge bg-warning text-dark certificate-badge">Expirando</span>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="bi bi-heart-pulse-fill certificate-icon me-3"></i>
+                                        <div>
+                                            <h5 class="mb-1">Atestado Médico</h5>
+                                            <p class="text-muted mb-0">Clínica Esportiva Belém</p>
+                                        </div>
+                                    </div>
+                                    <p class="card-text">Atestado médico de aptidão para prática de karatê competitivo, válido por 1 ano.</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Emitido em: 10/01/2023</small>
+                                        <button class="btn btn-sm btn-outline-primary">Visualizar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Certificado 4 -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card certificate-card h-100">
+                                <div class="card-body">
+                                    <span class="badge bg-success certificate-badge">Válido</span>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="bi bi-person-badge-fill certificate-icon me-3"></i>
+                                        <div>
+                                            <h5 class="mb-1">Curso de Arbitragem</h5>
+                                            <p class="text-muted mb-0">Federação Paraense de Karatê</p>
+                                        </div>
+                                    </div>
+                                    <p class="card-text">Certificado de conclusão do curso de arbitragem nível básico, com 40 horas de duração.</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Emitido em: 05/08/2022</small>
+                                        <button class="btn btn-sm btn-outline-primary">Visualizar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botão para adicionar novo certificado -->
+                    <div class="text-center mt-3">
+                        <button class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Adicionar Certificado
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Histórico de Competições -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="bi bi-trophy me-2"></i>Histórico de Competições</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Competição</th>
+                                    <th>Data</th>
+                                    <th>Categoria</th>
+                                    <th>Resultado</th>
+                                    <th>Pontuação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Torneio Nacional 2023</td>
+                                    <td>15/05/2023</td>
+                                    <td>Kumite -70kg</td>
+                                    <td><span class="badge badge-success">1º Lugar</span></td>
+                                    <td>8.5</td>
+                                </tr>
+                                <tr>
+                                    <td>Copa Estadual 2023</td>
+                                    <td>22/03/2023</td>
+                                    <td>Kumite -70kg</td>
+                                    <td><span class="badge badge-success">2º Lugar</span></td>
+                                    <td>7.8</td>
+                                </tr>
+                                <tr>
+                                    <td>Campeonato Regional 2022</td>
+                                    <td>10/11/2022</td>
+                                    <td>Kumite -70kg</td>
+                                    <td><span class="badge badge-success">1º Lugar</span></td>
+                                    <td>8.2</td>
+                                </tr>
+                                <tr>
+                                    <td>Torneio Aberto 2022</td>
+                                    <td>05/08/2022</td>
+                                    <td>Kumite -70kg</td>
+                                    <td><span class="badge badge-danger">Eliminado</span></td>
+                                    <td>6.5</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MDB JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
+    <script src="{% static 'atletas/js/perfil_atleta.js' %}"></script>
+</body>
+</html>

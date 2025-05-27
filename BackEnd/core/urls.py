@@ -6,6 +6,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('keychart/dashboard/', include('app.dashboard.urls')),
     path('keychart/competicoes/', include('app.competicoes.urls')),
+    path('keychart/equipes_atletas/', include('app.atletas.urls')),
     path('keychart/login/', include('app.autenticacao.urls')),
 ]
 

@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'app.autenticacao',
     'app.dashboard',
     'app.competicoes',
+    'app.atletas',
 ]
 
 # Middlewares
@@ -102,6 +103,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'app/dashboard/static'),
     os.path.join(BASE_DIR, 'app/competicoes/static'),
     os.path.join(BASE_DIR, 'app/autenticacao/static'),
+    os.path.join(BASE_DIR, 'app/atletas/static'),
 ]
 
 # Tipo de chave primária padrão

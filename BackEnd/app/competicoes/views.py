@@ -271,6 +271,7 @@ def excluir_categoria(request, categoria_id):
         categoria.delete()
         messages.success(request, f'Categoria "{nome}" excluída com sucesso!')
     return redirect('competicoes:categoria', competicao_id=categoria.competicao.id)
+
 def categoria_home(request):
     # Lógica para quando não há competicao_id
     return render(request, 'competicoes/categoria.html')
