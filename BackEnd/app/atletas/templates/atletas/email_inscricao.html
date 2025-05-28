@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmação de Inscrição</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #343A40; color: white; padding: 10px; text-align: center; }
+        .content { padding: 20px; border: 1px solid #ddd; }
+        .footer { margin-top: 20px; text-align: center; font-size: 0.8em; color: #777; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Confirmação de Inscrição</h2>
+        </div>
+
+        <div class="content">
+            <p>Prezado(a) atleta,</p>
+            <p>Sua inscrição foi recebida com sucesso. Seguem os detalhes:</p>
+
+            <table>
+                <tr>
+                    <th colspan="2">Dados da Inscrição</th>
+                </tr>
+                <tr>
+                    <td><strong>Nome do Atleta:</strong></td>
+                    <td>{{ nome_atleta }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Competição:</strong></td>
+                    <td>{{ competicao }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Categoria:</strong></td>
+                    <td>{{ categoria }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Data de Nascimento:</strong></td>
+                    <td>{{ data_nascimento }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Sexo:</strong></td>
+                    <td>{{ sexo }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Faixa:</strong></td>
+                    <td>{{ faixa }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Academia:</strong></td>
+                    <td>{{ academia }}</td>
+                </tr>
+            </table>
+
+            <p>Agradecemos pela sua participação e desejamos sucesso na competição!</p>
+        </div>
+
+        <div class="footer">
+            <p>Este é um email automático, por favor não responda.</p>
+        </div>
+    </div>
+</body>
+</html>

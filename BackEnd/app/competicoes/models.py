@@ -14,7 +14,7 @@ class Competicao(models.Model):
     )
     inscricoes_abertas = models.BooleanField(
         'Inscrições Abertas?',
-        default=False,
+        default=True,
         help_text="Marque se as inscrições estão abertas"
     )
     nome = models.CharField(max_length=100, null=False, blank=False)
@@ -57,7 +57,7 @@ class Academia(models.Model):
     def __str__(self):
         return f"{self.nome} ({self.cidade}/{self.estado})"
 
-class Atleta(models.Model):
+'''class Atleta(models.Model):
     SEXO_CHOICES = [
         ('M', 'Masculino'),
         ('F', 'Feminino'),
@@ -85,4 +85,4 @@ class Atleta(models.Model):
     foto = models.ImageField(upload_to='atletas/', null=True, blank=True)
 
     def __str__(self):
-        return self.nome_completo
+        return self.nome_completo'''

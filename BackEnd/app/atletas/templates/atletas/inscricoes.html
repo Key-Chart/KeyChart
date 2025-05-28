@@ -166,22 +166,22 @@
                     <h5 class="mb-0">Passo 3: Cadastrar Atleta - <span id="categoria-selecionada">Kata Individual - Faixa Preta (Masculino)</span></h5>
                 </div>
                 <div class="card-body">
-                    <form id="form-atleta">
+                    <form id="form-atleta" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Nome Completo <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="nome-atleta" placeholder="Digite o nome completo do atleta..." required>
+                                <input type="text" class="form-control" name="nome" id="nome-atleta" placeholder="Digite o nome completo do atleta..." required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Data de Nascimento <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" id="nascimento-atleta" required>
+                                <input type="date" class="form-control" name="nascimento" id="nascimento-atleta" required>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Sexo <span class="text-danger">*</span></label>
-                                <select class="form-select" id="sexo-atleta" required>
+                                <select class="form-select" name="sexo" id="sexo-atleta" required>
                                     <option value="">Selecione</option>
                                     <option value="masculino">Masculino</option>
                                     <option value="feminino">Feminino</option>
@@ -189,14 +189,14 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Idade</label>
-                                <input type="number" step="0.1" class="form-control" id="idade-atleta" placeholder="Digite a idade...">
+                                <input type="number" step="0.1" class="form-control" name="idade" id="idade-atleta" placeholder="Digite a idade...">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Peso (kg)</label>
-                                <input type="number" step="0.1" class="form-control" id="peso-atleta" placeholder="Digite o peso...">
+                                <input type="number" step="0.1" class="form-control" name="peso" id="peso-atleta" placeholder="Digite o peso...">
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Altura (cm)</label>
@@ -211,11 +211,11 @@
                                 <input type="tel" class="form-control" id="telefone-atleta" placeholder="Digite o telefone..." required>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Faixa <span class="text-danger">*</span></label>
-                                <select class="form-select" id="faixa-atleta" required>
+                                <select class="form-select" name="faixa" id="faixa-atleta" required>
                                     <option value="">Selecione</option>
                                     <option value="branca">Branca</option>
                                     <option value="azul">Azul</option>
@@ -229,11 +229,11 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Cidade <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="cidade-atleta" placeholder="Digite a cidade..." required>
+                                <input type="text" class="form-control" name="cidade" id="cidade-atleta" placeholder="Digite a cidade..." required>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Estado <span class="text-danger">*</span></label>
-                                <select class="form-select" id="estado-atleta" required>
+                                <select class="form-select" name="estado" id="estado-atleta" required>
                                     <option value="">Selecione</option>
                                     <option value="AC">Acre</option>
                                     <option value="AL">Alagoas</option>
@@ -265,11 +265,11 @@
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Academia/Clube <span class="text-danger">*</span></label>
-                                <select class="form-select" id="academia-atleta" required>
+                                <select class="form-select" name="academia" id="academia-atleta" required>
                                     <option value="">Selecione</option>
                                     <option value="Academia Central">Academia Central</option>
                                     <option value="Clube de Artes Marciais">Clube de Artes Marciais</option>
@@ -280,11 +280,11 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Foto do Atleta</label>
-                                <input type="file" class="form-control" id="foto-atleta" accept="image/*">
+                                <input type="file" class="form-control" name="foto" id="foto-atleta" accept="image/*">
                                 <small class="text-muted">Tamanho máximo: 2MB (opcional)</small>
                             </div>
                         </div>
-                        
+
                         <div class="d-flex justify-content-between mt-4">
                             <button type="button" class="btn btn-secondary" onclick="prevStep(3)">
                                 <i class="bi bi-arrow-left"></i> Voltar
@@ -296,57 +296,78 @@
                     </form>
                 </div>
             </div>
-            
 
-            <!-- Passo 4: Confirmar Inscrição (inicialmente oculto) -->
+
+            <!-- Passo 4: Confirmar Inscrição -->
             <div class="card mb-4 d-none" id="step4-content">
                 <div class="card-header">
                     <h5 class="mb-0">Passo 4: Confirmar Inscrição</h5>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-success">
-                        <h5><i class="bi bi-check-circle"></i> Confira os dados da inscrição:</h5>
-                    </div>
-                    
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h6>Dados da Competição</h6>
-                            <p><strong>Nome:</strong> <span id="confirm-competicao">Copa Regional 2025</span></p>
-                            <p><strong>Categoria:</strong> <span id="confirm-categoria">Kata Individual - Faixa Preta (Masculino)</span></p>
+                    <form method="post" action="{% url 'equipes_atletas:finalizar_inscricao' %}" id="form-finalizar">
+                        {% csrf_token %}
+
+                        <!-- Campos ocultos com os dados para envio no POST -->
+                        <input type="hidden" name="competicao_id" id="input-competicao" value="{{ competicao_id }}">
+                        <input type="hidden" name="categoria_id" id="input-categoria" value="{{ categoria_id }}">
+                        <input type="hidden" name="nome" id="input-nome" value="{{ nome }}">
+                        <input type="hidden" name="nascimento" id="input-nascimento" value="{{ nascimento }}">
+                        <input type="hidden" name="idade" id="input-idade" value="{{ idade }}">
+                        <input type="hidden" name="sexo" id="input-sexo" value="{{ sexo }}">
+                        <input type="hidden" name="peso" id="input-peso" value="{{ peso }}">
+                        <input type="hidden" name="faixa" id="input-faixa" value="{{ faixa }}">
+                        <input type="hidden" name="cidade" id="input-cidade" value="{{ cidade }}">
+                        <input type="hidden" name="estado" id="input-estado" value="{{ estado }}">
+                        <input type="hidden" name="academia" id="input-academia" value="{{ academia }}">
+                        <input type="hidden" name="foto_url" id="input-foto" value="{{ foto_url }}">
+
+                        <div class="alert alert-success">
+                            <h5><i class="bi bi-check-circle"></i> Confira os dados da inscrição:</h5>
                         </div>
-                        <div class="col-md-6">
-                            <h6>Dados do Atleta</h6>
-                            <p><strong>Nome:</strong> <span id="confirm-nome">João da Silva</span></p>
-                            <p><strong>Data Nasc.:</strong> <span id="confirm-nascimento">15/08/1995</span></p>
-                            <p><strong>Idade:</strong> <span id="confirm-idade">29 anos</span></p>
-                            <p><strong>Sexo:</strong> <span id="confirm-sexo">Masculino</span></p>
-                            <p><strong>Peso:</strong> <span id="confirm-peso">-</span></p>
-                            <p><strong>Faixa:</strong> <span id="confirm-faixa">Preta</span></p>
-                            <p><strong>Cidade/Estado:</strong> <span id="confirm-cidade">São Paulo</span>/<span id="confirm-estado">SP</span></p>
-                            <p><strong>Academia:</strong> <span id="confirm-academia">Academia Central</span></p>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6>Dados da Competição</h6>
+                                <p><strong>Nome:</strong> <span id="confirm-competicao">{{ nome_competicao }}</span></p>
+                                <p><strong>Categoria:</strong> <span id="confirm-categoria">{{ nome_categoria }}</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Dados do Atleta</h6>
+                                <p><strong>Nome:</strong> <span id="confirm-nome">{{ nome }}</span></p>
+                                <p><strong>Data Nasc.:</strong> <span id="confirm-nascimento">{{ nascimento }}</span></p>
+                                <p><strong>Idade:</strong> <span id="confirm-idade">{{ idade }}</span></p>
+                                <p><strong>Sexo:</strong> <span id="confirm-sexo">{{ sexo }}</span></p>
+                                <p><strong>Peso:</strong> <span id="confirm-peso">{{ peso }}</span></p>
+                                <p><strong>Faixa:</strong> <span id="confirm-faixa">{{ faixa }}</span></p>
+                                <p><strong>Cidade/Estado:</strong> <span id="confirm-cidade">{{ cidade }}</span>/<span id="confirm-estado">{{ estado }}</span></p>
+                                <p><strong>Academia:</strong> <span id="confirm-academia">{{ academia }}</span></p>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div id="foto-preview-container" class="text-center mb-4 d-none">
-                        <h6>Foto do Atleta</h6>
-                        <img id="foto-preview" src="#" alt="Preview da Foto" class="img-thumbnail" style="max-height: 200px;">
-                    </div>
-                    
-                    <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn-secondary" onclick="prevStep(4)">
-                            <i class="bi bi-arrow-left"></i> Voltar
-                        </button>
-                        <div>
-                            <button type="button" class="btn btn-primary me-2" onclick="openEmailModal()">
-                                <i class="bi bi-envelope"></i> Enviar por Email
+
+                        {% if foto_url %}
+                        <div id="foto-preview-container" class="text-center mb-4">
+                            <h6>Foto do Atleta</h6>
+                            <img id="foto-preview" src="{{ foto_url }}" alt="Preview da Foto" class="img-thumbnail" style="max-height: 200px;">
+                        </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" onclick="prevStep(4)">
+                                <i class="bi bi-arrow-left"></i> Voltar
                             </button>
-                            <button type="button" class="btn btn-success" onclick="finalizarInscricao()">
-                                <i class="bi bi-check-lg"></i> Confirmar Inscrição
-                            </button>
+                            <div>
+                                <button type="button" class="btn btn-primary me-2" onclick="openEmailModal()">
+                                    <i class="bi bi-envelope"></i> Enviar por Email
+                                </button>
+                                <button type="submit" class="btn btn-success" id="confirm-submit-btn">
+                                    <i class="bi bi-check-lg"></i> Confirmar Inscrição
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
+
         </div>
     </div>
 

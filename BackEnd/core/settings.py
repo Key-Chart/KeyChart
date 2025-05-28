@@ -1,6 +1,10 @@
 from pathlib import Path
 import os
 from decouple import config, Csv
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Carrega as variáveis do .env
 
 # Caminho base do projeto
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -110,3 +114,12 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+# Configurações de email (ajuste conforme seu servidor)
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT'))  # Converte para inteiro
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'True'  # Converte para boolean
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')

@@ -10,6 +10,6 @@ urlpatterns = [
     path('inscricoes/', views.inscricoes_view, name='inscricoes'),
     path('keychart/inscricoes/', views.inscricoes_view, name='inscricoes'),
     path('keychart/carregar_categorias/<int:competicao_id>/', views.carregar_categorias, name='carregar_categorias'),
-
-    path('.well-known/appspecific/com.chrome.devtools.json', lambda r: HttpResponseNotFound()),
+    path('keychart/finalizar_inscricao/', views.finalizar_inscricao, name='finalizar_inscricao'),
+    path('keychart/enviar_email_inscricao/', views.enviar_email_inscricao, name='enviar_email_inscricao'),
 ]
