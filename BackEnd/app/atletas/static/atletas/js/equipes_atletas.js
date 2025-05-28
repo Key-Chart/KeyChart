@@ -277,7 +277,7 @@ function toggleSidebar() {
         sidebar.classList.toggle('show');
     } else {
         // Comportamento desktop
-        if (sidebar.style.width === '280px') {
+        if (sidebar.style.width === '250px') {
             sidebar.style.width = '60px';
             content.style.marginLeft = '60px';
             document.querySelectorAll('.sidebar a span').forEach(el => {
@@ -285,8 +285,8 @@ function toggleSidebar() {
             });
             document.querySelector('.sidebar .small').style.display = 'none';
         } else {
-            sidebar.style.width = '280px';
-            content.style.marginLeft = '280px';
+            sidebar.style.width = '250px';
+            content.style.marginLeft = '250px';
             document.querySelectorAll('.sidebar a span').forEach(el => {
                 el.style.display = 'inline';
             });
@@ -305,8 +305,8 @@ document.getElementById('content').addEventListener('click', function() {
 // Atualizar ao redimensionar
 window.addEventListener('resize', function() {
     if (window.innerWidth > 992) {
-        document.getElementById('sidebar').style.width = '280px';
-        document.getElementById('content').style.marginLeft = '280px';
+        document.getElementById('sidebar').style.width = '250px';
+        document.getElementById('content').style.marginLeft = '250px';
         document.querySelectorAll('.sidebar a span').forEach(el => {
             el.style.display = 'inline';
         });

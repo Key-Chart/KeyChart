@@ -1,43 +1,12 @@
 :root {
     --primary-color: #343A40;
     --secondary-color: #f8f9fa;
-    --accent-color: #ffc107;
     --dark-color: #343a40;
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f5f7fa;
-}
-
-.sidebar {
-    width: 250px;
-    color: white;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding-top: 20px;
-    transition: width 0.3s ease-in-out;
-}
-
-.sidebar a {
-    padding: 15px;
-    display: block;
-    color: white;
-    text-decoration: none;
-    white-space: nowrap;
-    font-size: 18px;
-}
-
-.sidebar a i {
-    font-size: 24px;
-    margin-right: 10px;
-}
-
-.sidebar a:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
 }
 
 #img-logo {
@@ -150,17 +119,6 @@ body {
     object-fit: cover;
 }
 
-.toggle-btn {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 1050;
-}
 
 /* Botões de Ação */
 .btn-action {
@@ -168,27 +126,6 @@ body {
     border-radius: 50px;
     font-weight: 500;
     transition: all 0.2s;
-}
-
-/* Responsividade */
-@media (max-width: 992px) {
-    .sidebar {
-        transform: translateX(-100%);
-        width: 280px;
-    }
-    
-    .sidebar.show {
-        transform: translateX(0);
-    }
-    
-    .content {
-        margin-left: 0;
-    }
-    
-    .toggle-btn {
-        left: 20px;
-        top: 20px;
-    }
 }
 
 /* Animação */
@@ -249,9 +186,4 @@ body {
 .modal-message {
     margin-bottom: 25px;
     color: #555;
-}
-
-.sidebar a.active {
-    background-color: rgba(255, 255, 255, 0.4);
-    color: #ffd700; /* Amarelo ouro pra destacar */
 }

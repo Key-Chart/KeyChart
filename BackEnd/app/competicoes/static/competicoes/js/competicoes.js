@@ -8,8 +8,8 @@ document.getElementById('content').addEventListener('click', function() {
 // Atualizar ao redimensionar
 window.addEventListener('resize', function() {
     if (window.innerWidth > 992) {
-        document.getElementById('sidebar').style.width = '280px';
-        document.getElementById('content').style.marginLeft = '280px';
+        document.getElementById('sidebar').style.width = '250px';
+        document.getElementById('content').style.marginLeft = '250px';
         document.querySelectorAll('.sidebar a span').forEach(el => {
             el.style.display = 'inline';
         });
@@ -19,7 +19,7 @@ window.addEventListener('resize', function() {
 
 // Função para salvar alterações
 function saveChanges() {
-    // Lógica para salvar alterações
+    // Lógica para salvar alteraçõe
     alert('Alterações salvas com sucesso!');
     const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
     modal.hide();
