@@ -9,7 +9,9 @@ from django.conf import settings
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-
+from django.core.exceptions import ValidationError
+from django.shortcuts import redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 # Função para listar todos os atletas
 def atletas(request):
@@ -73,40 +75,86 @@ def carregar_categorias(request, competicao_id):
 @require_POST
 def finalizar_inscricao(request):
     try:
+        # Dados básicos obrigatórios
         competicao_id = request.POST.get('competicao_id')
         categoria_id = request.POST.get('categoria_id')
-        nome = request.POST.get('nome')
-        nascimento = request.POST.get('nascimento')
-        idade = request.POST.get('idade')
-        sexo = request.POST.get('sexo')
-        peso = request.POST.get('peso')
-        faixa = request.POST.get('faixa')
-        cidade = request.POST.get('cidade')
-        estado = request.POST.get('estado')
-        academia = request.POST.get('academia')
-        foto_url = request.POST.get('foto_url')
+        nome_academia = request.POST.get('academia', '').strip()
+        cidade_academia = request.POST.get('cidade', '').strip()
+        estado_academia = request.POST.get('estado', '').upper()[:2]
 
+        if not all([competicao_id, categoria_id, nome_academia, cidade_academia, estado_academia]):
+            raise ValueError("Todos os campos da academia são obrigatórios: nome, cidade e estado")
+
+        # Dados obrigatórios do atleta
+        nome_atleta = request.POST.get('nome', '').strip()
+        data_nascimento = request.POST.get('nascimento')
+        sexo = request.POST.get('sexo')
+        idade = float(request.POST['idade']) if request.POST.get('idade') else None
+        peso = float(request.POST['peso']) if request.POST.get('peso') else None
+        faixa = request.POST.get('faixa', '')
+        cidade_atleta = request.POST.get('cidade', '').strip()
+        estado_atleta = request.POST.get('estado', '').upper()[:2]
+        altura = int(request.POST.get('altura') or 0)
+        email = request.POST.get('email', '').strip()
+        telefone = request.POST.get('telefone', '').strip()
+        foto_url = request.POST.get('foto_url', '')
+
+        # 1. Obter a competição
+        competicao = get_object_or_404(Competicao, pk=competicao_id)
+
+        # 2. Buscar ou criar a academia PARA ESTA COMPETIÇÃO
+        academia, created = Academia.objects.get_or_create(
+            nome=nome_academia,
+            competicao=competicao,
+            defaults={
+                'cidade': cidade_academia,
+                'estado': estado_academia,
+                'endereco': request.POST.get('endereco', '')
+            }
+        )
+
+        # 3. Criar o atleta com os dados corretos
         atleta = Atleta(
-            competicao_id=competicao_id,
+            competicao=competicao,
             categoria_id=categoria_id,
-            nome_completo=nome,
-            data_nascimento=nascimento,
-            idade=float(idade) if idade else None,
+            nome_completo=nome_atleta,
+            data_nascimento=data_nascimento,
             sexo=sexo,
-            peso=float(peso) if peso else None,
+            idade=idade,
+            peso=peso,
             faixa=faixa,
-            cidade=cidade,
-            estado=estado,
+            cidade=cidade_atleta,
+            estado=estado_atleta,
             academia=academia,
+            altura=altura,
+            email=email,
+            telefone=telefone,
             foto_url=foto_url
         )
+
+        atleta.full_clean()
         atleta.save()
 
-        messages.success(request, 'Inscrição realizada com sucesso!')
+        # Resposta de sucesso
+        response_data = {
+            'success': True,
+            'message': 'Inscrição realizada com sucesso!',
+            'atleta_id': atleta.id,
+            'academia_id': academia.id
+        }
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse(response_data)
+
+        messages.success(request, response_data['message'])
         return redirect('equipes_atletas:inscricoes')
 
     except Exception as e:
-        messages.error(request, f'Erro ao processar inscrição: {str(e)}')
+        error_message = f"Erro ao processar inscrição: {str(e)}"
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'message': error_message}, status=400)
+
+        messages.error(request, error_message)
         return redirect('equipes_atletas:inscricoes')
 
 @csrf_exempt

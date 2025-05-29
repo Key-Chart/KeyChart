@@ -1,0 +1,153 @@
+-- Seleciona todas as competições
+SELECT * FROM main.competicoes_competicao ORDER BY data_inicio ASC;
+
+-- Mostra todas as tabelas criadas
+SELECT name FROM sqlite_master WHERE type='table';
+
+-- Mostra o conteúdo da tabela
+select * from atletas_atleta;
+
+-- Tabela com tipos e restrições
+CREATE TABLE produtos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL UNIQUE,
+    preco REAL CHECK(preco >= 0),
+    quantidade INTEGER DEFAULT 0,
+    criado_em TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela com chave estrangeira
+CREATE TABLE categorias (
+    id INTEGER PRIMARY KEY,
+    nome TEXT NOT NULL
+);
+
+ALTER TABLE produtos ADD COLUMN categoria_id INTEGER REFERENCES categorias(id);
+
+-- Inserir 1 registro
+INSERT INTO produtos (nome, preco, quantidade) VALUES ('Teclado', 150.00, 10);
+
+-- Inserir múltiplos registros
+INSERT INTO produtos (nome, preco) VALUES
+('Mouse', 80.00),
+('Monitor', 700.00);
+
+-- Consultar dados
+SELECT * FROM produtos;
+
+-- Filtros e ordenação
+SELECT nome, preco FROM produtos WHERE preco > 100 ORDER BY preco DESC;
+
+-- Atualizar
+UPDATE produtos SET quantidade = 15 WHERE nome = 'Teclado';
+
+-- Excluir
+DELETE FROM produtos WHERE nome = 'Mouse';
+
+-- INNER JOIN: retorna apenas registros relacionados
+SELECT p.nome, c.nome AS categoria
+FROM produtos p
+INNER JOIN categorias c ON p.categoria_id = c.id;
+
+-- LEFT JOIN: retorna todos os produtos, mesmo sem categoria
+SELECT p.nome, c.nome AS categoria
+FROM produtos p
+LEFT JOIN categorias c ON p.categoria_id = c.id;
+
+-- Soma total
+SELECT SUM(preco) AS total_preco FROM produtos;
+
+-- Média
+SELECT AVG(preco) AS media_preco FROM produtos;
+
+-- Contagem
+SELECT COUNT(*) AS total_produtos FROM produtos;
+
+-- Maior e menor
+SELECT MAX(preco) AS maior, MIN(preco) AS menor FROM produtos;
+
+-- Agrupamento
+SELECT categoria_id, COUNT(*) AS total_por_categoria
+FROM produtos
+GROUP BY categoria_id;
+
+-- Criar
+CREATE VIEW produtos_caros AS
+SELECT nome, preco FROM produtos WHERE preco > 100;
+
+-- Consultar
+SELECT * FROM produtos_caros;
+
+-- Excluir
+DROP VIEW produtos_caros;
+
+-- Log de alterações de preço
+CREATE TABLE log_alteracoes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    produto_id INTEGER,
+    preco_antigo REAL,
+    preco_novo REAL,
+    alterado_em TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TRIGGER trg_alteracao_preco
+AFTER UPDATE OF preco ON produtos
+FOR EACH ROW
+BEGIN
+    INSERT INTO log_alteracoes (produto_id, preco_antigo, preco_novo)
+    VALUES (OLD.id, OLD.preco, NEW.preco);
+END;
+
+-- Transação: atomicidade
+BEGIN TRANSACTION;
+
+UPDATE produtos SET quantidade = quantidade - 1 WHERE id = 1;
+INSERT INTO log_alteracoes (produto_id, preco_antigo, preco_novo) VALUES (1, 150.00, 149.00);
+
+COMMIT;  -- Confirma
+-- ROLLBACK;  -- Cancela
+
+-- Criar índice
+CREATE INDEX idx_nome_produto ON produtos(nome);
+
+-- Ver índices
+SELECT name FROM sqlite_master WHERE type = 'index';
+
+-- Remover índice
+DROP INDEX idx_nome_produto;
+
+-- Listar tabelas
+SELECT name FROM sqlite_master WHERE type='table';
+
+-- Estrutura de tabela
+PRAGMA table_info(produtos);
+
+-- Índices de uma tabela
+PRAGMA index_list(produtos);
+
+-- Esquema completo do banco
+.schema
+
+-- Ativar restrições de chave estrangeira (importante no SQLite!)
+PRAGMA foreign_keys = ON;
+
+-- Subquery: produtos acima da média de preço
+SELECT nome, preco FROM produtos WHERE preco > (SELECT AVG(preco) FROM produtos);
+
+-- CASE: classificação baseada no preço
+SELECT nome,
+    CASE
+        WHEN preco > 500 THEN 'Caro'
+        WHEN preco BETWEEN 200 AND 500 THEN 'Médio'
+        ELSE 'Barato'
+    END AS categoria_preco
+FROM produtos;
+
+-- Selecionar todas as competições
+SELECT * FROM main.competicoes_competicao ORDER BY data_inicio ASC;
+
+-- Mostrar todas as tabelas
+SELECT name FROM sqlite_master WHERE type='table';
+
+-- Mostrar conteúdo de tabela específica
+SELECT * FROM atletas_atleta;
