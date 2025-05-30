@@ -315,6 +315,9 @@ const InscricoesApp = {
             'input-idade': a.idade,
             'input-sexo': a.sexo,
             'input-peso': a.peso,
+            'input-altura': a.altura,  // Adicionado
+            'input-email': a.email,    // Adicionado
+            'input-telefone': a.telefone, // Adicionado
             'input-faixa': a.faixa,
             'input-cidade': a.cidade,
             'input-estado': a.estado,
@@ -335,6 +338,9 @@ const InscricoesApp = {
             'confirm-idade': a.idade ? `${a.idade} anos` : '-',
             'confirm-sexo': this.formatSexo(a.sexo),
             'confirm-peso': a.peso ? `${a.peso} kg` : '-',
+            'confirm-altura': a.altura ? `${a.altura} cm` : '-',  // Adicionado
+            'confirm-email': a.email || '-',                     // Adicionado
+            'confirm-telefone': a.telefone || '-',               // Adicionado
             'confirm-faixa': this.formatFaixa(a.faixa),
             'confirm-cidade': a.cidade,
             'confirm-estado': a.estado,
