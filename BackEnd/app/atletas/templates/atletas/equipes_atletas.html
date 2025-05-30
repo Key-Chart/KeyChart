@@ -101,84 +101,65 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        {% for atleta in atletas %}
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <img src="https://mdbootstrap.com/img/new/avatars/8.jpg" class="avatar me-3" alt="Luan Carvalho">
+                                                    {% if atleta.foto %}
+                                                        <img src="{{ atleta.foto.url }}" class="avatar me-3" alt="{{ atleta.nome_completo }}">
+                                                    {% else %}
+                                                        <img src="https://mdbootstrap.com/img/new/avatars/8.jpg" class="avatar me-3" alt="{{ atleta.nome_completo }}">
+                                                    {% endif %}
                                                     <div>
-                                                        <p class="fw-bold mb-1">Luan Carvalho</p>
-                                                        <p class="text-muted mb-0">luan.carvalho@example.com</p>
+                                                        <p class="fw-bold mb-1">{{ atleta.nome_completo }}</p>
+                                                        <p class="text-muted mb-0">{{ atleta.email|default:"-" }}</p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>25 anos</td>
-                                            <td><span class="badge badge-kumite">Kumite</span></td>
-                                            <td><span class="badge badge-active">Ativo</span></td>
+                                            <td>{{ atleta.idade }} anos</td>
+                                            <td>
+                                                <span class="badge {% if atleta.categoria.tipo == 'kata' %}badge-kata{% else %}badge-kumite{% endif %}">
+                                                    {{ atleta.categoria.get_tipo_display }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge {% if atleta.ativo %}badge-active{% else %}badge-inactive{% endif %}">
+                                                    {% if atleta.ativo %}Ativo{% else %}Inativo{% endif %}
+                                                </span>
+                                            </td>
                                             <td>
                                                 <button class="btn btn-sm btn-outline-primary me-1"
                                                         data-mdb-toggle="tooltip" title="Visualizar"
-                                                        onclick="window.location.href='{% url 'equipes_atletas:perfil_atleta' %}'">
+                                                        onclick="window.location.href='{% url 'equipes_atletas:perfil_atleta' atleta.id %}'">
                                                     <i class="bi bi-eye"></i>
                                                 </button>
 
-                                                <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="tooltip" title="Editar" data-mdb-toggle="modal" data-mdb-target="#editAthleteModal">
+                                                <button class="btn btn-sm btn-outline-warning me-1"
+                                                        data-mdb-toggle="tooltip" title="Editar"
+                                                        onclick="window.location.href='{% url 'equipes_atletas:editar_atleta' atleta.id %}'">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="tooltip" title="Inativar" data-mdb-toggle="modal" data-mdb-target="#deactivateAthleteModal">
+
+                                                {% if atleta.ativo %}
+                                                <button class="btn btn-sm btn-outline-danger"
+                                                        data-mdb-toggle="tooltip" title="Inativar"
+                                                        onclick="confirmarDesativacao({{ atleta.id }}, '{{ atleta.nome_completo }}')">
                                                     <i class="bi bi-person-x"></i>
                                                 </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://mdbootstrap.com/img/new/avatars/6.jpg" class="avatar me-3" alt="Maria Silva">
-                                                    <div>
-                                                        <p class="fw-bold mb-1">Maria Silva</p>
-                                                        <p class="text-muted mb-0">maria.silva@example.com</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>22 anos</td>
-                                            <td><span class="badge badge-kata">Kata</span></td>
-                                            <td><span class="badge badge-inactive">Inativo</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="tooltip" title="Visualizar" onclick="window.location.href='perfil_atleta.html'">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="tooltip" title="Editar" data-mdb-toggle="modal" data-mdb-target="#editAthleteModal">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-success" data-mdb-toggle="tooltip" title="Ativar" data-mdb-toggle="modal" data-mdb-target="#activateAthleteModal">
+                                                {% else %}
+                                                <button class="btn btn-sm btn-outline-success"
+                                                        data-mdb-toggle="tooltip" title="Ativar"
+                                                        onclick="confirmarAtivacao({{ atleta.id }}, '{{ atleta.nome_completo }}')">
                                                     <i class="bi bi-person-check"></i>
                                                 </button>
+                                                {% endif %}
                                             </td>
                                         </tr>
+                                        {% empty %}
                                         <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://mdbootstrap.com/img/new/avatars/7.jpg" class="avatar me-3" alt="Carlos Souza">
-                                                    <div>
-                                                        <p class="fw-bold mb-1">Carlos Souza</p>
-                                                        <p class="text-muted mb-0">carlos.souza@example.com</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>30 anos</td>
-                                            <td><span class="badge badge-kumite">Kumite</span></td>
-                                            <td><span class="badge badge-active">Ativo</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="tooltip" title="Visualizar" onclick="window.location.href='perfil_atleta.html'">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="tooltip" title="Editar" data-mdb-toggle="modal" data-mdb-target="#editAthleteModal">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="tooltip" title="Inativar" data-mdb-toggle="modal" data-mdb-target="#deactivateAthleteModal">
-                                                    <i class="bi bi-person-x"></i>
-                                                </button>
-                                            </td>
+                                            <td colspan="5" class="text-center">Nenhum atleta encontrado</td>
                                         </tr>
+                                        {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
@@ -492,9 +473,105 @@
             </div>
         </div>
     </div>
+    <!-- Modal de Confirmação para Desativar -->
+    <div class="modal fade" id="confirmarDesativacaoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-x me-2 text-danger"></i>Desativar Atleta</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja desativar o atleta <strong id="nomeAtletaDesativar"></strong>?</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle me-2"></i>O atleta não aparecerá mais nas listas de competições ativas.
+                    </div>
+                    <form id="formDesativarAtleta" method="post" action="{% url 'equipes_atletas:desativar_atleta' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="atleta_id" id="atletaIdDesativar">
+                        <div class="mb-3">
+                            <label for="motivoDesativacao" class="form-label">Motivo (opcional)</label>
+                            <textarea class="form-control" id="motivoDesativacao" name="motivo" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="document.getElementById('formDesativarAtleta').submit()">Confirmar Desativação</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação para Ativar -->
+    <div class="modal fade" id="confirmarAtivacaoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-check me-2 text-success"></i>Ativar Atleta</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja ativar o atleta <strong id="nomeAtletaAtivar"></strong>?</p>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>O atleta voltará a aparecer nas listas de competições.
+                    </div>
+                    <form id="formAtivarAtleta" method="post" action="{% url 'equipes_atletas:ativar_atleta' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="atleta_id" id="atletaIdAtivar">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" onclick="document.getElementById('formAtivarAtleta').submit()">Confirmar Ativação</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- MDB JS -->
     <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
     <script src="{% static 'atletas/js/equipes_atletas.js' %}"></script>
+    <script>
+    // Funções para os modais de confirmação
+    function confirmarDesativacao(atletaId, nomeAtleta) {
+        document.getElementById('nomeAtletaDesativar').textContent = nomeAtleta;
+        document.getElementById('atletaIdDesativar').value = atletaId;
+        const modal = new mdb.Modal(document.getElementById('confirmarDesativacaoModal'));
+        modal.show();
+    }
+
+    function confirmarAtivacao(atletaId, nomeAtleta) {
+        document.getElementById('nomeAtletaAtivar').textContent = nomeAtleta;
+        document.getElementById('atletaIdAtivar').value = atletaId;
+        const modal = new mdb.Modal(document.getElementById('confirmarAtivacaoModal'));
+        modal.show();
+    }
+
+    // Função para enviar o formulário de filtro
+    function aplicarFiltros() {
+        const nome = document.getElementById('filterName').value;
+        const idade = document.getElementById('filterAge').value;
+        const categoria = document.getElementById('filterCategory').value;
+
+        let url = window.location.pathname + '?';
+        if (nome) url += `filterName=${nome}&`;
+        if (idade) url += `filterAge=${idade}&`;
+        if (categoria) url += `filterCategory=${categoria}`;
+
+        window.location.href = url;
+    }
+
+    // Função para limpar os filtros
+    function limparFiltros() {
+        window.location.href = window.location.pathname;
+    }
+
+    // Atribuir eventos aos botões
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('.btn-primary[type="button"]').addEventListener('click', aplicarFiltros);
+        document.querySelector('.btn-warning[type="button"]').addEventListener('click', limparFiltros);
+    });
+</script>
 </body>
 </html>

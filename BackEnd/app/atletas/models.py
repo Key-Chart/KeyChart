@@ -36,7 +36,7 @@ class Atleta(models.Model):
     nome_completo = models.CharField(max_length=100)
     data_nascimento = models.DateField()
     sexo = models.CharField(max_length=1, choices=SEXO_CHOICES)
-    idade = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
+    idade = models.IntegerField(null=True, blank=True)
     peso = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     altura = models.IntegerField(default=0, null=False, blank=True)
     email = models.EmailField(null=True, blank=True)
@@ -44,7 +44,7 @@ class Atleta(models.Model):
     faixa = models.CharField(max_length=10, choices=FAIXA_CHOICES)
     cidade = models.CharField(max_length=50)
     estado = models.CharField(max_length=2, choices=ESTADO_CHOICES)
-    foto_url = models.URLField(null=True, blank=True)
+    foto = models.ImageField(upload_to='atletas/fotos/', null=True, blank=True)
     data_inscricao = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

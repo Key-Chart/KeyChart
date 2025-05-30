@@ -97,7 +97,7 @@ def finalizar_inscricao(request):
         altura = int(request.POST.get('altura') or 0)
         email = request.POST.get('email', '').strip()
         telefone = request.POST.get('telefone', '').strip()
-        foto_url = request.POST.get('foto_url', '')
+        foto = request.POST.get('foto', '')
 
         # 1. Obter a competição
         competicao = get_object_or_404(Competicao, pk=competicao_id)
@@ -129,11 +129,31 @@ def finalizar_inscricao(request):
             altura=altura,
             email=email,
             telefone=telefone,
-            foto_url=foto_url
+            foto=foto
         )
+
+        # Processar o upload da foto
+        if 'foto' in request.FILES:
+            atleta.foto = request.FILES['foto']
+            # Você pode querer renomear o arquivo para incluir o ID do atleta
+            # Mas como o ID ainda não existe, faremos isso depois do save
 
         atleta.full_clean()
         atleta.save()
+
+        # D renomear o arquivo
+        if atleta.foto:
+            import os
+            from django.conf import settings
+
+            ext = os.path.splitext(atleta.foto.name)[1]
+            new_name = f'atletas/fotos/{atleta.id}{ext}'
+            old_path = atleta.foto.path
+            new_path = os.path.join(settings.MEDIA_ROOT, new_name)
+
+            os.rename(old_path, new_path)
+            atleta.foto.name = new_name
+            atleta.save()
 
         # Resposta de sucesso
         response_data = {
@@ -203,3 +223,68 @@ def enviar_email_inscricao(request):
         'error': 'Método não permitido',
         'message': 'Requisição inválida'
     })
+
+# Função para listar todos os atletas
+def atletas(request):
+    # Obter parâmetros de filtro da requisição
+    nome = request.GET.get('filterName', '')
+    idade = request.GET.get('filterAge', '')
+    categoria = request.GET.get('filterCategory', '')
+
+    # Construir a query de filtro
+    atletas = Atleta.objects.all()
+
+    if nome:
+        atletas = atletas.filter(nome_completo__icontains=nome)
+    if idade:
+        atletas = atletas.filter(idade=idade)
+    if categoria:
+        atletas = atletas.filter(categoria__tipo=categoria)
+
+    context = {
+        'atletas': atletas,
+        'filterName': nome,
+        'filterAge': idade,
+        'filterCategory': categoria
+    }
+
+    return render(request, 'atletas/equipes_atletas.html', context)
+
+# Função para desativar Atleta
+def desativar_atleta(request):
+    if request.method == 'POST':
+        atleta_id = request.POST.get('atleta_id')
+        motivo = request.POST.get('motivo', '')
+
+        try:
+            atleta = Atleta.objects.get(id=atleta_id)
+            atleta.ativo = False
+            atleta.motivo_inativacao = motivo
+            atleta.save()
+
+            messages.success(request, f'Atleta {atleta.nome_completo} desativado com sucesso!')
+        except Atleta.DoesNotExist:
+            messages.error(request, 'Atleta não encontrado!')
+
+    return redirect('equipes_atletas:atletas')
+
+# Função para Ativar atleta
+def ativar_atleta(request):
+    if request.method == 'POST':
+        atleta_id = request.POST.get('atleta_id')
+
+        try:
+            atleta = Atleta.objects.get(id=atleta_id)
+            atleta.ativo = True
+            atleta.motivo_inativacao = ''
+            atleta.save()
+
+            messages.success(request, f'Atleta {atleta.nome_completo} ativado com sucesso!')
+        except Atleta.DoesNotExist:
+            messages.error(request, 'Atleta não encontrado!')
+
+    return redirect('equipes_atletas:atletas')
+
+
+def editar_atleta(request, atleta_id):
+    pass

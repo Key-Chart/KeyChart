@@ -332,9 +332,13 @@
                             </div>
                         </div>
 
-                        <div id="foto-preview-container" class="text-center mb-4 d-none">
+                        <div id="foto-preview-container" class="text-center mb-4 {% if not atleta.foto %}d-none{% endif %}">
                             <h6>Foto do Atleta</h6>
-                            <img id="foto-preview" src="" alt="Preview da Foto" class="img-thumbnail" style="max-height: 200px;">
+                            {% if atleta.foto %}
+                                <img src="{{ atleta.foto.url }}" alt="Foto do Atleta" class="img-thumbnail" style="max-height: 200px;">
+                            {% else %}
+                                <img id="foto-preview" src="" alt="Preview da Foto" class="img-thumbnail" style="max-height: 200px;">
+                            {% endif %}
                         </div>
 
                         <div class="d-flex justify-content-between">
@@ -356,13 +360,52 @@
         </div>
     </div>
 
-    <!-- Modais -->
+    <!-- Modal para enviar por email -->
     <div id="emailModal" class="modal-email">
-        <!-- Conteúdo do modal de email -->
+        <div class="modal-content">
+            <span class="close" onclick="closeEmailModal()">&times;</span>
+            <h4><i class="bi bi-envelope"></i> Enviar ficha de inscrição por email</h4>
+            <form id="emailForm">
+                <div class="mb-3">
+                    <label for="emailDestino" class="form-label">Email de destino <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="emailDestino" required>
+                </div>
+                <div class="mb-3">
+                    <label for="assuntoEmail" class="form-label">Assunto <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="assuntoEmail" value="Ficha de Inscrição - Copa Regional 2025" required>
+                </div>
+                <div class="mb-3">
+                    <label for="mensagemEmail" class="form-label">Mensagem <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="mensagemEmail" rows="4" required>Segue em anexo a ficha de inscrição para a competição.</textarea>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-secondary me-2" onclick="closeEmailModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <span id="emailSubmitText">Enviar Email</span>
+                        <span id="emailLoadingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
+    <!-- Modal de sucesso -->
     <div id="successModal" class="modal-email">
-        <!-- Conteúdo do modal de sucesso -->
+        <div class="modal-content text-center">
+            <div class="mb-3">
+                <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+            </div>
+            <h4 class="text-success">Inscrição realizada com sucesso!</h4>
+            <p id="successMessage">O atleta foi inscrito na competição com sucesso.</p>
+            <div class="d-flex justify-content-center mt-4">
+                <button type="button" class="btn btn-success me-2" onclick="window.location.href='/keychart/competicoes/'">
+                    <i class="bi bi-trophy"></i> Voltar para Competições
+                </button>
+                <button type="button" class="btn btn-primary" onclick="window.location.href='/keychart/equipes_atletas/inscricoes/'">
+                    <i class="bi bi-plus-circle"></i> Nova Inscrição
+                </button>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
