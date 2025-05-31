@@ -106,7 +106,7 @@
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     {% if atleta.foto %}
-                                                        <img src="{{ atleta.foto.url }}" class="avatar me-3" alt="{{ atleta.nome_completo }}">
+                                                        <img src="{{ atleta.foto }}" class="avatar me-3" alt="{{ atleta.nome_completo }}">
                                                     {% else %}
                                                         <img src="https://mdbootstrap.com/img/new/avatars/8.jpg" class="avatar me-3" alt="{{ atleta.nome_completo }}">
                                                     {% endif %}
@@ -123,8 +123,8 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <span class="badge {% if atleta.ativo %}badge-active{% else %}badge-inactive{% endif %}">
-                                                    {% if atleta.ativo %}Ativo{% else %}Inativo{% endif %}
+                                                <span class="badge {% if atleta.ativo %}badge-active{% else %}badge-active{% endif %}">
+                                                    {% if atleta.ativo %}Ativo{% else %}Ativo{% endif %}
                                                 </span>
                                             </td>
                                             <td>
@@ -136,20 +136,20 @@
 
                                                 <button class="btn btn-sm btn-outline-warning me-1"
                                                         data-mdb-toggle="tooltip" title="Editar"
-                                                        onclick="window.location.href='{% url 'equipes_atletas:editar_atleta' atleta.id %}'">
+                                                        >
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
 
                                                 {% if atleta.ativo %}
                                                 <button class="btn btn-sm btn-outline-danger"
                                                         data-mdb-toggle="tooltip" title="Inativar"
-                                                        onclick="confirmarDesativacao({{ atleta.id }}, '{{ atleta.nome_completo }}')">
+                                                        >
                                                     <i class="bi bi-person-x"></i>
                                                 </button>
                                                 {% else %}
                                                 <button class="btn btn-sm btn-outline-success"
                                                         data-mdb-toggle="tooltip" title="Ativar"
-                                                        onclick="confirmarAtivacao({{ atleta.id }}, '{{ atleta.nome_completo }}')">
+                                                        >
                                                     <i class="bi bi-person-check"></i>
                                                 </button>
                                                 {% endif %}
@@ -313,7 +313,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="editAthleteCategory" class="form-label">Categoria</label>
@@ -486,7 +486,7 @@
                     <div class="alert alert-warning">
                         <i class="bi bi-exclamation-circle me-2"></i>O atleta não aparecerá mais nas listas de competições ativas.
                     </div>
-                    <form id="formDesativarAtleta" method="post" action="{% url 'equipes_atletas:desativar_atleta' %}">
+                    <form id="formDesativarAtleta" method="post" action="">
                         {% csrf_token %}
                         <input type="hidden" name="atleta_id" id="atletaIdDesativar">
                         <div class="mb-3">
@@ -516,7 +516,7 @@
                     <div class="alert alert-info">
                         <i class="bi bi-info-circle me-2"></i>O atleta voltará a aparecer nas listas de competições.
                     </div>
-                    <form id="formAtivarAtleta" method="post" action="{% url 'equipes_atletas:ativar_atleta' %}">
+                    <form id="formAtivarAtleta" method="post" action="">
                         {% csrf_token %}
                         <input type="hidden" name="atleta_id" id="atletaIdAtivar">
                     </form>

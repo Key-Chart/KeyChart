@@ -23,7 +23,6 @@ print("Estou aqui")
 def perfil_atleta(request):
     return render(request, 'atletas/perfil_atleta.html')
 
-
 # Função para a renderizar a tela de inscrições
 def inscricoes_view(request):
     competicoes = Competicao.objects.filter(inscricoes_abertas=True, status='Ativa').order_by('data_inicio')
@@ -147,7 +146,7 @@ def finalizar_inscricao(request):
             from django.conf import settings
 
             ext = os.path.splitext(atleta.foto.name)[1]
-            new_name = f'atletas/fotos/{atleta.id}{ext}'
+            new_name = f'fotos_atletas/{atleta.id}{ext}'
             old_path = atleta.foto.path
             new_path = os.path.join(settings.MEDIA_ROOT, new_name)
 
@@ -251,7 +250,7 @@ def atletas(request):
     return render(request, 'atletas/equipes_atletas.html', context)
 
 # Função para desativar Atleta
-def desativar_atleta(request):
+'''def desativar_atleta(request):
     if request.method == 'POST':
         atleta_id = request.POST.get('atleta_id')
         motivo = request.POST.get('motivo', '')
@@ -266,10 +265,10 @@ def desativar_atleta(request):
         except Atleta.DoesNotExist:
             messages.error(request, 'Atleta não encontrado!')
 
-    return redirect('equipes_atletas:atletas')
+    return redirect('equipes_atletas:atletas')'''
 
 # Função para Ativar atleta
-def ativar_atleta(request):
+'''def ativar_atleta(request):
     if request.method == 'POST':
         atleta_id = request.POST.get('atleta_id')
 
@@ -283,8 +282,24 @@ def ativar_atleta(request):
         except Atleta.DoesNotExist:
             messages.error(request, 'Atleta não encontrado!')
 
-    return redirect('equipes_atletas:atletas')
+    return redirect('equipes_atletas:atletas')'''
 
+# Função para Editar Atleta
+'''def editar_atleta(request, atleta_id):
+    atleta = get_object_or_404(Atleta, id=atleta_id)
 
-def editar_atleta(request, atleta_id):
-    pass
+    if request.method == 'POST':
+        atleta.nome = request.POST.get('nome')
+        atleta.email = request.POST.get('email')
+        atleta.data_nascimento = request.POST.get('data_nascimento')
+        atleta.sexo = request.POST.get('sexo')
+        atleta.categoria = request.POST.get('categoria')
+        atleta.faixa = request.POST.get('faixa')
+        atleta.peso = request.POST.get('peso')
+        atleta.altura = request.POST.get('altura')
+        atleta.equipe_id = request.POST.get('equipe')
+        atleta.save()
+        return redirect('nome_da_tua_view_de_lista')  # Altere para onde deve redirecionar após editar
+
+    context = {'atleta': atleta}
+    return render(request, 'teu_template.html', context)'''

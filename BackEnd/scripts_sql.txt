@@ -151,3 +151,18 @@ SELECT name FROM sqlite_master WHERE type='table';
 
 -- Mostrar conteúdo de tabela específica
 SELECT * FROM atletas_atleta;
+
+
+
+# Apaga todos os Atletas e começa a contar do 0
+python manage.py shell
+
+from django.db import connection
+from atletas.models import Atleta
+
+# Apagar todos os registros
+Atleta.objects.all().delete()
+
+# Resetar o autoincrement do ID (SQLite)
+with connection.cursor() as cursor:
+    cursor.execute("DELETE FROM sqlite_sequence WHERE name='atletas_atleta';")

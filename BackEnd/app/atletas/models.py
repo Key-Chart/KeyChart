@@ -44,7 +44,7 @@ class Atleta(models.Model):
     faixa = models.CharField(max_length=10, choices=FAIXA_CHOICES)
     cidade = models.CharField(max_length=50)
     estado = models.CharField(max_length=2, choices=ESTADO_CHOICES)
-    foto = models.ImageField(upload_to='atletas/fotos/', null=True, blank=True)
+    foto = models.ImageField(upload_to='fotos_atletas/', null=True, blank=True)
     data_inscricao = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
