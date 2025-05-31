@@ -15,6 +15,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 import os
+from datetime import date
 
 # Função para listar todos os atletas
 def atletas(request):
@@ -274,3 +275,25 @@ def atletas(request):
 
     context = {'atleta': atleta}
     return render(request, 'teu_template.html', context)'''
+
+# Função para abrir a tela de visualizar atleta
+def perfil_atleta(request, atleta_id):
+    # Busca o atleta ou retorna 404 se não existir
+    atleta = get_object_or_404(Atleta, id=atleta_id)
+    # Calcula a idade
+    hoje = date.today()
+    idade = hoje.year - atleta.data_nascimento.year - (
+                (hoje.month, hoje.day) < (atleta.data_nascimento.month, atleta.data_nascimento.day))
+
+    # Formata a data de nascimento para exibição (dd/mm/aaaa)
+    data_nascimento_formatada = atleta.data_nascimento.strftime('%d/%m/%Y')
+
+    # Prepara o contexto com apenas os dados solicitados
+    context = {
+        'atleta': atleta,
+        'idade': idade,
+        'data_nascimento_formatada': data_nascimento_formatada,
+    }
+
+    return render(request, 'atletas/perfil_atleta.html', context)
+

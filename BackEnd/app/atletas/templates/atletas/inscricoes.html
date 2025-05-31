@@ -360,35 +360,6 @@
         </div>
     </div>
 
-    <!-- Modal para enviar por email -->
-    <div id="emailModal" class="modal-email">
-        <div class="modal-content">
-            <span class="close" onclick="closeEmailModal()">&times;</span>
-            <h4><i class="bi bi-envelope"></i> Enviar ficha de inscrição por email</h4>
-            <form id="emailForm">
-                <div class="mb-3">
-                    <label for="emailDestino" class="form-label">Email de destino <span class="text-danger">*</span></label>
-                    <input type="email" class="form-control" id="emailDestino" required>
-                </div>
-                <div class="mb-3">
-                    <label for="assuntoEmail" class="form-label">Assunto <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="assuntoEmail" value="Ficha de Inscrição - Copa Regional 2025" required>
-                </div>
-                <div class="mb-3">
-                    <label for="mensagemEmail" class="form-label">Mensagem <span class="text-danger">*</span></label>
-                    <textarea class="form-control" id="mensagemEmail" rows="4" required>Segue em anexo a ficha de inscrição para a competição.</textarea>
-                </div>
-                <div class="d-flex justify-content-end">
-                    <button type="button" class="btn btn-secondary me-2" onclick="closeEmailModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-success">
-                        <span id="emailSubmitText">Enviar Email</span>
-                        <span id="emailLoadingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Modal de sucesso -->
     <div id="successModal" class="modal-email">
         <div class="modal-content text-center">

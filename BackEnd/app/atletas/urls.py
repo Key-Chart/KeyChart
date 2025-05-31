@@ -3,6 +3,8 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponseNotFound
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = 'equipes_atletas'
 
@@ -18,4 +20,4 @@ urlpatterns = [
     #path('atletas/ativar/', views.ativar_atleta, name='ativar_atleta'),
     #path('atletas/editar/<int:atleta_id>/', views.editar_atleta, name='editar_atleta'),
     path('atletas/perfil/<int:atleta_id>/', views.perfil_atleta, name='perfil_atleta'),
-]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

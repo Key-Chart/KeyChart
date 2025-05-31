@@ -54,3 +54,6 @@ class Atleta(models.Model):
         verbose_name = 'Atleta'
         verbose_name_plural = 'Atletas'
         ordering = ['nome_completo']
+
+    def foto_url(self):
+        return self.foto.url if self.foto else ''

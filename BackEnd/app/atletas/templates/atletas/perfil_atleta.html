@@ -37,99 +37,103 @@
         <main class="container-fluid py-4">
             <!-- Perfil Principal -->
             <div class="card mb-4">
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Coluna da Foto -->
-                        <div class="col-md-4 text-center">
-                            <img src="https://mdbootstrap.com/img/new/avatars/8.jpg" class="avatar mb-4" alt="Luan Carvalho">
-                            <h4 class="mb-1">Luan Carvalho</h4>
-                            <p class="text-muted mb-3">Atleta Profissional</p>
-                            <button class="btn btn-pdf">
-                                <i class="bi bi-file-earmark-pdf me-2"></i>Exportar para PDF
-                            </button>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Coluna da Foto -->
+                    <div class="col-md-4 text-center">
+                        {% if atleta.foto %}
+                            <img src="{{ atleta.foto.url }}" class="avatar mb-4" alt="{{ atleta.nome_completo }}">
+                        {% else %}
+                            <img src="https://mdbootstrap.com/img/new/avatars/8.jpg" class="avatar mb-4" alt="{{ atleta.nome_completo }}">
+                        {% endif %}
+                        <h4 class="mb-1">{{ atleta.nome_completo }}</h4>
+                        <p class="text-muted mb-3">Atleta Profissional</p>
+                        <button class="btn btn-pdf">
+                            <i class="bi bi-file-earmark-pdf me-2"></i>Exportar para PDF
+                        </button>
+                    </div>
+
+                    <!-- Coluna das Informações -->
+                    <div class="col-md-8">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <h6><i class="bi bi-speedometer2 me-2 text-primary"></i>Peso</h6>
+                                    <p>{{ atleta.peso|default:"-" }} kg</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <h6><i class="bi bi-calendar me-2 text-primary"></i>Idade</h6>
+                                    <p>{{ idade }} anos</p>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <!-- Coluna das Informações -->
-                        <div class="col-md-8">
-                            <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <h6><i class="bi bi-speedometer2 me-2 text-primary"></i>Peso</h6>
-                                        <p>70 kg</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <h6><i class="bi bi-calendar me-2 text-primary"></i>Idade</h6>
-                                        <p>25 anos</p>
-                                    </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <h6><i class="bi bi-geo-alt me-2 text-primary"></i>Estado</h6>
+                                    <p>{{ atleta.estado|default:"-" }}</p>
                                 </div>
                             </div>
-                            
-                            <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <h6><i class="bi bi-geo-alt me-2 text-primary"></i>Estado</h6>
-                                        <p>Pará</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <h6><i class="bi bi-building me-2 text-primary"></i>Cidade da Academia</h6>
-                                        <p>Belém</p>
-                                    </div>
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <h6><i class="bi bi-building me-2 text-primary"></i>Cidade da Academia</h6>
+                                    <p>{{ atleta.cidade|default:"-" }}</p>
                                 </div>
                             </div>
-                            
-                            <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <h6><i class="bi bi-award me-2 text-primary"></i>Faixa</h6>
-                                        <p><span class="badge badge-black-belt">Preta</span></p>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <h6><i class="bi bi-exclamation-triangle me-2 text-primary"></i>Advertências</h6>
-                                        <p><span class="badge badge-success">Nenhuma</span></p>
-                                    </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <h6><i class="bi bi-award me-2 text-primary"></i>Faixa</h6>
+                                    <p><span class="badge badge-black-belt">{{ atleta.faixa|default:"-" }}</span></p>
                                 </div>
                             </div>
-                            
-                            <!-- Novos campos adicionados -->
-                            <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <h6><i class="bi bi-calendar-date me-2 text-primary"></i>Data de Nascimento</h6>
-                                        <p>15/03/1998</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <h6><i class="bi bi-file-text me-2 text-primary"></i>CPF</h6>
-                                        <p>123.456.789-00</p>
-                                    </div>
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <h6><i class="bi bi-exclamation-triangle me-2 text-primary"></i>Advertências</h6>
+                                    <p><span class="badge badge-success">Nenhuma</span></p>
                                 </div>
                             </div>
-                            
-                            <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <h6><i class="bi bi-file-earmark-text me-2 text-primary"></i>RG</h6>
-                                        <p>12.345.678-9</p>
-                                    </div>
+                        </div>
+
+                        <!-- Novos campos adicionados -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <h6><i class="bi bi-calendar-date me-2 text-primary"></i>Data de Nascimento</h6>
+                                    <p>{{ data_nascimento_formatada|default:"-" }}</p>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="info-item">
-                                        <h6><i class="bi bi-envelope me-2 text-primary"></i>E-mail</h6>
-                                        <p>exemplo@email.com</p>
-                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <h6><i class="bi bi-file-text me-2 text-primary"></i>CPF</h6>
+                                    <p>{{ atleta.cpf|default:"-" }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <h6><i class="bi bi-file-earmark-text me-2 text-primary"></i>RG</h6>
+                                    <p>{{ atleta.rg|default:"-" }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <h6><i class="bi bi-envelope me-2 text-primary"></i>E-mail</h6>
+                                    <p>{{ atleta.email|default:"-" }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
             
             <!-- Estatísticas e Informações -->
             <div class="row">
