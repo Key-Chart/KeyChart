@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,7 +8,18 @@
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background-color: #343A40; color: white; padding: 10px; text-align: center; }
+        .header {
+            background-color: #343A40;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header img {
+            max-height: 50px;
+        }
         .content { padding: 20px; border: 1px solid #ddd; }
         .footer { margin-top: 20px; text-align: center; font-size: 0.8em; color: #777; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
@@ -17,6 +30,7 @@
 <body>
     <div class="container">
         <div class="header">
+            <img src="{% static 'atletas/img/img.png' %}" alt="Logo">
             <h2>Confirmação de Inscrição</h2>
         </div>
 

@@ -12,6 +12,9 @@ from django.views.decorators.http import require_POST
 from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+import os
 
 # Função para listar todos os atletas
 def atletas(request):
@@ -72,9 +75,8 @@ def carregar_categorias(request, competicao_id):
 
 
 @require_POST
-def finalizar_inscricao(request):
+def enviar_email_inscricao(request):
     try:
-        # Dados básicos obrigatórios
         competicao_id = request.POST.get('competicao_id')
         categoria_id = request.POST.get('categoria_id')
         nome_academia = request.POST.get('academia', '').strip()
@@ -84,7 +86,6 @@ def finalizar_inscricao(request):
         if not all([competicao_id, categoria_id, nome_academia, cidade_academia, estado_academia]):
             raise ValueError("Todos os campos da academia são obrigatórios: nome, cidade e estado")
 
-        # Dados obrigatórios do atleta
         nome_atleta = request.POST.get('nome', '').strip()
         data_nascimento = request.POST.get('nascimento')
         sexo = request.POST.get('sexo')
@@ -98,10 +99,10 @@ def finalizar_inscricao(request):
         telefone = request.POST.get('telefone', '').strip()
         foto = request.POST.get('foto', '')
 
-        # 1. Obter a competição
+        # Obter a competição
         competicao = get_object_or_404(Competicao, pk=competicao_id)
 
-        # 2. Buscar ou criar a academia PARA ESTA COMPETIÇÃO
+        # Buscar ou criar a academia PARA ESTA COMPETIÇÃO
         academia, created = Academia.objects.get_or_create(
             nome=nome_academia,
             competicao=competicao,
@@ -112,7 +113,7 @@ def finalizar_inscricao(request):
             }
         )
 
-        # 3. Criar o atleta com os dados corretos
+        # Criar o atleta com os dados corretos
         atleta = Atleta(
             competicao=competicao,
             categoria_id=categoria_id,
@@ -134,17 +135,12 @@ def finalizar_inscricao(request):
         # Processar o upload da foto
         if 'foto' in request.FILES:
             atleta.foto = request.FILES['foto']
-            # Você pode querer renomear o arquivo para incluir o ID do atleta
-            # Mas como o ID ainda não existe, faremos isso depois do save
 
         atleta.full_clean()
         atleta.save()
 
-        # D renomear o arquivo
+        # Renomear o arquivo da foto, se existir
         if atleta.foto:
-            import os
-            from django.conf import settings
-
             ext = os.path.splitext(atleta.foto.name)[1]
             new_name = f'fotos_atletas/{atleta.id}{ext}'
             old_path = atleta.foto.path
@@ -154,7 +150,29 @@ def finalizar_inscricao(request):
             atleta.foto.name = new_name
             atleta.save()
 
-        # Resposta de sucesso
+        # Enviar email de confirmação
+        try:
+            html_content = render_to_string('atletas/email_inscricao.html', {
+                'nome_atleta': atleta.nome_completo,
+                'competicao': competicao.nome,
+                'categoria': atleta.categoria.nome,  # Ajuste se necessário
+                'data_nascimento': atleta.data_nascimento.strftime('%d/%m/%Y'),
+                'sexo': atleta.sexo,
+                'faixa': atleta.faixa,
+                'academia': atleta.academia.nome,
+            })
+
+            subject = f'Confirmação de Inscrição - {competicao.nome}'
+            from_email = 'rafaelgoesti2021@gmail.com'  # Troque para o seu email
+            to_email = [atleta.email]
+
+            email_message = EmailMultiAlternatives(subject, '', from_email, to_email)
+            email_message.attach_alternative(html_content, "text/html")
+            email_message.send()
+
+        except Exception as e:
+            print(f'Erro ao enviar e-mail: {e}')
+
         response_data = {
             'success': True,
             'message': 'Inscrição realizada com sucesso!',
@@ -175,53 +193,6 @@ def finalizar_inscricao(request):
 
         messages.error(request, error_message)
         return redirect('equipes_atletas:inscricoes')
-
-@csrf_exempt
-def enviar_email_inscricao(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-
-            # Renderizar o template HTML do email
-            context = {
-                'nome_atleta': data['nome_atleta'],
-                'competicao': data['competicao'],
-                'categoria': data['categoria'],
-                'data_nascimento': data['data_nascimento'],
-                'sexo': data['sexo'],
-                'faixa': data['faixa'],
-                'academia': data['academia'],
-            }
-
-            html_content = render_to_string('atletas/email_inscricao.html', context)
-
-            # Criar e enviar o email
-            email = EmailMessage(
-                subject=data['assunto'],
-                body=html_content,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[data['email_destino']],
-            )
-            email.content_subtype = "html"
-            email.send()
-
-            return JsonResponse({
-                'success': True,
-                'message': 'Email enviado com sucesso!'
-            })
-
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'error': str(e),
-                'message': 'Erro ao enviar email'
-            })
-
-    return JsonResponse({
-        'success': False,
-        'error': 'Método não permitido',
-        'message': 'Requisição inválida'
-    })
 
 # Função para listar todos os atletas
 def atletas(request):
