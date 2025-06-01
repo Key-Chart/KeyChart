@@ -212,8 +212,18 @@ def atletas(request):
     if categoria:
         atletas = atletas.filter(categoria__tipo=categoria)
 
+    # Como não temos campo 'ativo', vamos considerar todos como ativos
+    atletas_ativos_count = atletas.count()  # Todos são considerados ativos
+    atletas_inativos_count = 0  # Não temos inativos
+    kata_count = atletas.filter(categoria__tipo='kata').count()
+    kumite_count = atletas.filter(categoria__tipo='kumite').count()
+
     context = {
         'atletas': atletas,
+        'atletas_ativos_count': atletas_ativos_count,
+        'atletas_inativos_count': atletas_inativos_count,
+        'kata_count': kata_count,
+        'kumite_count': kumite_count,
         'filterName': nome,
         'filterAge': idade,
         'filterCategory': categoria

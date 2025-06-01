@@ -12,6 +12,183 @@
     <link rel="stylesheet" href="{% static 'competicoes/css/competicoes.css' %}">
     <title>Equipes e Atletas | KeyChart</title>
     <link rel="stylesheet" href="{% static 'atletas/css/equipes_atletas.css' %}">
+    <style>
+        :root {
+            --primary-color: #343A40;
+            --secondary-color: #9fa6b2;
+            --success-color: #14a44d;
+            --danger-color: #dc4c64;
+            --warning-color: #e4a11b;
+            --info-color: #54b4d3;
+            --light-color: #fbfbfb;
+            --dark-color: #332d2d;
+        }
+
+        /* Estilos personalizados */
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .avatar-lg {
+            width: 100px;
+            height: 100px;
+        }
+
+        .badge-kata {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .badge-kumite {
+            background-color: var(--warning-color);
+            color: black;
+        }
+
+        .badge-active {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .badge-inactive {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Layout principal */
+        .content {
+            margin-left: 250px;
+            transition: margin-left 0.3s;
+        }
+
+        @media (max-width: 992px) {
+            .content {
+                margin-left: 0;
+            }
+        }
+
+        /* Modal de impressão personalizado */
+        .print-modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+
+        .print-modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            max-width: 500px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Estilo para o relatório de impressão */
+        .print-report {
+            background-color: white;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .print-header {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .print-logo {
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .print-title {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .print-date {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .stats-card {
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+
+        .stats-card-body {
+            padding: 1.5rem;
+        }
+
+        .stats-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-card-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .print-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .print-table th {
+            background-color: #f8f9fa;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .print-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+
+        .print-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .print-footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        /* Efeito de hover para botões */
+        .btn-hover-effect {
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+
+        .btn-hover-effect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
 
@@ -27,7 +204,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Conteúdo -->
         <main class="container-fluid py-4">
             <!-- Filtros -->
@@ -312,6 +489,105 @@
         </div>
     </div>
 
+    <!-- Modal Imprimir - Conteúdo da Lista de Atletas -->
+    <div id="listaAtletasParaImpressao" style="display: none;">
+        <div class="container-fluid p-4">
+            <!-- Cabeçalho do Relatório -->
+            <div class="text-center mb-4">
+                <img src="{% static 'competicoes/img/icone_keychart.png' %}" alt="Logo" style="height: 60px;" class="mb-3">
+                <h2 class="text-primary" style="color: #343A40;">Relatório Completo de Atletas</h2>
+                <p class="text-muted">Data de emissão: {% now "d/m/Y H:i" %}</p>
+                <hr class="my-3" style="border-top: 2px solid #0d6efd;">
+            </div>
+
+            <!-- Resumo -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card border-primary">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Total de Atletas</h5>
+                            <p class="display-6 text-primary">{{ atletas.count }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-info">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Categoria Kata</h5>
+                            <p class="display-6 text-info">{{ kata_count }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-warning">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Categoria Kumite</h5>
+                            <p class="display-6 text-warning">{{ kumite_count }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de Atletas -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Atleta</th>
+                                <th>Idade</th>
+                                <th>Categoria</th>
+                                <th>Faixa</th>
+                                <th>Equipe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for atleta in atletas %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if atleta.foto %}
+                                            <img src="{{ atleta.foto }}" class="rounded-circle me-2" width="40" height="40" alt="{{ atleta.nome_completo }}">
+                                        {% else %}
+                                            <div class="avatar-placeholder rounded-circle me-2" style="width: 40px; height: 40px; background-color: #e9ecef; display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-person text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <p class="fw-bold mb-0">{{ atleta.nome_completo }}</p>
+                                            <small class="text-muted">{{ atleta.email|default:"-" }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ atleta.idade }} anos</td>
+                                <td>
+                                    <span class="badge {% if atleta.categoria.tipo == 'kata' %}bg-info{% else %}bg-warning text-dark{% endif %}">
+                                        {{ atleta.categoria.get_tipo_display }}
+                                    </span>
+                                </td>
+                                <td>{{ atleta.get_faixa_display|default:"-" }}</td>
+                                <td>{{ atleta.equipe.nome|default:"-" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">Nenhum atleta encontrado</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Rodapé do Relatório -->
+            <div class="mt-4 pt-3 text-center text-muted small border-top">
+                <p>Relatório gerado pelo sistema KeyChart em {% now "d/m/Y H:i" %}</p>
+                <p class="mb-0">Página <span class="page-number"></span> de <span class="page-count"></span></p>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Imprimir -->
     <div id="modalImprimir" class="modal-custom">
         <div class="modal-custom-content text-center">
@@ -333,7 +609,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Modal Exportar -->
     <div id="modalExportar" class="modal-custom">
         <div class="modal-custom-content text-center">
@@ -342,7 +618,7 @@
             </div>
             <h4 class="modal-title text-success">Exportar Dados</h4>
             <p class="modal-message">Selecione o formato para exportação:</p>
-            
+
             <div class="form-group mb-4 text-start">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="exportFormat" id="exportPDF" value="pdf" checked>
@@ -356,18 +632,12 @@
                         Excel (Planilha Eletrônica)
                     </label>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exportFormat" id="exportCSV" value="csv">
-                    <label class="form-check-label" for="exportCSV">
-                        CSV (Valores Separados por Vírgula)
-                    </label>
-                </div>
             </div>
-            
+
             <div class="progress mb-3" style="height: 6px; display: none;" id="exportProgressContainer">
                 <div id="exportProgress" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%"></div>
             </div>
-            
+
             <div class="d-flex justify-content-center gap-3">
                 <button type="button" class="btn btn-secondary" onclick="fecharModal('modalExportar')">
                     <i class="bi bi-x-circle me-2"></i>Cancelar
@@ -438,45 +708,165 @@
     <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
     <script src="{% static 'atletas/js/equipes_atletas.js' %}"></script>
     <script>
-    // Funções para os modais de confirmação
-    function confirmarDesativacao(atletaId, nomeAtleta) {
-        document.getElementById('nomeAtletaDesativar').textContent = nomeAtleta;
-        document.getElementById('atletaIdDesativar').value = atletaId;
-        const modal = new mdb.Modal(document.getElementById('confirmarDesativacaoModal'));
-        modal.show();
-    }
+        // Funções para os modais de confirmação
+        function confirmarDesativacao(atletaId, nomeAtleta) {
+            document.getElementById('nomeAtletaDesativar').textContent = nomeAtleta;
+            document.getElementById('atletaIdDesativar').value = atletaId;
+            const modal = new mdb.Modal(document.getElementById('confirmarDesativacaoModal'));
+            modal.show();
+        }
 
-    function confirmarAtivacao(atletaId, nomeAtleta) {
-        document.getElementById('nomeAtletaAtivar').textContent = nomeAtleta;
-        document.getElementById('atletaIdAtivar').value = atletaId;
-        const modal = new mdb.Modal(document.getElementById('confirmarAtivacaoModal'));
-        modal.show();
-    }
+        function confirmarAtivacao(atletaId, nomeAtleta) {
+            document.getElementById('nomeAtletaAtivar').textContent = nomeAtleta;
+            document.getElementById('atletaIdAtivar').value = atletaId;
+            const modal = new mdb.Modal(document.getElementById('confirmarAtivacaoModal'));
+            modal.show();
+        }
 
-    // Função para enviar o formulário de filtro
-    function aplicarFiltros() {
-        const nome = document.getElementById('filterName').value;
-        const idade = document.getElementById('filterAge').value;
-        const categoria = document.getElementById('filterCategory').value;
+        // Função para enviar o formulário de filtro
+        function aplicarFiltros() {
+            const nome = document.getElementById('filterName').value;
+            const idade = document.getElementById('filterAge').value;
+            const categoria = document.getElementById('filterCategory').value;
 
-        let url = window.location.pathname + '?';
-        if (nome) url += `filterName=${nome}&`;
-        if (idade) url += `filterAge=${idade}&`;
-        if (categoria) url += `filterCategory=${categoria}`;
+            let url = window.location.pathname + '?';
+            if (nome) url += `filterName=${nome}&`;
+            if (idade) url += `filterAge=${idade}&`;
+            if (categoria) url += `filterCategory=${categoria}`;
 
-        window.location.href = url;
-    }
+            window.location.href = url;
+        }
 
-    // Função para limpar os filtros
-    function limparFiltros() {
-        window.location.href = window.location.pathname;
-    }
+        // Função para limpar os filtros
+        function limparFiltros() {
+            window.location.href = window.location.pathname;
+        }
 
-    // Atribuir eventos aos botões
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelector('.btn-primary[type="button"]').addEventListener('click', aplicarFiltros);
-        document.querySelector('.btn-warning[type="button"]').addEventListener('click', limparFiltros);
-    });
-</script>
+        // Função para abrir modal de impressão
+        function abrirModalImprimir() {
+            document.getElementById('modalImprimir').style.display = 'block';
+        }
+
+        // Função para cancelar impressão
+        function cancelarImpressao() {
+            document.getElementById('modalImprimir').style.display = 'none';
+            document.getElementById('printProgress').style.width = '0%';
+        }
+
+        // Função para iniciar impressão
+        function iniciarImpressao() {
+            // Mostrar o modal e a barra de progresso
+            document.getElementById('modalImprimir').style.display = 'block';
+            const progressBar = document.getElementById('printProgress');
+
+            // Simular progresso
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = progress + '%';
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+
+                    // Criar iframe oculto para impressão
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    document.body.appendChild(iframe);
+
+                    const content = document.getElementById('listaAtletasParaImpressao').innerHTML;
+                    const doc = iframe.contentWindow.document;
+
+                    doc.open();
+                    doc.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                            <style>
+                                body { padding: 20px; }
+                                @media print {
+                                    @page { size: A4 portrait; margin: 15mm; }
+                                    body { padding: 0; }
+                                }
+                            </style>
+                        </head>
+                        <body>${content}</body>
+                        </html>
+                    `);
+                    doc.close();
+
+                    // Esperar o conteúdo carregar
+                    setTimeout(() => {
+                        try {
+                            iframe.contentWindow.focus();
+                            iframe.contentWindow.print();
+                        } catch (e) {
+                            console.error("Erro ao imprimir:", e);
+                        }
+
+                        // Remover iframe e fechar modal
+                        document.body.removeChild(iframe);
+                        document.getElementById('modalImprimir').style.display = 'none';
+                        progressBar.style.width = '0%';
+                    }, 500);
+                }
+            }, 50); // Intervalo mais curto para animação mais suave
+        }
+
+        // Função para abrir modal de exportação
+        function abrirModalExportar() {
+            document.getElementById('modalExportar').style.display = 'block';
+        }
+
+        // Função para fechar modal
+        function fecharModal(id) {
+            document.getElementById(id).style.display = 'none';
+            const progressBar = id === 'modalExportar' ?
+                document.getElementById('exportProgress') :
+                document.getElementById('printProgress');
+            progressBar.style.width = '0%';
+
+            if (id === 'modalExportar') {
+                document.getElementById('exportProgressContainer').style.display = 'none';
+            }
+        }
+
+        // Função para iniciar exportação
+        function iniciarExportacao() {
+            const format = document.querySelector('input[name="exportFormat"]:checked').value;
+            const progressBar = document.getElementById('exportProgress');
+            const progressContainer = document.getElementById('exportProgressContainer');
+
+            progressContainer.style.display = 'block';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = progress + '%';
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        // Simular exportação
+                        alert(`Exportação para ${format.toUpperCase()} concluída com sucesso!`);
+                        fecharModal('modalExportar');
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        // Inicializar tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar tooltips do MDB
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-mdb-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new mdb.Tooltip(tooltipTriggerEl);
+            });
+
+            // Atribuir eventos aos botões de filtro
+            document.querySelector('.btn-primary[type="button"]').addEventListener('click', aplicarFiltros);
+            document.querySelector('.btn-warning[type="button"]').addEventListener('click', limparFiltros);
+        });
+    </script>
 </body>
 </html>
