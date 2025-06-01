@@ -7,102 +7,286 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <!-- MDB Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
-    <!-- MDB Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'competicoes/css/chaveamento_kata.css' %}">
     <link rel="stylesheet" href="{% static 'competicoes/css/atletas_categoria.css' %}">
-    <title>Chaveamento Kata</title>
+    <title>{{ competicao.nome }} | KeyChart</title>
+    <style>
+        .athlete-row:hover {
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .nota-input {
+            width: 70px;
+            text-align: center;
+        }
+        .avatar-img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #dee2e6;
+        }
+        .table-header {
+            background-color: #343a40;
+            color: white;
+        }
+        .total-score {
+            font-weight: bold;
+            color: #0d6efd;
+        }
+        .filter-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
 
     {% include 'sidebar.html' %}
 
     <div class="content" id="content">
-        <div class="header d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-arrow-left back-icon" onclick="window.history.back()"></i>
-                <h2 class="m-0">Copa Regional 2025</h2>
+        <div class="header d-flex align-items-center justify-content-between bg-dark text-white p-3">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-arrow-left back-icon me-3" onclick="window.history.back()" style="cursor: pointer;"></i>
+                <div>
+                    <h2 class="mb-0 fw-bold">{{ competicao.nome }}</h2>
+                    <small class="text-white-50">{{ competicao.descricao|default:"Competição de Artes Marciais" }}</small>
+                </div>
             </div>
-            <h5 class="m-0 text-end fw-bold">Atletas: <strong>250</strong></h5>  
+            <span class="badge bg-light text-dark fs-6">
+                <i class="bi bi-people-fill me-1"></i> {{ atletas|length }} Atletas
+            </span>
         </div>
 
-        <div class="container mt-4">
+        <div class="container-fluid mt-4 px-4">
             <div class="card">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Competição de Kata</h4>
-                    <button class="btn btn-sm btn-light" id="addAtleta">
-                        <i class="bi bi-plus-circle"></i> Adicionar Atleta
-                    </button>
+                <div class="card-header text-white d-flex justify-content-between align-items-center table-header">
+                    <div>
+                        <h4 class="mb-0"><i class="bi bi-diagram-3 me-2"></i>Chaveamento de Kata</h4>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-light" id="exportData">
+                            <i class="bi bi-download me-1"></i> Exportar
+                        </button>
+                    </div>
                 </div>
+
                 <div class="card-body">
+                    <!-- Filtros -->
+                    <div class="filter-section">
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                    <input type="text" class="form-control" placeholder="Buscar atleta..." id="searchInput">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <select class="form-select" id="cityFilter">
+                                    <option value="">Todas as cidades</option>
+                                    {% for cidade in cidades_distintas %}
+                                    <option value="{{ cidade }}">{{ cidade }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <select class="form-select" id="stateFilter">
+                                    <option value="">Todos os estados</option>
+                                    {% for estado in estados_distintos %}
+                                    <option value="{{ estado }}">{{ estado }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Atletas -->
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover" id="kataTable">
-                            <thead class="table-dark">
+                        <table class="table table-bordered table-hover align-middle" id="kataTable">
+                            <thead class="table-header">
                                 <tr>
-                                    <th width="3%">ID</th>
+                                    <th width="5%">ID</th>
                                     <th width="20%">Atleta</th>
+                                    <th width="10%">Cidade/Estado</th>
+                                    <th width="10%">Academia</th>
                                     <th width="8%">Nota 1</th>
                                     <th width="8%">Nota 2</th>
                                     <th width="8%">Nota 3</th>
                                     <th width="8%">Nota 4</th>
-                                    <th width="8%">Nota 5</th>
-                                    <th width="8%">Nota 6</th>
-                                    <th width="10%">Total</th>
-                                    <th width="20%">Ações</th>
+                                    <th width="8%">Total</th>
+                                    <th width="15%">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Exemplo de linha com dados do backend -->
-
-                                <tr data-atleta-id="">
-                                    <td>001</td>
-                                    <td>Rafael Lindo</td><!---->
-                                    <td><input type="number" class="form-control nota" name="nota1" value="{{ atleta.nota1|default_if_none:'' }}" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control nota" name="nota2" value="{{ atleta.nota2|default_if_none:'' }}" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control nota" name="nota3" value="{{ atleta.nota3|default_if_none:'' }}" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control nota" name="nota4" value="{{ atleta.nota4|default_if_none:'' }}" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control nota" name="nota5" value="{{ atleta.nota5|default_if_none:'' }}" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control nota" name="nota6" value="{{ atleta.nota6|default_if_none:'' }}" min="0" max="10" step="0.1"></td>
-                                    <td class="total"></td> <!-- {{ atleta.total|default_if_none:"0.0" }}-->
+                                {% for atleta in atletas %}
+                                <tr class="athlete-row" data-atleta-id="{{ atleta.id }}">
+                                    <td class="fw-bold">{{ atleta.id }}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-success btn-salvar">
-                                            <i class="bi bi-save"></i> Salvar
-                                        </button>
-                                        <button class="btn btn-sm btn-danger btn-remover ms-1">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2">
+                                                <img src="{% if atleta.foto %}{{ atleta.foto.url }}{% else %}{% static 'competicoes/img/foto_atleta.png' %}{% endif %}"
+                                                     class="avatar-img" alt="Avatar">
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold">{{ atleta.nome_completo }}</div>
+                                                <small class="text-muted">{{ atleta.get_faixa_display }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {{ atleta.cidade }}/{{ atleta.get_estado_display }}
+                                    </td>
+                                    <td>
+                                        {% if atleta.academia %}{{ atleta.academia.nome }}{% else %}--{% endif %}
+                                    </td>
+                                    <td><input type="number" class="form-control form-control-sm nota-input" name="nota1" value="0.0" min="0" max="10" step="0.1"></td>
+                                    <td><input type="number" class="form-control form-control-sm nota-input" name="nota2" value="0.0" min="0" max="10" step="0.1"></td>
+                                    <td><input type="number" class="form-control form-control-sm nota-input" name="nota3" value="0.0" min="0" max="10" step="0.1"></td>
+                                    <td><input type="number" class="form-control form-control-sm nota-input" name="nota4" value="0.0" min="0" max="10" step="0.1"></td>
+                                    <td class="total-score">0.0</td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button class="btn btn-sm btn-success btn-salvar">
+                                                <i class="bi bi-save"></i> Salvar
+                                            </button>
+                                            <button class="btn btn-sm btn-info text-white btn-visualizar">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
-                                <tr data-atleta-id="">
-                                    <td>002</td>
-                                    <td>Rafael Lindo</td><!-- -->
-                                    <td><input type="number" class="form-control nota" name="nota1" value="{{ atleta.nota1|default_if_none:'' }}" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control nota" name="nota2" value="{{ atleta.nota2|default_if_none:'' }}" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control nota" name="nota3" value="{{ atleta.nota3|default_if_none:'' }}" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control nota" name="nota4" value="{{ atleta.nota4|default_if_none:'' }}" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control nota" name="nota5" value="{{ atleta.nota5|default_if_none:'' }}" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control nota" name="nota6" value="{{ atleta.nota6|default_if_none:'' }}" min="0" max="10" step="0.1"></td>
-                                    <td class="total"></td> <!-- {{ atleta.total|default_if_none:"0.0" }}-->
-                                    <td>
-                                        <button class="btn btn-sm btn-success btn-salvar">
-                                            <i class="bi bi-save"></i> Salvar
-                                        </button>
-                                        <button class="btn btn-sm btn-danger btn-remover ms-1">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="10" class="text-center py-4">
+                                        <div class="alert alert-info">
+                                            <i class="bi bi-info-circle me-2"></i> Nenhum atleta inscrito nesta categoria.
+                                        </div>
                                     </td>
                                 </tr>
-                                <!--  -->
+                                {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light d-flex justify-content-between align-items-center">
+                    <div class="text-muted small">
+                        <i class="bi bi-info-circle me-1"></i> Clique em um atleta para ver detalhes
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" id="gerarChaveamento">
+                            <i class="bi bi-diagram-3 me-1"></i> Gerar Chaveamento
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="{% static 'competicoes/js/atletas_categoria.js' %}"></script>
-    <script src="{% static 'competicoes/js/chaveamento_kata.js' %}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elementos do DOM
+        const searchInput = document.getElementById('searchInput');
+        const cityFilter = document.getElementById('cityFilter');
+        const stateFilter = document.getElementById('stateFilter');
+        const athleteRows = document.querySelectorAll('.athlete-row');
+        const notaInputs = document.querySelectorAll('.nota-input');
+        const gerarChaveamentoBtn = document.getElementById('gerarChaveamento');
+
+        // Função para filtrar atletas
+        function filterAthletes() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const cityValue = cityFilter.value.toLowerCase();
+            const stateValue = stateFilter.value.toLowerCase();
+
+            athleteRows.forEach(row => {
+                const name = row.querySelector('.fw-semibold').textContent.toLowerCase();
+                const location = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                const city = location.split('/')[0].trim();
+                const state = location.split('/')[1] ? location.split('/')[1].trim() : '';
+
+                const matchesSearch = name.includes(searchTerm);
+                const matchesCity = cityValue === '' || city.includes(cityValue);
+                const matchesState = stateValue === '' || state.includes(stateValue);
+
+                if (matchesSearch && matchesCity && matchesState) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Função para calcular o total
+        function calculateTotal(row) {
+            const inputs = row.querySelectorAll('.nota-input');
+            let total = 0;
+            inputs.forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            row.querySelector('.total-score').textContent = total.toFixed(1);
+            return total;
+        }
+
+        // Event Listeners
+        searchInput.addEventListener('keyup', filterAthletes);
+        cityFilter.addEventListener('change', filterAthletes);
+        stateFilter.addEventListener('change', filterAthletes);
+
+        // Calcular totais quando as notas mudam
+        notaInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const row = this.closest('tr');
+                calculateTotal(row);
+            });
+        });
+
+        // Botão Salvar
+        document.querySelectorAll('.btn-salvar').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const atletaId = row.getAttribute('data-atleta-id');
+                const notas = {
+                    nota1: parseFloat(row.querySelector('[name="nota1"]').value) || 0,
+                    nota2: parseFloat(row.querySelector('[name="nota2"]').value) || 0,
+                    nota3: parseFloat(row.querySelector('[name="nota3"]').value) || 0,
+                    nota4: parseFloat(row.querySelector('[name="nota4"]').value) || 0,
+                    total: parseFloat(row.querySelector('.total-score').textContent) || 0
+                };
+
+                // Aqui você pode adicionar a lógica para salvar no banco de dados
+                console.log(`Salvando notas para atleta ${atletaId}:`, notas);
+                alert(`Notas do atleta ID ${atletaId} salvas com sucesso!`);
+            });
+        });
+
+        // Botão Gerar Chaveamento
+        gerarChaveamentoBtn.addEventListener('click', function() {
+            // Ordenar atletas por nota total (decrescente)
+            const rows = Array.from(document.querySelectorAll('.athlete-row')).filter(row => row.style.display !== 'none');
+
+            rows.sort((a, b) => {
+                const totalA = parseFloat(a.querySelector('.total-score').textContent);
+                const totalB = parseFloat(b.querySelector('.total-score').textContent);
+                return totalB - totalA;
+            });
+
+            // Reorganizar a tabela
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
+            rows.forEach(row => tbody.appendChild(row));
+
+            alert('Chaveamento gerado com sucesso! Atletas ordenados por pontuação.');
+        });
+
+        // Debug
+        console.log('Total de atletas carregados:', {{ atletas|length }});
+    });
+    </script>
 </body>
 </html>

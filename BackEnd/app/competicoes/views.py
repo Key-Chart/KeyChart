@@ -326,5 +326,21 @@ def excluir_atleta(request, pk):
     return redirect('competicoes:atletas_categoria', categoria_id=categoria_id)
 
 # Função responsavel por renderizar a pagina de Chaveamento
-def chaveamento_kata(request):
-    return render(request, 'competicoes/chaveamento_kata.html')
+def chaveamento_kata(request, categoria_id):
+    categoria = get_object_or_404(Categoria, id=categoria_id)
+
+    # Obtenha os atletas da categoria específica
+    atletas = Atleta.objects.filter(categoria=categoria).select_related('academia')
+
+    # Para os filtros
+    cidades_distintas = atletas.order_by('cidade').values_list('cidade', flat=True).distinct()
+    estados_distintos = atletas.order_by('estado').values_list('estado', flat=True).distinct()
+
+    context = {
+        'competicao': categoria.competicao,  # Acessa a competição através da categoria
+        'categoria': categoria,
+        'atletas': atletas,
+        'cidades_distintas': cidades_distintas,
+        'estados_distintos': estados_distintos,
+    }
+    return render(request, 'competicoes/chaveamento_kata.html', context)
