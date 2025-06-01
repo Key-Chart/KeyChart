@@ -389,4 +389,3 @@ def perfil_atleta(request, atleta_id):
     }
 
     return render(request, 'atletas/perfil_atleta.html', context)
-

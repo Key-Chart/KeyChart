@@ -5,6 +5,7 @@ from .models import Competicao, Categoria, Academia
 from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime
+from app.atletas.models import Atleta
 
 # Função para criar Competições
 def criar_competicao(request):
@@ -278,14 +279,51 @@ def categoria_home(request):
 
 # Função responsavel por renderizar a pagina de Atletas
 def atletas_categoria(request, categoria_id):
-    # buscar c ategoria, atletas, ou qualquer lógica que queira
     categoria = get_object_or_404(Categoria, id=categoria_id)
-    atletas = categoria.atletas.all()  # se categoria tiver relação com atletas
 
-    return render(request, 'competicoes/atletas_categoria.html', {
+    # Filtre os atletas que têm essa categoria definida
+    atletas = Atleta.objects.filter(categoria__id=categoria_id).select_related('academia')
+
+    # Para debug - imprima no console
+    print(f"Total de atletas encontrados: {atletas.count()}")
+    for atleta in atletas:
+        print(f"Atleta: {atleta.nome_completo}, Categoria: {atleta.categoria.nome if atleta.categoria else 'Nenhuma'}")
+
+    # Para os filtros
+    cidades_distintas = atletas.order_by('cidade').values_list('cidade', flat=True).distinct()
+    estados_distintos = atletas.order_by('estado').values_list('estado', flat=True).distinct()
+
+    context = {
         'categoria': categoria,
+        'competicao': categoria.competicao,
         'atletas': atletas,
-    })
+        'cidades_distintas': cidades_distintas,
+        'estados_distintos': estados_distintos,
+    }
+    return render(request, 'competicoes/atletas_categoria.html', context)
+
+def editar_atleta(request, pk):
+    atleta = get_object_or_404(Atleta, pk=pk)
+
+    if request.method == 'POST':
+        # Processamento manual dos dados do formulário
+        atleta.nome_completo = request.POST.get('nome_completo')
+        atleta.data_nascimento = request.POST.get('data_nascimento')
+        # Atualize todos os campos necessários...
+        atleta.save()
+        messages.success(request, 'Atleta atualizado com sucesso!')
+        return redirect('competicoes:atletas_categoria', categoria_id=atleta.categoria.id)
+
+    context = {'atleta': atleta}
+    return render(request, 'atletas/editar_atleta.html', context)
+
+
+def excluir_atleta(request, pk):
+    atleta = get_object_or_404(Atleta, pk=pk)
+    categoria_id = atleta.categoria.id
+    atleta.delete()
+    messages.success(request, 'Atleta excluído com sucesso!')
+    return redirect('competicoes:atletas_categoria', categoria_id=categoria_id)
 
 # Função responsavel por renderizar a pagina de Chaveamento
 def chaveamento_kata(request):
