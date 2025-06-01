@@ -620,16 +620,24 @@
             <p class="modal-message">Selecione o formato para exportação:</p>
 
             <div class="form-group mb-4 text-start">
-                <div class="form-check">
+                <div class="form-check mb-3">
                     <input class="form-check-input" type="radio" name="exportFormat" id="exportPDF" value="pdf" checked>
-                    <label class="form-check-label" for="exportPDF">
-                        PDF (Documento Portátil)
+                    <label class="form-check-label d-flex align-items-center" for="exportPDF">
+                        <i class="bi bi-file-earmark-pdf me-2 text-danger" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <h6 class="mb-0">PDF (Documento Portátil)</h6>
+                            <small class="text-muted">Formato ideal para impressão e compartilhamento</small>
+                        </div>
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="exportFormat" id="exportExcel" value="excel">
-                    <label class="form-check-label" for="exportExcel">
-                        Excel (Planilha Eletrônica)
+                    <input class="form-check-input" type="radio" name="exportFormat" id="exportCSV" value="csv">
+                    <label class="form-check-label d-flex align-items-center" for="exportCSV">
+                        <i class="bi bi-file-earmark-excel me-2 text-success" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <h6 class="mb-0">CSV (Planilha Eletrônica)</h6>
+                            <small class="text-muted">Formato ideal para edição e análise de dados</small>
+                        </div>
                     </label>
                 </div>
             </div>
@@ -648,6 +656,7 @@
             </div>
         </div>
     </div>
+
     <!-- Modal de Confirmação para Desativar -->
     <div class="modal fade" id="confirmarDesativacaoModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -867,6 +876,41 @@
             document.querySelector('.btn-primary[type="button"]').addEventListener('click', aplicarFiltros);
             document.querySelector('.btn-warning[type="button"]').addEventListener('click', limparFiltros);
         });
+
+        // Iniciar Exportação (PDF/CSV)
+        function iniciarExportacao() {
+            const format = document.querySelector('input[name="exportFormat"]:checked').value;
+            const progressBar = document.getElementById('exportProgress');
+            const progressContainer = document.getElementById('exportProgressContainer');
+
+            // Mostrar progresso
+            progressContainer.style.display = 'block';
+
+            // Simular progresso
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = progress + '%';
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+
+                    // Construir URL com parâmetros atuais + formato de exportação
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('export', format);
+
+                    // Forçar download
+                    window.location.href = url.toString();
+
+                    // Resetar e fechar modal
+                    setTimeout(() => {
+                        progressBar.style.width = '0%';
+                        progressContainer.style.display = 'none';
+                        fecharModal('modalExportar');
+                    }, 1000);
+                }
+            }, 50);
+        }
     </script>
 </body>
 </html>

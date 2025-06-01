@@ -1,11 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import JsonResponse
 from app.competicoes.models import Competicao, Categoria, Academia
 from .models import Atleta
 from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.conf import settings
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -16,6 +15,13 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 import os
 from datetime import date
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+import csv
+import base64
+from django.contrib.staticfiles import finders
+from django.conf import settings
 
 # Função para listar todos os atletas
 def atletas(request):
@@ -201,6 +207,7 @@ def atletas(request):
     nome = request.GET.get('filterName', '')
     idade = request.GET.get('filterAge', '')
     categoria = request.GET.get('filterCategory', '')
+    export_format = request.GET.get('export')
 
     # Construir a query de filtro
     atletas = Atleta.objects.all()
@@ -212,9 +219,13 @@ def atletas(request):
     if categoria:
         atletas = atletas.filter(categoria__tipo=categoria)
 
+    # Verificar se é uma requisição de exportação
+    if export_format in ['pdf', 'csv']:
+        return exportar_atletas(atletas, export_format)
+
     # Como não temos campo 'ativo', vamos considerar todos como ativos
-    atletas_ativos_count = atletas.count()  # Todos são considerados ativos
-    atletas_inativos_count = 0  # Não temos inativos
+    atletas_ativos_count = atletas.count()
+    atletas_inativos_count = 0
     kata_count = atletas.filter(categoria__tipo='kata').count()
     kumite_count = atletas.filter(categoria__tipo='kumite').count()
 
@@ -230,6 +241,78 @@ def atletas(request):
     }
 
     return render(request, 'atletas/equipes_atletas.html', context)
+
+# Função para exportar lista de atletas em PDF
+def exportar_atletas(queryset, format):
+    if format == 'pdf':
+        return exportar_pdf(queryset)
+    elif format == 'csv':
+        return exportar_csv(queryset)
+
+# Exportar para PDF
+def exportar_pdf(queryset):
+    template_path = 'atletas/exportar_pdf.html'
+
+    # Encontrar o arquivo usando o sistema de finders do Django
+    logo_path = finders.find('competicoes/img/icone_keychart.png')
+
+    logo_base64 = None
+    if logo_path:
+        try:
+            with open(logo_path, "rb") as image_file:
+                logo_base64 = base64.b64encode(image_file.read()).decode('utf-8')
+        except Exception as e:
+            print(f"Erro ao carregar logo: {e}")
+
+    context = {
+        'atletas': queryset,
+        'logo_base64': logo_base64
+    }
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="atletas.pdf"'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(
+        html, dest=response,
+        encoding='utf-8'
+    )
+
+    if pisa_status.err:
+        return HttpResponse('Erro ao gerar PDF', status=500)
+    return response
+
+# Função para exportar para CSV
+def exportar_csv(queryset):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="atletas.csv"'
+
+    headers = ['Nome Completo', 'Email', 'Idade', 'Categoria', 'Faixa']
+
+    # Verifica se o modelo tem o campo equipe
+    if hasattr(queryset.model, 'equipe'):
+        headers.append('Equipe')
+
+    writer = csv.writer(response)
+    writer.writerow(headers)
+
+    for atleta in queryset:
+        row = [
+            atleta.nome_completo,
+            atleta.email or '',
+            atleta.idade,
+            atleta.categoria.get_tipo_display(),
+            atleta.get_faixa_display() or '',
+        ]
+
+        if hasattr(atleta, 'equipe'):
+            row.append(atleta.equipe.nome if atleta.equipe else '')
+
+        writer.writerow(row)
+
+    return response
 
 # Função para desativar Atleta
 '''def desativar_atleta(request):

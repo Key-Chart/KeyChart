@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .logo {
+            max-height: 60px;
+            width: auto;  /* Mantém a proporção */
+            margin-bottom: 10px;
+        }
+        h1 { color: #2c3e50; margin: 10px 0; font-size: 24px; }
+        .report-info { margin-bottom: 15px; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background-color: #343a40; color: white; padding: 10px; text-align: left; }
+        td { padding: 8px; border-bottom: 1px solid #ddd; }
+        .page-break { page-break-after: always; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        {% if logo_base64 %}
+        <img src="data:image/png;base64,{{ logo_base64 }}" class="logo" alt="KeyChart Logo" style="height: 60px; width: auto;">
+        {% endif %}
+        <h1>Relatório de Atletas</h1>
+        <div class="report-info">
+            <p>Data: {% now "d/m/Y H:i" %}</p>
+            <p>Total de atletas: {{ atletas.count }}</p>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Idade</th>
+                <th>Categoria</th>
+                <th>Faixa</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for atleta in atletas %}
+            <tr>
+                <td>{{ atleta.nome_completo }}</td>
+                <td>{{ atleta.email|default:"" }}</td>
+                <td>{{ atleta.idade }}</td>
+                <td>{{ atleta.categoria.get_tipo_display }}</td>
+                <td>{{ atleta.get_faixa_display|default:"" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
