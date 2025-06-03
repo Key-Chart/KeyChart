@@ -720,26 +720,6 @@
 			document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"]`).innerHTML = '<i class="bi bi-play-fill"></i> Play';
 		}
 
-		function startTimer(matchId) {
-			const timer = matchTimers[matchId];
-			if (timer.interval) clearInterval(timer.interval);
-
-			timer.interval = setInterval(() => {
-				if (timer.seconds === 0) {
-					if (timer.minutes === 0) {
-						clearInterval(timer.interval);
-						alert(`Partida #${matchId} - Tempo esgotado!`);
-						return;
-					}
-					timer.minutes--;
-					timer.seconds = 59;
-				} else {
-					timer.seconds--;
-				}
-				updateTimerDisplay(matchId);
-			}, 1000);
-		}
-
 		function updateTimerDisplay(matchId) {
 			const timer = matchTimers[matchId];
 			const display = document.querySelector(`.timer-display[data-match="${matchId}"]`);
