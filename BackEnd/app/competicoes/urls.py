@@ -15,6 +15,8 @@ urlpatterns = [
     path('competicao/<int:competicao_id>/categorias/', views.categoria, name='categoria'),
     path('categoria/<int:categoria_id>/excluir/', views.excluir_categoria, name='excluir_categoria'),
     path('categoria/<int:categoria_id>/atletas/chaveamento_kata/', views.chaveamento_kata, name='chaveamento_kata'),
+    path('categoria/atletas/chaveamento_kumite', views.chaveamento_kumite, name='chaveamento_kumite'),
+    path('categoria/atletas/chaveamento_kumite_teste', views.chaveamento_kumite_teste, name='chaveamento_kumite_teste'),
     path('competicao/<int:competicao_id>/categoria/cadastrar/', views.cadastrar_categoria, name='cadastrar_categoria'),
     path('categoria/<int:categoria_id>/atletas/', views.atletas_categoria, name='atletas_categoria'),
 

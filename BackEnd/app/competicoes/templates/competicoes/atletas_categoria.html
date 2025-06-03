@@ -156,12 +156,14 @@
             <div class="container mt-5 mb-5">
                 <div class="row justify-content-center g-3">
                     <div class="col-md-5 col-12 text-center">
-                        <a href="{% url 'competicoes:chaveamento_kata' categoria.id %}" class="btn btn-primary">
-                            Gerar Chaveamento Kata
+                        <a href="{% url 'competicoes:chaveamento_kata' categoria.id %}"
+                           class="btn btn-generate text-white w-100" style="background: #198754;">
+                            <i class="fas fa-people-arrows"></i> Gerar Chaveamento KATA
                         </a>
                     </div>
                     <div class="col-md-5 col-12 text-center">
-                        <a href="" class="btn btn-generate text-white w-100" style="background: #198754;">
+                        <a href="{% url 'competicoes:chaveamento_kumite' %}"
+                           class="btn btn-generate text-white w-100" style="background: #198754;">
                             <i class="fas fa-people-arrows"></i> Gerar Chaveamento KUMITE
                         </a>
                     </div>

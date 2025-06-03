@@ -344,3 +344,9 @@ def chaveamento_kata(request, categoria_id):
         'estados_distintos': estados_distintos,
     }
     return render(request, 'competicoes/chaveamento_kata.html', context)
+
+def chaveamento_kumite(request):
+    return render(request, 'competicoes/chaveamento_kumite.html')
+
+def chaveamento_kumite_teste(request):
+    return render(request, 'competicoes/chaveamento_kumite_teste.html')

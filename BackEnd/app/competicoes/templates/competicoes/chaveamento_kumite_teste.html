@@ -1,0 +1,151 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'competicoes/css/competicoes.css' %}">
+    <title>{{ competicao.nome }} | KeyChart</title>
+    <title>Painel Kumitê Completo - Copa Regional 2025</title>
+    <link rel="stylesheet" href="">
+    <style>
+        :root {
+            --primary-color: #198754;
+            --secondary-color: #0d6efd;
+            --dark-color: #212529;
+            --light-color: #f8f9fa;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .content {
+            margin-left: 250px;
+            transition: all 0.3s;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #0a5a3e);
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .match-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            border: none;
+            overflow: hidden;
+        }
+
+        .match-header {
+            background: linear-gradient(135deg, #343A40, #343A40);
+            color: white;
+            padding: 12px 20px;
+            font-weight: 600;
+        }
+
+        .athlete-info {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .athlete-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 2px solid #ddd;
+        }
+
+        .score-input {
+            width: 60px;
+            text-align: center;
+            font-weight: bold;
+            border: 2px solid #ddd;
+            padding: 5px;
+        }
+
+        .timer-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .control-btn {
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            margin: 0 2px;
+        }
+
+        .match-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .match-status-badge {
+            font-size: 0.8rem;
+            padding: 5px 10px;
+        }
+
+        .global-controls {
+            background: linear-gradient(135deg, #343A40, #343A40);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .match-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                margin-left: -250px;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    {% include 'sidebar.html' %}
+
+    <!-- Conteúdo Principal -->
+    <div class="content" id="content">
+        <div class="header d-flex align-items-center justify-content-between" style="background: #343A40;">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-arrow-left back-icon me-3" onclick="window.history.back()"></i>
+                <div>
+                    <h2 class="mb-0 fw-bold">Copa Regional 2025 - Chaveamento Completo</h2>
+                    <small class="text-white-50">Chaveamento Completo</small>
+                </div>
+            </div>
+        </div>
+        <img src="{% static 'competicoes/img/img_5.png' %}" class="">
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
