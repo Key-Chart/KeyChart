@@ -14,6 +14,9 @@ urlpatterns = [
     path('keychart/login/', include('app.autenticacao.urls')),
     path('keychart/portal_atleta/', include('app.portal_atleta.urls')),
     path('keychart/login/', include('app.autenticacao.urls')),
+    path('keychart/configuracoes/', include('app.configuracoes.urls')),
+    path('keychart/', include('app.partidas_chaveamento.urls')),
+    path('keychart/relatorio/', include('app.relatorios.urls')),
 
     path('.well-known/appspecific/com.chrome.devtools.json', lambda r: HttpResponseNotFound()),
 ]

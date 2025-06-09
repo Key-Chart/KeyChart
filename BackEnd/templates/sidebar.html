@@ -64,9 +64,9 @@
         <a href="{% url 'competicoes:home' %}" class="active"><i class="bi bi-trophy"></i><span>Competições</span></a>
         <a href="{% url 'equipes_atletas:home' %}"><i class="bi bi-person-lines-fill"></i><span>Equipes e Atletas</span></a>
         <a href="{% url 'equipes_atletas:inscricoes' %}"><i class="bi bi-pencil-square"></i><span>Inscrições</span></a>
-        <a href=""><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
-        <a href=""><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
-        <a href=""><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
+        <a href="{% url 'partidas_chaveamento:home' %}"><i class="bi bi-calendar-check"></i><span>Partidas</span></a>
+        <a href="{% url 'partidas_chaveamento:chaveamento' %}"><i class="bi bi-link-45deg"></i><span>Chaveamento</span></a>
+        <a href="{% url 'relatorio:home' %}"><i class="bi bi-file-earmark-text"></i><span>Relatórios</span></a>
     </div>
     <script src="{% static 'js/sidebar.js' %}"></script>
 </body>

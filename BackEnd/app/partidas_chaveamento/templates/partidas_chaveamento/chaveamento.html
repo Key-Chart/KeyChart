@@ -1,0 +1,161 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'competicoes/css/competicoes.css' %}">
+    <title>Chaveamento</title>
+</head>
+
+<body>
+
+    {% include 'sidebar.html' %}
+
+    <div class="content" id="content">
+        <!-- Header -->
+        <div class="header" style="background: #ffffff; color: #343A40;">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2><i class="bi bi-diagram-3"></i>
+                        chaveamentos</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Conteúdo -->
+        <main class="container-fluid py-4">
+            <!-- Tabela de Chaveamento -->
+            <div class="card">
+                <div class="card-header" style="background-color: #343A40;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0 text-white">
+                            <i class="bi bi-link-45deg me-2"></i>Chaveamento e Tabelas
+                        </h5>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Campeonato</th>
+                                    <th>Sexo</th>
+                                    <th>Nome</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Kata Individual Masculino -->
+                                <tr>
+                                    <td>Copa Regional 2025</td>
+                                    <td>Masculino</td>
+                                    <td>Kata Individual - Faixa Preta</td>
+                                    <td>Kata</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <a href="chaveamento_kata.html" class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        
+                                    </td>
+                                </tr>
+    
+                                <!-- Kata Individual Feminino -->
+                                <tr>
+                                    <td>Campeonato Estadual</td>
+                                    <td>Feminino</td>
+                                    <td>Kata Individual - Faixa Preta</td>
+                                    <td>Kata</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <a href="chaveamento_kata.html" class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        
+                                    </td>
+                                </tr>
+    
+                                <!-- Kumite Masculino -->
+                                <tr>
+                                    <td>Copa Regional 2025</td>
+                                    <td>Masculino</td>
+                                    <td>Kumite -67kg</td>
+                                    <td>Kumite</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <a href="chaveamento_kumite.html" class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        
+                                    </td>
+                                </tr>
+    
+                                <!-- Kumite Feminino -->
+                                <tr>
+                                    <td>Campeonato Estadual</td>
+                                    <td>Feminino</td>
+                                    <td>Kumite -55kg</td>
+                                    <td>Kumite</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+    
+                                <!-- Outras categorias de exemplo -->
+                                <tr>
+                                    <td>Copa Regional 2025</td>
+                                    <td>Masculino</td>
+                                    <td>Kata Individual - Faixa Marrom</td>
+                                    <td>Kata</td>
+                                    <td><span class="badge bg-warning text-dark">Pendente</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted small">
+                            Mostrando 1 a 5 de 12 categorias
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Próximo</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'partidas_chaveamento/js/chaveamento.js' %}"></script>
+    <script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+</body>
+</html>

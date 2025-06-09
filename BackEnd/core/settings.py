@@ -32,6 +32,9 @@ INSTALLED_APPS = [
     'app.competicoes',
     'app.atletas',
     'app.portal_atleta',
+    'app.configuracoes',
+    'app.partidas_chaveamento',
+    'app.relatorios',
 ]
 
 # Middlewares
