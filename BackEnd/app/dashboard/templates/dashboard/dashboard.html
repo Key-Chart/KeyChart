@@ -45,6 +45,203 @@
             background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url("{% static 'dashboard/img/pontuacao_kata.jpeg' %}");
             background-size: cover;
         }
+
+        /* Estilos do Chat Container */
+.chat-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.chat-container.collapsed {
+    height: auto;
+}
+
+/* Botão de toggle do chat - VERSÃO CORRIGIDA */
+.chat-toggle-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1001;
+    background-color: #198754 !important;
+    border-radius: 50% !important;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+}
+
+/* Online status dentro do botão */
+.chat-toggle-btn .online-status {
+    display: none; /* Esconde o texto "Online" no botão pequeno */
+}
+
+.chat-card {
+    width: 350px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chat-header {
+    padding: 15px;
+    background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
+    color: white;
+}
+
+.avatar-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.online {
+    background-color: #28a745;
+}
+
+.chat-body {
+    padding: 15px;
+    height: 350px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+}
+
+.message-content {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.message-bubble {
+    margin-left: 10px;
+    max-width: 80%;
+}
+
+.bot-message .message-bubble {
+    background-color: #e9ecef;
+    padding: 10px 15px;
+    border-radius: 15px 15px 15px 0;
+}
+
+.user-message {
+    justify-content: flex-end;
+}
+
+.user-message .message-bubble {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 15px 15px 0 15px;
+    margin-left: 0;
+    margin-right: 10px;
+}
+
+.message-time {
+    display: block;
+    font-size: 0.7rem;
+    color: #6c757d;
+    margin-top: 5px;
+    text-align: right;
+}
+
+.quick-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.btn-quick-option {
+    background-color: #f1f1f1;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-quick-option:hover {
+    background-color: #e2e2e2;
+}
+
+.chat-footer {
+    padding: 15px;
+    background-color: white;
+    border-top: 1px solid #e9ecef;
+}
+
+.contact-form {
+    padding: 15px;
+    background-color: #f8f9fa;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-header h6 {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-header p {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.message-content {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Responsivo */
+@media (max-width: 576px) {
+    .chat-card {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 0;
+    }
+
+    .chat-toggle-btn {
+        bottom: 20px;
+        right: 20px;
+    }
+}
         </style>        
 </head>
 <body>
@@ -305,37 +502,91 @@
     <!-- Chat Container -->
     <div class="chat-container collapsed" id="chatContainer">
         <button class="btn btn-success chat-toggle-btn" onclick="toggleChat()">
-            <i class="bi bi-chat-dots"></i>
+            <i class="bi bi-chat-dots"></i> <span class="online-status">Online</span>
         </button>
-        <div class="card" id="chat2">
-            <div class="card-header d-flex justify-content-between align-items-center p-3">
-                <h5 class="mb-0">Chat</h5>
-                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-sm" data-mdb-ripple-color="dark">Chat KeyChart</button>
+
+        <div class="chat-card" id="chatWindow">
+            <div class="chat-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                             alt="avatar" class="avatar-img">
+                        <div class="ms-3">
+                            <h5 class="mb-0">Suporte KeyChart</h5>
+                            <div class="status-indicator">
+                                <span class="status-dot online"></span>
+                                <small class="text-muted">Online</small>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" onclick="toggleChat()"></button>
+                </div>
             </div>
-            <div class="card-body" data-mdb-perfect-scrollbar-init style="position: relative; height: 400px">
-                <!-- Mensagens do chat aqui -->
-                <div class="d-flex flex-row justify-content-start">
-                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">
-                    <div>
-                        <p class="small p-2 ms-3 mb-1 rounded-3 bg-body-tertiary">Olá, Marcus!</p>
-                        <p class="small p-2 ms-3 mb-1 rounded-3 bg-body-tertiary">Como vai ...???</p>
-                        <p class="small p-2 ms-3 mb-1 rounded-3 bg-body-tertiary">O que você vai fazer amanhã? Bora bolar um Back-End?</p>
-                        <p class="small ms-3 mb-3 rounded-3 text-muted">23:58</p>
+
+            <div class="chat-body" id="chatMessages">
+                <!-- Mensagens iniciais do bot -->
+                <div class="bot-message">
+                    <div class="message-content">
+                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                             alt="avatar" class="avatar-img">
+                        <div class="message-bubble">
+                            <p>Olá! Sou o assistente virtual da KeyChart. Como posso te ajudar hoje?</p>
+                            <div class="quick-options">
+                                <button class="btn-quick-option" onclick="selectQuickOption(1)">Dúvidas sobre competições</button>
+                                <button class="btn-quick-option" onclick="selectQuickOption(2)">Problemas técnicos</button>
+                                <button class="btn-quick-option" onclick="selectQuickOption(3)">Falar com suporte</button>
+                                <button class="btn-quick-option" onclick="selectQuickOption(4)">Documentação</button>
+                            </div>
+                            <small class="message-time">Agora</small>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp" alt="avatar 3" style="width: 40px; height: 100%;">
-                <input type="text" class="form-control form-control-lg" id="exampleFormControlInput1" placeholder="Mensagem...">
-                    <!-- Ícone de anexo (abre o explorador de arquivos) -->
-                    <label for="fileInput" class="ms-1 text-muted" style="cursor: pointer;">
-                        <i class="fas fa-paperclip"></i>
-                    </label>
-                    <input type="file" id="fileInput" style="display: none;">
-                    
-                    <!-- Ícone de emoji e enviar -->
-                    <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
-                    <a class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>
+
+            <!-- Formulário de contato (inicialmente oculto) -->
+            <div class="contact-form" id="contactForm" style="display: none;">
+                <div class="form-header">
+                    <h6>Preencha seus dados para continuar</h6>
+                    <p>Nossa equipe entrará em contato em breve</p>
+                </div>
+                <form id="supportForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nome completo</label>
+                        <input type="text" class="form-control" id="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Telefone</label>
+                        <input type="tel" class="form-control" id="phone">
+                    </div>
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Assunto</label>
+                        <select class="form-select" id="subject" required>
+                            <option value="">Selecione...</option>
+                            <option value="Problema técnico">Problema técnico</option>
+                            <option value="Dúvida sobre competições">Dúvida sobre competições</option>
+                            <option value="Sugestão">Sugestão</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Mensagem</label>
+                        <textarea class="form-control" id="message" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Enviar solicitação</button>
+                </form>
+            </div>
+
+            <div class="chat-footer">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="userMessage"
+                           placeholder="Digite sua mensagem..." disabled>
+                    <button class="btn btn-primary" id="sendButton" onclick="sendMessage()" disabled>
+                        <i class="bi bi-send"></i>
+                    </button>
                 </div>
             </div>
         </div>

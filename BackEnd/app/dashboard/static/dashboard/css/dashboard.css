@@ -137,21 +137,18 @@ body {
     display: block;
 }
 
-/* Container do chat */
-.chat-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 350px;
-    z-index: 1000;
-    transition: all 0.3s ease-in-out;
-    border: none;
-}
-
-/* Estilo do card do chat aberto */
-.chat-container:not(.collapsed) .card {
+/* Mostra o texto "Online" quando o chat estiver aberto */
+.chat-container:not(.collapsed) .online-status {
+    display: inline-block;
+    position: absolute;
+    top: -25px;
+    right: 0;
+    background-color: #28a745;
+    color: white;
+    padding: 2px 8px;
     border-radius: 10px;
-    overflow: hidden;
+    font-size: 0.7rem;
+    white-space: nowrap;
 }
 
 /* Botão de toggle do chat */
@@ -306,3 +303,194 @@ body {
 }
 
 
+        /* Estilos do Chat Container */
+.chat-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.chat-container.collapsed {
+    height: auto;
+}
+
+.chat-toggle-btn {
+    border-radius: 50px;
+    padding: 12px 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.online-status {
+    font-size: 0.8rem;
+    background-color: #28a745;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 5px;
+}
+
+.chat-card {
+    width: 350px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chat-header {
+    padding: 15px;
+    background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
+    color: white;
+}
+
+.avatar-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.online {
+    background-color: #28a745;
+}
+
+.chat-body {
+    padding: 15px;
+    height: 350px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+}
+
+.message-content {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.message-bubble {
+    margin-left: 10px;
+    max-width: 80%;
+}
+
+.bot-message .message-bubble {
+    background-color: #e9ecef;
+    padding: 10px 15px;
+    border-radius: 15px 15px 15px 0;
+}
+
+.user-message {
+    justify-content: flex-end;
+}
+
+.user-message .message-bubble {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 15px 15px 0 15px;
+    margin-left: 0;
+    margin-right: 10px;
+}
+
+.message-time {
+    display: block;
+    font-size: 0.7rem;
+    color: #6c757d;
+    margin-top: 5px;
+    text-align: right;
+}
+
+.quick-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.btn-quick-option {
+    background-color: #f1f1f1;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-quick-option:hover {
+    background-color: #e2e2e2;
+}
+
+.chat-footer {
+    padding: 15px;
+    background-color: white;
+    border-top: 1px solid #e9ecef;
+}
+
+.contact-form {
+    padding: 15px;
+    background-color: #f8f9fa;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-header h6 {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-header p {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.message-content {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Responsivo */
+@media (max-width: 576px) {
+    .chat-card {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 0;
+    }
+
+    .chat-toggle-btn {
+        bottom: 20px;
+        right: 20px;
+    }
+}

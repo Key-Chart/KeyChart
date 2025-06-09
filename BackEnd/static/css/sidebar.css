@@ -6,22 +6,20 @@
     text-decoration: none;
     white-space: nowrap;
     font-size: 18px;
+    transition: background-color 0.3s;
 }
 
 /* Ícones dos links */
 .sidebar a i {
     font-size: 24px;
     margin-right: 10px;
+    vertical-align: middle;
 }
 
 /* Sidebar minimizada */
-.sidebar-hidden {
-    width: 60px;
-}
-
-/* Centralizar texto dos links minimizados */
 .sidebar-hidden a {
     text-align: center;
+    padding: 15px 5px;
 }
 
 /* Esconder texto dos links minimizados */
@@ -29,11 +27,23 @@
     display: none;
 }
 
+/* Mostrar apenas ícones quando minimizado */
+.sidebar-hidden a i {
+    margin-right: 0;
+    font-size: 24px;
+    display: block;
+}
+
 /* Hover nos links da sidebar */
 .sidebar a:hover {
     background-color: rgba(255, 255, 255, 0.26);
 }
 
+/* Logo quando sidebar está minimizada */
+.sidebar-hidden #img-logo {
+    margin: 0 auto;
+    display: block;
+}
 
 /* Responsividade para tablets */
 @media (max-width: 768px) {
@@ -42,6 +52,9 @@
     }
     .sidebar a span {
         display: none;
+    }
+    .content {
+        margin-left: 60px;
     }
 }
 
@@ -52,5 +65,8 @@
     }
     .sidebar-hidden {
         transform: translateX(0);
+    }
+    .content {
+        margin-left: 0;
     }
 }
