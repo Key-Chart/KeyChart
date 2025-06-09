@@ -6,6 +6,10 @@ from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime
 from app.atletas.models import Atleta
+from django.contrib import messages
+import random
+import math
+
 
 # Função para criar Competições
 def criar_competicao(request):
@@ -345,8 +349,80 @@ def chaveamento_kata(request, categoria_id):
     }
     return render(request, 'competicoes/chaveamento_kata.html', context)
 
-def chaveamento_kumite(request):
-    return render(request, 'competicoes/chaveamento_kumite.html')
+
+def chaveamento_kumite(request, categoria_id):
+    categoria = get_object_or_404(Categoria, id=categoria_id)
+    competicao = categoria.competicao
+    atletas = list(Atleta.objects.filter(categoria=categoria))
+
+    # Se não houver atletas, retorna com aviso
+    if not atletas:
+        messages.error(request, "Não há atletas cadastrados nesta categoria.")
+        return render(request, 'competicoes/chaveamento_kumite.html', {
+            'competicao': competicao,
+            'categoria': categoria,
+            'partidas': [],
+            'num_atletas': 0,
+            'current_phase': 1,
+            'max_phases': 1,
+            'fase_atual': 'Sem atletas',
+            'is_final': False,
+        })
+
+    # Embaralha os atletas para criar chaveamento aleatório
+    random.shuffle(atletas)
+    num_atletas = len(atletas)
+
+    # Verifica se o número de atletas é potência de 2
+    if not (num_atletas & (num_atletas - 1) == 0):
+        messages.warning(request, f"O número de atletas ({num_atletas}) não é uma potência de 2. Serão adicionados 'byes'.")
+
+    # Calcula o número total de fases
+    max_phases = math.ceil(math.log2(num_atletas)) + 1
+
+    # Divide os atletas em AKA (vermelho) e AO (azul)
+    metade = (num_atletas + 1) // 2
+    atletas_aka = atletas[:metade]
+    atletas_ao = atletas[metade:]
+
+    # Cria as partidas da primeira fase
+    partidas = []
+    for i in range(max(len(atletas_aka), len(atletas_ao))):
+        aka = atletas_aka[i] if i < len(atletas_aka) else None
+        ao = atletas_ao[i] if i < len(atletas_ao) else None
+        partidas.append({
+            'numero': i + 1,
+            'aka': aka,
+            'ao': ao,
+            'area': chr(65 + (i % 3)),  # Áreas A, B, C, etc.
+        })
+
+    # Determina o nome da fase atual
+    if len(partidas) == 1:
+        fase_atual = "Final"
+        is_final = True
+    elif len(partidas) == 2:
+        fase_atual = "Semifinais"
+        is_final = False
+    elif len(partidas) >= 4:
+        fase_atual = "Quartas de Final"
+        is_final = False
+    else:
+        fase_atual = f"Fase {math.ceil(math.log2(len(partidas)) + 1)}"
+        is_final = False
+
+    context = {
+        'competicao': competicao,
+        'categoria': categoria,
+        'partidas': partidas,
+        'num_atletas': num_atletas,
+        'current_phase': 1,
+        'max_phases': max_phases,
+        'fase_atual': fase_atual,
+        'is_final': is_final,
+    }
+
+    return render(request, 'competicoes/chaveamento_kumite.html', context)
 
 def chaveamento_kumite_teste(request):
     return render(request, 'competicoes/chaveamento_kumite_teste.html')

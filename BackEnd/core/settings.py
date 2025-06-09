@@ -16,6 +16,9 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='127.0.0.1,localhost')
 
+RECAPTCHA_SITE_KEY = '6LdpAForAAAAAES3CanLVUlv1Jm1hf_3JPDWvZMb'
+RECAPTCHA_SECRET_KEY = 'LdpAForAAAAAGhxMtMOEiCuOlfmoY_bfZ0dt2oX'
+
 # Aplicações instaladas
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -28,6 +31,7 @@ INSTALLED_APPS = [
     'app.dashboard',
     'app.competicoes',
     'app.atletas',
+    'app.portal_atleta',
 ]
 
 # Middlewares
@@ -40,6 +44,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'app.autenticacao.middleware.login_required_middleware.LoginRequiredMiddleware',
 ]
 
 # Configuração de URL raiz

@@ -248,19 +248,21 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Academia <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="academia" id="academia-atleta" required>
+                                <select class="form-select" name="academia" id="academia-atleta" required>
+                                    <option value="">Selecione</option>
+                                    <!-- Opções serão preenchidas via JS -->
+                                </select>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Cidade da Academia <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="cidade_academia" id="cidade-academia" required>
+                                <input type="text" class="form-control" name="cidade_academia" id="cidade-academia" readonly required>
                             </div>
+
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Estado da Academia <span class="text-danger">*</span></label>
-                                <select class="form-select" name="estado_academia" id="estado-academia" required>
-                                    <option value="">Selecione</option>
-                                    <!-- Opções de estados -->
-                                </select>
+                                <input type="text" class="form-control" name="estado_academia" id="estado-academia" readonly required>
                             </div>
+
                         </div>
 
                         <div class="row">
@@ -379,7 +381,46 @@
         </div>
     </div>
 
+    <!-- Pega o ID da Competição atual -->
+    <div id="competicao-info" data-competicao-id="{{ competicoes.0.id }}"></div>
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'atletas/js/inscricoes.js' %}?v=3.0"></script>
+    <script>
+        // Suponha que a competição já foi escolhida e tenha um ID conhecido
+        const academiasPorCompeticao = {{ todas_academias|safe }};  // isso injeta o dicionário Python como objeto JS
+
+        // Supondo que você tenha o ID da competição selecionada
+        const competenciaIdSelecionada = parseInt(document.getElementById('competicao-info').dataset.competicaoId);
+
+        const academiaSelect = document.getElementById('academia-atleta');
+        const cidadeInput = document.getElementById('cidade-academia');
+        const estadoSelect = document.getElementById('estado-academia');
+
+        // Carrega academias no select
+        function carregarAcademias() {
+            const academias = academiasPorCompeticao[competenciaIdSelecionada] || [];
+
+            academias.forEach(academia => {
+                const option = document.createElement('option');
+                option.value = academia.nome;
+                option.textContent = academia.nome;
+                option.dataset.cidade = academia.cidade;
+                option.dataset.estado = academia.estado;
+                academiaSelect.appendChild(option);
+            });
+        }
+
+        // Preenche cidade/estado ao selecionar academia
+        academiaSelect.addEventListener('change', function () {
+            const selected = this.options[this.selectedIndex];
+            cidadeInput.value = selected.dataset.cidade || '';
+            estadoSelect.value = selected.dataset.estado || '';
+        });
+
+        // Carrega na inicialização
+        carregarAcademias();
+    </script>
 </body>
 </html>

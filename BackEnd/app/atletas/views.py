@@ -47,15 +47,20 @@ def inscricoes_view(request):
             todas_categorias[competicao_id] = []
         todas_categorias[competicao_id].append(categoria)
 
-    # Pré-carrega academias
-    todas_academias = {}
+    # Pré-carrega e serializa academias por competição
     academias = Academia.objects.filter(competicao__in=competicoes)
+    todas_academias = {}
 
     for academia in academias:
         competicao_id = academia.competicao.id
         if competicao_id not in todas_academias:
             todas_academias[competicao_id] = []
-        todas_academias[competicao_id].append(academia)
+        todas_academias[competicao_id].append({
+            'id': academia.id,
+            'nome': academia.nome,
+            'cidade': academia.cidade,
+            'estado': academia.estado,
+        })
 
     context = {
         'competicoes': competicoes,
@@ -63,6 +68,7 @@ def inscricoes_view(request):
         'todas_academias': todas_academias,
     }
     return render(request, 'atletas/inscricoes.html', context)
+
 
 
 # Função para carregar todas as categorias
@@ -158,7 +164,7 @@ def enviar_email_inscricao(request):
             atleta.save()
 
         # Enviar email de confirmação
-        try:
+        '''try:
             html_content = render_to_string('atletas/email_inscricao.html', {
                 'nome_atleta': atleta.nome_completo,
                 'competicao': competicao.nome,
@@ -178,7 +184,7 @@ def enviar_email_inscricao(request):
             email_message.send()
 
         except Exception as e:
-            print(f'Erro ao enviar e-mail: {e}')
+            print(f'Erro ao enviar e-mail: {e}')'''
 
         response_data = {
             'success': True,

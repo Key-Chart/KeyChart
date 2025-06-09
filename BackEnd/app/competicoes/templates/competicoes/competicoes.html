@@ -80,6 +80,30 @@
             border-radius: 20px;
             font-size: 0.8rem;
         }
+
+        /* Estilos para os tabs */
+        .nav-tabs .nav-link {
+            color: #495057;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            background-color: transparent;
+            border-bottom: 3px solid #0d6efd;
+        }
+
+        .nav-tabs .nav-link:hover:not(.active) {
+            color: #0d6efd;
+            border-bottom: 3px solid #dee2e6;
+        }
+
+        .tab-content {
+            padding: 20px 0;
+        }
+
         /* Estilização dos filtros */
         .input-group-text {
             background-color: #f8f9fa !important;
@@ -90,6 +114,18 @@
         }
         .btn-filter {
             transition: all 0.3s ease;
+        }
+
+        /* Estilos para o modal maior */
+        .modal-xl {
+            max-width: 1140px;
+        }
+
+        /* Centralizar modal verticalmente */
+        .modal-dialog-centered {
+            display: flex;
+            align-items: center;
+            min-height: calc(100% - (1.75rem * 2));
         }
     </style>
 </head>
@@ -331,8 +367,8 @@
     </div>
 
     <!-- Modal Editar -->
-    <div class="modal fade" id="editModal{{ competicao.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ competicao.id }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade" id="editModal{{ competicao.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ competicao.id }}" aria-hidden="true" data-mdb-backdrop="static" data-mdb-keyboard="false">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content custom-modal">
                 <div class="modal-header text-white" style="background: #343A40;">
                     <h5 class="modal-title" id="editModalLabel{{ competicao.id }}"><i class="bi bi-pencil-square me-2"></i>Editar Competição</h5>
@@ -341,66 +377,185 @@
                 <div class="modal-body">
                     <form id="editCompetitionForm{{ competicao.id }}" method="POST" action="{% url 'competicoes:editar_competicao' competicao.id %}">
                         {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="editName{{ competicao.id }}" class="form-label">Nome da Competição</label>
-                                <input type="text" class="form-control" id="editName{{ competicao.id }}" name="nome" value="{{ competicao.nome }}" required>
+                        <ul class="nav nav-tabs mb-4" id="editCompetitionTabs{{ competicao.id }}" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="edit-basic-tab{{ competicao.id }}" data-mdb-toggle="tab" data-mdb-target="#edit-basic{{ competicao.id }}" type="button" role="tab" aria-controls="edit-basic{{ competicao.id }}" aria-selected="true">
+                                    Informações Básicas
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="edit-inscriptions-tab{{ competicao.id }}" data-mdb-toggle="tab" data-mdb-target="#edit-inscriptions{{ competicao.id }}" type="button" role="tab" aria-controls="edit-inscriptions{{ competicao.id }}" aria-selected="false">
+                                    Inscrições
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="edit-arbitros-tab{{ competicao.id }}" data-mdb-toggle="tab" data-mdb-target="#edit-arbitros{{ competicao.id }}" type="button" role="tab" aria-controls="edit-arbitros{{ competicao.id }}" aria-selected="false">
+                                    Árbitros
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="editCompetitionTabContent{{ competicao.id }}">
+                            <div class="tab-pane fade show active" id="edit-basic{{ competicao.id }}" role="tabpanel" aria-labelledby="edit-basic-tab{{ competicao.id }}">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="editName{{ competicao.id }}" class="form-label">Nome da Competição</label>
+                                        <input type="text" class="form-control" id="editName{{ competicao.id }}" name="nome" value="{{ competicao.nome }}" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="editModality{{ competicao.id }}" class="form-label">Modalidade</label>
+                                        <select class="form-select" id="editModality{{ competicao.id }}" name="modalidade" required>
+                                            <option value="Kata" {% if competicao.modalidade == "Kata" %}selected{% endif %}>Kata</option>
+                                            <option value="Kumitê" {% if competicao.modalidade == "Kumitê" %}selected{% endif %}>Kumitê</option>
+                                            <option value="Kata-Kumitê" {% if competicao.modalidade == "Kata-Kumitê" %}selected{% endif %}>Kata/Kumitê</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="editDate{{ competicao.id }}" class="form-label">Data de Início</label>
+                                        <input type="date" class="form-control" id="editDate{{ competicao.id }}" name="data_inicio" value="{{ competicao.data_inicio|date:'Y-m-d' }}" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="editTime{{ competicao.id }}" class="form-label">Horário</label>
+                                        <input type="time" class="form-control" id="editTime{{ competicao.id }}" name="horario" value="{{ competicao.horario }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="editLocation{{ competicao.id }}" class="form-label">Local</label>
+                                    <input type="text" class="form-control" id="editLocation{{ competicao.id }}" name="local" value="{{ competicao.local }}" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="editRules{{ competicao.id }}" class="form-label">Regras Específicas</label>
+                                    <textarea class="form-control" id="editRules{{ competicao.id }}" name="regras_especificas" rows="4">{{ competicao.regras_especificas }}</textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="editStatus{{ competicao.id }}" class="form-label">Status</label>
+                                    <select class="form-select" id="editStatus{{ competicao.id }}" name="status" required>
+                                        <option value="Ativa" {% if competicao.status == "Ativa" %}selected{% endif %}>Ativa</option>
+                                        <option value="Finalizada" {% if competicao.status == "Finalizada" %}selected{% endif %}>Finalizada</option>
+                                        <option value="Em breve" {% if competicao.status == "Em breve" %}selected{% endif %}>Em breve</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editModality{{ competicao.id }}" class="form-label">Modalidade</label>
-                                <select class="form-select" id="editModality{{ competicao.id }}" name="modalidade" required>
-                                    <option value="Kata" {% if competicao.modalidade == "Kata" %}selected{% endif %}>Kata</option>
-                                    <option value="Kumitê" {% if competicao.modalidade == "Kumitê" %}selected{% endif %}>Kumitê</option>
-                                    <option value="Kata-Kumitê" {% if competicao.modalidade == "Kata-Kumitê" %}selected{% endif %}>Kata/Kumitê</option>
-                                </select>
+
+                            <div class="tab-pane fade" id="edit-inscriptions{{ competicao.id }}" role="tabpanel" aria-labelledby="edit-inscriptions-tab{{ competicao.id }}">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Status das Inscrições</label>
+                                        <select class="form-select" name="inscricoes_status">
+                                            <option value="abertas" {% if competicao.inscricoes_abertas %}selected{% endif %}>Abertas</option>
+                                            <option value="fechadas" {% if not competicao.inscricoes_abertas %}selected{% endif %}>Fechadas</option>
+                                            <option value="em-breve">Em breve</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Data Limite</label>
+                                        <input type="date" class="form-control" name="inscricoes_data_limite" value="{{ competicao.inscricoes_data_limite|date:'Y-m-d' }}">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Valor Padrão (R$)</label>
+                                        <input type="number" step="0.01" class="form-control" name="inscricoes_valor" value="{{ competicao.inscricoes_valor|default:'120.00' }}">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Taxa Adicional (R$)</label>
+                                        <input type="number" step="0.01" class="form-control" name="inscricoes_taxa" value="{{ competicao.inscricoes_taxa|default:'0.00' }}">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Desconto (R$)</label>
+                                        <input type="number" step="0.01" class="form-control" name="inscricoes_desconto" value="{{ competicao.inscricoes_desconto|default:'0.00' }}">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Métodos de Pagamento</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="inscricoes_pagamento_pix" id="editPaymentPix{{ competicao.id }}" {% if competicao.inscricoes_pagamento_pix %}checked{% endif %}>
+                                        <label class="form-check-label" for="editPaymentPix{{ competicao.id }}">PIX</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="inscricoes_pagamento_cartao" id="editPaymentCreditCard{{ competicao.id }}" {% if competicao.inscricoes_pagamento_cartao %}checked{% endif %}>
+                                        <label class="form-check-label" for="editPaymentCreditCard{{ competicao.id }}">Cartão de Crédito</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="inscricoes_pagamento_boleto" id="editPaymentBoleto{{ competicao.id }}" {% if competicao.inscricoes_pagamento_boleto %}checked{% endif %}>
+                                        <label class="form-check-label" for="editPaymentBoleto{{ competicao.id }}">Boleto Bancário</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" name="inscricoes_mostrar_valor" id="editShowValue{{ competicao.id }}" {% if competicao.inscricoes_mostrar_valor %}checked{% endif %}>
+                                    <label class="form-check-label" for="editShowValue{{ competicao.id }}">Exibir valor das inscrições</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" name="inscricoes_mostrar_vagas" id="editShowVacancies{{ competicao.id }}" {% if competicao.inscricoes_mostrar_vagas %}checked{% endif %}>
+                                    <label class="form-check-label" for="editShowVacancies{{ competicao.id }}">Exibir vagas disponíveis</label>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Mensagem de Boas-Vindas</label>
+                                    <textarea class="form-control" name="inscricoes_mensagem" rows="3" placeholder="Mensagem que será exibida na página de inscrições">{{ competicao.inscricoes_mensagem }}</textarea>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="editDate{{ competicao.id }}" class="form-label">Data de Início</label>
-                                <input type="date" class="form-control" id="editDate{{ competicao.id }}" name="data_inicio" value="{{ competicao.data_inicio|date:'Y-m-d' }}" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editTime{{ competicao.id }}" class="form-label">Horário</label>
-                                <input type="time" class="form-control" id="editTime{{ competicao.id }}" name="horario" value="{{ competicao.horario }}" required>
-                            </div>
-                        </div>
+                            <div class="tab-pane fade" id="edit-arbitros{{ competicao.id }}" role="tabpanel" aria-labelledby="edit-arbitros-tab{{ competicao.id }}">
+                                <div class="mb-3">
+                                    <label class="form-label">Árbitros Cadastrados</label>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nome</th>
+                                                    <th>Email</th>
+                                                    <th>Telefone</th>
+                                                    <th>Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for arbitro in competicao.arbitros.all %}
+                                                <tr>
+                                                    <td>{{ arbitro.nome }}</td>
+                                                    <td>{{ arbitro.email }}</td>
+                                                    <td>{{ arbitro.telefone }}</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-danger" onclick="removerArbitro({{ competicao.id }}, {{ arbitro.id }})">
+                                                            <i class="bi bi-trash"></i> Remover
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
 
-                        <div class="mb-3">
-                            <label for="editLocation{{ competicao.id }}" class="form-label">Local</label>
-                            <input type="text" class="form-control" id="editLocation{{ competicao.id }}" name="local" value="{{ competicao.local }}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="editReferees{{ competicao.id }}" class="form-label">Árbitros Responsáveis</label>
-                            <select class="form-select" id="editReferees{{ competicao.id }}" name="arbitros" multiple>
-                                {% for arbitro in todos_arbitros %}
-                                    <option value="{{ arbitro.id }}" {% if arbitro in competicao.arbitros.all %}selected{% endif %}>{{ arbitro.nome }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="editRules{{ competicao.id }}" class="form-label">Regras Específicas</label>
-                            <textarea class="form-control" id="editRules{{ competicao.id }}" name="regras_especificas" rows="4">{{ competicao.regras_especificas }}</textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="editStatus{{ competicao.id }}" class="form-label">Status</label>
-                            <select class="form-select" id="editStatus{{ competicao.id }}" name="status" required>
-                                <option value="Ativa" {% if competicao.status == "Ativa" %}selected{% endif %}>Ativa</option>
-                                <option value="Finalizada" {% if competicao.status == "Finalizada" %}selected{% endif %}>Finalizada</option>
-                                <option value="Em breve" {% if competicao.status == "Em breve" %}selected{% endif %}>Em breve</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="editInscricoesAbertas{{ competicao.id }}" name="inscricoes_abertas" {% if competicao.inscricoes_abertas %}checked{% endif %}>
-                                <label class="form-check-label" for="editInscricoesAbertas{{ competicao.id }}">
-                                    Inscrições abertas
-                                </label>
+                                <div class="mb-3">
+                                    <label class="form-label">Adicionar Novo Árbitro</label>
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control" id="novoArbitroNome{{ competicao.id }}" placeholder="Nome completo">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="email" class="form-control" id="novoArbitroEmail{{ competicao.id }}" placeholder="Email">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="tel" class="form-control" id="novoArbitroTelefone{{ competicao.id }}" placeholder="Telefone">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button class="btn btn-primary w-100" onclick="adicionarArbitro({{ competicao.id }})">
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -440,8 +595,8 @@
     {% endfor %}
 
     <!-- Modal Criar Nova Competição -->
-    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true" data-mdb-backdrop="static" data-mdb-keyboard="false">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content custom-modal">
                 <div class="modal-header text-white" style="background: #343A40;">
                     <h5 class="modal-title" id="createModalLabel"><i class="bi bi-plus-circle me-2"></i>Criar Nova Competição</h5>
@@ -449,62 +604,174 @@
                 </div>
                 <div class="modal-body">
                     <!-- Formulário nova Competição -->
-                    <form id="createCompetitionForm" method="POST" action="{% url 'competicoes:criar_competicao' %}"> {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="createName" class="form-label">Nome da Competição</label>
-                                <input type="text" class="form-control" name="nome" id="createName" placeholder="Ex: Copa Regional 2025" required>
+                    <form id="createCompetitionForm" method="POST" action="{% url 'competicoes:criar_competicao' %}">
+                        {% csrf_token %}
+                        <ul class="nav nav-tabs mb-4" id="createCompetitionTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="basic-tab" data-mdb-toggle="tab" data-mdb-target="#basic" type="button" role="tab" aria-controls="basic" aria-selected="true">
+                                    Informações Básicas
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="inscriptions-tab" data-mdb-toggle="tab" data-mdb-target="#inscriptions" type="button" role="tab" aria-controls="inscriptions" aria-selected="false">
+                                    Inscrições
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="arbitros-tab" data-mdb-toggle="tab" data-mdb-target="#arbitros" type="button" role="tab" aria-controls="arbitros" aria-selected="false">
+                                    Árbitros
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="createCompetitionTabContent">
+                            <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="createName" class="form-label">Nome da Competição</label>
+                                        <input type="text" class="form-control" name="nome" id="createName" placeholder="Ex: Copa Regional 2025" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="createModality" class="form-label">Modalidade</label>
+                                        <select class="form-select" name="modalidade" id="createModality" required>
+                                            <option value="" selected disabled>Selecione uma modalidade</option>
+                                            <option value="Kata">Kata</option>
+                                            <option value="Kumitê">Kumitê</option>
+                                            <option value="Kata-Kumitê">Kata/Kumitê</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="createDate" class="form-label">Data de Início</label>
+                                        <input type="date" class="form-control" name="data_inicio" id="createDate" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="createTime" class="form-label">Horário</label>
+                                        <input type="time" class="form-control" name="horario" id="createTime" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="createLocation" class="form-label">Local</label>
+                                    <input type="text" class="form-control" name="local" id="createLocation" placeholder="Ex: Estádio Municipal" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="createRules" class="form-label">Regras Específicas</label>
+                                    <textarea class="form-control" name="regras_especificas" id="createRules" rows="4" placeholder="Descreva as regras específicas desta competição..."></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="createStatus" class="form-label">Status</label>
+                                    <select class="form-select" name="status" id="createStatus" required>
+                                        <option value="Ativa" selected>Ativa</option>
+                                        <option value="Finalizada">Finalizada</option>
+                                        <option value="Em breve">Em breve</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="createModality" class="form-label">Modalidade</label>
-                                <select class="form-select" name="modalidade" id="createModality" required>
-                                    <option value="" selected disabled>Selecione uma modalidade</option>
-                                    <option value="Kata">Kata</option>
-                                    <option value="Kumitê">Kumitê</option>
-                                    <option value="Kata-Kumitê">Kata/Kumitê</option>
-                                </select>
+
+                            <div class="tab-pane fade" id="inscriptions" role="tabpanel" aria-labelledby="inscriptions-tab">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Status das Inscrições</label>
+                                        <select class="form-select" name="inscricoes_status">
+                                            <option value="abertas" selected>Abertas</option>
+                                            <option value="fechadas">Fechadas</option>
+                                            <option value="em-breve">Em breve</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Data Limite</label>
+                                        <input type="date" class="form-control" name="inscricoes_data_limite">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Valor Padrão (R$)</label>
+                                        <input type="number" step="0.01" class="form-control" name="inscricoes_valor" value="120.00">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Taxa Adicional (R$)</label>
+                                        <input type="number" step="0.01" class="form-control" name="inscricoes_taxa" value="0.00">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Desconto (R$)</label>
+                                        <input type="number" step="0.01" class="form-control" name="inscricoes_desconto" value="0.00">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Métodos de Pagamento</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="inscricoes_pagamento_pix" id="paymentPix" checked>
+                                        <label class="form-check-label" for="paymentPix">PIX</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="inscricoes_pagamento_cartao" id="paymentCreditCard" checked>
+                                        <label class="form-check-label" for="paymentCreditCard">Cartão de Crédito</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="inscricoes_pagamento_boleto" id="paymentBoleto">
+                                        <label class="form-check-label" for="paymentBoleto">Boleto Bancário</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" name="inscricoes_mostrar_valor" id="showValue" checked>
+                                    <label class="form-check-label" for="showValue">Exibir valor das inscrições</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" name="inscricoes_mostrar_vagas" id="showVacancies">
+                                    <label class="form-check-label" for="showVacancies">Exibir vagas disponíveis</label>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Mensagem de Boas-Vindas</label>
+                                    <textarea class="form-control" name="inscricoes_mensagem" rows="3" placeholder="Mensagem que será exibida na página de inscrições"></textarea>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="createDate" class="form-label">Data de Início</label>
-                                <input type="date" class="form-control" name="data_inicio" id="createDate" required>
+                            <div class="tab-pane fade" id="arbitros" role="tabpanel" aria-labelledby="arbitros-tab">
+                                <div class="mb-3">
+                                    <label class="form-label">Árbitros Disponíveis</label>
+                                    <select class="form-select" name="arbitros" multiple>
+                                        {% for arbitro in todos_arbitros %}
+                                            <option value="{{ arbitro.id }}">{{ arbitro.nome }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Adicionar Novo Árbitro</label>
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control" id="novoArbitroNome" placeholder="Nome completo">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="email" class="form-control" id="novoArbitroEmail" placeholder="Email">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="tel" class="form-control" id="novoArbitroTelefone" placeholder="Telefone">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-primary w-100" onclick="adicionarNovoArbitro()">
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="createTime" class="form-label">Horário</label>
-                                <input type="time" class="form-control" name="horario" id="createTime" required>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="createLocation" class="form-label">Local</label>
-                            <input type="text" class="form-control" name="local" id="createLocation" placeholder="Ex: Estádio Municipal" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="createReferees" class="form-label">Árbitros Responsáveis</label>
-                            <input type="text" class="form-control" name="arbitros" id="createLocation" placeholder="Árbitro..." required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="createRules" class="form-label">Regras Específicas</label>
-                            <textarea class="form-control" name="regras_especificas" id="createRules" rows="4" placeholder="Descreva as regras específicas desta competição..."></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="createStatus" class="form-label">Status</label>
-                            <select class="form-select" name="status" id="createStatus" required>
-                                <option value="Ativa" selected>Ativa</option>
-                                <option value="Finalizada">Finalizada</option>
-                                <option value="Em breve">Em breve</option>
-                            </select>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success">Criar Competição</button>
                         </div>
                     </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-mdb-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="createCompetitionForm" class="btn btn-success">Criar Competição</button>
                 </div>
             </div>
         </div>
@@ -658,6 +925,53 @@
                     }, 500);
                 }
             }, 100);
+        }
+
+        function adicionarNovoArbitro() {
+            const nome = document.getElementById('novoArbitroNome').value;
+            const email = document.getElementById('novoArbitroEmail').value;
+            const telefone = document.getElementById('novoArbitroTelefone').value;
+
+            if (!nome || !email) {
+                alert('Por favor, preencha pelo menos o nome e email do árbitro');
+                return;
+            }
+
+            // Aqui você pode adicionar a lógica para enviar os dados para o servidor
+            // e atualizar a lista de árbitros disponíveis
+            alert(`Novo árbitro adicionado: ${nome}, ${email}, ${telefone}`);
+
+            // Limpar os campos
+            document.getElementById('novoArbitroNome').value = '';
+            document.getElementById('novoArbitroEmail').value = '';
+            document.getElementById('novoArbitroTelefone').value = '';
+        }
+
+        function adicionarArbitro(competicaoId) {
+            const nome = document.getElementById(`novoArbitroNome${competicaoId}`).value;
+            const email = document.getElementById(`novoArbitroEmail${competicaoId}`).value;
+            const telefone = document.getElementById(`novoArbitroTelefone${competicaoId}`).value;
+
+            if (!nome || !email) {
+                alert('Por favor, preencha pelo menos o nome e email do árbitro');
+                return;
+            }
+
+            // Aqui você pode adicionar a lógica para enviar os dados para o servidor
+            // e atualizar a lista de árbitros da competição
+            alert(`Novo árbitro adicionado à competição ${competicaoId}: ${nome}, ${email}, ${telefone}`);
+
+            // Limpar os campos
+            document.getElementById(`novoArbitroNome${competicaoId}`).value = '';
+            document.getElementById(`novoArbitroEmail${competicaoId}`).value = '';
+            document.getElementById(`novoArbitroTelefone${competicaoId}`).value = '';
+        }
+
+        function removerArbitro(competicaoId, arbitroId) {
+            if (confirm('Tem certeza que deseja remover este árbitro da competição?')) {
+                // Aqui você pode adicionar a lógica para remover o árbitro no servidor
+                alert(`Árbitro ${arbitroId} removido da competição ${competicaoId}`);
+            }
         }
     </script>
 </body>

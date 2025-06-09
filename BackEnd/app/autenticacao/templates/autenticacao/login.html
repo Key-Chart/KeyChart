@@ -1,0 +1,189 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../img/icone_keychart.png" type="image/x-icon">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <title>Login - KeyChart</title>
+    <link rel="stylesheet" href="{% static 'autenticacao/css/login.css' %}">
+    <style>
+        /* Estilo para o popup de erro */
+        .error-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffebee;
+            border: 2px solid #f44336;
+            border-radius: 15px;
+            padding: 25px;
+            width: 350px;
+            max-width: 90%;
+            box-shadow: 0 10px 25px rgba(244, 67, 54, 0.3);
+            z-index: 10000;
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .error-popup .error-icon {
+            font-size: 50px;
+            color: #f44336;
+            margin-bottom: 15px;
+        }
+
+        .error-popup .error-title {
+            color: #d32f2f;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .error-popup .error-message {
+            color: #b71c1c;
+            margin-bottom: 20px;
+        }
+
+        .error-popup .close-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .error-popup .close-btn:hover {
+            background-color: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 9999;
+            backdrop-filter: blur(3px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        /* Estilo para mensagens de sucesso (opcional) */
+        .success-popup {
+            /* Estilos similares, mas com cores verdes */
+        }
+    </style>
+</head>
+<body>
+    <!-- Efeito de partículas -->
+    <div id="particles-js"></div>
+
+    <!-- Ícones decorativos de karatê -->
+    <i class="fas fa-user-ninja karate-icon karate-icon-1"></i>
+    <i class="fas fa-fist-raised karate-icon karate-icon-2"></i>
+
+    <!-- Container principal -->
+    <div class="login-container">
+        <!-- Formulário de login -->
+        <div class="login-form">
+            <div class="logo-login">
+                <img src="{% static 'autenticacao/img/icone_keychart.png' %}" alt="KeyChart Logo">
+            </div>
+            <h1 class="login-title">KEYCHART</h1>
+            <p class="login-subtitle">Sistema de Gerenciamento de Competições de Karatê</p>
+
+            <!-- Popup de Erro -->
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                    <div class="overlay"></div>
+                    <div class="error-popup">
+                        <div class="error-icon">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </div>
+                        <div class="error-title">Ops!</div>
+                        <div class="error-message">{{ message }}</div>
+                        <button class="close-btn" onclick="closePopup()">Entendido</button>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username" class="form-label">Usuário</label>
+                    <input type="text" name="username" class="form-control" id="username" placeholder="Digite seu usuário" required>
+                </div>
+
+                <div class="form-group password-toggle">
+                    <label for="password" class="form-label">Senha</label>
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Digite sua senha" required>
+                </div>
+
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="remember">
+                    <label class="form-check-label" for="remember">Lembrar de mim</label>
+                </div>
+
+                <button type="submit" class="btn btn-login">Entrar</button>
+
+                <div class="text-center mt-3">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Esqueceu sua senha?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Esqueceu a Senha -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">Recuperar Senha</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="recoveryEmail" class="form-label">E-mail</label>
+                            <input type="email" class="form-control" id="recoveryEmail" placeholder="Digite seu e-mail cadastrado" required>
+                        </div>
+                        <button type="submit" class="btn btn-login">Enviar Link de Recuperação</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+    <script>
+        // Fechar o popup
+        function closePopup() {
+            document.querySelector('.overlay').style.display = 'none';
+            document.querySelector('.error-popup').style.display = 'none';
+        }
+
+        // Fechar ao clicar no overlay (opcional)
+        document.querySelector('.overlay').addEventListener('click', closePopup);
+    </script>
+    <script src="{% static 'autenticacao/js/login.js' %}"></script>
+</body>
+</html>

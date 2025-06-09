@@ -6,14 +6,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
-    <link rel="stylesheet" href="{% static 'competicoes/css/competicoes.css' %}">
-    <title>{{ competicao.nome }} | KeyChart</title>
-    <title>Painel Kumitê Completo - Copa Regional 2025</title>
-    <link rel="stylesheet" href="">
+    <title>{{ competicao.nome }} - Kumitê {{ categoria.nome }}</title>
     <style>
         :root {
             --primary-color: #198754;
@@ -114,18 +109,73 @@
             margin-bottom: 20px;
         }
 
-        @media (max-width: 768px) {
-            .match-grid {
-                grid-template-columns: 1fr;
-            }
+        .penalty-badge {
+            font-size: 0.75rem;
+            margin-left: 5px;
+        }
 
-            .sidebar {
-                margin-left: -250px;
-            }
+        .bye-badge {
+            background-color: #6c757d;
+        }
 
-            .content {
-                margin-left: 0;
-            }
+        .disabled-input {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        .champion-badge {
+            background: linear-gradient(135deg, #ffd700, #c9b037);
+            color: #000;
+            font-weight: bold;
+        }
+
+        .modal-center {
+            display: flex;
+            align-items: center;
+            min-height: calc(100% - 1rem);
+        }
+
+        .modal-center .modal-dialog {
+            margin: 0 auto;
+        }
+
+        .modal-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .phase-title {
+            background: linear-gradient(135deg, #343A40, #343A40);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 20px 0 10px;
+        }
+
+        .bracket-connector {
+            position: relative;
+            height: 50px;
+            margin: 5px 0;
+        }
+
+        .bracket-connector::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            background-color: #6c757d;
+        }
+
+        .bracket-connector::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 2px;
+            background-color: #6c757d;
         }
     </style>
 </head>
@@ -137,360 +187,188 @@
     <div class="content" id="content">
         <div class="header d-flex align-items-center justify-content-between" style="background: #343A40;">
             <div class="d-flex align-items-center">
-                <i class="bi bi-arrow-left back-icon me-3" onclick="window.history.back()"></i>
+                <i class="bi bi-arrow-left back-icon me-3" onclick="window.history.back()" style="cursor: pointer;"></i>
                 <div>
-                    <h2 class="mb-0 fw-bold">Copa Regional 2025 - Kumitê -67kg</h2>
-                    <small class="text-white-50">Quartas de Final - Todas as Partidas</small>
+                    <h2 class="mb-0 fw-bold">{{ competicao.nome }} - Kumitê {{ categoria.nome }}</h2>
+                    <small class="text-white-50">{{ competicao.descricao|default:"Competição de Karatê" }}</small>
                 </div>
             </div>
             <div>
                 <span class="badge bg-light text-dark fs-6 me-2">
-                    <i class="bi bi-people-fill me-1"></i> 8 Atletas
+                    <i class="bi bi-people-fill me-1"></i> {{ num_atletas }} Atletas
                 </span>
                 <span class="badge bg-light text-dark fs-6">
-                    <i class="bi bi-trophy me-1"></i> 4 Partidas
+                    <i class="bi bi-trophy me-1"></i> Fase {{ current_phase }}/{{ max_phases }}
                 </span>
             </div>
         </div>
 
+        <!-- Mensagens de alerta -->
+        {% if messages %}
+            {% for message in messages %}
+            <div class="container mt-3">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+
         <!-- Controles Globais -->
-        <div class="global-controls">
-            <div class="row align-items-center">
-                <div class="col-md-4 mb-2">
-                    <select class="form-select form-select-sm">
-                        <option selected>Todas as Áreas</option>
-                        <option>Área A (Principal)</option>
-                        <option>Área B</option>
-                        <option>Área C</option>
-                    </select>
-                </div>
-                <div class="col-md-4 mb-2 text-center">
-                    <button class="btn btn-light btn-sm me-2" onclick="startAllMatches()">
-                        <i class="bi bi-play-circle"></i> Iniciar Todas
-                    </button>
-                    <button class="btn btn-light btn-sm" onclick="pauseAllMatches()">
-                        <i class="bi bi-pause-circle"></i> Pausar Todas
-                    </button>
-                </div>
-                <div class="col-md-4 mb-2 text-end">
-                    <button class="btn btn-warning btn-sm me-2" data-bs-toggle="modal" data-bs-target="#advanceModal">
-                        <i class="bi bi-arrow-right-circle"></i> Avançar Vencedores
-                    </button>
-                    <a href="{% url 'competicoes:chaveamento_kumite_teste' %}" class="btn btn-light btn-sm">
-                        <i class="bi bi-eye"></i> Chaveamento Completo
-                    </a>
+        <div class="container mt-3">
+            <div class="global-controls">
+                <div class="row align-items-center">
+                    <div class="col-md-4 mb-2">
+                        <select class="form-select form-select-sm" id="areaFilter">
+                            <option selected>Todas as Áreas</option>
+                            {% for partida in partidas %}
+                                <option>Área {{ partida.area }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-2 text-center">
+                        <button class="btn btn-light btn-sm me-2" onclick="startAllMatches()">
+                            <i class="bi bi-play-circle"></i> Iniciar Todas
+                        </button>
+                        <button class="btn btn-light btn-sm" onclick="pauseAllMatches()">
+                            <i class="bi bi-pause-circle"></i> Pausar Todas
+                        </button>
+                    </div>
+                    <div class="col-md-4 mb-2 text-end">
+                        {% if not is_final %}
+                        <button class="btn btn-warning btn-sm me-2" data-bs-toggle="modal" data-bs-target="#advanceModal">
+                            <i class="bi bi-arrow-right-circle"></i> Avançar Vencedores
+                        </button>
+                        {% endif %}
+                        <button class="btn btn-light btn-sm" onclick="window.print()">
+                            <i class="bi bi-printer"></i> Imprimir
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- Fases do Torneio -->
         <div class="container mt-4">
+            <h4 class="phase-title">
+                <i class="bi bi-{% if is_final %}trophy{% else %}diagram-2{% endif %} me-2"></i>
+                {{ fase_atual }}
+            </h4>
+
             <!-- Grid de Partidas -->
             <div class="match-grid">
-                <!-- Partida 1 -->
-                <div class="card match-card">
+                {% for partida in partidas %}
+                <div class="card match-card" id="match-{{ partida.numero }}">
                     <div class="match-header d-flex justify-content-between align-items-center">
-                        <span>Partida #1 - Área A</span>
-                        <span class="badge match-status-badge bg-success">Em Andamento</span>
-                    </div>
-                    <div class="card-body p-0">
-                        <!-- Atleta AKA -->
-                        <div class="athlete-info">
-                            <img src="{% static 'competicoes/img/9.jpg' %}" class="athlete-avatar" alt="Atleta 1">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">Luan Carvalho</h6>
-                                <small class="text-muted">AKA | Academia MM02</small>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <span class="me-2 fw-bold">Pontos:</span>
-                                <input type="number" class="score-input" value="5" min="0" data-match="1" data-athlete="1">
-                            </div>
-                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="addPenalty(1,1)">
-                                <i class="bi bi-exclamation-triangle"></i>
-                            </button>
-                        </div>
-
-                        <!-- Atleta AO -->
-                        <div class="athlete-info">
-                            <img src="{% static 'competicoes/img/1.jpg' %}" class="athlete-avatar" alt="Atleta 2">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">Rafael Góes</h6>
-                                <small class="text-muted">AO | Top Karate</small>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <span class="me-2 fw-bold">Pontos:</span>
-                                <input type="number" class="score-input" value="3" min="0" data-match="1" data-athlete="2">
-                            </div>
-                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="addPenalty(1,2)">
-                                <i class="bi bi-exclamation-triangle"></i>
-                            </button>
-                        </div>
-
-                        <!-- Controles da Partida -->
-                        <div class="p-3 border-top">
-                            <div class="timer-display" data-match="1">02:00</div>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <button class="btn btn-sm btn-primary control-btn" onclick="toggleMatchTimer(1)">
-                                        <i class="bi bi-play-fill"></i> Play
-                                    </button>
-                                    <button class="btn btn-sm btn-secondary control-btn" onclick="resetMatchTimer(1)">
-                                        <i class="bi bi-arrow-counterclockwise"></i>
-                                    </button>
-                                </div>
-                                <div>
-                                    <button class="btn btn-sm btn-success control-btn" onclick="finishMatch(1)">
-                                        <i class="bi bi-flag-fill"></i> Finalizar
-                                    </button>
-                                    <button class="btn btn-sm btn-danger control-btn" onclick="cancelMatch(1)">
-                                        <i class="bi bi-x-circle-fill"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-center mt-2">
-                                <button class="btn btn-sm btn-outline-primary me-1" onclick="addPoint(1,1)">
-                                    +1 AKA
-                                </button>
-                                <button class="btn btn-sm btn-outline-warning me-1" onclick="addTime(1,10)">
-                                    +10s
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="addPoint(1,2)">
-                                    +1 AO
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Partida 2 -->
-                <div class="card match-card">
-                    <div class="match-header d-flex justify-content-between align-items-center">
-                        <span>Partida #2 - Área B</span>
-                        <span class="badge match-status-badge bg-warning text-dark">Pronta</span>
-                    </div>
-                    <div class="card-body p-0">
-                        <!-- Atleta AKA -->
-                        <div class="athlete-info">
-                            <img src="{% static 'competicoes/img/img.png' %}" class="athlete-avatar" alt="Atleta 1">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">Marcus Batista</h6>
-                                <small class="text-muted">AKA | Academia Paulista</small>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <span class="me-2 fw-bold">Pontos:</span>
-                                <input type="number" class="score-input" value="0" min="0" data-match="2" data-athlete="1">
-                            </div>
-                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="addPenalty(2,1)">
-                                <i class="bi bi-exclamation-triangle"></i>
-                            </button>
-                        </div>
-
-                        <!-- Atleta AO -->
-                        <div class="athlete-info">
-                            <img src="{% static 'competicoes/img/img_1.png' %}" class="athlete-avatar" alt="Atleta 2">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">Emanuel Rodrigues</h6>
-                                <small class="text-muted">AO | Karate Dojo</small>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <span class="me-2 fw-bold">Pontos:</span>
-                                <input type="number" class="score-input" value="0" min="0" data-match="2" data-athlete="2">
-                            </div>
-                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="addPenalty(2,2)">
-                                <i class="bi bi-exclamation-triangle"></i>
-                            </button>
-                        </div>
-
-                        <!-- Controles da Partida -->
-                        <div class="p-3 border-top">
-                            <div class="timer-display" data-match="2">02:00</div>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <button class="btn btn-sm btn-primary control-btn" onclick="toggleMatchTimer(2)">
-                                        <i class="bi bi-play-fill"></i> Play
-                                    </button>
-                                    <button class="btn btn-sm btn-secondary control-btn" onclick="resetMatchTimer(2)">
-                                        <i class="bi bi-arrow-counterclockwise"></i>
-                                    </button>
-                                </div>
-                                <div>
-                                    <button class="btn btn-sm btn-success control-btn" onclick="finishMatch(2)">
-                                        <i class="bi bi-flag-fill"></i> Finalizar
-                                    </button>
-                                    <button class="btn btn-sm btn-danger control-btn" onclick="cancelMatch(2)">
-                                        <i class="bi bi-x-circle-fill"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-center mt-2">
-                                <button class="btn btn-sm btn-outline-primary me-1" onclick="addPoint(2,1)">
-                                    +1 AKA
-                                </button>
-                                <button class="btn btn-sm btn-outline-warning me-1" onclick="addTime(2,10)">
-                                    +10s
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="addPoint(2,2)">
-                                    +1 AO
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Partida 3 -->
-                <div class="card match-card">
-                    <div class="match-header d-flex justify-content-between align-items-center">
-                        <span>Partida #3 - Área C</span>
+                        <span>Partida #{{ partida.numero }} - Área {{ partida.area }}</span>
                         <span class="badge match-status-badge bg-secondary">Não Iniciada</span>
                     </div>
                     <div class="card-body p-0">
                         <!-- Atleta AKA -->
                         <div class="athlete-info">
-                            <img src="{% static 'competicoes/img/img_2.png' %}" class="athlete-avatar" alt="Atleta 1">
+                            <img src="{% if partida.aka and partida.aka.foto %}{{ partida.aka.foto.url }}{% else %}{% static 'competicoes/img/foto_atleta.png' %}{% endif %}"
+                                 class="athlete-avatar" alt="Atleta AKA">
                             <div class="flex-grow-1">
-                                <h6 class="mb-1">Erminio Paixão</h6>
-                                <small class="text-muted">AKA | Bushido</small>
+                                <h6 class="mb-1">
+                                    {% if partida.aka %}
+                                        {{ partida.aka.nome_completo }}
+                                    {% else %}
+                                        <span class="text-muted">Bye</span>
+                                    {% endif %}
+                                </h6>
+                                <small class="text-muted">
+                                    AKA | {% if partida.aka and partida.aka.academia %}{{ partida.aka.academia.nome }}{% else %}--{% endif %}
+                                </small>
+                                <div class="penalties mt-1" data-match="{{ partida.numero }}" data-athlete="1"></div>
                             </div>
                             <div class="d-flex align-items-center">
                                 <span class="me-2 fw-bold">Pontos:</span>
-                                <input type="number" class="score-input" value="0" min="0" data-match="3" data-athlete="1">
+                                <input type="number" class="score-input" value="0" min="0"
+                                       data-match="{{ partida.numero }}" data-athlete="1" {% if not partida.aka %}disabled{% endif %}>
                             </div>
-                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="addPenalty(3,1)">
+                            {% if partida.aka %}
+                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="showPenaltyModal({{ partida.numero }},1)">
                                 <i class="bi bi-exclamation-triangle"></i>
                             </button>
+                            {% else %}
+                            <span class="badge bye-badge ms-2">BYE</span>
+                            {% endif %}
                         </div>
 
                         <!-- Atleta AO -->
                         <div class="athlete-info">
-                            <img src="{% static 'competicoes/img/img_3.png' %}" class="athlete-avatar" alt="Atleta 2">
+                            <img src="{% if partida.ao and partida.ao.foto %}{{ partida.ao.foto.url }}{% else %}{% static 'competicoes/img/foto_atleta.png' %}{% endif %}"
+                                 class="athlete-avatar" alt="Atleta AO">
                             <div class="flex-grow-1">
-                                <h6 class="mb-1">Alan</h6>
-                                <small class="text-muted">AO | Striker Team</small>
+                                <h6 class="mb-1">
+                                    {% if partida.ao %}
+                                        {{ partida.ao.nome_completo }}
+                                    {% else %}
+                                        <span class="text-muted">Bye</span>
+                                    {% endif %}
+                                </h6>
+                                <small class="text-muted">
+                                    AO | {% if partida.ao and partida.ao.academia %}{{ partida.ao.academia.nome }}{% else %}--{% endif %}
+                                </small>
+                                <div class="penalties mt-1" data-match="{{ partida.numero }}" data-athlete="2"></div>
                             </div>
                             <div class="d-flex align-items-center">
                                 <span class="me-2 fw-bold">Pontos:</span>
-                                <input type="number" class="score-input" value="0" min="0" data-match="3" data-athlete="2">
+                                <input type="number" class="score-input" value="0" min="0"
+                                       data-match="{{ partida.numero }}" data-athlete="2" {% if not partida.ao %}disabled{% endif %}>
                             </div>
-                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="addPenalty(3,2)">
+                            {% if partida.ao %}
+                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="showPenaltyModal({{ partida.numero }},2)">
                                 <i class="bi bi-exclamation-triangle"></i>
                             </button>
+                            {% else %}
+                            <span class="badge bye-badge ms-2">BYE</span>
+                            {% endif %}
                         </div>
 
                         <!-- Controles da Partida -->
                         <div class="p-3 border-top">
-                            <div class="timer-display" data-match="3">02:00</div>
+                            <div class="timer-display" data-match="{{ partida.numero }}">02:00</div>
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <button class="btn btn-sm btn-primary control-btn" onclick="toggleMatchTimer(3)">
+                                    <button class="btn btn-sm btn-primary control-btn" onclick="toggleMatchTimer({{ partida.numero }})">
                                         <i class="bi bi-play-fill"></i> Play
                                     </button>
-                                    <button class="btn btn-sm btn-secondary control-btn" onclick="resetMatchTimer(3)">
+                                    <button class="btn btn-sm btn-secondary control-btn" onclick="resetMatchTimer({{ partida.numero }})">
                                         <i class="bi bi-arrow-counterclockwise"></i>
                                     </button>
                                 </div>
                                 <div>
-                                    <button class="btn btn-sm btn-success control-btn" onclick="finishMatch(3)">
+                                    <button class="btn btn-sm btn-success control-btn" onclick="prepareFinishMatch({{ partida.numero }})">
                                         <i class="bi bi-flag-fill"></i> Finalizar
                                     </button>
-                                    <button class="btn btn-sm btn-danger control-btn" onclick="cancelMatch(3)">
+                                    <button class="btn btn-sm btn-danger control-btn" onclick="prepareCancelMatch({{ partida.numero }})">
                                         <i class="bi bi-x-circle-fill"></i>
                                     </button>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-center mt-2">
-                                <button class="btn btn-sm btn-outline-primary me-1" onclick="addPoint(3,1)">
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="addPoint({{ partida.numero }},1)" {% if not partida.aka %}disabled{% endif %}>
                                     +1 AKA
                                 </button>
-                                <button class="btn btn-sm btn-outline-warning me-1" onclick="addTime(3,10)">
+                                <button class="btn btn-sm btn-outline-warning me-1" onclick="addTime({{ partida.numero }},10)">
                                     +10s
                                 </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="addPoint(3,2)">
+                                <button class="btn btn-sm btn-outline-danger" onclick="addPoint({{ partida.numero }},2)" {% if not partida.ao %}disabled{% endif %}>
                                     +1 AO
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Partida 4 -->
-                <div class="card match-card">
-                    <div class="match-header d-flex justify-content-between align-items-center">
-                        <span>Partida #4 - Área A</span>
-                        <span class="badge match-status-badge bg-success">Em Andamento</span>
-                    </div>
-                    <div class="card-body p-0">
-                        <!-- Atleta AKA -->
-                        <div class="athlete-info">
-                            <img src="{% static 'competicoes/img/img_4.png' %}" class="athlete-avatar" alt="Atleta 1">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">Davi Lima</h6>
-                                <small class="text-muted">AKA | Champions</small>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <span class="me-2 fw-bold">Pontos:</span>
-                                <input type="number" class="score-input" value="4" min="0" data-match="4" data-athlete="1">
-                            </div>
-                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="addPenalty(4,1)">
-                                <i class="bi bi-exclamation-triangle"></i>
-                            </button>
-                        </div>
-
-                        <!-- Atleta AO -->
-                        <div class="athlete-info">
-                            <img src="{% static 'competicoes/img/2.jpg' %}" class="athlete-avatar" alt="Atleta 2">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">João Pereira</h6>
-                                <small class="text-muted">AO | Strong Karate</small>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <span class="me-2 fw-bold">Pontos:</span>
-                                <input type="number" class="score-input" value="2" min="0" data-match="4" data-athlete="2">
-                            </div>
-                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="addPenalty(4,2)">
-                                <i class="bi bi-exclamation-triangle"></i>
-                            </button>
-                        </div>
-
-                        <!-- Controles da Partida -->
-                        <div class="p-3 border-top">
-                            <div class="timer-display" data-match="4">01:45</div>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <button class="btn btn-sm btn-primary control-btn" onclick="toggleMatchTimer(4)">
-                                        <i class="bi bi-pause-fill"></i> Pause
-                                    </button>
-                                    <button class="btn btn-sm btn-secondary control-btn" onclick="resetMatchTimer(4)">
-                                        <i class="bi bi-arrow-counterclockwise"></i>
-                                    </button>
-                                </div>
-                                <div>
-                                    <button class="btn btn-sm btn-success control-btn" onclick="finishMatch(4)">
-                                        <i class="bi bi-flag-fill"></i> Finalizar
-                                    </button>
-                                    <button class="btn btn-sm btn-danger control-btn" onclick="cancelMatch(4)">
-                                        <i class="bi bi-x-circle-fill"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-center mt-2">
-                                <button class="btn btn-sm btn-outline-primary me-1" onclick="addPoint(4,1)">
-                                    +1 AKA
-                                </button>
-                                <button class="btn btn-sm btn-outline-warning me-1" onclick="addTime(4,10)">
-                                    +10s
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="addPoint(4,2)">
-                                    +1 AO
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
 
             <!-- Visualização do Chaveamento -->
             <div class="card mt-4">
                 <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">Visão Geral do Chaveamento - Kumitê -67kg</h5>
+                    <h5 class="mb-0"><i class="bi bi-list-check me-2"></i>Resumo do Chaveamento</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -509,66 +387,23 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for partida in partidas %}
                                 <tr>
-                                    <td>#1</td>
-                                    <td>Área A</td>
-                                    <td>Luan Carvalho</td>
-                                    <td class="fw-bold text-success">5</td>
-                                    <td>Rafael Góes</td>
-                                    <td class="fw-bold">3</td>
-                                    <td><span class="badge bg-success">Em Andamento</span></td>
-                                    <td>02:00</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary" onclick="focusMatch(1)">
-                                            <i class="bi bi-zoom-in"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#2</td>
-                                    <td>Área B</td>
-                                    <td>Marcus Batista</td>
+                                    <td>#{{ partida.numero }}</td>
+                                    <td>Área {{ partida.area }}</td>
+                                    <td>{% if partida.aka %}{{ partida.aka.nome_completo }}{% else %}<span class="text-muted">Bye</span>{% endif %}</td>
                                     <td class="fw-bold">0</td>
-                                    <td>Emanuel Rodrigues</td>
-                                    <td class="fw-bold">0</td>
-                                    <td><span class="badge bg-warning text-dark">Pronta</span></td>
-                                    <td>02:00</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary" onclick="focusMatch(2)">
-                                            <i class="bi bi-zoom-in"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#3</td>
-                                    <td>Área C</td>
-                                    <td>Erminio Paixão</td>
-                                    <td class="fw-bold">0</td>
-                                    <td>Alan</td>
+                                    <td>{% if partida.ao %}{{ partida.ao.nome_completo }}{% else %}<span class="text-muted">Bye</span>{% endif %}</td>
                                     <td class="fw-bold">0</td>
                                     <td><span class="badge bg-secondary">Não Iniciada</span></td>
                                     <td>02:00</td>
                                     <td>
-                                        <button class="btn btn-sm btn-primary" onclick="focusMatch(3)">
+                                        <button class="btn btn-sm btn-primary" onclick="focusMatch({{ partida.numero }})">
                                             <i class="bi bi-zoom-in"></i>
                                         </button>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>#4</td>
-                                    <td>Área A</td>
-                                    <td>Davi Lima</td>
-                                    <td class="fw-bold text-success">4</td>
-                                    <td>João Pereira</td>
-                                    <td class="fw-bold">2</td>
-                                    <td><span class="badge bg-success">Em Andamento</span></td>
-                                    <td>01:45</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary" onclick="focusMatch(4)">
-                                            <i class="bi bi-zoom-in"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -577,18 +412,64 @@
         </div>
     </div>
 
-    <!-- Modal de Avançar Vencedores -->
-    <div class="modal fade" id="advanceModal" tabindex="-1" aria-labelledby="advanceModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <!-- Modal Finalizar Partida -->
+    <div class="modal fade" id="finishMatchModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="advanceModalLabel">Avançar Vencedores para Semifinal</h5>
+                    <h5 class="modal-title"><i class="bi bi-flag-fill me-2"></i> Finalizar Partida</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="modal-icon text-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <h5>Deseja finalizar esta partida?</h5>
+                    <p>Após confirmar, os resultados serão salvos e não poderão ser alterados.</p>
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" id="confirmFinishMatch">Finalizar Partida</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cancelar Partida -->
+    <div class="modal fade" id="cancelMatchModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="bi bi-x-circle-fill me-2"></i> Cancelar Partida</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="modal-icon text-danger">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                    <h5>Deseja cancelar esta partida?</h5>
+                    <p>Esta ação não pode ser desfeita. Todos os dados serão perdidos.</p>
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+                        <button type="button" class="btn btn-danger" id="confirmCancelMatch">Cancelar Partida</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Avançar Vencedores -->
+    <div class="modal fade" id="advanceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title"><i class="bi bi-arrow-right-circle-fill me-2"></i> Avançar Vencedores</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive">
                         <table class="table table-bordered">
-                            <thead class="table-success">
+                            <thead class="table-warning">
                                 <tr>
                                     <th>Partida</th>
                                     <th>Vencedor</th>
@@ -596,73 +477,62 @@
                                     <th>Confirmar</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="winnersTableBody">
+                                {% for partida in partidas %}
                                 <tr>
-                                    <td>Partida #1 - Emanuel Silva vs Marcus Batista</td>
-                                    <td>
-                                        <select class="form-select form-select-sm">
-                                            <option selected>Selecione...</option>
-                                            <option>Emanuel Silva (5 pontos)</option>
-                                            <option>Marcus Batista (3 pontos)</option>
-                                        </select>
+                                    <td>Partida #{{ partida.numero }} -
+                                        {% if partida.aka %}{{ partida.aka.nome_completo }}{% else %}Bye{% endif %} vs
+                                        {% if partida.ao %}{{ partida.ao.nome_completo }}{% else %}Bye{% endif %}
                                     </td>
-                                    <td class="fw-bold">5-3</td>
-                                    <td class="text-center">
-                                        <input type="checkbox" class="form-check-input" checked>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Partida #2 - Erminio Paixão vs Alan</td>
                                     <td>
-                                        <select class="form-select form-select-sm">
-                                            <option selected>Selecione...</option>
-                                            <option>Erminio Paixão (0 pontos)</option>
-                                            <option>Alan (0 pontos)</option>
+                                        <select class="form-select form-select-sm winner-select" data-match="{{ partida.numero }}">
+                                            <option value="">Selecione...</option>
+                                            {% if partida.aka %}
+                                            <option value="{{ partida.aka.id }}">{{ partida.aka.nome_completo }}</option>
+                                            {% endif %}
+                                            {% if partida.ao %}
+                                            <option value="{{ partida.ao.id }}">{{ partida.ao.nome_completo }}</option>
+                                            {% endif %}
                                         </select>
                                     </td>
                                     <td class="fw-bold">0-0</td>
                                     <td class="text-center">
-                                        <input type="checkbox" class="form-check-input">
+                                        <input type="checkbox" class="form-check-input confirm-checkbox" data-match="{{ partida.numero }}">
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>Partida #3 - Luan Carvalho vs Rafael Góes</td>
-                                    <td>
-                                        <select class="form-select form-select-sm">
-                                            <option selected>Selecione...</option>
-                                            <option>Luan Carvalho(0 pontos)</option>
-                                            <option>Rafael Góes(0 pontos)</option>
-                                        </select>
-                                    </td>
-                                    <td class="fw-bold">0-0</td>
-                                    <td class="text-center">
-                                        <input type="checkbox" class="form-check-input">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Partida #4 - Davi Lima vs João Pereira</td>
-                                    <td>
-                                        <select class="form-select form-select-sm">
-                                            <option selected>Selecione...</option>
-                                            <option>Davi Lima (4 pontos)</option>
-                                            <option>João Pereira (2 pontos)</option>
-                                        </select>
-                                    </td>
-                                    <td class="fw-bold">4-2</td>
-                                    <td class="text-center">
-                                        <input type="checkbox" class="form-check-input" checked>
-                                    </td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
                     <div class="alert alert-info mt-3">
-                        <i class="bi bi-info-circle"></i> Apenas partidas finalizadas e com vencedores confirmados serão avançadas para a próxima fase.
+                        <i class="bi bi-info-circle-fill me-2"></i> Apenas partidas finalizadas e com vencedores confirmados serão avançadas para a próxima fase.
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-success">Confirmar e Gerar Semifinal</button>
+                    <button type="button" class="btn btn-warning" onclick="advanceWinners()">Avançar Vencedores</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Campeão -->
+    <div class="modal fade" id="championModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title"><i class="bi bi-trophy-fill me-2"></i> Campeão da Categoria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="modal-icon text-warning">
+                        <i class="bi bi-trophy-fill"></i>
+                    </div>
+                    <h4 id="championName"></h4>
+                    <p class="mb-0">Parabéns ao campeão da categoria <strong>{{ categoria.nome }}</strong>!</p>
+                    <div class="d-flex justify-content-center mt-4">
+                        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Fechar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -670,171 +540,428 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-		// Variáveis de controle
-		const matchTimers = {
-			1: { interval: null, minutes: 2, seconds: 0, running: true },
-			2: { interval: null, minutes: 2, seconds: 0, running: false },
-			3: { interval: null, minutes: 2, seconds: 0, running: false },
-			4: { interval: null, minutes: 1, seconds: 45, running: true }
-		};
+        // Variáveis globais
+        let currentMatchToFinish = null;
+        let currentMatchToCancel = null;
+        let currentPenaltyMatch = null;
+        let currentPenaltyAthlete = null;
+        let currentPhase = {{ current_phase }};
+        let maxPhases = {{ max_phases }};
+        let champion = null;
 
-		// Função para alternar a sidebar
-		function toggleSidebar() {
-			const sidebar = document.getElementById('sidebar');
-			const content = document.getElementById('content');
-			sidebar.classList.toggle('active');
-			content.classList.toggle('active');
-		}
+        // Inicializa os modais
+        const finishMatchModal = new bootstrap.Modal(document.getElementById('finishMatchModal'));
+        const cancelMatchModal = new bootstrap.Modal(document.getElementById('cancelMatchModal'));
+        const advanceModal = new bootstrap.Modal(document.getElementById('advanceModal'));
+        const championModal = new bootstrap.Modal(document.getElementById('championModal'));
 
-		// Funções de controle das partidas
-		function toggleMatchTimer(matchId) {
-			const timer = matchTimers[matchId];
-			const btn = document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"] i`);
+        // Estrutura para armazenar partidas
+        const allMatches = {};
 
-			if (timer.running) {
-				clearInterval(timer.interval);
-				btn.classList.remove('bi-pause-fill');
-				btn.classList.add('bi-play-fill');
-				document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"]`).innerHTML = '<i class="bi bi-play-fill"></i> Play';
-			} else {
-				startTimer(matchId);
-				btn.classList.remove('bi-play-fill');
-				btn.classList.add('bi-pause-fill');
-				document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"]`).innerHTML = '<i class="bi bi-pause-fill"></i> Pause';
-			}
+        // Inicializa os timers
+        const matchTimers = {};
+        {% for partida in partidas %}
+        matchTimers[{{ partida.numero }}] = {
+            interval: null,
+            minutes: 2,
+            seconds: 0,
+            running: false
+        };
+        {% endfor %}
 
-			timer.running = !timer.running;
-		}
+        // Função para preparar finalização da partida
+        function prepareFinishMatch(matchId) {
+            currentMatchToFinish = matchId;
+            finishMatchModal.show();
+        }
 
-		function resetMatchTimer(matchId) {
-			const timer = matchTimers[matchId];
-			clearInterval(timer.interval);
-			timer.minutes = 2;
-			timer.seconds = 0;
-			timer.running = false;
-			updateTimerDisplay(matchId);
+        // Confirmar finalização da partida
+        document.getElementById('confirmFinishMatch').addEventListener('click', function() {
+            if (currentMatchToFinish) {
+                finishMatch(currentMatchToFinish);
+                finishMatchModal.hide();
+            }
+        });
 
-			const btn = document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"] i`);
-			btn.classList.remove('bi-pause-fill');
-			btn.classList.add('bi-play-fill');
-			document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"]`).innerHTML = '<i class="bi bi-play-fill"></i> Play';
-		}
+        // Função para preparar cancelamento da partida
+        function prepareCancelMatch(matchId) {
+            currentMatchToCancel = matchId;
+            cancelMatchModal.show();
+        }
 
-		function updateTimerDisplay(matchId) {
-			const timer = matchTimers[matchId];
-			const display = document.querySelector(`.timer-display[data-match="${matchId}"]`);
-			display.textContent = `${timer.minutes.toString().padStart(2, '0')}:${timer.seconds.toString().padStart(2, '0')}`;
-		}
+        // Confirmar cancelamento da partida
+        document.getElementById('confirmCancelMatch').addEventListener('click', function() {
+            if (currentMatchToCancel) {
+                cancelMatch(currentMatchToCancel);
+                cancelMatchModal.hide();
+            }
+        });
 
-		function addPoint(matchId, athleteId) {
-			const input = document.querySelector(`.score-input[data-match="${matchId}"][data-athlete="${athleteId}"]`);
-			input.value = parseInt(input.value) + 1;
-		}
+        // Função para desabilitar inputs de uma partida
+        function disableMatchInputs(matchId) {
+            const inputs = document.querySelectorAll(`.score-input[data-match="${matchId}"]`);
+            inputs.forEach(input => {
+                input.disabled = true;
+                input.classList.add('disabled-input');
+            });
 
-		function addTime(matchId, seconds) {
-			const timer = matchTimers[matchId];
-			timer.seconds += seconds;
+            const buttons = document.querySelectorAll(`button[onclick="addPoint(${matchId},1)"], button[onclick="addPoint(${matchId},2)"]`);
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('disabled');
+            });
+        }
 
-			while (timer.seconds >= 60) {
-				timer.seconds -= 60;
-				timer.minutes += 1;
-			}
+        // Função para finalizar partida
+        function finishMatch(matchId) {
+            clearInterval(matchTimers[matchId].interval);
+            matchTimers[matchId].running = false;
 
-			updateTimerDisplay(matchId);
-		}
+            // Determina o vencedor
+            const scoreAka = parseInt(document.querySelector(`.score-input[data-match="${matchId}"][data-athlete="1"]`).value) || 0;
+            const scoreAo = parseInt(document.querySelector(`.score-input[data-match="${matchId}"][data-athlete="2"]`).value) || 0;
+            let winner = null;
 
-		function addPenalty(matchId, athleteId) {
-			alert(`Adicionar penalidade ao atleta ${athleteId} da partida ${matchId}`);
-			// Abrir modal de penalidades específico
-		}
+            if (scoreAka > scoreAo) {
+                winner = 'AKA';
+            } else if (scoreAo > scoreAka) {
+                winner = 'AO';
+            } else {
+                winner = 'Empate';
+            }
 
-		function finishMatch(matchId) {
-			if (confirm(`Deseja finalizar a Partida #${matchId}?`)) {
-				clearInterval(matchTimers[matchId].interval);
-				matchTimers[matchId].running = false;
+            // Atualiza status da partida
+            const statusBadge = document.querySelector(`#match-${matchId} .match-status-badge`);
+            if (statusBadge) {
+                statusBadge.classList.remove('bg-success', 'bg-warning', 'bg-secondary');
+                statusBadge.classList.add('bg-info');
+                statusBadge.textContent = 'Finalizada';
 
-				// Atualizar status no cabeçalho da partida
-				const statusBadge = document.querySelector(`.match-card:nth-child(${matchId}) .match-status-badge`);
-				if (statusBadge) {
-					statusBadge.classList.remove('bg-success', 'bg-warning', 'bg-secondary');
-					statusBadge.classList.add('bg-info');
-					statusBadge.textContent = 'Finalizada';
-				}
-			}
-		}
+                // Adiciona badge ao vencedor
+                if (winner !== 'Empate') {
+                    const winnerSide = winner === 'AKA' ? '1' : '2';
+                    const winnerDiv = document.querySelector(`.athlete-info:nth-child(${winnerSide})`, document.querySelector(`#match-${matchId}`));
+                    if (winnerDiv) {
+                        const championBadge = document.createElement('span');
+                        championBadge.className = 'badge champion-badge ms-2';
+                        championBadge.innerHTML = '<i class="bi bi-trophy-fill"></i> Vencedor';
+                        winnerDiv.querySelector('.flex-grow-1').appendChild(championBadge);
+                    }
+                }
+            }
 
-		function cancelMatch(matchId) {
-			if (confirm(`Deseja cancelar a Partida #${matchId}?`)) {
-				clearInterval(matchTimers[matchId].interval);
-				matchTimers[matchId].running = false;
+            // Desabilita inputs
+            disableMatchInputs(matchId);
 
-				// Atualizar status no cabeçalho da partida
-				const statusBadge = document.querySelector(`.match-card:nth-child(${matchId}) .match-status-badge`);
-				if (statusBadge) {
-					statusBadge.classList.remove('bg-success', 'bg-warning', 'bg-secondary', 'bg-info');
-					statusBadge.classList.add('bg-danger');
-					statusBadge.textContent = 'Cancelada';
-				}
-			}
-		}
+            // Atualiza a tabela de resumo
+            updateSummaryTable(matchId, scoreAka, scoreAo, 'Finalizada');
 
-		function startAllMatches() {
-			for (let matchId in matchTimers) {
-				if (!matchTimers[matchId].running) {
-					startTimer(matchId);
-					matchTimers[matchId].running = true;
-					const btn = document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"] i`);
-					if (btn) {
-						btn.classList.remove('bi-play-fill');
-						btn.classList.add('bi-pause-fill');
-						document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"]`).innerHTML = '<i class="bi bi-pause-fill"></i> Pause';
-					}
-				}
-			}
-		}
+            console.log(`Partida #${matchId} finalizada. Vencedor: ${winner} (${scoreAka}-${scoreAo})`);
+        }
 
-		function pauseAllMatches() {
-			for (let matchId in matchTimers) {
-				if (matchTimers[matchId].running) {
-					clearInterval(matchTimers[matchId].interval);
-					matchTimers[matchId].running = false;
-					const btn = document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"] i`);
-					if (btn) {
-						btn.classList.remove('bi-pause-fill');
-						btn.classList.add('bi-play-fill');
-						document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"]`).innerHTML = '<i class="bi bi-play-fill"></i> Play';
-					}
-				}
-			}
-		}
+        // Função para cancelar partida
+        function cancelMatch(matchId) {
+            clearInterval(matchTimers[matchId].interval);
+            matchTimers[matchId].running = false;
 
-		function focusMatch(matchId) {
-			const matchElement = document.querySelector(`.match-card:nth-child(${matchId})`);
-			if (matchElement) {
-				matchElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				matchElement.style.boxShadow = '0 0 0 3px rgba(13, 110, 253, 0.5)';
-				setTimeout(() => {
-					matchElement.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.08)';
-				}, 2000);
-			}
-		}
+            // Atualiza status da partida
+            const statusBadge = document.querySelector(`#match-${matchId} .match-status-badge`);
+            if (statusBadge) {
+                statusBadge.classList.remove('bg-success', 'bg-warning', 'bg-secondary', 'bg-info');
+                statusBadge.classList.add('bg-danger');
+                statusBadge.textContent = 'Cancelada';
+            }
 
-		// Inicialização dos timers
-		document.addEventListener('DOMContentLoaded', () => {
-			// Inicia os timers que devem estar rodando por padrão
-			for (let matchId in matchTimers) {
-				updateTimerDisplay(matchId);
-				if (matchTimers[matchId].running) {
-					startTimer(matchId);
-					const btn = document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"] i`);
-					if (btn) {
-						btn.classList.remove('bi-play-fill');
-						btn.classList.add('bi-pause-fill');
-						document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"]`).innerHTML = '<i class="bi bi-pause-fill"></i> Pause';
-					}
-				}
-			}
-		});
-	</script>
+            // Desabilita inputs
+            disableMatchInputs(matchId);
+
+            // Atualiza a tabela de resumo
+            updateSummaryTable(matchId, 0, 0, 'Cancelada');
+
+            console.log(`Partida #${matchId} cancelada`);
+        }
+
+        // Função para mostrar modal de penalidades
+        function showPenaltyModal(matchId, athleteId) {
+            currentPenaltyMatch = matchId;
+            currentPenaltyAthlete = athleteId;
+
+            const athleteElement = document.querySelector(`.athlete-info:nth-child(${athleteId}) h6`,
+                document.querySelector(`#match-${matchId}`));
+            const athleteName = athleteElement ? athleteElement.textContent.trim() : 'Atleta';
+
+            document.getElementById('athleteName').value = `${athleteName} (${athleteId === 1 ? 'AKA' : 'AO'})`;
+            document.getElementById('penaltyType').value = 'C1';
+            document.getElementById('penaltyReason').value = '';
+
+            penaltyModal.show();
+        }
+
+        // Função para adicionar penalidade
+        function addPenalty() {
+            if (!currentPenaltyMatch || !currentPenaltyAthlete) return;
+
+            const penaltyType = document.getElementById('penaltyType').value;
+            const penaltyReason = document.getElementById('penaltyReason').value;
+
+            // Adiciona a penalidade visualmente
+            const penaltiesContainer = document.querySelector(`.penalties[data-match="${currentPenaltyMatch}"][data-athlete="${currentPenaltyAthlete}"]`);
+
+            let badgeClass = 'bg-danger';
+            if (penaltyType === 'H1' || penaltyType === 'H2') {
+                badgeClass = 'bg-warning text-dark';
+            }
+
+            const badge = document.createElement('span');
+            badge.className = `badge ${badgeClass} penalty-badge me-1`;
+            badge.textContent = penaltyType;
+            badge.title = penaltyReason || 'Penalidade aplicada';
+
+            penaltiesContainer.appendChild(badge);
+
+            penaltyModal.hide();
+        }
+
+        // Função para atualizar a tabela de resumo
+        function updateSummaryTable(matchId, scoreAka, scoreAo, status) {
+            const row = document.querySelector(`table tbody tr:nth-child(${matchId})`);
+            if (row) {
+                const cells = row.cells;
+                cells[3].textContent = scoreAka;
+                cells[5].textContent = scoreAo;
+
+                // Atualiza status
+                const statusBadge = cells[6].querySelector('.badge');
+                if (statusBadge) {
+                    statusBadge.className = 'badge ' +
+                        (status === 'Finalizada' ? 'bg-info' :
+                         status === 'Cancelada' ? 'bg-danger' : 'bg-secondary');
+                    statusBadge.textContent = status;
+                }
+            }
+        }
+
+        // Função para avançar vencedores
+        function advanceWinners() {
+            const winners = [];
+            let hasUnconfirmed = false;
+
+            // Coleta os vencedores confirmados
+            document.querySelectorAll('.winner-select').forEach(select => {
+                const matchId = select.dataset.match;
+                const checkbox = document.querySelector(`.confirm-checkbox[data-match="${matchId}"]`);
+
+                if (select.value && checkbox.checked) {
+                    winners.push({
+                        matchId: parseInt(matchId),
+                        athleteId: parseInt(select.value),
+                        athleteName: select.options[select.selectedIndex].text
+                    });
+                } else if (select.value && !checkbox.checked) {
+                    hasUnconfirmed = true;
+                }
+            });
+
+            if (winners.length === 0) {
+                alert('Nenhum vencedor foi selecionado ou confirmado!');
+                return;
+            }
+
+            if (hasUnconfirmed) {
+                if (!confirm('Alguns vencedores não foram confirmados. Deseja avançar apenas os confirmados?')) {
+                    return;
+                }
+            }
+
+            // Aqui você enviaria os dados para o servidor
+            console.log('Vencedores a avançar:', winners);
+
+            // Simula o avanço para a próxima fase
+            if (currentPhase < maxPhases) {
+                currentPhase++;
+                alert(`Vencedores avançados para a fase ${currentPhase}! Atualizando a página...`);
+                // Na implementação real, você redirecionaria para a próxima fase
+                window.location.href = window.location.href;
+            } else {
+                // Se for a final, define o campeão
+                if (winners.length === 1) {
+                    champion = winners[0];
+                    showChampion(champion.athleteName);
+                }
+            }
+
+            advanceModal.hide();
+        }
+
+        // Função para mostrar o campeão
+        function showChampion(championName) {
+            document.getElementById('championName').textContent = championName;
+            championModal.show();
+        }
+
+        // Função para alternar o timer da partida
+        function toggleMatchTimer(matchId) {
+            const timer = matchTimers[matchId];
+            const btn = document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"] i`);
+
+            if (timer.running) {
+                clearInterval(timer.interval);
+                btn.classList.remove('bi-pause-fill');
+                btn.classList.add('bi-play-fill');
+                document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"]`).innerHTML = '<i class="bi bi-play-fill"></i> Play';
+            } else {
+                startTimer(matchId);
+                btn.classList.remove('bi-play-fill');
+                btn.classList.add('bi-pause-fill');
+                document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"]`).innerHTML = '<i class="bi bi-pause-fill"></i> Pause';
+            }
+
+            timer.running = !timer.running;
+            updateMatchStatus(matchId);
+        }
+
+        // Função para iniciar o timer
+        function startTimer(matchId) {
+            const timer = matchTimers[matchId];
+
+            if (timer.interval) {
+                clearInterval(timer.interval);
+            }
+
+            timer.interval = setInterval(() => {
+                if (timer.seconds === 0) {
+                    if (timer.minutes === 0) {
+                        clearInterval(timer.interval);
+                        finishMatch(matchId);
+                        return;
+                    }
+                    timer.minutes--;
+                    timer.seconds = 59;
+                } else {
+                    timer.seconds--;
+                }
+                updateTimerDisplay(matchId);
+            }, 1000);
+        }
+
+        // Função para resetar o timer
+        function resetMatchTimer(matchId) {
+            const timer = matchTimers[matchId];
+            clearInterval(timer.interval);
+            timer.minutes = 2;
+            timer.seconds = 0;
+            timer.running = false;
+            updateTimerDisplay(matchId);
+
+            const btn = document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"] i`);
+            btn.classList.remove('bi-pause-fill');
+            btn.classList.add('bi-play-fill');
+            document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"]`).innerHTML = '<i class="bi bi-play-fill"></i> Play';
+
+            updateMatchStatus(matchId);
+        }
+
+        // Função para atualizar o display do timer
+        function updateTimerDisplay(matchId) {
+            const timer = matchTimers[matchId];
+            const display = document.querySelector(`.timer-display[data-match="${matchId}"]`);
+            display.textContent = `${timer.minutes.toString().padStart(2, '0')}:${timer.seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Função para atualizar o status da partida
+        function updateMatchStatus(matchId) {
+            const timer = matchTimers[matchId];
+            const statusBadge = document.querySelector(`#match-${matchId} .match-status-badge`);
+
+            if (!statusBadge) return;
+
+            statusBadge.classList.remove('bg-success', 'bg-warning', 'bg-secondary', 'bg-info', 'bg-danger');
+
+            if (timer.running) {
+                statusBadge.classList.add('bg-success');
+                statusBadge.textContent = 'Em Andamento';
+            } else if (timer.minutes === 2 && timer.seconds === 0) {
+                statusBadge.classList.add('bg-secondary');
+                statusBadge.textContent = 'Não Iniciada';
+            } else {
+                statusBadge.classList.add('bg-warning', 'text-dark');
+                statusBadge.textContent = 'Pausada';
+            }
+        }
+
+        // Função para adicionar pontos
+        function addPoint(matchId, athleteId) {
+            const input = document.querySelector(`.score-input[data-match="${matchId}"][data-athlete="${athleteId}"]`);
+            input.value = parseInt(input.value) + 1;
+        }
+
+        // Função para adicionar tempo
+        function addTime(matchId, seconds) {
+            const timer = matchTimers[matchId];
+            timer.seconds += seconds;
+
+            while (timer.seconds >= 60) {
+                timer.seconds -= 60;
+                timer.minutes += 1;
+            }
+
+            updateTimerDisplay(matchId);
+        }
+
+        // Função para iniciar todas as partidas
+        function startAllMatches() {
+            for (let matchId in matchTimers) {
+                if (!matchTimers[matchId].running) {
+                    startTimer(matchId);
+                    matchTimers[matchId].running = true;
+                    const btn = document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"] i`);
+                    if (btn) {
+                        btn.classList.remove('bi-play-fill');
+                        btn.classList.add('bi-pause-fill');
+                        document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"]`).innerHTML = '<i class="bi bi-pause-fill"></i> Pause';
+                    }
+                    updateMatchStatus(matchId);
+                }
+            }
+        }
+
+        // Função para pausar todas as partidas
+        function pauseAllMatches() {
+            for (let matchId in matchTimers) {
+                if (matchTimers[matchId].running) {
+                    clearInterval(matchTimers[matchId].interval);
+                    matchTimers[matchId].running = false;
+                    const btn = document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"] i`);
+                    if (btn) {
+                        btn.classList.remove('bi-pause-fill');
+                        btn.classList.add('bi-play-fill');
+                        document.querySelector(`button[onclick="toggleMatchTimer(${matchId})"]`).innerHTML = '<i class="bi bi-play-fill"></i> Play';
+                    }
+                    updateMatchStatus(matchId);
+                }
+            }
+        }
+
+        // Função para focar em uma partida específica
+        function focusMatch(matchId) {
+            const matchElement = document.getElementById(`match-${matchId}`);
+            if (matchElement) {
+                matchElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                matchElement.style.boxShadow = '0 0 0 3px rgba(13, 110, 253, 0.5)';
+                setTimeout(() => {
+                    matchElement.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.08)';
+                }, 2000);
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            // Atualiza os displays dos timers
+            for (let matchId in matchTimers) {
+                updateTimerDisplay(matchId);
+                updateMatchStatus(matchId);
+            }
+        });
+    </script>
 </body>
 </html>

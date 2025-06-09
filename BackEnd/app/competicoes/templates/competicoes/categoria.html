@@ -155,8 +155,8 @@
                                     <label for="tipo" class="form-label">Tipo</label>
                                     <select class="form-select" id="tipo" name="tipo" required>
                                         <option value="" selected disabled>Selecione</option>
-                                        <option value="GI">Gi</option>
-                                        <option value="NOGI">No-Gi</option>
+                                        <option value="KATA">Kata</option>
+                                        <option value="KUMITE">Kumitê</option>
                                         <option value="ABS">Absolute</option>
                                     </select>
                                 </div>
@@ -251,7 +251,7 @@
                                             </td>
                                             <td>{{ categoria.nome }}</td>
                                             <td>
-                                                <span class="badge {% if categoria.tipo == 'GI' %}badge-gi{% elif categoria.tipo == 'NOGI' %}badge-nogi{% else %}badge-primary{% endif %}">
+                                                <span class="badge {% if categoria.tipo == 'KATA' %}badge-gi{% elif categoria.tipo == 'KUMITE' %}badge-nogi{% else %}badge-primary{% endif %}">
                                                     {{ categoria.get_tipo_display }}
                                                 </span>
                                             </td>
