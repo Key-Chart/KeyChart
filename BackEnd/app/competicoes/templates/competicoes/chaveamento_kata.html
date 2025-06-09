@@ -14,7 +14,6 @@
     <title>{{ competicao.nome }} | KeyChart</title>
     <style>
         .athlete-row:hover {
-            background-color: #f8f9fa;
             transition: all 0.3s ease;
         }
         .nota-input {
@@ -41,6 +40,48 @@
             padding: 15px;
             border-radius: 5px;
             margin-bottom: 20px;
+        }
+
+        /* Estilos para faixas */
+        .faixa-branca {
+            background-color: #ffffff;
+            border-left: 4px solid #c0c0c0;
+        }
+        .faixa-azul {
+            background-color: #f0f8ff;
+            border-left: 4px solid #1e90ff;
+        }
+        .faixa-amarela {
+            background-color: #fffff0;
+            border-left: 4px solid #ffd700;
+        }
+        .faixa-verde {
+            background-color: #f0fff0;
+            border-left: 4px solid #2e8b57;
+        }
+        .faixa-roxa {
+            background-color: #f8f0ff;
+            border-left: 4px solid #800080;
+        }
+        .faixa-marrom {
+            background-color: #fff8f0;
+            border-left: 4px solid #8b4513;
+        }
+        .faixa-preta {
+            background-color: #f0f0f0;
+            border-left: 4px solid #000000;
+        }
+
+        /* Modal com ícone */
+        .modal-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .modal-success .modal-icon {
+            color: #28a745;
+        }
+        .modal-info .modal-icon {
+            color: #17a2b8;
         }
     </style>
 </head>
@@ -110,20 +151,21 @@
                             <thead class="table-header">
                                 <tr>
                                     <th width="5%">ID</th>
-                                    <th width="20%">Atleta</th>
+                                    <th width="15%">Atleta</th>
                                     <th width="10%">Cidade/Estado</th>
                                     <th width="10%">Academia</th>
                                     <th width="8%">Nota 1</th>
                                     <th width="8%">Nota 2</th>
                                     <th width="8%">Nota 3</th>
                                     <th width="8%">Nota 4</th>
+                                    <th width="8%">Nota 5</th>
                                     <th width="8%">Total</th>
-                                    <th width="15%">Ações</th>
+                                    <th width="12%">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for atleta in atletas %}
-                                <tr class="athlete-row" data-atleta-id="{{ atleta.id }}">
+                                <tr class="athlete-row faixa-{{ atleta.faixa|lower }}" data-atleta-id="{{ atleta.id }}">
                                     <td class="fw-bold">{{ atleta.id }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
@@ -147,13 +189,14 @@
                                     <td><input type="number" class="form-control form-control-sm nota-input" name="nota2" value="0.0" min="0" max="10" step="0.1"></td>
                                     <td><input type="number" class="form-control form-control-sm nota-input" name="nota3" value="0.0" min="0" max="10" step="0.1"></td>
                                     <td><input type="number" class="form-control form-control-sm nota-input" name="nota4" value="0.0" min="0" max="10" step="0.1"></td>
+                                    <td><input type="number" class="form-control form-control-sm nota-input" name="nota5" value="0.0" min="0" max="10" step="0.1"></td>
                                     <td class="total-score">0.0</td>
                                     <td>
                                         <div class="d-flex gap-1">
                                             <button class="btn btn-sm btn-success btn-salvar">
                                                 <i class="bi bi-save"></i> Salvar
                                             </button>
-                                            <button class="btn btn-sm btn-info text-white btn-visualizar">
+                                            <button class="btn btn-sm btn-info text-white btn-visualizar" data-bs-toggle="modal" data-bs-target="#visualizarModal">
                                                 <i class="bi bi-eye"></i>
                                             </button>
                                         </div>
@@ -161,7 +204,7 @@
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="10" class="text-center py-4">
+                                    <td colspan="11" class="text-center py-4">
                                         <div class="alert alert-info">
                                             <i class="bi bi-info-circle me-2"></i> Nenhum atleta inscrito nesta categoria.
                                         </div>
@@ -175,13 +218,78 @@
 
                 <div class="card-footer bg-light d-flex justify-content-between align-items-center">
                     <div class="text-muted small">
-                        <i class="bi bi-info-circle me-1"></i> Clique em um atleta para ver detalhes
+                        <i class="bi bi-info-circle me-1"></i> Clique no ícone de visualização para ver detalhes do atleta
                     </div>
-                    <div>
-                        <button class="btn btn-primary" id="gerarChaveamento">
-                            <i class="bi bi-diagram-3 me-1"></i> Gerar Chaveamento
-                        </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Visualizar -->
+    <div class="modal fade" id="visualizarModal" tabindex="-1" aria-labelledby="visualizarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="visualizarModalLabel"><i class="bi bi-person-badge me-2"></i>Detalhes do Atleta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <img src="{% static 'competicoes/img/foto_atleta.png' %}" class="img-thumbnail rounded-circle" width="120" alt="Foto do Atleta">
                     </div>
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <p><strong>Nome:</strong> <span id="modal-nome">Carlos Silva</span></p>
+                            <p><strong>Idade:</strong> <span id="modal-idade">25 anos</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Faixa:</strong> <span id="modal-faixa">Preta</span></p>
+                            <p><strong>Peso:</strong> <span id="modal-peso">70 kg</span></p>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <p><strong>Cidade/Estado:</strong> <span id="modal-cidade">São Paulo/SP</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Academia:</strong> <span id="modal-academia">Academia Central</span></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <h6 class="mb-3">Notas</h6>
+                    <div class="row">
+                        <div class="col-4 text-center">
+                            <p class="mb-1"><small>Nota 1</small></p>
+                            <h5>8.5</h5>
+                        </div>
+                        <div class="col-4 text-center">
+                            <p class="mb-1"><small>Nota 2</small></p>
+                            <h5>9.0</h5>
+                        </div>
+                        <div class="col-4 text-center">
+                            <p class="mb-1"><small>Total</small></p>
+                            <h5 class="text-primary">17.5</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmação -->
+    <div class="modal fade modal-success" id="confirmacaoModal" tabindex="-1" aria-labelledby="confirmacaoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-center p-4">
+                    <div class="modal-icon">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <h4 class="mb-3">Notas salvas com sucesso!</h4>
+                    <p>As notas do atleta foram atualizadas no sistema.</p>
+                    <button type="button" class="btn btn-success mt-2" data-bs-dismiss="modal">OK</button>
                 </div>
             </div>
         </div>
@@ -196,7 +304,10 @@
         const stateFilter = document.getElementById('stateFilter');
         const athleteRows = document.querySelectorAll('.athlete-row');
         const notaInputs = document.querySelectorAll('.nota-input');
-        const gerarChaveamentoBtn = document.getElementById('gerarChaveamento');
+        const visualizarButtons = document.querySelectorAll('.btn-visualizar');
+        const salvarButtons = document.querySelectorAll('.btn-salvar');
+        const confirmacaoModal = new bootstrap.Modal(document.getElementById('confirmacaoModal'));
+        const visualizarModal = new bootstrap.Modal(document.getElementById('visualizarModal'));
 
         // Função para filtrar atletas
         function filterAthletes() {
@@ -246,9 +357,21 @@
             });
         });
 
+        // Botão Visualizar
+        visualizarButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                // Aqui você pode preencher os dados do modal com as informações do atleta
+                // Exemplo:
+                // document.getElementById('modal-nome').textContent = row.querySelector('.fw-semibold').textContent;
+                // document.getElementById('modal-faixa').textContent = row.querySelector('.text-muted').textContent;
+                // etc...
+            });
+        });
+
         // Botão Salvar
-        document.querySelectorAll('.btn-salvar').forEach(btn => {
-            btn.addEventListener('click', function() {
+        salvarButtons.forEach(button => {
+            button.addEventListener('click', function() {
                 const row = this.closest('tr');
                 const atletaId = row.getAttribute('data-atleta-id');
                 const notas = {
@@ -256,32 +379,16 @@
                     nota2: parseFloat(row.querySelector('[name="nota2"]').value) || 0,
                     nota3: parseFloat(row.querySelector('[name="nota3"]').value) || 0,
                     nota4: parseFloat(row.querySelector('[name="nota4"]').value) || 0,
+                    nota5: parseFloat(row.querySelector('[name="nota5"]').value) || 0,
                     total: parseFloat(row.querySelector('.total-score').textContent) || 0
                 };
 
                 // Aqui você pode adicionar a lógica para salvar no banco de dados
                 console.log(`Salvando notas para atleta ${atletaId}:`, notas);
-                alert(`Notas do atleta ID ${atletaId} salvas com sucesso!`);
+
+                // Mostrar modal de confirmação
+                confirmacaoModal.show();
             });
-        });
-
-        // Botão Gerar Chaveamento
-        gerarChaveamentoBtn.addEventListener('click', function() {
-            // Ordenar atletas por nota total (decrescente)
-            const rows = Array.from(document.querySelectorAll('.athlete-row')).filter(row => row.style.display !== 'none');
-
-            rows.sort((a, b) => {
-                const totalA = parseFloat(a.querySelector('.total-score').textContent);
-                const totalB = parseFloat(b.querySelector('.total-score').textContent);
-                return totalB - totalA;
-            });
-
-            // Reorganizar a tabela
-            const tbody = document.querySelector('tbody');
-            tbody.innerHTML = '';
-            rows.forEach(row => tbody.appendChild(row));
-
-            alert('Chaveamento gerado com sucesso! Atletas ordenados por pontuação.');
         });
 
         // Debug
