@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -88,7 +89,7 @@
 <body>
 
     {% include 'sidebar.html' %}
-
+    {% block content %}
     <div class="content" id="content">
         <div class="header d-flex align-items-center justify-content-between bg-dark text-white p-3">
             <div class="d-flex align-items-center">
@@ -110,6 +111,11 @@
                         <h4 class="mb-0"><i class="bi bi-diagram-3 me-2"></i>Chaveamento de Kata</h4>
                     </div>
                     <div class="d-flex gap-2">
+                        {% if chaveamento_existente %}
+                        <span class="badge bg-success d-flex align-items-center">
+                            <i class="bi bi-check-circle me-1"></i> Chaveamento Gerado
+                        </span>
+                        {% endif %}
                         <button class="btn btn-sm btn-light" id="exportData">
                             <i class="bi bi-download me-1"></i> Exportar
                         </button>
@@ -145,80 +151,133 @@
                         </div>
                     </div>
 
-                    <!-- Tabela de Atletas -->
+                    <!-- Tabela de Atletas - PARTE CORRIGIDA -->
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover align-middle" id="kataTable">
-                            <thead class="table-header">
-                                <tr>
-                                    <th width="5%">ID</th>
-                                    <th width="15%">Atleta</th>
-                                    <th width="10%">Cidade/Estado</th>
-                                    <th width="10%">Academia</th>
-                                    <th width="8%">Nota 1</th>
-                                    <th width="8%">Nota 2</th>
-                                    <th width="8%">Nota 3</th>
-                                    <th width="8%">Nota 4</th>
-                                    <th width="8%">Nota 5</th>
-                                    <th width="8%">Total</th>
-                                    <th width="12%">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for atleta in atletas %}
-                                <tr class="athlete-row faixa-{{ atleta.faixa|lower }}" data-atleta-id="{{ atleta.id }}">
-                                    <td class="fw-bold">{{ atleta.id }}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar me-2">
-                                                <img src="{% if atleta.foto %}{{ atleta.foto.url }}{% else %}{% static 'competicoes/img/foto_atleta.png' %}{% endif %}"
-                                                     class="avatar-img" alt="Avatar">
+                        <form id="formResultados">
+                            {% csrf_token %}
+                            <table class="table table-bordered table-hover align-middle" id="kataTable">
+                                <thead class="table-header">
+                                    <tr>
+                                        <th width="5%">ID</th>
+                                        <th width="15%">Atleta</th>
+                                        <th width="10%">Cidade/Estado</th>
+                                        <th width="10%">Academia</th>
+                                        <th width="8%">Nota 1</th>
+                                        <th width="8%">Nota 2</th>
+                                        <th width="8%">Nota 3</th>
+                                        <th width="8%">Nota 4</th>
+                                        <th width="8%">Nota 5</th>
+                                        <th width="8%">Total</th>
+                                        <th width="12%">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for atleta in atletas %}
+                                    {% with resultado=resultados|get_item:atleta.id %}
+                                    <tr class="athlete-row faixa-{{ atleta.faixa|lower }}" data-atleta-id="{{ atleta.id }}">
+                                        <td class="fw-bold">{{ atleta.id }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar me-2">
+                                                    <img src="{% if atleta.foto %}{{ atleta.foto.url }}{% else %}{% static 'competicoes/img/foto_atleta.png' %}{% endif %}"
+                                                         class="avatar-img" alt="Avatar">
+                                                </div>
+                                                <div>
+                                                    <div class="fw-semibold">{{ atleta.nome_completo }}</div>
+                                                    <small class="text-muted">{{ atleta.get_faixa_display }}</small>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <div class="fw-semibold">{{ atleta.nome_completo }}</div>
-                                                <small class="text-muted">{{ atleta.get_faixa_display }}</small>
+                                        </td>
+                                        <td>
+                                            {{ atleta.cidade }}/{{ atleta.get_estado_display }}
+                                        </td>
+                                        <td>
+                                            {% if atleta.academia %}{{ atleta.academia.nome }}{% else %}--{% endif %}
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm nota-input"
+                                                   name="nota1_{{ atleta.id }}"
+                                                   value="{% if resultado %}{{ resultado.nota1|stringformat:".1f" }}{% else %}0.0{% endif %}"
+                                                   min="0" max="10" step="0.1"
+                                                   {% if resultado or chaveamento_existente %}readonly{% endif %}>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm nota-input"
+                                                   name="nota2_{{ atleta.id }}"
+                                                   value="{% if resultado %}{{ resultado.nota2|stringformat:".1f" }}{% else %}0.0{% endif %}"
+                                                   min="0" max="10" step="0.1"
+                                                   {% if resultado or chaveamento_existente %}readonly{% endif %}>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm nota-input"
+                                                   name="nota3_{{ atleta.id }}"
+                                                   value="{% if resultado %}{{ resultado.nota3|stringformat:".1f" }}{% else %}0.0{% endif %}"
+                                                   min="0" max="10" step="0.1"
+                                                   {% if resultado or chaveamento_existente %}readonly{% endif %}>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm nota-input"
+                                                   name="nota4_{{ atleta.id }}"
+                                                   value="{% if resultado %}{{ resultado.nota4|stringformat:".1f" }}{% else %}0.0{% endif %}"
+                                                   min="0" max="10" step="0.1"
+                                                   {% if resultado or chaveamento_existente %}readonly{% endif %}>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm nota-input"
+                                                   name="nota5_{{ atleta.id }}"
+                                                   value="{% if resultado %}{{ resultado.nota5|stringformat:".1f" }}{% else %}0.0{% endif %}"
+                                                   min="0" max="10" step="0.1"
+                                                   {% if resultado or chaveamento_existente %}readonly{% endif %}>
+                                        </td>
+                                        <td class="total-score">
+                                            {% if resultado %}{{ resultado.total|stringformat:".1f" }}{% else %}0.0{% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                {% if not resultado and not chaveamento_existente %}
+                                                <button type="button" class="btn btn-sm btn-success btn-salvar">
+                                                    <i class="bi bi-save"></i> Salvar
+                                                </button>
+                                                {% endif %}
+                                                <button type="button" class="btn btn-sm btn-info text-white btn-visualizar"
+                                                        data-bs-toggle="modal" data-bs-target="#visualizarModal"
+                                                        data-atleta-id="{{ atleta.id }}">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        {{ atleta.cidade }}/{{ atleta.get_estado_display }}
-                                    </td>
-                                    <td>
-                                        {% if atleta.academia %}{{ atleta.academia.nome }}{% else %}--{% endif %}
-                                    </td>
-                                    <td><input type="number" class="form-control form-control-sm nota-input" name="nota1" value="0.0" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control form-control-sm nota-input" name="nota2" value="0.0" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control form-control-sm nota-input" name="nota3" value="0.0" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control form-control-sm nota-input" name="nota4" value="0.0" min="0" max="10" step="0.1"></td>
-                                    <td><input type="number" class="form-control form-control-sm nota-input" name="nota5" value="0.0" min="0" max="10" step="0.1"></td>
-                                    <td class="total-score">0.0</td>
-                                    <td>
-                                        <div class="d-flex gap-1">
-                                            <button class="btn btn-sm btn-success btn-salvar">
-                                                <i class="bi bi-save"></i> Salvar
-                                            </button>
-                                            <button class="btn btn-sm btn-info text-white btn-visualizar" data-bs-toggle="modal" data-bs-target="#visualizarModal">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="11" class="text-center py-4">
-                                        <div class="alert alert-info">
-                                            <i class="bi bi-info-circle me-2"></i> Nenhum atleta inscrito nesta categoria.
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                        </td>
+                                    </tr>
+                                    {% endwith %}
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="11" class="text-center py-4">
+                                            <div class="alert alert-info">
+                                                <i class="bi bi-info-circle me-2"></i> Nenhum atleta inscrito nesta categoria.
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% if not chaveamento_existente and atletas %}
+                            <div class="text-end mt-3">
+                                <button type="button" id="btnSalvarTodos" class="btn btn-primary">
+                                    <i class="bi bi-save-fill me-1"></i> Salvar Todos os Resultados
+                                </button>
+                            </div>
+                            {% endif %}
+                        </form>
                     </div>
                 </div>
 
                 <div class="card-footer bg-light d-flex justify-content-between align-items-center">
                     <div class="text-muted small">
-                        <i class="bi bi-info-circle me-1"></i> Clique no ícone de visualização para ver detalhes do atleta
+                        <i class="bi bi-info-circle me-1"></i>
+                        {% if chaveamento_existente %}
+                        O chaveamento já foi gerado. As notas não podem mais ser alteradas.
+                        {% else %}
+                        Clique no ícone de visualização para ver detalhes do atleta
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -235,40 +294,52 @@
                 </div>
                 <div class="modal-body">
                     <div class="text-center mb-3">
-                        <img src="{% static 'competicoes/img/foto_atleta.png' %}" class="img-thumbnail rounded-circle" width="120" alt="Foto do Atleta">
+                        <img id="modal-foto" src="{% static 'competicoes/img/foto_atleta.png' %}" class="img-thumbnail rounded-circle" width="120" alt="Foto do Atleta">
                     </div>
                     <div class="row mb-2">
                         <div class="col-md-6">
-                            <p><strong>Nome:</strong> <span id="modal-nome">Carlos Silva</span></p>
-                            <p><strong>Idade:</strong> <span id="modal-idade">25 anos</span></p>
+                            <p><strong>Nome:</strong> <span id="modal-nome">-</span></p>
+                            <p><strong>Idade:</strong> <span id="modal-idade">-</span></p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Faixa:</strong> <span id="modal-faixa">Preta</span></p>
-                            <p><strong>Peso:</strong> <span id="modal-peso">70 kg</span></p>
+                            <p><strong>Faixa:</strong> <span id="modal-faixa">-</span></p>
+                            <p><strong>Peso:</strong> <span id="modal-peso">-</span></p>
                         </div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-md-6">
-                            <p><strong>Cidade/Estado:</strong> <span id="modal-cidade">São Paulo/SP</span></p>
+                            <p><strong>Cidade/Estado:</strong> <span id="modal-cidade">-</span></p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Academia:</strong> <span id="modal-academia">Academia Central</span></p>
+                            <p><strong>Academia:</strong> <span id="modal-academia">-</span></p>
                         </div>
                     </div>
                     <hr>
                     <h6 class="mb-3">Notas</h6>
                     <div class="row">
-                        <div class="col-4 text-center">
+                        <div class="col-2 text-center">
                             <p class="mb-1"><small>Nota 1</small></p>
-                            <h5>8.5</h5>
+                            <h5 id="modal-nota1">-</h5>
                         </div>
-                        <div class="col-4 text-center">
+                        <div class="col-2 text-center">
                             <p class="mb-1"><small>Nota 2</small></p>
-                            <h5>9.0</h5>
+                            <h5 id="modal-nota2">-</h5>
                         </div>
-                        <div class="col-4 text-center">
+                        <div class="col-2 text-center">
+                            <p class="mb-1"><small>Nota 3</small></p>
+                            <h5 id="modal-nota3">-</h5>
+                        </div>
+                        <div class="col-2 text-center">
+                            <p class="mb-1"><small>Nota 4</small></p>
+                            <h5 id="modal-nota4">-</h5>
+                        </div>
+                        <div class="col-2 text-center">
+                            <p class="mb-1"><small>Nota 5</small></p>
+                            <h5 id="modal-nota5">-</h5>
+                        </div>
+                        <div class="col-2 text-center">
                             <p class="mb-1"><small>Total</small></p>
-                            <h5 class="text-primary">17.5</h5>
+                            <h5 class="text-primary" id="modal-total">-</h5>
                         </div>
                     </div>
                 </div>
@@ -294,106 +365,211 @@
             </div>
         </div>
     </div>
+    {% endblock %}
 
+    {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Elementos do DOM
-        const searchInput = document.getElementById('searchInput');
-        const cityFilter = document.getElementById('cityFilter');
-        const stateFilter = document.getElementById('stateFilter');
-        const athleteRows = document.querySelectorAll('.athlete-row');
-        const notaInputs = document.querySelectorAll('.nota-input');
-        const visualizarButtons = document.querySelectorAll('.btn-visualizar');
-        const salvarButtons = document.querySelectorAll('.btn-salvar');
-        const confirmacaoModal = new bootstrap.Modal(document.getElementById('confirmacaoModal'));
-        const visualizarModal = new bootstrap.Modal(document.getElementById('visualizarModal'));
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos do DOM
+            const searchInput = document.getElementById('searchInput');
+            const cityFilter = document.getElementById('cityFilter');
+            const stateFilter = document.getElementById('stateFilter');
+            const athleteRows = document.querySelectorAll('.athlete-row');
+            const notaInputs = document.querySelectorAll('.nota-input');
+            const visualizarButtons = document.querySelectorAll('.btn-visualizar');
+            const salvarButtons = document.querySelectorAll('.btn-salvar');
+            const btnSalvarTodos = document.getElementById('btnSalvarTodos');
+            const formResultados = document.getElementById('formResultados');
+            const confirmacaoModal = new bootstrap.Modal(document.getElementById('confirmacaoModal'));
+            const visualizarModal = new bootstrap.Modal(document.getElementById('visualizarModal'));
 
-        // Função para filtrar atletas
-        function filterAthletes() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const cityValue = cityFilter.value.toLowerCase();
-            const stateValue = stateFilter.value.toLowerCase();
+            // Função para filtrar atletas
+            function filterAthletes() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const cityValue = cityFilter.value.toLowerCase();
+                const stateValue = stateFilter.value.toLowerCase();
 
-            athleteRows.forEach(row => {
-                const name = row.querySelector('.fw-semibold').textContent.toLowerCase();
-                const location = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-                const city = location.split('/')[0].trim();
-                const state = location.split('/')[1] ? location.split('/')[1].trim() : '';
+                athleteRows.forEach(row => {
+                    const name = row.querySelector('.fw-semibold').textContent.toLowerCase();
+                    const location = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                    const city = location.split('/')[0].trim();
+                    const state = location.split('/')[1] ? location.split('/')[1].trim() : '';
 
-                const matchesSearch = name.includes(searchTerm);
-                const matchesCity = cityValue === '' || city.includes(cityValue);
-                const matchesState = stateValue === '' || state.includes(stateValue);
+                    const matchesSearch = name.includes(searchTerm);
+                    const matchesCity = cityValue === '' || city.includes(cityValue);
+                    const matchesState = stateValue === '' || state.includes(stateValue);
 
-                if (matchesSearch && matchesCity && matchesState) {
-                    row.style.display = '';
+                    if (matchesSearch && matchesCity && matchesState) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            // Função para calcular o total (eliminando maior e menor nota)
+            function calculateTotal(row) {
+                const inputs = row.querySelectorAll('.nota-input');
+                let notas = [];
+
+                inputs.forEach(input => {
+                    const nota = parseFloat(input.value) || 0;
+                    notas.push(nota);
+                });
+
+                // Ordena as notas e remove a maior e a menor
+                if (notas.length >= 3) {
+                    notas.sort((a, b) => a - b);
+                    const notasValidas = notas.slice(1, -1); // Remove a primeira (menor) e última (maior)
+                    const total = notasValidas.reduce((sum, nota) => sum + nota, 0);
+                    row.querySelector('.total-score').textContent = total.toFixed(1);
+                    return total;
                 } else {
-                    row.style.display = 'none';
+                    const total = notas.reduce((sum, nota) => sum + nota, 0);
+                    row.querySelector('.total-score').textContent = total.toFixed(1);
+                    return total;
+                }
+            }
+
+            // Event Listeners
+            searchInput.addEventListener('keyup', filterAthletes);
+            cityFilter.addEventListener('change', filterAthletes);
+            stateFilter.addEventListener('change', filterAthletes);
+
+            // Calcular totais quando as notas mudam
+            notaInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const row = this.closest('tr');
+                    calculateTotal(row);
+                });
+            });
+
+            // Botão Visualizar - Preenche o modal com dados reais
+            visualizarButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const atletaId = row.getAttribute('data-atleta-id');
+                    const notas = row.querySelectorAll('.nota-input');
+
+                    // Preenche os dados básicos
+                    document.getElementById('modal-nome').textContent = row.querySelector('.fw-semibold').textContent;
+                    document.getElementById('modal-faixa').textContent = row.querySelector('.text-muted').textContent;
+                    document.getElementById('modal-cidade').textContent = row.querySelector('td:nth-child(3)').textContent;
+                    document.getElementById('modal-academia').textContent = row.querySelector('td:nth-child(4)').textContent;
+
+                    // Preenche as notas
+                    document.getElementById('modal-nota1').textContent = notas[0].value;
+                    document.getElementById('modal-nota2').textContent = notas[1].value;
+                    document.getElementById('modal-nota3').textContent = notas[2].value;
+                    document.getElementById('modal-nota4').textContent = notas[3].value;
+                    document.getElementById('modal-nota5').textContent = notas[4].value;
+                    document.getElementById('modal-total').textContent = row.querySelector('.total-score').textContent;
+
+                    // Atualiza a foto se existir
+                    const imgSrc = row.querySelector('.avatar-img').src;
+                    document.getElementById('modal-foto').src = imgSrc;
+
+                    // Mostra o modal
+                    visualizarModal.show();
+                });
+            });
+
+            // Botão Salvar Individual
+            salvarButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const atletaId = row.getAttribute('data-atleta-id');
+                    const notaInputs = row.querySelectorAll('.nota-input');
+
+                    const data = {
+                        'atleta_id': atletaId,
+                        'nota1': notaInputs[0].value,
+                        'nota2': notaInputs[1].value,
+                        'nota3': notaInputs[2].value,
+                        'nota4': notaInputs[3].value,
+                        'nota5': notaInputs[4].value,
+                        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    };
+
+                    fetch("{% url 'competicoes:chaveamento_kata' categoria.id %}", {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams(data)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Atualiza o total na tabela
+                            row.querySelector('.total-score').textContent = data.total;
+
+                            // Desabilita edição
+                            notaInputs.forEach(input => input.readOnly = true);
+                            button.disabled = true;
+
+                            confirmacaoModal.show();
+
+                            // Atualiza o modal de visualização se estiver aberto
+                            if (visualizarModal._isShown) {
+                                document.getElementById('modal-nota1').textContent = notaInputs[0].value;
+                                document.getElementById('modal-nota2').textContent = notaInputs[1].value;
+                                document.getElementById('modal-nota3').textContent = notaInputs[2].value;
+                                document.getElementById('modal-nota4').textContent = notaInputs[3].value;
+                                document.getElementById('modal-nota5').textContent = notaInputs[4].value;
+                                document.getElementById('modal-total').textContent = data.total;
+                            }
+                        }
+                    });
+                });
+            });
+
+            // Botão Salvar Todos
+            if (btnSalvarTodos) {
+                btnSalvarTodos.addEventListener('click', function() {
+                    if (confirm('Tem certeza que deseja salvar TODOS os resultados? Esta ação não pode ser desfeita.')) {
+                        // Desabilita todos os inputs e botões
+                        document.querySelectorAll('.nota-input').forEach(input => {
+                            input.readOnly = true;
+                        });
+                        document.querySelectorAll('.btn-salvar').forEach(btn => {
+                            btn.disabled = true;
+                        });
+                        this.disabled = true;
+
+                        // Envia o formulário via AJAX
+                        fetch("{% url 'competicoes:chaveamento_kata' categoria.id %}", {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                            },
+                            body: new FormData(formResultados)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                confirmacaoModal.show();
+                                setTimeout(() => location.reload(), 1500);
+                            }
+                        });
+                    }
+                });
+            }
+
+            // Atualiza os totais iniciais para os atletas com resultados salvos
+            athleteRows.forEach(row => {
+                const notaInputs = row.querySelectorAll('.nota-input');
+                const hasResult = Array.from(notaInputs).some(input => input.readOnly);
+
+                if (hasResult) {
+                    calculateTotal(row);
                 }
             });
-        }
-
-        // Função para calcular o total
-        function calculateTotal(row) {
-            const inputs = row.querySelectorAll('.nota-input');
-            let total = 0;
-            inputs.forEach(input => {
-                total += parseFloat(input.value) || 0;
-            });
-            row.querySelector('.total-score').textContent = total.toFixed(1);
-            return total;
-        }
-
-        // Event Listeners
-        searchInput.addEventListener('keyup', filterAthletes);
-        cityFilter.addEventListener('change', filterAthletes);
-        stateFilter.addEventListener('change', filterAthletes);
-
-        // Calcular totais quando as notas mudam
-        notaInputs.forEach(input => {
-            input.addEventListener('change', function() {
-                const row = this.closest('tr');
-                calculateTotal(row);
-            });
         });
-
-        // Botão Visualizar
-        visualizarButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
-                // Aqui você pode preencher os dados do modal com as informações do atleta
-                // Exemplo:
-                // document.getElementById('modal-nome').textContent = row.querySelector('.fw-semibold').textContent;
-                // document.getElementById('modal-faixa').textContent = row.querySelector('.text-muted').textContent;
-                // etc...
-            });
-        });
-
-        // Botão Salvar
-        salvarButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const atletaId = row.getAttribute('data-atleta-id');
-                const notas = {
-                    nota1: parseFloat(row.querySelector('[name="nota1"]').value) || 0,
-                    nota2: parseFloat(row.querySelector('[name="nota2"]').value) || 0,
-                    nota3: parseFloat(row.querySelector('[name="nota3"]').value) || 0,
-                    nota4: parseFloat(row.querySelector('[name="nota4"]').value) || 0,
-                    nota5: parseFloat(row.querySelector('[name="nota5"]').value) || 0,
-                    total: parseFloat(row.querySelector('.total-score').textContent) || 0
-                };
-
-                // Aqui você pode adicionar a lógica para salvar no banco de dados
-                console.log(`Salvando notas para atleta ${atletaId}:`, notas);
-
-                // Mostrar modal de confirmação
-                confirmacaoModal.show();
-            });
-        });
-
-        // Debug
-        console.log('Total de atletas carregados:', {{ atletas|length }});
-    });
     </script>
+    {% endblock %}
 </body>
 </html>

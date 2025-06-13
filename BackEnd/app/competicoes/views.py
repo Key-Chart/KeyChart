@@ -9,8 +9,9 @@ from app.atletas.models import Atleta
 from django.contrib import messages
 import random
 import math
-
-
+from django.db import transaction
+from .models import ResultadoKata
+from django.http.response import HttpResponse, JsonResponse
 # Função para criar Competições
 def criar_competicao(request):
     if request.method == 'POST':
@@ -321,7 +322,6 @@ def editar_atleta(request, pk):
     context = {'atleta': atleta}
     return render(request, 'atletas/editar_atleta.html', context)
 
-
 def excluir_atleta(request, pk):
     atleta = get_object_or_404(Atleta, pk=pk)
     categoria_id = atleta.categoria.id
@@ -332,24 +332,89 @@ def excluir_atleta(request, pk):
 # Função responsavel por renderizar a pagina de Chaveamento
 def chaveamento_kata(request, categoria_id):
     categoria = get_object_or_404(Categoria, id=categoria_id)
-
-    # Obtenha os atletas da categoria específica
     atletas = Atleta.objects.filter(categoria=categoria).select_related('academia')
+
+    # Verifica se TODOS os atletas já têm resultados (para o chaveamento completo)
+    chaveamento_existente = ResultadoKata.objects.filter(categoria=categoria).count() == atletas.count()
 
     # Para os filtros
     cidades_distintas = atletas.order_by('cidade').values_list('cidade', flat=True).distinct()
     estados_distintos = atletas.order_by('estado').values_list('estado', flat=True).distinct()
 
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Processa requisições AJAX individuais
+        atleta_id = request.POST.get('atleta_id')
+        atleta = get_object_or_404(Atleta, id=atleta_id)
+
+        nota1 = float(request.POST.get('nota1', 0))
+        nota2 = float(request.POST.get('nota2', 0))
+        nota3 = float(request.POST.get('nota3', 0))
+        nota4 = float(request.POST.get('nota4', 0))
+        nota5 = float(request.POST.get('nota5', 0))
+
+        resultado, created = ResultadoKata.objects.update_or_create(
+            atleta=atleta,
+            categoria=categoria,
+            defaults={
+                'nota1': nota1,
+                'nota2': nota2,
+                'nota3': nota3,
+                'nota4': nota4,
+                'nota5': nota5,
+                'competicao': categoria.competicao
+            }
+        )
+
+        # Verifica novamente se todos os atletas já têm resultados
+        todos_salvos = ResultadoKata.objects.filter(categoria=categoria).count() == atletas.count()
+
+        return JsonResponse({
+            'success': True,
+            'total': resultado.total,
+            'atleta_id': atleta_id,
+            'todos_salvos': todos_salvos  # Adiciona esta informação na resposta
+        })
+    elif request.method == 'POST':
+        # Processa o salvamento em lote
+        with transaction.atomic():
+            for atleta in atletas:
+                nota1 = float(request.POST.get(f'nota1_{atleta.id}', 0))
+                nota2 = float(request.POST.get(f'nota2_{atleta.id}', 0))
+                nota3 = float(request.POST.get(f'nota3_{atleta.id}', 0))
+                nota4 = float(request.POST.get(f'nota4_{atleta.id}', 0))
+                nota5 = float(request.POST.get(f'nota5_{atleta.id}', 0))
+
+                ResultadoKata.objects.update_or_create(
+                    atleta=atleta,
+                    categoria=categoria,
+                    defaults={
+                        'nota1': nota1,
+                        'nota2': nota2,
+                        'nota3': nota3,
+                        'nota4': nota4,
+                        'nota5': nota5,
+                        'competicao': categoria.competicao
+                    }
+                )
+
+            return JsonResponse({'success': True})
+
+    # Carrega resultados existentes
+    resultados = ResultadoKata.objects.filter(atleta__in=atletas, categoria=categoria)
+    resultados_dict = {resultado.atleta_id: resultado for resultado in resultados}
+
     context = {
-        'competicao': categoria.competicao,  # Acessa a competição através da categoria
+        'competicao': categoria.competicao,
         'categoria': categoria,
         'atletas': atletas,
         'cidades_distintas': cidades_distintas,
         'estados_distintos': estados_distintos,
+        'resultados': resultados_dict,
+        'chaveamento_existente': chaveamento_existente,
     }
     return render(request, 'competicoes/chaveamento_kata.html', context)
 
-
+# Função para chaveamento Kumitê
 def chaveamento_kumite(request, categoria_id):
     categoria = get_object_or_404(Categoria, id=categoria_id)
     competicao = categoria.competicao
