@@ -5,29 +5,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'competicoes/css/atletas_categoria.css' %}">
-    <title>{{ competicao.nome }} | KeyChart</title>
+    <title>{{ categoria.nome }} - {{ competicao.nome }} | KeyChart</title>
     <style>
+        :root {
+            --primary-color: #343A40;
+            --secondary-color: #f8f9fa;
+            --accent-color: #198754;
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .content {
+            margin-left: 250px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
         .athlete-card {
             transition: all 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+            height: 100%;
+            max-height: 200px;
         }
+
         .athlete-card:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
         }
+
         .athlete-avatar {
-            border: 3px solid #dee2e6;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
+
+        .athlete-card:hover .athlete-avatar {
+            transform: scale(1.03);
+        }
+
+        .info-section {
+            background: rgba(248, 249, 250, 0.6);
+            border-radius: 6px;
+            padding: 0.3rem;
+            margin: 0.15rem 0;
+        }
+
         .info-label {
-            font-size: 0.8rem;
+            font-size: 0.65rem;
             color: #6c757d;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.1rem;
         }
+
         .info-value {
+            font-weight: 600;
+            color: #343a40;
+            font-size: 0.8rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #495057 100%);
+            border-radius: 15px;
+            padding: 1.25rem;
+            color: white;
+            border: none;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 110px;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
             font-weight: 500;
+        }
+
+        .filter-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            border: none;
+            margin-bottom: 2rem;
+        }
+
+        .filter-card .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px 15px 0 0;
+            border: none;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .badge-custom {
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: 2px solid transparent;
+        }
+
+        .badge-primary-custom {
+            background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+            color: white;
+        }
+
+        .badge-secondary-custom {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            color: white;
+        }
+
+        .btn-generate {
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 15px rgba(25, 135, 84, 0.3);
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(25, 135, 84, 0.4);
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            z-index: 10;
+        }
+
+        .search-input {
+            padding-left: 45px;
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+        }
+
+        .athlete-name {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+            line-height: 1.2;
+        }
+
+        .athlete-id {
+            background: #e9ecef;
+            color: #6c757d;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 1rem;
+        }
+
+        .view-toggle {
+            background: white;
+            border-radius: 25px;
+            padding: 0.25rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .view-toggle .btn {
+            border-radius: 20px;
+            border: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-toggle .btn.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 10px rgba(52, 58, 64, 0.3);
         }
     </style>
 </head>
@@ -35,187 +247,453 @@
 
     {% include 'sidebar.html' %}
 
-    <!-- Debug Info -->
-    <div class="container mt-3 d-none"> <!-- Remova o d-none para ver os dados de debug -->
-        <div class="alert alert-info">
-            <h5>Debug Information</h5>
-            <p>Total Atletas: {{ atletas|length }}</p>
-            <p>Categoria: {{ categoria.nome }}</p>
-            <p>Competição: {{ competicao.nome }}</p>
-        </div>
-    </div>
-
     <!-- Conteúdo Principal -->
     <div class="content" id="content">
-        <div class="header d-flex align-items-center justify-content-between bg-dark text-white p-3">
-            <div class="d-flex align-items-center">
-                <i class="bi bi-arrow-left back-icon me-3" onclick="window.history.back()" style="cursor: pointer;"></i>
-                <div>
-                    <h2 class="mb-0 fw-bold">{{ competicao.nome }}</h2>
-                    <small class="text-white-50">{{ competicao.descricao|default:"Competição de Artes Marciais" }}</small>
+        <!-- Header Moderno -->
+        <div class="header" style="background: linear-gradient(135deg, #343A40 0%, #495057 100%); color: #ffffff;">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-link text-white p-0 me-3" onclick="window.history.back()" 
+                                style="font-size: 1.5rem; text-decoration: none;">
+                            <i class="bi bi-arrow-left"></i>
+                        </button>
+                        <div>
+                            <h2 class="mb-0 fw-bold">
+                                <i class="bi bi-people-fill me-2"></i>{{ categoria.nome }}
+                            </h2>
+                            <small class="text-white-50">{{ competicao.nome }} - {{ competicao.descricao|default:"Competição de Artes Marciais" }}</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="view-toggle">
+                            <button class="btn btn-sm active" id="cardViewBtn" data-view="cards">
+                                <i class="bi bi-grid-3x3-gap me-1"></i>Cards
+                            </button>
+                            <button class="btn btn-sm" id="listViewBtn" data-view="list">
+                                <i class="bi bi-list me-1"></i>Lista
+                            </button>
+                        </div>
+                        <div class="stat-card d-inline-block p-2 m-0" style="min-width: 120px;">
+                            <div class="stat-number mb-0" style="font-size: 1.5rem;">{{ atletas|length }}</div>
+                            <div class="stat-label" style="font-size: 0.8rem;">Atletas</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <span class="badge bg-light text-dark fs-6">
-                <i class="bi bi-people-fill me-1"></i> {{ atletas|length }} Atletas
-            </span>
         </div>
 
-        <div class="container mt-4">
-            <!-- Filtros e Busca -->
+        <main class="container-fluid py-4">
+            <!-- Cards de Estatísticas -->
             <div class="row mb-4">
-                <div class="col-md-6 mb-2">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" placeholder="Buscar atleta..." id="searchInput">
-                        <button class="btn btn-primary" id="searchButton">Buscar</button>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <i class="fas fa-users position-absolute" style="right: 20px; top: 20px; font-size: 2rem; opacity: 0.3;"></i>
+                        <div class="stat-number">{{ atletas|length }}</div>
+                        <div class="stat-label">Total de Atletas</div>
                     </div>
                 </div>
-                <div class="col-md-6 mb-2">
-                    <div class="d-flex gap-2">
-                        <select class="form-select" id="cityFilter">
-                            <option value="">Filtrar por cidade</option>
-                            {% for cidade in cidades_distintas %}
-                            <option value="{{ cidade }}">{{ cidade }}</option>
-                            {% endfor %}
-                        </select>
-                        <select class="form-select" id="stateFilter">
-                            <option value="">Filtrar por Estado</option>
-                            {% for estado in estados_distintos %}
-                            <option value="{{ estado }}">{{ estado }}</option>
-                            {% endfor %}
-                        </select>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #198754 0%, #157347 100%);">
+                        <i class="fas fa-venus-mars position-absolute" style="right: 20px; top: 20px; font-size: 2rem; opacity: 0.3;"></i>
+                        <div class="stat-number">{% if atletas %}{{ atletas|first|default:0 }}{% else %}0{% endif %}</div>
+                        <div class="stat-label">Masculino</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #dc3545 0%, #b02a37 100%);">
+                        <i class="fas fa-venus position-absolute" style="right: 20px; top: 20px; font-size: 2rem; opacity: 0.3;"></i>
+                        <div class="stat-number">{% if atletas %}{{ atletas|length|default:0 }}{% else %}0{% endif %}</div>
+                        <div class="stat-label">Feminino</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);">
+                        <i class="fas fa-map-marker-alt position-absolute" style="right: 20px; top: 20px; font-size: 2rem; opacity: 0.3;"></i>
+                        <div class="stat-number">{{ cidades_distintas|length }}</div>
+                        <div class="stat-label">Cidades</div>
                     </div>
                 </div>
             </div>
-
-            <!-- Lista de Atletas -->
-            <div id="atletasContainer">
-                {% for atleta in atletas %}
-                <div class="card athlete-card mb-3">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-12 col-md-2 text-center">
-                                <img src="{% if atleta.foto %}{{ atleta.foto.url }}{% else %}{% static 'competicoes/img/foto_atleta.png' %}{% endif %}"
-                                     class="rounded-circle athlete-avatar mb-2" alt="Foto do Atleta" style="width: 80px; height: 80px; object-fit: cover;">
-                                <h5 class="card-title mb-0">{{ atleta.nome_completo }}</h5>
-                                <small class="text-muted">ID: #{{ atleta.id }}</small>
+            <!-- Filtros Compactos -->
+            <div class="filter-card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 text-muted fw-bold">
+                            <i class="bi bi-funnel me-2"></i>Filtros de Busca
+                        </h6>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" id="toggleFilters">
+                            <i class="bi bi-chevron-down" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body d-none" id="filtersContainer">
+                    <div class="row g-2">
+                        <!-- Campo de Busca Compacto -->
+                        <div class="col-md-8">
+                            <div class="search-container">
+                                <i class="bi bi-search search-icon"></i>
+                                <input type="text" class="form-control search-input" placeholder="Buscar por nome do atleta..." id="searchInput">
                             </div>
-                            <div class="col-12 col-md-5">
-                                <div class="row">
-                                    <div class="col-6 col-md-3 text-center mb-3">
-                                        <div class="info-label">PESO</div>
-                                        <div class="info-value">{% if atleta.peso %}{{ atleta.peso }} kg{% else %}--{% endif %}</div>
-                                    </div>
-                                    <div class="col-6 col-md-3 text-center mb-3">
-                                        <div class="info-label">FAIXA</div>
-                                        <div class="info-value text-uppercase">{{ atleta.get_faixa_display }}</div>
-                                    </div>
-                                    <div class="col-6 col-md-3 text-center mb-3">
-                                        <div class="info-label">ESTADO</div>
-                                        <div class="info-value">{{ atleta.get_estado_display }}</div>
-                                    </div>
-                                    <div class="col-6 col-md-3 text-center mb-3">
-                                        <div class="info-label">IDADE</div>
-                                        <div class="info-value">{% if atleta.idade %}{{ atleta.idade }}{% else %}--{% endif %}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <div class="row">
-                                    <div class="col-6 text-center mb-3">
-                                        <div class="info-label">CIDADE</div>
-                                        <div class="info-value">{{ atleta.cidade }}</div>
-                                    </div>
-                                    <div class="col-6 text-center mb-3">
-                                        <div class="info-label">ACADEMIA</div>
-                                        <div class="info-value">
-                                            {% if atleta.academia %}{{ atleta.academia.nome }}{% else %}--{% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="d-flex justify-content-center gap-2">
-                                            <span class="badge bg-primary">{{ atleta.get_sexo_display }}</span>
-                                            <span class="badge bg-secondary">{{ atleta.categoria.get_tipo_display|default:"--" }}</span>
-                                        </div>
-                                    </div>
+                        </div>
+                        
+                        <!-- Filtros Lado a Lado -->
+                        <div class="col-md-2">
+                            <select class="form-select form-select-sm" id="cityFilter" style="border-radius: 8px;">
+                                <option value="">Cidade</option>
+                                {% for cidade in cidades_distintas %}
+                                <option value="{{ cidade }}">{{ cidade }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <select class="form-select form-select-sm" id="stateFilter" style="border-radius: 8px;">
+                                <option value="">Estado</option>
+                                {% for estado in estados_distintos %}
+                                <option value="{{ estado }}">{{ estado }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Botões de Ação Compactos -->
+                        <div class="col-12 mt-3">
+                            <div class="d-flex gap-2 flex-wrap align-items-center">
+                                <button type="button" class="btn btn-sm btn-primary" id="clearFilters">
+                                    <i class="bi bi-x-circle me-1"></i>Limpar
+                                </button>
+                                <div class="ms-auto">
+                                    <span class="badge bg-secondary" id="resultCount">
+                                        <i class="bi bi-people me-1"></i>{{ atletas|length }} atleta{{ atletas|length|pluralize:"s" }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                {% empty %}
-                <div class="alert alert-info text-center">
-                    <i class="bi bi-info-circle me-2"></i> Nenhum atleta inscrito nesta categoria.
-                </div>
-                {% endfor %}
             </div>
-        </div>
 
-           <!-- Botões de Ação -->
-            {% if atletas %}
-            <div class="container mt-5 mb-5">
-                <div class="row justify-content-center g-3">
-                    <div class="col-md-5 col-12 text-center">
-                        <a href="{% url 'competicoes:chaveamento_kata' categoria.id %}"
-                           class="btn btn-generate text-white w-100" style="background: #198754;">
-                            <i class="fas fa-people-arrows"></i> Gerar Chaveamento KATA
-                        </a>
+            <!-- Container dos Atletas -->
+            <div class="card shadow-sm border-0" style="border-radius: 15px;">
+                <div class="card-header" style="background: linear-gradient(135deg, #343A40 0%, #495057 100%); color: #ffffff; border-radius: 15px 15px 0 0;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0 fw-bold">
+                            <i class="bi bi-people-fill me-2"></i>Lista de Atletas
+                        </h5>
+                        <span class="badge bg-light text-dark fs-6">
+                            <i class="bi bi-trophy me-1"></i>{{ categoria.nome }}
+                        </span>
                     </div>
-                    <div class="col-md-5 col-12 text-center">
-                        <a href="{% url 'competicoes:chaveamento_kumite' categoria.id %}"
-                           class="btn btn-generate text-white w-100" style="background: #198754;">
-                            <i class="fas fa-people-arrows"></i> Gerar Chaveamento KUMITE
-                        </a>
+                </div>
+                
+                <!-- Vista em Cards (padrão) -->
+                <div class="card-body p-4" id="cardView">
+                    {% if atletas %}
+                        <div class="row g-3" id="atletasContainer">
+                            {% for atleta in atletas %}
+                            <div class="col-lg-6 col-xl-4 athlete-item">
+                                <div class="athlete-card">
+                                    <div class="card-body p-2">
+                                        <!-- Header Compacto do Card do Atleta -->
+                                        <div class="d-flex align-items-center mb-1">
+                                            <img src="{% if atleta.foto %}{{ atleta.foto.url }}{% else %}{% static 'competicoes/img/foto_atleta.png' %}{% endif %}"
+                                                 class="rounded-circle athlete-avatar me-2" alt="Foto do Atleta" 
+                                                 style="width: 50px; height: 50px; object-fit: cover;">
+                                            <div class="flex-grow-1">
+                                                <h6 class="athlete-name mb-0">{{ atleta.nome_completo }}</h6>
+                                                <small class="athlete-id">ID: #{{ atleta.id }}</small>
+                                            </div>
+                                        </div>
+
+                                        <!-- Informações Compactas -->
+                                        <div class="row g-1 mb-1">
+                                            <div class="col-6">
+                                                <div class="info-section text-center" style="padding: 0.3rem;">
+                                                    <div class="info-label" style="font-size: 0.65rem; margin-bottom: 0.1rem;">Peso</div>
+                                                    <div class="info-value" style="font-size: 0.8rem;">{% if atleta.peso %}{{ atleta.peso }}kg{% else %}--{% endif %}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="info-section text-center" style="padding: 0.3rem;">
+                                                    <div class="info-label" style="font-size: 0.65rem; margin-bottom: 0.1rem;">Faixa</div>
+                                                    <div class="info-value" style="font-size: 0.8rem;">{{ atleta.get_faixa_display }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Informações em Lista Compacta -->
+                                        <div class="mb-1" style="font-size: 0.75rem;">
+                                            <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0.2rem;">
+                                                <span class="text-muted">
+                                                    <i class="bi bi-geo-alt text-warning me-1" style="font-size: 0.7rem;"></i>{{ atleta.cidade|truncatechars:12 }}
+                                                </span>
+                                                <span class="text-muted">
+                                                    {% if atleta.idade %}{{ atleta.idade }}a{% else %}--{% endif %}
+                                                </span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-muted">
+                                                    <i class="bi bi-building text-info me-1" style="font-size: 0.7rem;"></i>
+                                                    {% if atleta.academia %}{{ atleta.academia.nome|truncatechars:12 }}{% else %}--{% endif %}
+                                                </span>
+                                                <span class="text-muted">{{ atleta.get_estado_display|truncatechars:5 }}</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Badges Compactos -->
+                                        <div class="d-flex justify-content-center gap-1">
+                                            <span class="badge badge-custom badge-primary-custom" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">
+                                                {{ atleta.get_sexo_display }}
+                                            </span>
+                                            <span class="badge badge-custom badge-secondary-custom" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">
+                                                {{ atleta.categoria.get_tipo_display|default:"--" }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="bi bi-people empty-state-icon"></i>
+                            <h5 class="text-muted mb-3">Nenhum atleta inscrito</h5>
+                            <p class="text-muted">Não há atletas inscritos nesta categoria ainda.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Vista em Lista -->
+                <div class="card-body p-0 d-none" id="listView">
+                    {% if atletas %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="border-0 ps-4">
+                                            <i class="bi bi-person text-primary me-1"></i>Atleta
+                                        </th>
+                                        <th class="border-0">
+                                            <i class="bi bi-tag text-success me-1"></i>Dados Físicos
+                                        </th>
+                                        <th class="border-0">
+                                            <i class="bi bi-geo-alt text-warning me-1"></i>Localização
+                                        </th>
+                                        <th class="border-0">
+                                            <i class="bi bi-building text-info me-1"></i>Academia
+                                        </th>
+                                        <th class="border-0">
+                                            <i class="bi bi-award text-secondary me-1"></i>Categoria
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for atleta in atletas %}
+                                    <tr class="athlete-item">
+                                        <td class="align-middle ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <img src="{% if atleta.foto %}{{ atleta.foto.url }}{% else %}{% static 'competicoes/img/foto_atleta.png' %}{% endif %}"
+                                                     class="rounded-circle me-3" alt="Foto do Atleta" 
+                                                     style="width: 50px; height: 50px; object-fit: cover;">
+                                                <div>
+                                                    <div class="fw-bold">{{ atleta.nome_completo }}</div>
+                                                    <small class="text-muted">ID: #{{ atleta.id }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="small">
+                                                <div><strong>Peso:</strong> {% if atleta.peso %}{{ atleta.peso }} kg{% else %}--{% endif %}</div>
+                                                <div><strong>Idade:</strong> {% if atleta.idade %}{{ atleta.idade }} anos{% else %}--{% endif %}</div>
+                                                <div><strong>Faixa:</strong> {{ atleta.get_faixa_display }}</div>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="small">
+                                                <div><strong>Cidade:</strong> {{ atleta.cidade }}</div>
+                                                <div><strong>Estado:</strong> {{ atleta.get_estado_display }}</div>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <span class="fw-semibold">
+                                                {% if atleta.academia %}{{ atleta.academia.nome }}{% else %}--{% endif %}
+                                            </span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex flex-column gap-1">
+                                                <span class="badge bg-primary-subtle text-primary">
+                                                    <i class="bi bi-person me-1"></i>{{ atleta.get_sexo_display }}
+                                                </span>
+                                                <span class="badge bg-secondary-subtle text-secondary">
+                                                    <i class="bi bi-tag me-1"></i>{{ atleta.categoria.get_tipo_display|default:"--" }}
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="bi bi-people empty-state-icon"></i>
+                            <h5 class="text-muted mb-3">Nenhum atleta inscrito</h5>
+                            <p class="text-muted">Não há atletas inscritos nesta categoria ainda.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+           <!-- Botões de Chaveamento -->
+            {% if atletas %}
+            <div class="row justify-content-center mt-5 mb-5">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-lg" style="border-radius: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                        <div class="card-body p-5 text-center">
+                            <h4 class="fw-bold mb-4 text-dark">
+                                <i class="fas fa-trophy me-2 text-warning"></i>
+                                Gerar Chaveamento
+                            </h4>
+                            <p class="text-muted mb-4">Escolha o tipo de chaveamento que deseja gerar para esta categoria</p>
+                            
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <a href="{% url 'competicoes:chaveamento_kata' categoria.id %}"
+                                       class="btn btn-generate text-white w-100 py-3" 
+                                       style="background: linear-gradient(135deg, #198754 0%, #157347 100%); border-radius: 15px;">
+                                        <i class="fas fa-hand-paper d-block mb-2" style="font-size: 2rem;"></i>
+                                        <div class="fw-bold">CHAVEAMENTO KATA</div>
+                                        <small class="opacity-75">Competição de formas</small>
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="{% url 'competicoes:chaveamento_kumite' categoria.id %}"
+                                       class="btn btn-generate text-white w-100 py-3" 
+                                       style="background: linear-gradient(135deg, #dc3545 0%, #b02a37 100%); border-radius: 15px;">
+                                        <i class="fas fa-fist-raised d-block mb-2" style="font-size: 2rem;"></i>
+                                        <div class="fw-bold">CHAVEAMENTO KUMITE</div>
+                                        <small class="opacity-75">Competição de luta</small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             {% endif %}
-        </div>
+        </main>
     </div>
 
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Elementos do DOM
         const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
         const cityFilter = document.getElementById('cityFilter');
         const stateFilter = document.getElementById('stateFilter');
-        const athleteCards = document.querySelectorAll('.athlete-card');
+        const athleteItems = document.querySelectorAll('.athlete-item');
+        const resultCount = document.getElementById('resultCount');
+        const toggleFilters = document.getElementById('toggleFilters');
+        const filtersContainer = document.getElementById('filtersContainer');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const cardViewBtn = document.getElementById('cardViewBtn');
+        const listViewBtn = document.getElementById('listViewBtn');
+        const cardView = document.getElementById('cardView');
+        const listView = document.getElementById('listView');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+
+        let totalAthletes = {{ atletas|length }};
+
+        // Função para alternar entre vista de cards e lista
+        function toggleView(viewType) {
+            if (viewType === 'cards') {
+                cardView.classList.remove('d-none');
+                listView.classList.add('d-none');
+                cardViewBtn.classList.add('active');
+                listViewBtn.classList.remove('active');
+            } else {
+                cardView.classList.add('d-none');
+                listView.classList.remove('d-none');
+                listViewBtn.classList.add('active');
+                cardViewBtn.classList.remove('active');
+            }
+        }
 
         // Função para filtrar atletas
         function filterAthletes() {
             const searchTerm = searchInput.value.toLowerCase();
             const cityValue = cityFilter.value.toLowerCase();
             const stateValue = stateFilter.value.toLowerCase();
+            let visibleCount = 0;
 
-            athleteCards.forEach(card => {
-                const name = card.querySelector('.card-title').textContent.toLowerCase();
-                const city = card.querySelectorAll('.info-value')[0].textContent.toLowerCase();
-                const state = card.querySelectorAll('.info-value')[2].textContent.toLowerCase();
+            athleteItems.forEach(item => {
+                let name, city, state;
+                
+                // Buscar elementos diferentes dependendo da vista
+                if (cardView.classList.contains('d-none')) {
+                    // Vista de lista
+                    name = item.querySelector('.fw-bold').textContent.toLowerCase();
+                    const cityElement = item.querySelector('td:nth-child(3)');
+                    const stateElement = item.querySelector('td:nth-child(3)');
+                    city = cityElement ? cityElement.textContent.toLowerCase() : '';
+                    state = stateElement ? stateElement.textContent.toLowerCase() : '';
+                } else {
+                    // Vista de cards
+                    name = item.querySelector('.athlete-name').textContent.toLowerCase();
+                    const infoValues = item.querySelectorAll('.info-value');
+                    city = item.textContent.toLowerCase();
+                    state = item.textContent.toLowerCase();
+                }
 
                 const matchesSearch = name.includes(searchTerm);
                 const matchesCity = cityValue === '' || city.includes(cityValue);
                 const matchesState = stateValue === '' || state.includes(stateValue);
 
                 if (matchesSearch && matchesCity && matchesState) {
-                    card.style.display = '';
+                    item.style.display = '';
+                    visibleCount++;
                 } else {
-                    card.style.display = 'none';
+                    item.style.display = 'none';
                 }
             });
+
+            // Atualizar contador
+            resultCount.innerHTML = `<i class="bi bi-people me-1"></i>${visibleCount} atleta${visibleCount !== 1 ? 's' : ''}`;
+        }
+
+        // Função para limpar filtros
+        function clearFilters() {
+            searchInput.value = '';
+            cityFilter.value = '';
+            stateFilter.value = '';
+            filterAthletes();
+        }
+
+        // Função para alternar visibilidade dos filtros
+        function toggleFiltersVisibility() {
+            if (filtersContainer.classList.contains('d-none')) {
+                filtersContainer.classList.remove('d-none');
+                toggleIcon.classList.remove('bi-chevron-down');
+                toggleIcon.classList.add('bi-chevron-up');
+            } else {
+                filtersContainer.classList.add('d-none');
+                toggleIcon.classList.remove('bi-chevron-up');
+                toggleIcon.classList.add('bi-chevron-down');
+            }
         }
 
         // Event Listeners
-        searchInput.addEventListener('keyup', filterAthletes);
-        searchButton.addEventListener('click', filterAthletes);
-        cityFilter.addEventListener('change', filterAthletes);
-        stateFilter.addEventListener('change', filterAthletes);
+        if (searchInput) searchInput.addEventListener('keyup', filterAthletes);
+        if (cityFilter) cityFilter.addEventListener('change', filterAthletes);
+        if (stateFilter) stateFilter.addEventListener('change', filterAthletes);
+        if (clearFiltersBtn) clearFiltersBtn.addEventListener('click', clearFilters);
+        if (toggleFilters) toggleFilters.addEventListener('click', toggleFiltersVisibility);
+        
+        if (cardViewBtn) cardViewBtn.addEventListener('click', () => toggleView('cards'));
+        if (listViewBtn) listViewBtn.addEventListener('click', () => toggleView('list'));
 
         // Debug
-        console.log('Total de atletas carregados:', {{ atletas|length }});
+        console.log('Total de atletas carregados: ' + totalAthletes);
     });
     </script>
 </body>
