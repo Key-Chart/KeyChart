@@ -163,85 +163,188 @@
         {% endif %}
 
         <!-- Conteúdo -->
-        <main class="container-fluid py-4">
-            <!-- Cards de Estatísticas -->
+        <main class="container-fluid py-4">            <!-- Cards de Estatísticas -->
             <div class="row mb-4">
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
                     <div class="stat-card bg-primary">
                         <i class="fas fa-trophy"></i>
                         <div class="label">Total de Competições</div>
                         <div class="number">{{ total_competicoes }}</div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
                     <div class="stat-card bg-success">
                         <i class="fas fa-running"></i>
                         <div class="label">Competições Ativas</div>
                         <div class="number">{{ competicoes_ativas }}</div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
                     <div class="stat-card bg-warning text-dark">
                         <i class="fas fa-flag-checkered"></i>
                         <div class="label">Competições Finalizadas</div>
                         <div class="number">{{ competicoes_finalizadas }}</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Filtros -->
-            <form method="GET" action="{% url 'competicoes:home' %}" class="mb-4">
-                <div class="row g-3">
-                    <!-- Campo de Busca -->
-                    <div class="col-md-4">
-                        <div class="input-group">
-                            <span class="input-group-text bg-light">
-                                <i class="bi bi-search"></i>
-                            </span>
-                            <input type="text" class="form-control" name="q"
-                                   placeholder="Buscar por nome, local, modalidade ou árbitros..."
-                                   value="{{ request.GET.q }}">
-                        </div>
-                    </div>
-
-                    <!-- Filtro por Status -->
-                    <div class="col-md-3">
-                        <select class="form-select" name="status">
-                            <option value="">Todos os status</option>
-                            <option value="Ativa" {% if request.GET.status == 'Ativa' %}selected{% endif %}>Ativa</option>
-                            <option value="Finalizada" {% if request.GET.status == 'Finalizada' %}selected{% endif %}>Finalizada</option>
-                            <option value="Em breve" {% if request.GET.status == 'Em breve' %}selected{% endif %}>Em breve</option>
-                        </select>
-                    </div>
-
-                    <!-- Filtro por Data -->
-                    <div class="col-md-3">
-                        <input type="date" class="form-control" name="data"
-                               value="{{ request.GET.data }}">
-                    </div>
-
-                    <!-- Botões -->
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="bi bi-funnel me-2"></i>Filtrar
-                        </button>
-                        {% if request.GET %}
-                            <a href="{% url 'competicoes:home' %}" class="btn btn-outline-secondary w-100 mt-2">
-                                <i class="bi bi-x-circle me-2"></i>Limpar
-                            </a>
-                        {% endif %}
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card bg-info text-white">
+                        <i class="fas fa-clock"></i>
+                        <div class="label">Em Breve</div>
+                        <div class="number">{{ competicoes_em_breve }}</div>
                     </div>
                 </div>
-            </form>
+            </div>
 
+            <!-- Filtros Avançados -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 text-muted">
+                            <i class="bi bi-funnel me-2"></i>Filtros de Busca
+                        </h6>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" id="toggleFilters">
+                            <i class="bi bi-chevron-up" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" id="filtersContainer">
+                    <form method="GET" action="{% url 'competicoes:home' %}" id="filterForm">
+                        <div class="row g-3">
+                            <!-- Campo de Busca -->
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Busca Geral</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           name="q"
+                                           id="searchInput"
+                                           placeholder="Buscar por nome, local, modalidade ou árbitros..."
+                                           value="{{ request.GET.q }}">
+                                    <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Filtro por Status -->
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Status</label>
+                                <select class="form-select" name="status" id="statusFilter">
+                                    <option value="">Todos os status</option>
+                                    <option value="Ativa" {% if request.GET.status == 'Ativa' %}selected{% endif %}>
+                                        <i class="bi bi-check-circle"></i> Ativa
+                                    </option>
+                                    <option value="Finalizada" {% if request.GET.status == 'Finalizada' %}selected{% endif %}>
+                                        <i class="bi bi-flag"></i> Finalizada
+                                    </option>
+                                    <option value="Em breve" {% if request.GET.status == 'Em breve' %}selected{% endif %}>
+                                        <i class="bi bi-clock"></i> Em breve
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Filtro por Modalidade -->
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Modalidade</label>
+                                <select class="form-select" name="modalidade" id="modalidadeFilter">
+                                    <option value="">Todas as modalidades</option>
+                                    {% for modalidade in modalidades_distintas %}
+                                        <option value="{{ modalidade }}" 
+                                                {% if request.GET.modalidade == modalidade %}selected{% endif %}>
+                                            {{ modalidade }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Filtro por Árbitro -->
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Árbitro</label>
+                                <select class="form-select" name="arbitro" id="arbitroFilter">
+                                    <option value="">Todos os árbitros</option>
+                                    {% for arbitro in todos_arbitros %}
+                                        <option value="{{ arbitro.id }}" 
+                                                {% if request.GET.arbitro == arbitro.id|stringformat:"s" %}selected{% endif %}>
+                                            {{ arbitro.nome }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Filtro por Data Específica -->
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Data Específica</label>
+                                <input type="date" 
+                                       class="form-control" 
+                                       name="data"
+                                       id="dataFilter"
+                                       value="{{ request.GET.data }}">
+                            </div>
+
+                            <!-- Período de Datas -->
+                            <div class="col-md-2">
+                                <label class="form-label small text-muted">Data Início</label>
+                                <input type="date" 
+                                       class="form-control" 
+                                       name="data_inicio"
+                                       id="dataInicioFilter"
+                                       value="{{ request.GET.data_inicio }}">
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label small text-muted">Data Fim</label>
+                                <input type="date" 
+                                       class="form-control" 
+                                       name="data_fim"
+                                       id="dataFimFilter"
+                                       value="{{ request.GET.data_fim }}">
+                            </div>
+
+                            <!-- Botões de Ação -->
+                            <div class="col-12">
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-funnel me-2"></i>Aplicar Filtros
+                                    </button>
+                                    {% if request.GET %}
+                                        <a href="{% url 'competicoes:home' %}" class="btn btn-outline-secondary">
+                                            <i class="bi bi-x-circle me-2"></i>Limpar Filtros
+                                        </a>
+                                    {% endif %}
+                                    <button type="button" class="btn btn-outline-info" id="autoFilterToggle">
+                                        <i class="bi bi-lightning me-2"></i>Busca Automática: 
+                                        <span id="autoFilterStatus">Desligada</span>
+                                    </button>
+                                    <div class="ms-auto">
+                                        <span class="badge bg-secondary fs-6">
+                                            {{ listar_competicoes|length }} competição{{ listar_competicoes|length|pluralize:"ões" }} encontrada{{ listar_competicoes|length|pluralize:"s" }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>                </div>
+            </div>
+            
             <!-- Tabela de Competições -->
-            <div class="card">
-                <div class="card-header" style="background: #343A40; color: #ffffff;">
+            <div class="card shadow-sm">
+                <div class="card-header" style="background: linear-gradient(135deg, #343A40 0%, #495057 100%); color: #ffffff;">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-list-check me-2"></i>Lista de Competições
                         </h5>
-                        <div>
+                        <div class="d-flex gap-2">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-outline-light" id="viewToggle" data-view="table">
+                                    <i class="bi bi-table me-1"></i>Tabela
+                                </button>
+                                <button type="button" class="btn btn-sm btn-light" id="cardViewToggle" data-view="cards">
+                                    <i class="bi bi-grid-3x3-gap me-1"></i>Cards
+                                </button>
+                            </div>
                             <button class="btn btn-sm btn-primary me-2 border border-white" onclick="abrirModalImprimir()">
                                 <i class="bi bi-printer"></i> Imprimir
                             </button>
@@ -251,63 +354,263 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Data de Início</th>
-                                    <th>Local</th>
-                                    <th>Status</th>
-                                    <th>Inscrições</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for competicao in listar_competicoes %}
+                
+                <!-- Vista em Tabela -->
+                <div class="card-body p-0" id="tableView">
+                    {% if listar_competicoes %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
                                     <tr>
-                                        <td>
-                                            <a href="{% url 'competicoes:categoria' competicao_id=competicao.id %}" class="text-decoration-none fw-bold text-primary">{{ competicao.nome }}</a>
-                                            <div class="text-muted small">Modalidade: {{ competicao.modalidade }}</div>
-                                        </td>
-                                        <td>{{ competicao.data_inicio }}</td>
-                                        <td>{{ competicao.local }}</td>
-                                        <td>
-                                            {% if competicao.status == "Ativa" %}
-                                                <span class="badge bg-success">{{ competicao.status }}</span>
-                                            {% elif competicao.status == "Finalizada" %}
-                                                <span class="badge bg-secondary">{{ competicao.status }}</span>
-                                            {% elif competicao.status == "Em breve" %}
-                                                <span class="badge bg-warning text-dark">{{ competicao.status }}</span>
-                                            {% else %}
-                                                <span class="badge bg-light text-dark">{{ competicao.status }}</span>
-                                            {% endif %}
-                                        </td>
-
-                                        <td>
-                                            {% if competicao.inscricoes_abertas %}
-                                                <span class="badge badge-inscricoes-abertas">Abertas</span>
-                                            {% else %}
-                                                <span class="badge badge-inscricoes-fechadas">Fechadas</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary me-1" data-mdb-toggle="modal" data-mdb-target="#viewModal{{ competicao.id }}" title="Visualizar">
-                                                <i class="bi bi-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-warning me-1" data-mdb-toggle="modal" data-mdb-target="#editModal{{ competicao.id }}" title="Editar">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" data-mdb-toggle="modal" data-mdb-target="#deleteModal{{ competicao.id }}" title="Excluir">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </td>
+                                        <th class="border-0">
+                                            <i class="bi bi-trophy text-primary me-1"></i>Nome
+                                        </th>
+                                        <th class="border-0">
+                                            <i class="bi bi-calendar text-success me-1"></i>Data de Início
+                                        </th>
+                                        <th class="border-0">
+                                            <i class="bi bi-geo-alt text-warning me-1"></i>Local
+                                        </th>
+                                        <th class="border-0">
+                                            <i class="bi bi-info-circle text-info me-1"></i>Status
+                                        </th>
+                                        <th class="border-0">
+                                            <i class="bi bi-person-check text-secondary me-1"></i>Inscrições
+                                        </th>
+                                        <th class="border-0 text-center">
+                                            <i class="bi bi-gear text-muted me-1"></i>Ações
+                                        </th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    {% for competicao in listar_competicoes %}
+                                        <tr class="competition-row" data-competition-id="{{ competicao.id }}">
+                                            <td class="align-middle">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="me-3">
+                                                        {% if competicao.status == "Ativa" %}
+                                                            <div class="status-indicator bg-success"></div>
+                                                        {% elif competicao.status == "Finalizada" %}
+                                                            <div class="status-indicator bg-secondary"></div>
+                                                        {% else %}
+                                                            <div class="status-indicator bg-warning"></div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div>
+                                                        <a href="{% url 'competicoes:categoria' competicao_id=competicao.id %}" 
+                                                           class="text-decoration-none fw-bold text-primary competition-name">
+                                                            {{ competicao.nome }}
+                                                        </a>
+                                                        <div class="text-muted small">
+                                                            <i class="bi bi-diagram-3 me-1"></i>{{ competicao.modalidade }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="d-flex align-items-center">
+                                                    <div>
+                                                        <div class="fw-semibold">{{ competicao.data_inicio|date:"d/m/Y" }}</div>
+                                                        <div class="text-muted small">
+                                                            <i class="bi bi-clock me-1"></i>{{ competicao.horario }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="text-truncate" style="max-width: 200px;" title="{{ competicao.local }}">
+                                                    <i class="bi bi-geo-alt text-muted me-1"></i>{{ competicao.local }}
+                                                </div>
+                                            </td>
+                                            <td class="align-middle">
+                                                {% if competicao.status == "Ativa" %}
+                                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
+                                                        <i class="bi bi-check-circle me-1"></i>{{ competicao.status }}
+                                                    </span>
+                                                {% elif competicao.status == "Finalizada" %}
+                                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill">
+                                                        <i class="bi bi-flag me-1"></i>{{ competicao.status }}
+                                                    </span>
+                                                {% elif competicao.status == "Em breve" %}
+                                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill">
+                                                        <i class="bi bi-clock me-1"></i>{{ competicao.status }}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-light text-dark border rounded-pill">{{ competicao.status }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="align-middle">
+                                                {% if competicao.inscricoes_abertas %}
+                                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill">
+                                                        <i class="bi bi-door-open me-1"></i>Abertas
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill">
+                                                        <i class="bi bi-door-closed me-1"></i>Fechadas
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-sm btn-outline-primary" 
+                                                            data-mdb-toggle="modal" 
+                                                            data-mdb-target="#viewModal{{ competicao.id }}" 
+                                                            title="Visualizar">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-warning" 
+                                                            data-mdb-toggle="modal" 
+                                                            data-mdb-target="#editModal{{ competicao.id }}" 
+                                                            title="Editar">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger" 
+                                                            data-mdb-toggle="modal" 
+                                                            data-mdb-target="#deleteModal{{ competicao.id }}" 
+                                                            title="Excluir">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="mb-3">
+                                <i class="bi bi-inbox display-1 text-muted"></i>
+                            </div>
+                            <h5 class="text-muted">Nenhuma competição encontrada</h5>
+                            <p class="text-muted">
+                                {% if request.GET %}
+                                    Tente ajustar os filtros de busca ou 
+                                    <a href="{% url 'competicoes:home' %}" class="text-decoration-none">limpar todos os filtros</a>.
+                                {% else %}
+                                    Comece criando sua primeira competição.
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Vista em Cards -->
+                <div class="card-body d-none" id="cardView">
+                    {% if listar_competicoes %}
+                        <div class="row g-3">
+                            {% for competicao in listar_competicoes %}
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card h-100 competition-card shadow-sm border-0" data-competition-id="{{ competicao.id }}">
+                                        <div class="card-header bg-transparent border-bottom-0 p-3">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="card-title mb-1 fw-bold">
+                                                        <a href="{% url 'competicoes:categoria' competicao_id=competicao.id %}" 
+                                                           class="text-decoration-none text-primary">
+                                                            {{ competicao.nome }}
+                                                        </a>
+                                                    </h6>
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-diagram-3 me-1"></i>{{ competicao.modalidade }}
+                                                    </small>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary border-0" 
+                                                            type="button" 
+                                                            data-bs-toggle="dropdown">
+                                                        <i class="bi bi-three-dots"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a class="dropdown-item" 
+                                                               data-mdb-toggle="modal" 
+                                                               data-mdb-target="#viewModal{{ competicao.id }}">
+                                                                <i class="bi bi-eye me-2"></i>Visualizar
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" 
+                                                               data-mdb-toggle="modal" 
+                                                               data-mdb-target="#editModal{{ competicao.id }}">
+                                                                <i class="bi bi-pencil me-2"></i>Editar
+                                                            </a>
+                                                        </li>
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li>
+                                                            <a class="dropdown-item text-danger" 
+                                                               data-mdb-toggle="modal" 
+                                                               data-mdb-target="#deleteModal{{ competicao.id }}">
+                                                                <i class="bi bi-trash me-2"></i>Excluir
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-3 pt-0">
+                                            <div class="row g-2 small">
+                                                <div class="col-12">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <i class="bi bi-calendar text-success me-2"></i>
+                                                        <span class="fw-semibold">{{ competicao.data_inicio|date:"d/m/Y" }}</span>
+                                                        <span class="text-muted ms-2">às {{ competicao.horario }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <i class="bi bi-geo-alt text-warning me-2"></i>
+                                                        <span class="text-truncate">{{ competicao.local }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    {% if competicao.status == "Ativa" %}
+                                                        <span class="badge bg-success-subtle text-success rounded-pill">
+                                                            <i class="bi bi-check-circle me-1"></i>{{ competicao.status }}
+                                                        </span>
+                                                    {% elif competicao.status == "Finalizada" %}
+                                                        <span class="badge bg-secondary-subtle text-secondary rounded-pill">
+                                                            <i class="bi bi-flag me-1"></i>{{ competicao.status }}
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning-subtle text-warning rounded-pill">
+                                                            <i class="bi bi-clock me-1"></i>{{ competicao.status }}
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-6 text-end">
+                                                    {% if competicao.inscricoes_abertas %}
+                                                        <span class="badge bg-primary-subtle text-primary rounded-pill">
+                                                            <i class="bi bi-door-open me-1"></i>Abertas
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="badge bg-danger-subtle text-danger rounded-pill">
+                                                            <i class="bi bi-door-closed me-1"></i>Fechadas
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="mb-3">
+                                <i class="bi bi-inbox display-1 text-muted"></i>
+                            </div>
+                            <h5 class="text-muted">Nenhuma competição encontrada</h5>
+                            <p class="text-muted">
+                                {% if request.GET %}
+                                    Tente ajustar os filtros de busca ou 
+                                    <a href="{% url 'competicoes:home' %}" class="text-decoration-none">limpar todos os filtros</a>.
+                                {% else %}
+                                    Comece criando sua primeira competição.
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </main>
@@ -1239,8 +1542,7 @@
                 body: `arbitro_id=${arbitroId}`
             })
             .then(response => response.json())
-            .then(data => {
-                if (data.success) {
+            .then(data => {                if (data.success) {
                     alert(data.message);
                     // Recarregar a página para atualizar as tabelas de árbitros
                     location.reload();
@@ -1253,6 +1555,103 @@
                 alert('Erro ao adicionar árbitro. Tente novamente.');
             });
         }
-    </script>
+    </script>    <!-- Estilos adicionais para filtros e visualizações -->
+    <style>
+        /* Indicador de status */
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Efeitos de hover para cards de competição */
+        .competition-card {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .competition-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+            border-color: #0d6efd;
+        }
+
+        /* Efeitos de hover para linhas da tabela */
+        .competition-row {
+            transition: all 0.2s ease;
+        }
+
+        .competition-row:hover {
+            background-color: rgba(13, 110, 253, 0.05);
+            transform: scale(1.001);
+        }
+
+        /* Nome da competição com efeito hover */
+        .competition-name:hover {
+            text-decoration: underline !important;
+        }
+
+        /* Filtros colapsáveis */
+        #filtersContainer {
+            transition: all 0.3s ease;
+        }
+
+        .filters-collapsed #filtersContainer {
+            display: none !important;
+        }
+
+        /* Badges modernos */
+        .badge {
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+
+        /* Botões de alternância de view */
+        .btn-group .btn {
+            transition: all 0.2s ease;
+        }
+
+        .btn-group .btn:not(.btn-light) {
+            background-color: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        /* Loading states */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Animação para busca automática */
+        .auto-search-active #searchInput {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+
+        /* Empty state melhorado */
+        .empty-state {
+            padding: 4rem 2rem;
+        }
+
+        /* Responsividade para filtros */
+        @media (max-width: 768px) {
+            .card-header .d-flex {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn-group {
+                width: 100%;
+            }
+            
+            .btn-group .btn {
+                flex: 1;
+            }
+        }
+    </style>
+
+    <!-- JavaScript para filtros avançados -->
+    <script src="{% load static %}{% static 'competicoes/js/filtros_competicoes.js' %}"></script>
 </body>
 </html>
