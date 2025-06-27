@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados de Kata - {{ categoria.nome }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border: 2px solid #333;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .header h2 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        
+        .info-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #007bff;
+        }
+        
+        .info-section h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            width: 120px;
+            color: #555;
+        }
+        
+        .info-value {
+            color: #333;
+        }
+        
+        .podio-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+            text-align: center;
+        }
+        
+        .podio-section h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .podio-item {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            min-width: 150px;
+        }
+        
+        .podio-position {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .podio-nome {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .podio-academia {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        
+        .podio-pontos {
+            font-size: 12px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .fase-section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        
+        .fase-title {
+            background-color: #333;
+            color: white;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        .results-table th {
+            background-color: #f8f9fa;
+            color: #333;
+            padding: 8px 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 11px;
+            border: 1px solid #ddd;
+        }
+        
+        .results-table td {
+            padding: 8px 6px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size: 11px;
+            vertical-align: top;
+        }
+        
+        .results-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .results-table tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+        
+        .col-pos { width: 8%; }
+        .col-atleta { width: 25%; text-align: left; }
+        .col-academia { width: 20%; text-align: left; }
+        .col-nota { width: 7%; }
+        .col-total { width: 10%; font-weight: bold; }
+        .col-status { width: 10%; }
+        
+        .atleta-info {
+            text-align: left;
+            padding-left: 8px;
+        }
+        
+        .atleta-nome {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 2px;
+            color: #333;
+        }
+        
+        .atleta-detalhes {
+            font-size: 10px;
+            color: #666;
+            line-height: 1.2;
+        }
+        
+        .nota-valor {
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .total-destaque {
+            background-color: #333;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .status-classificado {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .status-eliminado {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .status-pendente {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-style: italic;
+            background-color: #f8f9fa;
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding: 8px;
+            background-color: white;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        .posicao-destaque {
+            background-color: #333;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        
+        .primeiro { background-color: #ffd700 !important; color: #333 !important; }
+        .segundo { background-color: #c0c0c0 !important; color: #333 !important; }
+        .terceiro { background-color: #cd7f32 !important; color: white !important; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>RESULTADOS DE KATA</h1>
+        <h2>{{ competicao.nome }}</h2>
+        <h2>Categoria: {{ categoria.nome }}</h2>
+    </div>
+    
+    <!-- Informações da Competição -->
+    <div class="info-section">
+        <h3>Informações da Competição</h3>
+        <div class="info-row">
+            <div class="info-label">Competição:</div>
+            <div class="info-value">{{ competicao.nome }}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Categoria:</div>
+            <div class="info-value">{{ categoria.nome }}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Data:</div>
+            <div class="info-value">{{ competicao.data_inicio|date:"d/m/Y" }}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Local:</div>
+            <div class="info-value">{{ competicao.local }}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Total de Atletas:</div>
+            <div class="info-value">{{ atletas|length }}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Gerado em:</div>
+            <div class="info-value">{{ data_geracao|date:"d/m/Y H:i" }}</div>
+        </div>
+    </div>
+    
+    <!-- Pódio -->
+    {% if podio %}
+    <div class="podio-section">
+        <h3>🏆 PÓDIO FINAL</h3>
+        {% for resultado in podio %}
+        <div class="podio-item">
+            <div class="podio-position">{{ resultado.posicao }}º LUGAR</div>
+            <div class="podio-nome">{{ resultado.atleta.nome_completo|default:"Nome não informado" }}</div>
+            <div class="podio-academia">{{ resultado.atleta.academia.nome|default:"Academia não informada" }}</div>
+            <div class="podio-pontos">{{ resultado.total|floatformat:1 }} pontos</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Resultados por Fase -->
+    {% for fase in fases %}
+    <div class="fase-section">
+        <div class="fase-title">{{ fase.nome|upper }}</div>
+        
+        {% if fase.resultados %}
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th class="col-pos">Pos.</th>
+                    <th class="col-atleta">Atleta</th>
+                    <th class="col-academia">Academia</th>
+                    <th class="col-nota">Nota 1</th>
+                    <th class="col-nota">Nota 2</th>
+                    <th class="col-nota">Nota 3</th>
+                    <th class="col-nota">Nota 4</th>
+                    <th class="col-nota">Nota 5</th>
+                    <th class="col-total">Total</th>
+                    <th class="col-status">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resultado in fase.resultados %}
+                <tr>
+                    <td class="col-pos">
+                        {% if resultado.posicao %}
+                            {% if resultado.posicao == 1 %}
+                                <div class="posicao-destaque primeiro">{{ resultado.posicao }}</div>
+                            {% elif resultado.posicao == 2 %}
+                                <div class="posicao-destaque segundo">{{ resultado.posicao }}</div>
+                            {% elif resultado.posicao == 3 %}
+                                <div class="posicao-destaque terceiro">{{ resultado.posicao }}</div>
+                            {% else %}
+                                <div class="posicao-destaque">{{ resultado.posicao }}</div>
+                            {% endif %}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td class="atleta-info">
+                        <div class="atleta-nome">{{ resultado.atleta.nome_completo|default:"Nome não informado" }}</div>
+                        <div class="atleta-detalhes">
+                            {% if resultado.atleta.cidade and resultado.atleta.estado %}
+                                {{ resultado.atleta.cidade }}/{{ resultado.atleta.estado }}
+                            {% else %}
+                                Local não informado
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="atleta-info">
+                        <div style="font-weight: bold;">{{ resultado.atleta.academia.nome|default:"—" }}</div>
+                    </td>
+                    <td class="col-nota">
+                        {% if resultado.nota1 > 0 %}
+                            <span class="nota-valor">{{ resultado.nota1|floatformat:1 }}</span>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td class="col-nota">
+                        {% if resultado.nota2 > 0 %}
+                            <span class="nota-valor">{{ resultado.nota2|floatformat:1 }}</span>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td class="col-nota">
+                        {% if resultado.nota3 > 0 %}
+                            <span class="nota-valor">{{ resultado.nota3|floatformat:1 }}</span>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td class="col-nota">
+                        {% if resultado.nota4 > 0 %}
+                            <span class="nota-valor">{{ resultado.nota4|floatformat:1 }}</span>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td class="col-nota">
+                        {% if resultado.nota5 > 0 %}
+                            <span class="nota-valor">{{ resultado.nota5|floatformat:1 }}</span>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td class="col-total">
+                        {% if resultado.total > 0 %}
+                            <span class="total-destaque">{{ resultado.total|floatformat:1 }}</span>
+                        {% else %}
+                            0.0
+                        {% endif %}
+                    </td>
+                    <td class="col-status">
+                        {% if resultado.status == 'classificado' %}
+                            <span class="status-classificado">Classificado</span>
+                        {% elif resultado.status == 'eliminado' %}
+                            <span class="status-eliminado">Eliminado</span>
+                        {% else %}
+                            <span class="status-pendente">Pendente</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="no-results">
+            Nenhum resultado encontrado para esta fase.
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if not forloop.last %}
+        <div class="page-break"></div>
+    {% endif %}
+    {% endfor %}
+    
+    <!-- Footer -->
+    <div class="footer">
+        <strong>Sistema KeyChart</strong> | {{ competicao.nome }} - {{ categoria.nome }} | 
+        Gerado em {{ data_geracao|date:"d/m/Y H:i" }}
+    </div>
+</body>
+</html>
