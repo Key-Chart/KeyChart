@@ -12,70 +12,244 @@ import math
 from django.db import transaction
 from .models import ResultadoKata
 from django.http.response import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404
+from django.contrib import messages
+from .models import Competicao, Categoria, Academia, Arbitro
+from django.db.models import Q
+from django.utils import timezone
+from datetime import datetime
+from app.atletas.models import Atleta
+from django.contrib import messages
+import random
+import math
+from django.db import transaction
+from .models import ResultadoKata
+from django.http.response import HttpResponse, JsonResponse
+from django.core.exceptions import ValidationError
+from decimal import Decimal
+
 # Função para criar Competições
 def criar_competicao(request):
     if request.method == 'POST':
-        nome_competicao = request.POST.get('nome')
-        modalidade = request.POST.get('modalidade')
-        data_inicio = request.POST.get('data_inicio')
-        horario = request.POST.get('horario')
-        local = request.POST.get('local')
-        arbitros = request.POST.get('arbitros')
-        regras_especificas = request.POST.get('regras_especificas')
-        status = request.POST.get('status')
+        try:
+            with transaction.atomic():
+                # Informações básicas
+                nome_competicao = request.POST.get('nome')
+                modalidade = request.POST.get('modalidade')
+                data_inicio = request.POST.get('data_inicio')
+                horario = request.POST.get('horario')
+                local = request.POST.get('local')
+                regras_especificas = request.POST.get('regras_especificas', '')
+                status = request.POST.get('status', 'Ativa')
 
-        if not nome_competicao or not modalidade or not data_inicio or not horario or not local:
-            messages.error(request, 'Preencha todos os campos obrigatórios.')
+                # Validações básicas
+                if not nome_competicao or not modalidade or not data_inicio or not horario or not local:
+                    messages.error(request, 'Preencha todos os campos obrigatórios.')
+                    return redirect('competicoes:home')
+
+                if len(nome_competicao) < 3:
+                    messages.error(request, 'Nome da competição muito curto.')
+                    return redirect('competicoes:home')
+
+                # Configurações de inscrições
+                inscricoes_status = request.POST.get('inscricoes_status', 'abertas')
+                inscricoes_data_limite = request.POST.get('inscricoes_data_limite')
+                inscricoes_valor = request.POST.get('inscricoes_valor', '120.00')
+                inscricoes_taxa = request.POST.get('inscricoes_taxa', '0.00')
+                inscricoes_desconto = request.POST.get('inscricoes_desconto', '0.00')
+                
+                # Métodos de pagamento
+                inscricoes_pagamento_pix = request.POST.get('inscricoes_pagamento_pix') == 'on'
+                inscricoes_pagamento_cartao = request.POST.get('inscricoes_pagamento_cartao') == 'on'
+                inscricoes_pagamento_boleto = request.POST.get('inscricoes_pagamento_boleto') == 'on'
+                
+                # Configurações de exibição
+                inscricoes_mostrar_valor = request.POST.get('inscricoes_mostrar_valor') == 'on'
+                inscricoes_mostrar_vagas = request.POST.get('inscricoes_mostrar_vagas') == 'on'
+                inscricoes_mensagem = request.POST.get('inscricoes_mensagem', '')
+
+                # Converter valores monetários
+                try:
+                    inscricoes_valor = Decimal(inscricoes_valor)
+                    inscricoes_taxa = Decimal(inscricoes_taxa)
+                    inscricoes_desconto = Decimal(inscricoes_desconto)
+                except (ValueError, TypeError):
+                    messages.error(request, 'Valores monetários inválidos.')
+                    return redirect('competicoes:home')
+
+                # Converter data limite se fornecida
+                inscricoes_data_limite_obj = None
+                if inscricoes_data_limite:
+                    try:
+                        inscricoes_data_limite_obj = datetime.strptime(inscricoes_data_limite, '%Y-%m-%d').date()
+                    except ValueError:
+                        messages.error(request, 'Data limite das inscrições inválida.')
+                        return redirect('competicoes:home')
+
+                # Determinar se inscrições estão abertas
+                inscricoes_abertas = inscricoes_status == 'abertas'
+
+                # Criar a competição
+                nova_competicao = Competicao(
+                    nome=nome_competicao,
+                    modalidade=modalidade,
+                    data_inicio=data_inicio,
+                    horario=horario,
+                    local=local,
+                    regras_especificas=regras_especificas,
+                    status=status,
+                    inscricoes_abertas=inscricoes_abertas,
+                    inscricoes_status=inscricoes_status,
+                    inscricoes_data_limite=inscricoes_data_limite_obj,
+                    inscricoes_valor=inscricoes_valor,
+                    inscricoes_taxa=inscricoes_taxa,
+                    inscricoes_desconto=inscricoes_desconto,
+                    inscricoes_pagamento_pix=inscricoes_pagamento_pix,
+                    inscricoes_pagamento_cartao=inscricoes_pagamento_cartao,
+                    inscricoes_pagamento_boleto=inscricoes_pagamento_boleto,
+                    inscricoes_mostrar_valor=inscricoes_mostrar_valor,
+                    inscricoes_mostrar_vagas=inscricoes_mostrar_vagas,
+                    inscricoes_mensagem=inscricoes_mensagem
+                )
+                nova_competicao.save()
+
+                # Processar árbitros selecionados
+                arbitros_selecionados = request.POST.getlist('arbitros')
+                if arbitros_selecionados:
+                    arbitros_objs = Arbitro.objects.filter(id__in=arbitros_selecionados)
+                    nova_competicao.arbitros.set(arbitros_objs)
+
+                # Processar novo árbitro (se fornecido)
+                novo_arbitro_nome = request.POST.get('novo_arbitro_nome', '').strip()
+                novo_arbitro_email = request.POST.get('novo_arbitro_email', '').strip()
+                novo_arbitro_telefone = request.POST.get('novo_arbitro_telefone', '').strip()
+
+                if novo_arbitro_nome and novo_arbitro_email:
+                    try:
+                        # Verificar se já existe um árbitro com esse email
+                        arbitro_existente = Arbitro.objects.filter(email=novo_arbitro_email).first()
+                        if arbitro_existente:
+                            # Adicionar árbitro existente à competição
+                            nova_competicao.arbitros.add(arbitro_existente)
+                        else:
+                            # Criar novo árbitro
+                            novo_arbitro = Arbitro.objects.create(
+                                nome=novo_arbitro_nome,
+                                email=novo_arbitro_email,
+                                telefone=novo_arbitro_telefone
+                            )
+                            nova_competicao.arbitros.add(novo_arbitro)
+                    except ValidationError as e:
+                        messages.warning(request, f'Erro ao adicionar árbitro: {str(e)}')
+
+                messages.success(request, 'Competição criada com sucesso!')
+                return redirect('competicoes:home')
+                
+        except Exception as e:
+            messages.error(request, f'Erro ao criar competição: {str(e)}')
             return redirect('competicoes:home')
-
-        if len(nome_competicao) < 3:
-            messages.error(request, 'Nome da competição muito curto.')
-            return redirect('competicoes:home')
-
-        nova_competicao = Competicao(
-            nome=nome_competicao,
-            modalidade=modalidade,
-            data_inicio=data_inicio,
-            horario=horario,
-            local=local,
-            arbitros=arbitros,
-            regras_especificas=regras_especificas,
-            status=status
-        )
-        nova_competicao.save()
-        messages.success(request, 'Competição criada com sucesso!')
-        return redirect('competicoes:home')
+            
     return redirect('competicoes:home')
 
 # Função para Atualizar Competição
 def editar_competicao(request, competicao_id):
     competicao = get_object_or_404(Competicao, id=competicao_id)
     if request.method == 'POST':
-        nome = request.POST.get('nome')
-        modalidade = request.POST.get('modalidade')
-        data_inicio = request.POST.get('data_inicio')
-        horario = request.POST.get('horario')
-        local = request.POST.get('local')
-        arbitros = request.POST.get('arbitros')
-        regras_especificas = request.POST.get('regras_especificas')
-        status = request.POST.get('status')
-        if not nome or not modalidade or not data_inicio or not horario or not local:
-            messages.error(request, 'Preencha todos os campos obrigatórios.')
+        try:
+            with transaction.atomic():
+                # Informações básicas
+                nome = request.POST.get('nome')
+                modalidade = request.POST.get('modalidade')
+                data_inicio = request.POST.get('data_inicio')
+                horario = request.POST.get('horario')
+                local = request.POST.get('local')
+                regras_especificas = request.POST.get('regras_especificas', '')
+                status = request.POST.get('status')
+                
+                # Validações básicas
+                if not nome or not modalidade or not data_inicio or not horario or not local:
+                    messages.error(request, 'Preencha todos os campos obrigatórios.')
+                    return redirect('competicoes:home')
+                if len(nome) < 3:
+                    messages.error(request, 'Nome da competição muito curto.')
+                    return redirect('competicoes:home')
+                
+                # Configurações de inscrições
+                inscricoes_status = request.POST.get('inscricoes_status', 'abertas')
+                inscricoes_data_limite = request.POST.get('inscricoes_data_limite')
+                inscricoes_valor = request.POST.get('inscricoes_valor', '120.00')
+                inscricoes_taxa = request.POST.get('inscricoes_taxa', '0.00')
+                inscricoes_desconto = request.POST.get('inscricoes_desconto', '0.00')
+                
+                # Métodos de pagamento
+                inscricoes_pagamento_pix = request.POST.get('inscricoes_pagamento_pix') == 'on'
+                inscricoes_pagamento_cartao = request.POST.get('inscricoes_pagamento_cartao') == 'on'
+                inscricoes_pagamento_boleto = request.POST.get('inscricoes_pagamento_boleto') == 'on'
+                
+                # Configurações de exibição
+                inscricoes_mostrar_valor = request.POST.get('inscricoes_mostrar_valor') == 'on'
+                inscricoes_mostrar_vagas = request.POST.get('inscricoes_mostrar_vagas') == 'on'
+                inscricoes_mensagem = request.POST.get('inscricoes_mensagem', '')
+
+                # Converter valores monetários
+                try:
+                    inscricoes_valor = Decimal(inscricoes_valor)
+                    inscricoes_taxa = Decimal(inscricoes_taxa)
+                    inscricoes_desconto = Decimal(inscricoes_desconto)
+                except (ValueError, TypeError):
+                    messages.error(request, 'Valores monetários inválidos.')
+                    return redirect('competicoes:home')
+
+                # Converter data limite se fornecida
+                inscricoes_data_limite_obj = None
+                if inscricoes_data_limite:
+                    try:
+                        inscricoes_data_limite_obj = datetime.strptime(inscricoes_data_limite, '%Y-%m-%d').date()
+                    except ValueError:
+                        messages.error(request, 'Data limite das inscrições inválida.')
+                        return redirect('competicoes:home')
+
+                # Determinar se inscrições estão abertas
+                inscricoes_abertas = inscricoes_status == 'abertas'
+                
+                # Atualizar competição
+                competicao.nome = nome
+                competicao.modalidade = modalidade
+                competicao.data_inicio = data_inicio
+                competicao.horario = horario
+                competicao.local = local
+                competicao.regras_especificas = regras_especificas
+                competicao.status = status
+                competicao.inscricoes_abertas = inscricoes_abertas
+                competicao.inscricoes_status = inscricoes_status
+                competicao.inscricoes_data_limite = inscricoes_data_limite_obj
+                competicao.inscricoes_valor = inscricoes_valor
+                competicao.inscricoes_taxa = inscricoes_taxa
+                competicao.inscricoes_desconto = inscricoes_desconto
+                competicao.inscricoes_pagamento_pix = inscricoes_pagamento_pix
+                competicao.inscricoes_pagamento_cartao = inscricoes_pagamento_cartao
+                competicao.inscricoes_pagamento_boleto = inscricoes_pagamento_boleto
+                competicao.inscricoes_mostrar_valor = inscricoes_mostrar_valor
+                competicao.inscricoes_mostrar_vagas = inscricoes_mostrar_vagas
+                competicao.inscricoes_mensagem = inscricoes_mensagem
+                competicao.save()
+                
+                # Processar árbitros selecionados
+                arbitros_selecionados = request.POST.getlist('arbitros')
+                if arbitros_selecionados:
+                    arbitros_objs = Arbitro.objects.filter(id__in=arbitros_selecionados)
+                    competicao.arbitros.set(arbitros_objs)
+                else:
+                    competicao.arbitros.clear()
+
+                messages.success(request, 'Competição atualizada com sucesso!')
+                return redirect('competicoes:home')
+                
+        except Exception as e:
+            messages.error(request, f'Erro ao atualizar competição: {str(e)}')
             return redirect('competicoes:home')
-        if len(nome) < 3:
-            messages.error(request, 'Nome da competição muito curto.')
-            return redirect('competicoes:home')
-        competicao.nome = nome
-        competicao.modalidade = modalidade
-        competicao.data_inicio = data_inicio
-        competicao.horario = horario
-        competicao.local = local
-        competicao.arbitros = arbitros
-        competicao.regras_especificas = regras_especificas
-        competicao.status = status
-        competicao.save()
-        messages.success(request, 'Competição atualizada com sucesso!')
-        return redirect('competicoes:home')
+            
     return redirect('competicoes:home')
 
 # Função para Excluir Competição
@@ -119,17 +293,46 @@ def listar_competicoes(request):
 
 # Função da rota principal da página Competições
 def competicoes(request):
-    listar_competicoes = Competicao.objects.all()
+    # Processar filtros de busca
+    listar_competicoes = Competicao.objects.all().order_by('-data_inicio')
+    search_query = request.GET.get('q')
+    
+    if search_query:
+        listar_competicoes = listar_competicoes.filter(
+            Q(nome__icontains=search_query) |
+            Q(local__icontains=search_query) |
+            Q(modalidade__icontains=search_query) |
+            Q(arbitros__nome__icontains=search_query)
+        ).distinct()
+    
+    if 'status' in request.GET and request.GET['status']:
+        listar_competicoes = listar_competicoes.filter(status=request.GET['status'])
+        
+    date_filter = request.GET.get('data')
+    if date_filter:
+        try:
+            date_obj = datetime.strptime(date_filter, '%Y-%m-%d').date()
+            listar_competicoes = listar_competicoes.filter(data_inicio=date_obj)
+        except (ValueError, TypeError):
+            pass
+    
+    # Estatísticas
     total_competicoes = Competicao.objects.all().count()
     competicoes_ativas = Competicao.objects.filter(status='Ativa').count()
     competicoes_finalizadas = Competicao.objects.filter(status='Finalizada').count()
-    contex = {
+    
+    # Todos os árbitros para o modal de criação
+    todos_arbitros = Arbitro.objects.all().order_by('nome')
+    
+    context = {
         'total_competicoes': total_competicoes,
         'competicoes_ativas': competicoes_ativas,
         'competicoes_finalizadas': competicoes_finalizadas,
-        'listar_competicoes': listar_competicoes
+        'listar_competicoes': listar_competicoes,
+        'todos_arbitros': todos_arbitros,
+        'status_choices': ['Ativa', 'Finalizada', 'Em breve'],
     }
-    return render(request, 'competicoes/competicoes.html', contex)
+    return render(request, 'competicoes/competicoes.html', context)
 
 # Função principal da tela de Categoria
 def categoria(request, competicao_id):
@@ -491,3 +694,185 @@ def chaveamento_kumite(request, categoria_id):
 
 def chaveamento_kumite_teste(request):
     return render(request, 'competicoes/chaveamento_kumite_teste.html')
+
+# ======================== VIEWS PARA GERENCIAMENTO DE ÁRBITROS ========================
+
+def adicionar_arbitro(request):
+    """View para adicionar um novo árbitro via AJAX"""
+    if request.method == 'POST':
+        try:
+            nome = request.POST.get('nome', '').strip()
+            email = request.POST.get('email', '').strip()
+            telefone = request.POST.get('telefone', '').strip()
+            
+            if not nome or not email:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Nome e email são obrigatórios.'
+                })
+            
+            # Verificar se já existe um árbitro com esse email
+            if Arbitro.objects.filter(email=email).exists():
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Já existe um árbitro cadastrado com este email.'
+                })
+            
+            # Criar novo árbitro
+            novo_arbitro = Arbitro.objects.create(
+                nome=nome,
+                email=email,
+                telefone=telefone
+            )
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Árbitro adicionado com sucesso!',
+                'arbitro': {
+                    'id': novo_arbitro.id,
+                    'nome': novo_arbitro.nome,
+                    'email': novo_arbitro.email,
+                    'telefone': novo_arbitro.telefone
+                }
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Erro ao adicionar árbitro: {str(e)}'
+            })
+    
+    return JsonResponse({'success': False, 'message': 'Método não permitido.'})
+
+def adicionar_arbitro_competicao(request, competicao_id):
+    """View para adicionar um árbitro a uma competição específica"""
+    if request.method == 'POST':
+        try:
+            competicao = get_object_or_404(Competicao, id=competicao_id)
+            
+            # Verificar se é para adicionar um árbitro existente
+            arbitro_id = request.POST.get('arbitro_id')
+            if arbitro_id:
+                arbitro = get_object_or_404(Arbitro, id=arbitro_id)
+                
+                # Verificar se o árbitro já está na competição
+                if competicao.arbitros.filter(id=arbitro.id).exists():
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'Este árbitro já está cadastrado nesta competição.'
+                    })
+                
+                # Adicionar árbitro existente à competição
+                competicao.arbitros.add(arbitro)
+                
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Árbitro adicionado à competição com sucesso!',
+                    'arbitro': {
+                        'id': arbitro.id,
+                        'nome': arbitro.nome,
+                        'email': arbitro.email,
+                        'telefone': arbitro.telefone
+                    }
+                })
+            
+            # Caso contrário, criar um novo árbitro
+            nome = request.POST.get('nome', '').strip()
+            email = request.POST.get('email', '').strip()
+            telefone = request.POST.get('telefone', '').strip()
+            
+            if not nome or not email:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Nome e email são obrigatórios.'
+                })
+            
+            # Verificar se já existe um árbitro com esse email
+            arbitro_existente = Arbitro.objects.filter(email=email).first()
+            
+            if arbitro_existente:
+                # Verificar se o árbitro já está na competição
+                if competicao.arbitros.filter(id=arbitro_existente.id).exists():
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'Este árbitro já está cadastrado nesta competição.'
+                    })
+                
+                # Adicionar árbitro existente à competição
+                competicao.arbitros.add(arbitro_existente)
+                novo_arbitro = arbitro_existente
+            else:
+                # Criar novo árbitro e adicionar à competição
+                novo_arbitro = Arbitro.objects.create(
+                    nome=nome,
+                    email=email,
+                    telefone=telefone
+                )
+                competicao.arbitros.add(novo_arbitro)
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Árbitro adicionado à competição com sucesso!',
+                'arbitro': {
+                    'id': novo_arbitro.id,
+                    'nome': novo_arbitro.nome,
+                    'email': novo_arbitro.email,
+                    'telefone': novo_arbitro.telefone
+                }
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Erro ao adicionar árbitro: {str(e)}'
+            })
+    
+    return JsonResponse({'success': False, 'message': 'Método não permitido.'})
+
+def remover_arbitro_competicao(request, competicao_id, arbitro_id):
+    """View para remover um árbitro de uma competição específica"""
+    if request.method == 'POST':
+        try:
+            competicao = get_object_or_404(Competicao, id=competicao_id)
+            arbitro = get_object_or_404(Arbitro, id=arbitro_id)
+            
+            # Verificar se o árbitro está na competição
+            if not competicao.arbitros.filter(id=arbitro_id).exists():
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Este árbitro não está cadastrado nesta competição.'
+                })
+            
+            # Remover árbitro da competição
+            competicao.arbitros.remove(arbitro)
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Árbitro removido da competição com sucesso!'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Erro ao remover árbitro: {str(e)}'
+            })
+    
+    return JsonResponse({'success': False, 'message': 'Método não permitido.'})
+
+def listar_arbitros(request):
+    """View para listar todos os árbitros (para uso em AJAX)"""
+    arbitros = Arbitro.objects.all().order_by('nome')
+    arbitros_data = []
+    
+    for arbitro in arbitros:
+        arbitros_data.append({
+            'id': arbitro.id,
+            'nome': arbitro.nome,
+            'email': arbitro.email,
+            'telefone': arbitro.telefone
+        })
+    
+    return JsonResponse({
+        'success': True,
+        'arbitros': arbitros_data
+    })

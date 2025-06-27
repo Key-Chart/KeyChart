@@ -27,4 +27,10 @@ urlpatterns = [
 
     # Atletas Categoria
     path('atleta/<int:pk>/editar/', views.editar_atleta, name='atleta_editar'),
+    
+    # Árbitros
+    path('arbitro/adicionar/', views.adicionar_arbitro, name='adicionar_arbitro'),
+    path('competicao/<int:competicao_id>/arbitro/adicionar/', views.adicionar_arbitro_competicao, name='adicionar_arbitro_competicao'),
+    path('competicao/<int:competicao_id>/arbitro/<int:arbitro_id>/remover/', views.remover_arbitro_competicao, name='remover_arbitro_competicao'),
+    path('arbitros/listar/', views.listar_arbitros, name='listar_arbitros'),
 ]
