@@ -8,17 +8,21 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
-    <title>{{ competicao.nome }} | KeyChart</title>
-    <style>
+    <title>{{ competicao.nome }} | KeyChart</title>    <style>
         :root {
             --primary-color: #343A40;
             --secondary-color: #f8f9fa;
             --accent-color: #ffc107;
+            --success-color: #198754;
+            --info-color: #0dcaf0;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
         .content {
@@ -28,63 +32,347 @@
         }
 
         .header {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, #343A40 0%, #495057 100%);
             color: white;
-            padding: 1.5rem;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .btn-back {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(-5px);
         }
 
         .card {
             border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
         }
 
         .card-header {
-            background-color: white;
-            color: #000;
-            padding: 1.25rem 1.5rem;
-            border-bottom: none;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #495057;
+            padding: 1.5rem 2rem;
+            border-bottom: 3px solid var(--primary-color);
+            font-weight: 600;
+        }
+
+        .card-header h5 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: none;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #20c997 100%);
+            border: none;
+            box-shadow: 0 4px 15px rgba(25, 135, 84, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(25, 135, 84, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+            border: none;
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid #0d6efd;
+            color: #0d6efd;
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: #0d6efd;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-warning {
+            border: 2px solid var(--warning-color);
+            color: var(--warning-color);
+            background: transparent;
+        }
+
+        .btn-outline-warning:hover {
+            background: var(--warning-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-danger {
+            border: 2px solid var(--danger-color);
+            color: var(--danger-color);
+            background: transparent;
+        }
+
+        .btn-outline-danger:hover {
+            background: var(--danger-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .table {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            transform: scale(1.02);
+        }
+
+        .table tbody td {
+            padding: 1rem 1.5rem;
+            vertical-align: middle;
+            border-color: #dee2e6;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 2px solid transparent;
         }
 
         .badge-male {
-            background-color: #0d6efd;
+            background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
             color: white;
+            border-color: #0d6efd;
         }
 
         .badge-female {
-            background-color: #fd0d6e;
+            background: linear-gradient(135deg, #fd0d6e 0%, #c51162 100%);
             color: white;
+            border-color: #fd0d6e;
         }
 
         .badge-secondary {
-            background-color: #6c757d;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
             color: white;
+            border-color: #6c757d;
         }
 
         .badge-gi {
-            background-color: #198754;
+            background: linear-gradient(135deg, var(--success-color) 0%, #146c43 100%);
             color: white;
+            border-color: var(--success-color);
         }
 
         .badge-nogi {
-            background-color: #212529;
+            background: linear-gradient(135deg, #212529 0%, #495057 100%);
             color: white;
+            border-color: #212529;
         }
 
-        .badge-active {
-            background-color: #198754;
+        .badge-primary {
+            background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
             color: white;
+            border-color: #0d6efd;
         }
 
-        .badge-finished {
-            background-color: #6c757d;
-            color: white;
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,249,250,0.9) 100%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
         }
 
-        .badge-suspended {
-            background-color: #dc3545;
-            color: white;
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .stats-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #6c757d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stats-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-card .label {
+            color: #6c757d;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            backdrop-filter: blur(20px);
+        }
+
+        .modal-header {
+            border-radius: 20px 20px 0 0;
+            border-bottom: none;
+            padding: 1.5rem 2rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            border-top: none;
+            padding: 1.5rem 2rem;
+        }
+
+        .alert {
+            border-radius: 15px;
+            border: none;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.9) 0%, rgba(255, 193, 7, 0.7) 100%);
+            color: #664d03;
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .table-responsive {
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h5 {
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 0.95rem;
         }
 
         .modal-backdrop {
@@ -98,17 +386,35 @@
 </head>
 <body>
 
-    {% include 'sidebar.html' %}
-
-    <div class="content" id="content">
+    {% include 'sidebar.html' %}    <div class="content" id="content">
         <div class="header">
             <div class="container-fluid">
-                <div class="d-flex align-items-center">
-                    <button class="btn btn-back me-3" onclick="window.location.href='http://127.0.0.1:8000/keychart/competicoes/'">
-                        <i class="bi bi-arrow-left text-white"></i>
-                    </button>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-back me-3" onclick="window.location.href='http://127.0.0.1:8000/keychart/competicoes/'" title="Voltar para Competições">
+                            <i class="bi bi-arrow-left"></i>
+                        </button>
 
-                    <h2><i class="bi bi-trophy me-2"></i> {{ competicao.nome }}</h2>
+                        <div>
+                            <h2 class="mb-1">
+                                <i class="bi bi-trophy me-2"></i>{{ competicao.nome }}
+                            </h2>
+                            <p class="mb-0 opacity-75">
+                                <i class="bi bi-calendar me-2"></i>{{ competicao.data_inicio|date:"d/m/Y" }}
+                                <span class="mx-2">|</span>
+                                <i class="bi bi-geo-alt me-2"></i>{{ competicao.local }}
+                                <span class="mx-2">|</span>
+                                <i class="bi bi-diagram-3 me-2"></i>{{ competicao.modalidade }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center">
+                        <span class="badge {% if competicao.status == 'Ativa' %}bg-success{% elif competicao.status == 'Finalizada' %}bg-secondary{% else %}bg-warning text-dark{% endif %} fs-6 me-3">
+                            <i class="bi {% if competicao.status == 'Ativa' %}bi-check-circle{% elif competicao.status == 'Finalizada' %}bi-flag{% else %}bi-clock{% endif %} me-1"></i>
+                            {{ competicao.status }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -120,16 +426,55 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endfor %}
-        {% endif %}
+        {% endif %}        <main class="container-fluid py-4">
+            <!-- Cards de Estatísticas -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card animate-fadeIn">
+                        <div class="icon">
+                            <i class="bi bi-list-check"></i>
+                        </div>
+                        <div class="number">{{ categorias.count }}</div>
+                        <div class="label">Categorias</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card animate-fadeIn" style="animation-delay: 0.1s">
+                        <div class="icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <div class="number">{{ competicao.academias.count }}</div>
+                        <div class="label">Academias</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card animate-fadeIn" style="animation-delay: 0.2s">
+                        <div class="icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="number">{{ categorias|length|add:competicao.academias.count }}</div>
+                        <div class="label">Total Items</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card animate-fadeIn" style="animation-delay: 0.3s">
+                        <div class="icon">
+                            <i class="bi bi-trophy"></i>
+                        </div>
+                        <div class="number">{{ competicao.modalidade }}</div>
+                        <div class="label">Modalidade</div>
+                    </div>
+                </div>
+            </div>
 
-        <main class="container-fluid py-4">
             <div class="row mb-4">
                 <div class="col-lg-6 mb-4">
-                    <div class="card h-100">
+                    <div class="card h-100 animate-fadeIn">
                         <div class="card-header">
-                            <h5 class="card-title mb-0"><i class="bi bi-tag me-2"></i>Cadastro de Categorias</h5>
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-tag me-2 text-primary"></i>Cadastro de Categorias
+                            </h5>
                         </div>
-                        <hr>
                         <div class="card-body">
 
                             <form method="POST" action="{% url 'competicoes:cadastrar_categoria' competicao_id=competicao.id %}">
@@ -159,124 +504,155 @@
                                         <option value="KUMITE">Kumitê</option>
                                         <option value="ABS">Absolute</option>
                                     </select>
-                                </div>
-                                <button type="submit" class="btn btn-success w-100">
+                                </div>                                <button type="submit" class="btn btn-success w-100">
                                     <i class="bi bi-plus-circle me-2"></i>Cadastrar Categoria
                                 </button>
                             </form>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-lg-6 mb-4">
-                    <div class="card h-100">
+                </div>                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 animate-fadeIn" style="animation-delay: 0.1s">
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0"><i class="bi bi-building me-2"></i>Academias Cadastradas</h5>
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-building me-2 text-info"></i>Academias Cadastradas
+                                </h5>
                                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAcademyModal">
                                     <i class="bi bi-plus-lg me-1"></i> Nova Academia
                                 </button>
                             </div>
                         </div>
                         <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Nome</th>
-                                            <th>Cidade/Estado</th>
-                                            <th>Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for academia in competicao.academias.all %}
-                                        <tr>
-                                            <td>{{ academia.id }}</td>
-                                            <td>{{ academia.nome }}</td>
-                                            <td>{{ academia.cidade }}/{{ academia.estado }}</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#viewAcademyModal{{ academia.id }}" title="Visualizar">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning me-1" data-bs-toggle="modal" data-bs-target="#editAcademyModal{{ academia.id }}" title="Editar">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAcademyModal{{ academia.id }}" title="Excluir">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        {% empty %}
-                                        <tr>
-                                            <td colspan="4" class="text-center">Nenhuma academia cadastrada</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
+                            {% if competicao.academias.all %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th><i class="bi bi-hash me-1"></i>ID</th>
+                                                <th><i class="bi bi-building me-1"></i>Nome</th>
+                                                <th><i class="bi bi-geo-alt me-1"></i>Localização</th>
+                                                <th class="text-center"><i class="bi bi-gear me-1"></i>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for academia in competicao.academias.all %}
+                                            <tr>
+                                                <td class="fw-bold text-primary">#{{ academia.id }}</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                                                            <i class="bi bi-building text-primary"></i>
+                                                        </div>
+                                                        {{ academia.nome }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-geo-alt me-1"></i>{{ academia.cidade }}/{{ academia.estado }}
+                                                    </small>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="btn-group">
+                                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewAcademyModal{{ academia.id }}" title="Visualizar">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editAcademyModal{{ academia.id }}" title="Editar">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAcademyModal{{ academia.id }}" title="Excluir">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="empty-state">
+                                    <i class="bi bi-building"></i>
+                                    <h5>Nenhuma academia cadastrada</h5>
+                                    <p>Comece adicionando uma nova academia à competição.</p>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
-         <!-- Categories Table -->
-
-            <div class="row">
+         <!-- Categories Table -->            <div class="row">
                 <div class="col-lg-12 mb-4">
-                    <div class="card h-100">
+                    <div class="card h-100 animate-fadeIn" style="animation-delay: 0.2s">
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0"><i class="bi bi-list-check me-2"></i>Categorias Cadastradas</h5>
-                                <span class="badge bg-primary">{{ categorias.count }} registros</span>
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-list-check me-2 text-success"></i>Categorias Cadastradas
+                                </h5>
+                                <span class="badge bg-primary fs-6">{{ categorias.count }} registro{{ categorias.count|pluralize:"s" }}</span>
                             </div>
                         </div>
                         <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Sexo</th>
-                                            <th>Nome</th>
-                                            <th>Tipo</th>
-                                            <th>Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for categoria in categorias %}
-                                        <tr>
-                                            <td>
-                                                <span class="badge {% if categoria.sexo == 'M' %}badge-male{% elif categoria.sexo == 'F' %}badge-female{% else %}badge-secondary{% endif %}">
-                                                    {{ categoria.get_sexo_display }}
-                                                </span>
-                                            </td>
-                                            <td>{{ categoria.nome }}</td>
-                                            <td>
-                                                <span class="badge {% if categoria.tipo == 'KATA' %}badge-gi{% elif categoria.tipo == 'KUMITE' %}badge-nogi{% else %}badge-primary{% endif %}">
-                                                    {{ categoria.get_tipo_display }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <a href="{% url 'competicoes:atletas_categoria' categoria.id %}"
-                                                   class="btn btn-sm btn-outline-primary me-1"
-                                                   title="Visualizar">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-outline-danger"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#deleteCategoryModal{{ categoria.id }}"
-                                                        title="Excluir">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        {% empty %}
-                                        <tr>
-                                            <td colspan="4" class="text-center">Nenhuma categoria cadastrada</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
+                            {% if categorias %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th><i class="bi bi-gender-ambiguous me-1"></i>Sexo</th>
+                                                <th><i class="bi bi-tag me-1"></i>Nome</th>
+                                                <th><i class="bi bi-trophy me-1"></i>Tipo</th>
+                                                <th class="text-center"><i class="bi bi-gear me-1"></i>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for categoria in categorias %}
+                                            <tr>
+                                                <td>
+                                                    <span class="badge {% if categoria.sexo == 'M' %}badge-male{% elif categoria.sexo == 'F' %}badge-female{% else %}badge-secondary{% endif %}">
+                                                        <i class="bi {% if categoria.sexo == 'M' %}bi-gender-male{% elif categoria.sexo == 'F' %}bi-gender-female{% else %}bi-gender-ambiguous{% endif %} me-1"></i>
+                                                        {{ categoria.get_sexo_display }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-2">
+                                                            <i class="bi bi-tag text-success"></i>
+                                                        </div>
+                                                        <span class="fw-semibold">{{ categoria.nome }}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge {% if categoria.tipo == 'KATA' %}badge-gi{% elif categoria.tipo == 'KUMITE' %}badge-nogi{% else %}badge-primary{% endif %}">
+                                                        <i class="bi {% if categoria.tipo == 'KATA' %}bi-person-standing{% elif categoria.tipo == 'KUMITE' %}bi-lightning{% else %}bi-star{% endif %} me-1"></i>
+                                                        {{ categoria.get_tipo_display }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="btn-group">
+                                                        <a href="{% url 'competicoes:atletas_categoria' categoria.id %}"
+                                                           class="btn btn-sm btn-outline-primary"
+                                                           title="Visualizar Atletas">
+                                                            <i class="bi bi-people"></i>
+                                                        </a>
+                                                        <button class="btn btn-sm btn-outline-danger"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#deleteCategoryModal{{ categoria.id }}"
+                                                                title="Excluir Categoria">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="empty-state">
+                                    <i class="bi bi-list-check"></i>
+                                    <h5>Nenhuma categoria cadastrada</h5>
+                                    <p>Comece criando uma nova categoria para a competição.</p>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
