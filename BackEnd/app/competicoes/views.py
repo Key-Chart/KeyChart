@@ -297,6 +297,7 @@ def competicoes(request):
     listar_competicoes = Competicao.objects.all().order_by('-data_inicio')
     search_query = request.GET.get('q')
     
+    # Filtro de busca geral
     if search_query:
         listar_competicoes = listar_competicoes.filter(
             Q(nome__icontains=search_query) |
@@ -305,9 +306,19 @@ def competicoes(request):
             Q(arbitros__nome__icontains=search_query)
         ).distinct()
     
+    # Filtro por status
     if 'status' in request.GET and request.GET['status']:
         listar_competicoes = listar_competicoes.filter(status=request.GET['status'])
+    
+    # Filtro por modalidade
+    if 'modalidade' in request.GET and request.GET['modalidade']:
+        listar_competicoes = listar_competicoes.filter(modalidade__icontains=request.GET['modalidade'])
+    
+    # Filtro por árbitro
+    if 'arbitro' in request.GET and request.GET['arbitro']:
+        listar_competicoes = listar_competicoes.filter(arbitros__id=request.GET['arbitro'])
         
+    # Filtro por data
     date_filter = request.GET.get('data')
     if date_filter:
         try:
@@ -316,20 +327,40 @@ def competicoes(request):
         except (ValueError, TypeError):
             pass
     
+    # Filtro por período de data
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
+    if data_inicio:
+        try:
+            data_inicio_obj = datetime.strptime(data_inicio, '%Y-%m-%d').date()
+            listar_competicoes = listar_competicoes.filter(data_inicio__gte=data_inicio_obj)
+        except (ValueError, TypeError):
+            pass
+    if data_fim:
+        try:
+            data_fim_obj = datetime.strptime(data_fim, '%Y-%m-%d').date()
+            listar_competicoes = listar_competicoes.filter(data_inicio__lte=data_fim_obj)
+        except (ValueError, TypeError):
+            pass
+    
     # Estatísticas
     total_competicoes = Competicao.objects.all().count()
     competicoes_ativas = Competicao.objects.filter(status='Ativa').count()
     competicoes_finalizadas = Competicao.objects.filter(status='Finalizada').count()
+    competicoes_em_breve = Competicao.objects.filter(status='Em breve').count()
     
-    # Todos os árbitros para o modal de criação
+    # Dados para os filtros
     todos_arbitros = Arbitro.objects.all().order_by('nome')
+    modalidades_distintas = Competicao.objects.values_list('modalidade', flat=True).distinct().order_by('modalidade')
     
     context = {
         'total_competicoes': total_competicoes,
         'competicoes_ativas': competicoes_ativas,
         'competicoes_finalizadas': competicoes_finalizadas,
+        'competicoes_em_breve': competicoes_em_breve,
         'listar_competicoes': listar_competicoes,
         'todos_arbitros': todos_arbitros,
+        'modalidades_distintas': modalidades_distintas,
         'status_choices': ['Ativa', 'Finalizada', 'Em breve'],
     }
     return render(request, 'competicoes/competicoes.html', context)
