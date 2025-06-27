@@ -504,11 +504,9 @@
                                     <label class="form-label">Mensagem de Boas-Vindas</label>
                                     <textarea class="form-control" name="inscricoes_mensagem" rows="3" placeholder="Mensagem que será exibida na página de inscrições">{{ competicao.inscricoes_mensagem }}</textarea>
                                 </div>
-                            </div>
-
-                            <div class="tab-pane fade" id="edit-arbitros{{ competicao.id }}" role="tabpanel" aria-labelledby="edit-arbitros-tab{{ competicao.id }}">
+                            </div>                            <div class="tab-pane fade" id="edit-arbitros{{ competicao.id }}" role="tabpanel" aria-labelledby="edit-arbitros-tab{{ competicao.id }}">
                                 <div class="mb-3">
-                                    <label class="form-label">Árbitros Cadastrados</label>
+                                    <label class="form-label">Árbitros da Competição</label>
                                     <div class="table-responsive">
                                         <table class="table table-hover">
                                             <thead>
@@ -524,12 +522,52 @@
                                                 <tr>
                                                     <td>{{ arbitro.nome }}</td>
                                                     <td>{{ arbitro.email }}</td>
-                                                    <td>{{ arbitro.telefone }}</td>
+                                                    <td>{{ arbitro.telefone|default:"-" }}</td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-outline-danger" onclick="removerArbitro({{ competicao.id }}, {{ arbitro.id }})">
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removerArbitro({{ competicao.id }}, {{ arbitro.id }})">
                                                             <i class="bi bi-trash"></i> Remover
                                                         </button>
                                                     </td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted">Nenhum árbitro na competição</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Árbitros Disponíveis para Adicionar</label>
+                                    <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                                        <table class="table table-hover table-sm">
+                                            <thead class="table-light sticky-top">
+                                                <tr>
+                                                    <th>Nome</th>
+                                                    <th>Email</th>
+                                                    <th>Telefone</th>
+                                                    <th>Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for arbitro in todos_arbitros %}
+                                                    {% if arbitro not in competicao.arbitros.all %}
+                                                    <tr>
+                                                        <td>{{ arbitro.nome }}</td>
+                                                        <td>{{ arbitro.email }}</td>
+                                                        <td>{{ arbitro.telefone|default:"-" }}</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="adicionarArbitroExistente({{ competicao.id }}, {{ arbitro.id }})">
+                                                                <i class="bi bi-plus"></i> Adicionar
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    {% endif %}
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted">Nenhum árbitro disponível</td>
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>
@@ -550,7 +588,7 @@
                                             <input type="tel" class="form-control" id="novoArbitroTelefone{{ competicao.id }}" placeholder="Telefone">
                                         </div>
                                         <div class="col-md-1">
-                                            <button class="btn btn-primary w-100" onclick="adicionarArbitro({{ competicao.id }})">
+                                            <button type="button" class="btn btn-primary w-100" onclick="adicionarArbitro({{ competicao.id }})">
                                                 <i class="bi bi-plus"></i>
                                             </button>
                                         </div>
@@ -734,29 +772,74 @@
                                     <label class="form-label">Mensagem de Boas-Vindas</label>
                                     <textarea class="form-control" name="inscricoes_mensagem" rows="3" placeholder="Mensagem que será exibida na página de inscrições"></textarea>
                                 </div>
-                            </div>
+                            </div>                            <div class="tab-pane fade" id="arbitros" role="tabpanel" aria-labelledby="arbitros-tab">
+                                <div class="mb-3">
+                                    <label class="form-label">Árbitros Selecionados</label>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="tabelaArbitrosSelecionados">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nome</th>
+                                                    <th>Email</th>
+                                                    <th>Telefone</th>
+                                                    <th>Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Árbitros selecionados serão adicionados aqui via JavaScript -->
+                                            </tbody>
+                                        </table>
+                                        <div id="nenhumArbitroSelecionado" class="text-muted text-center py-3">
+                                            Nenhum árbitro selecionado
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <div class="tab-pane fade" id="arbitros" role="tabpanel" aria-labelledby="arbitros-tab">
                                 <div class="mb-3">
                                     <label class="form-label">Árbitros Disponíveis</label>
-                                    <select class="form-select" name="arbitros" multiple>
-                                        {% for arbitro in todos_arbitros %}
-                                            <option value="{{ arbitro.id }}">{{ arbitro.nome }}</option>
-                                        {% endfor %}
-                                    </select>
+                                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                        <table class="table table-hover">
+                                            <thead class="table-light sticky-top">
+                                                <tr>
+                                                    <th>Nome</th>
+                                                    <th>Email</th>
+                                                    <th>Telefone</th>
+                                                    <th>Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for arbitro in todos_arbitros %}
+                                                <tr id="arbitroDisponivel{{ arbitro.id }}">
+                                                    <td>{{ arbitro.nome }}</td>
+                                                    <td>{{ arbitro.email }}</td>
+                                                    <td>{{ arbitro.telefone|default:"-" }}</td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="selecionarArbitro({{ arbitro.id }}, '{{ arbitro.nome }}', '{{ arbitro.email }}', '{{ arbitro.telefone|default:"" }}')">
+                                                            <i class="bi bi-plus"></i> Selecionar
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted">Nenhum árbitro cadastrado</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Adicionar Novo Árbitro</label>
                                     <div class="row g-3">
                                         <div class="col-md-4">
-                                            <input type="text" class="form-control" id="novoArbitroNome" placeholder="Nome completo">
+                                            <input type="text" class="form-control" id="novoArbitroNome" name="novo_arbitro_nome" placeholder="Nome completo">
                                         </div>
                                         <div class="col-md-4">
-                                            <input type="email" class="form-control" id="novoArbitroEmail" placeholder="Email">
+                                            <input type="email" class="form-control" id="novoArbitroEmail" name="novo_arbitro_email" placeholder="Email">
                                         </div>
                                         <div class="col-md-3">
-                                            <input type="tel" class="form-control" id="novoArbitroTelefone" placeholder="Telefone">
+                                            <input type="tel" class="form-control" id="novoArbitroTelefone" name="novo_arbitro_telefone" placeholder="Telefone">
                                         </div>
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-primary w-100" onclick="adicionarNovoArbitro()">
@@ -765,6 +848,9 @@
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <!-- Campos hidden para enviar os árbitros selecionados -->
+                                <div id="arbitrosSelecionadosInputs"></div>
                             </div>
                         </div>
                     </form>
@@ -925,53 +1011,247 @@
                     }, 500);
                 }
             }, 100);
+        }        // Array para armazenar os árbitros selecionados
+        let arbitrosSelecionados = [];
+
+        function selecionarArbitro(id, nome, email, telefone) {
+            // Verificar se o árbitro já foi selecionado
+            if (arbitrosSelecionados.find(a => a.id === id)) {
+                alert('Este árbitro já foi selecionado.');
+                return;
+            }
+
+            // Adicionar ao array de selecionados
+            arbitrosSelecionados.push({
+                id: id,
+                nome: nome,
+                email: email,
+                telefone: telefone
+            });
+
+            // Atualizar a tabela de selecionados
+            atualizarTabelaArbitrosSelecionados();
+
+            // Esconder o árbitro da tabela de disponíveis
+            document.getElementById(`arbitroDisponivel${id}`).style.display = 'none';
+        }
+
+        function removerArbitroSelecionado(id) {
+            // Remover do array de selecionados
+            arbitrosSelecionados = arbitrosSelecionados.filter(a => a.id !== id);
+
+            // Atualizar a tabela de selecionados
+            atualizarTabelaArbitrosSelecionados();
+
+            // Mostrar novamente o árbitro na tabela de disponíveis
+            const arbitroDisponivel = document.getElementById(`arbitroDisponivel${id}`);
+            if (arbitroDisponivel) {
+                arbitroDisponivel.style.display = '';
+            }
+        }
+
+        function atualizarTabelaArbitrosSelecionados() {
+            const tbody = document.querySelector('#tabelaArbitrosSelecionados tbody');
+            const nenhumArbitro = document.getElementById('nenhumArbitroSelecionado');
+            const inputsContainer = document.getElementById('arbitrosSelecionadosInputs');
+
+            // Limpar conteúdo atual
+            tbody.innerHTML = '';
+            inputsContainer.innerHTML = '';
+
+            if (arbitrosSelecionados.length === 0) {
+                nenhumArbitro.style.display = 'block';
+                document.getElementById('tabelaArbitrosSelecionados').style.display = 'none';
+            } else {
+                nenhumArbitro.style.display = 'none';
+                document.getElementById('tabelaArbitrosSelecionados').style.display = 'table';
+
+                arbitrosSelecionados.forEach(arbitro => {
+                    // Adicionar linha na tabela
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${arbitro.nome}</td>
+                        <td>${arbitro.email}</td>
+                        <td>${arbitro.telefone || '-'}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removerArbitroSelecionado(${arbitro.id})">
+                                <i class="bi bi-trash"></i> Remover
+                            </button>
+                        </td>
+                    `;
+
+                    // Adicionar input hidden para envio do formulário
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'arbitros';
+                    input.value = arbitro.id;
+                    inputsContainer.appendChild(input);
+                });
+            }
         }
 
         function adicionarNovoArbitro() {
-            const nome = document.getElementById('novoArbitroNome').value;
-            const email = document.getElementById('novoArbitroEmail').value;
-            const telefone = document.getElementById('novoArbitroTelefone').value;
+            const nome = document.getElementById('novoArbitroNome').value.trim();
+            const email = document.getElementById('novoArbitroEmail').value.trim();
+            const telefone = document.getElementById('novoArbitroTelefone').value.trim();
 
             if (!nome || !email) {
                 alert('Por favor, preencha pelo menos o nome e email do árbitro');
                 return;
             }
 
-            // Aqui você pode adicionar a lógica para enviar os dados para o servidor
-            // e atualizar a lista de árbitros disponíveis
-            alert(`Novo árbitro adicionado: ${nome}, ${email}, ${telefone}`);
+            // Enviar dados via AJAX
+            fetch('{% url "competicoes:adicionar_arbitro" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `nome=${encodeURIComponent(nome)}&email=${encodeURIComponent(email)}&telefone=${encodeURIComponent(telefone)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    // Limpar os campos
+                    document.getElementById('novoArbitroNome').value = '';
+                    document.getElementById('novoArbitroEmail').value = '';
+                    document.getElementById('novoArbitroTelefone').value = '';
+                    
+                    // Adicionar automaticamente à lista de selecionados
+                    selecionarArbitro(data.arbitro.id, data.arbitro.nome, data.arbitro.email, data.arbitro.telefone);
+                    
+                    // Adicionar à tabela de disponíveis
+                    adicionarArbitroNaTabelaDisponiveis(data.arbitro);
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao adicionar árbitro. Tente novamente.');
+            });
+        }
 
-            // Limpar os campos
-            document.getElementById('novoArbitroNome').value = '';
-            document.getElementById('novoArbitroEmail').value = '';
-            document.getElementById('novoArbitroTelefone').value = '';
+        function adicionarArbitroNaTabelaDisponiveis(arbitro) {
+            const tbody = document.querySelector('.table-responsive table tbody');
+            const noDataRow = tbody.querySelector('tr td[colspan="4"]');
+            
+            if (noDataRow) {
+                noDataRow.parentRow.remove();
+            }
+
+            const row = tbody.insertRow();
+            row.id = `arbitroDisponivel${arbitro.id}`;
+            row.style.display = 'none'; // Escondido pois já foi selecionado
+            row.innerHTML = `
+                <td>${arbitro.nome}</td>
+                <td>${arbitro.email}</td>
+                <td>${arbitro.telefone || '-'}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="selecionarArbitro(${arbitro.id}, '${arbitro.nome}', '${arbitro.email}', '${arbitro.telefone || ''}')">
+                        <i class="bi bi-plus"></i> Selecionar
+                    </button>
+                </td>
+            `;
         }
 
         function adicionarArbitro(competicaoId) {
-            const nome = document.getElementById(`novoArbitroNome${competicaoId}`).value;
-            const email = document.getElementById(`novoArbitroEmail${competicaoId}`).value;
-            const telefone = document.getElementById(`novoArbitroTelefone${competicaoId}`).value;
+            const nome = document.getElementById(`novoArbitroNome${competicaoId}`).value.trim();
+            const email = document.getElementById(`novoArbitroEmail${competicaoId}`).value.trim();
+            const telefone = document.getElementById(`novoArbitroTelefone${competicaoId}`).value.trim();
 
             if (!nome || !email) {
                 alert('Por favor, preencha pelo menos o nome e email do árbitro');
                 return;
             }
 
-            // Aqui você pode adicionar a lógica para enviar os dados para o servidor
-            // e atualizar a lista de árbitros da competição
-            alert(`Novo árbitro adicionado à competição ${competicaoId}: ${nome}, ${email}, ${telefone}`);
-
-            // Limpar os campos
-            document.getElementById(`novoArbitroNome${competicaoId}`).value = '';
-            document.getElementById(`novoArbitroEmail${competicaoId}`).value = '';
-            document.getElementById(`novoArbitroTelefone${competicaoId}`).value = '';
+            // Enviar dados via AJAX
+            fetch(`/competicoes/competicao/${competicaoId}/arbitro/adicionar/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `nome=${encodeURIComponent(nome)}&email=${encodeURIComponent(email)}&telefone=${encodeURIComponent(telefone)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    // Limpar os campos
+                    document.getElementById(`novoArbitroNome${competicaoId}`).value = '';
+                    document.getElementById(`novoArbitroEmail${competicaoId}`).value = '';
+                    document.getElementById(`novoArbitroTelefone${competicaoId}`).value = '';
+                    
+                    // Recarregar a página para atualizar a tabela de árbitros
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao adicionar árbitro. Tente novamente.');
+            });
         }
 
         function removerArbitro(competicaoId, arbitroId) {
             if (confirm('Tem certeza que deseja remover este árbitro da competição?')) {
-                // Aqui você pode adicionar a lógica para remover o árbitro no servidor
-                alert(`Árbitro ${arbitroId} removido da competição ${competicaoId}`);
+                // Enviar requisição via AJAX
+                fetch(`/competicoes/competicao/${competicaoId}/arbitro/${arbitroId}/remover/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        // Recarregar a página para atualizar a tabela de árbitros
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao remover árbitro. Tente novamente.');
+                });
             }
+        }
+
+        // Inicializar ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            atualizarTabelaArbitrosSelecionados();
+        });
+
+        function adicionarArbitroExistente(competicaoId, arbitroId) {
+            // Enviar requisição via AJAX para adicionar árbitro existente à competição
+            fetch(`/competicoes/competicao/${competicaoId}/arbitro/adicionar/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `arbitro_id=${arbitroId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    // Recarregar a página para atualizar as tabelas de árbitros
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao adicionar árbitro. Tente novamente.');
+            });
         }
     </script>
 </body>
