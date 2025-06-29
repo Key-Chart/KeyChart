@@ -116,29 +116,108 @@ class Academia(models.Model):
         return f"{self.nome} ({self.cidade}/{self.estado})"
 
 class ResultadoKata(models.Model):
+    FASE_CHOICES = [
+        ('eliminatorias', 'Eliminatórias'),
+        ('semifinal', 'Semifinal'),
+        ('final', 'Final'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('ativo', 'Ativo'),
+        ('classificado', 'Classificado'),
+        ('eliminado', 'Eliminado'),
+    ]
+
     atleta = models.ForeignKey('atletas.Atleta', on_delete=models.CASCADE, related_name='resultados_kata')
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     competicao = models.ForeignKey(Competicao, on_delete=models.CASCADE)
-    nota1 = models.FloatField()
-    nota2 = models.FloatField()
-    nota3 = models.FloatField()
-    nota4 = models.FloatField()
-    nota5 = models.FloatField()
-    total = models.FloatField()
+    fase = models.CharField(max_length=20, choices=FASE_CHOICES, default='eliminatorias')
+    nota1 = models.FloatField(default=0.0)
+    nota2 = models.FloatField(default=0.0)
+    nota3 = models.FloatField(default=0.0)
+    nota4 = models.FloatField(default=0.0)
+    nota5 = models.FloatField(default=0.0)
+    total = models.FloatField(default=0.0)
+    posicao = models.IntegerField(default=0)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ativo')
+    salvo = models.BooleanField(default=False)  # Indica se as notas já foram salvas
     data_criacao = models.DateTimeField(auto_now_add=True)
     data_atualizacao = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ('atleta', 'categoria')  # Garante apenas um resultado por atleta por categoria
+        unique_together = ('atleta', 'categoria', 'fase')
+        ordering = ['-total', 'posicao']
 
     def save(self, *args, **kwargs):
         notas = [self.nota1, self.nota2, self.nota3, self.nota4, self.nota5]
-
-        # Remove a maior e menor nota apenas se houver pelo menos 3 notas
-        if len([n for n in notas if n is not None]) >= 3:
-            notas_validas = sorted(notas)[1:-1]  # Remove a menor e a maior
-            self.total = sum(notas_validas) / len(notas_validas)  # Média das restantes
+        # Remove a maior e menor nota (critério do karatê)
+        if len([n for n in notas if n > 0]) >= 3:
+            notas_ordenadas = sorted([n for n in notas if n > 0])
+            if len(notas_ordenadas) >= 3:
+                notas_validas = notas_ordenadas[1:-1]  # Remove menor e maior
+                self.total = sum(notas_validas)
+            else:
+                self.total = sum(notas_ordenadas)
         else:
-            self.total = sum(notas) / len([n for n in notas if n is not None])
-
+            self.total = sum(notas)
+        
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.atleta.nome_completo} - {self.fase} - {self.total}"
+
+
+class ChaveamentoKata(models.Model):
+    categoria = models.OneToOneField(Categoria, on_delete=models.CASCADE, related_name='chaveamento_kata')
+    competicao = models.ForeignKey(Competicao, on_delete=models.CASCADE)
+    fase_atual = models.CharField(
+        max_length=20,
+        choices=ResultadoKata.FASE_CHOICES,
+        default='eliminatorias'
+    )
+    finalizado = models.BooleanField(default=False)
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    data_finalizacao = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Chaveamento Kata - {self.categoria.nome}"
+
+    def get_resultados_fase(self, fase):
+        """Retorna os resultados de uma fase específica"""
+        return ResultadoKata.objects.filter(
+            categoria=self.categoria,
+            fase=fase
+        ).order_by('-total')
+
+    def avançar_fase(self):
+        """Avança para a próxima fase do chaveamento"""
+        if self.fase_atual == 'eliminatorias':
+            self.fase_atual = 'semifinal'
+        elif self.fase_atual == 'semifinal':
+            self.fase_atual = 'final'
+        elif self.fase_atual == 'final':
+            self.finalizado = True
+            self.data_finalizacao = timezone.now()
+        self.save()
+
+    def get_classificados_fase_anterior(self):
+        """Retorna os atletas classificados da fase anterior"""
+        fase_anterior = None
+        if self.fase_atual == 'semifinal':
+            fase_anterior = 'eliminatorias'
+        elif self.fase_atual == 'final':
+            fase_anterior = 'semifinal'
+        
+        if fase_anterior:
+            return ResultadoKata.objects.filter(
+                categoria=self.categoria,
+                fase=fase_anterior,
+                status='classificado'
+            ).order_by('-total')
+        return ResultadoKata.objects.none()
+
+    def get_podio(self):
+        """Retorna o pódio final"""
+        if self.finalizado:
+            return self.get_resultados_fase('final')[:3]
+        return []

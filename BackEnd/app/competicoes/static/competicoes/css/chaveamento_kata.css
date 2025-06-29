@@ -1,0 +1,648 @@
+/* ===== CHAVEAMENTO DE KATA - CSS PROFISSIONAL ===== */
+
+/* Importação de fonte */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Variáveis CSS customizadas */
+:root {
+    --primary-color: #1a1f36;
+    --secondary-color: #f8f9fa;
+    --accent-color: #ff6b35;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --dark-color: #343a40;
+    --light-color: #f8f9fa;
+    --gold-color: #ffd700;
+    --silver-color: #c0c0c0;
+    --bronze-color: #cd7f32;
+    --card-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset e configurações base */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+/* Layout principal */
+.content {
+    margin-left: 250px;
+    transition: var(--transition);
+    min-height: 100vh;
+    background: transparent;
+}
+
+/* Header do kata */
+.header-kata {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%);
+    color: white;
+    border-radius: 0 0 20px 20px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.header-kata::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+.header-kata h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.header-kata h4 {
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+/* Seletor de fases */
+.phase-selector {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    margin: 2rem 0;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.phase-tab {
+    padding: 1.25rem 2rem;
+    border: none;
+    background: #f8f9fa;
+    color: #6c757d;
+    transition: var(--transition);
+    border-bottom: 3px solid transparent;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+}
+
+.phase-tab:hover {
+    background: #e9ecef;
+    color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.phase-tab.active {
+    background: white;
+    color: var(--primary-color);
+    border-bottom-color: var(--accent-color);
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+}
+
+.phase-tab small {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.7;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Cards principais */
+.kata-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    border: none;
+    transition: var(--transition);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.kata-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.kata-card .card-header {
+    border: none;
+    padding: 1.5rem 2rem;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+/* Cards dos atletas */
+.athlete-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--card-shadow);
+    border-left: 4px solid #e9ecef;
+    transition: var(--transition);
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.athlete-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Estados dos atletas */
+.athlete-card.qualified {
+    border-left-color: var(--success-color);
+    background: linear-gradient(135deg, #f8fff8 0%, #ffffff 100%);
+}
+
+.athlete-card.eliminated {
+    border-left-color: var(--danger-color);
+    background: linear-gradient(135deg, #fff8f8 0%, #ffffff 100%);
+    opacity: 0.7;
+    filter: grayscale(30%);
+}
+
+.athlete-card.podium-1st {
+    border-left-color: var(--gold-color);
+    background: linear-gradient(135deg, #fefdf6 0%, #ffffff 100%);
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+}
+
+.athlete-card.podium-2nd {
+    border-left-color: var(--silver-color);
+    background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
+    box-shadow: 0 8px 30px rgba(192, 192, 192, 0.3);
+}
+
+.athlete-card.podium-3rd {
+    border-left-color: var(--bronze-color);
+    background: linear-gradient(135deg, #fdf9f3 0%, #ffffff 100%);
+    box-shadow: 0 8px 30px rgba(205, 127, 50, 0.3);
+}
+
+/* Avatar dos atletas */
+.athlete-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: var(--transition);
+}
+
+.athlete-card:hover .athlete-avatar {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+/* Indicadores de faixa */
+.faixa-indicator {
+    display: inline-block;
+    width: 24px;
+    height: 4px;
+    border-radius: 2px;
+    margin-right: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.faixa-branca { background-color: #ffffff; border: 1px solid #ccc; }
+.faixa-azul { background: linear-gradient(135deg, #1e90ff 0%, #4169e1 100%); }
+.faixa-amarela { background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); }
+.faixa-verde { background: linear-gradient(135deg, #2e8b57 0%, #3cb371 100%); }
+.faixa-roxa { background: linear-gradient(135deg, #800080 0%, #9932cc 100%); }
+.faixa-marrom { background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%); }
+.faixa-preta { background: linear-gradient(135deg, #000000 0%, #2c2c2c 100%); }
+
+/* Sistema de ranking */
+.ranking-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 0.9rem;
+    border: 3px solid white;
+    box-shadow: var(--card-shadow);
+    z-index: 10;
+}
+
+.ranking-1st { 
+    background: linear-gradient(135deg, var(--gold-color) 0%, #ffed4e 100%); 
+    color: #333;
+    animation: pulse-gold 2s ease-in-out infinite;
+}
+
+.ranking-2nd { 
+    background: linear-gradient(135deg, var(--silver-color) 0%, #e5e5e5 100%); 
+    color: #333;
+    animation: pulse-silver 2s ease-in-out infinite;
+}
+
+.ranking-3rd { 
+    background: linear-gradient(135deg, var(--bronze-color) 0%, #deb887 100%);
+    animation: pulse-bronze 2s ease-in-out infinite;
+}
+
+.ranking-other { 
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); 
+}
+
+@keyframes pulse-gold {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+    50% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+}
+
+@keyframes pulse-silver {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(192, 192, 192, 0.7); }
+    50% { box-shadow: 0 0 0 10px rgba(192, 192, 192, 0); }
+}
+
+@keyframes pulse-bronze {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(205, 127, 50, 0.7); }
+    50% { box-shadow: 0 0 0 10px rgba(205, 127, 50, 0); }
+}
+
+/* Sistema de notas */
+.score-display {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 8px;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    margin: 0.25rem 0;
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: var(--transition);
+}
+
+.score-display:hover {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    transform: translateY(-1px);
+}
+
+.score-input {
+    width: 100%;
+    text-align: center;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    background: white;
+}
+
+.score-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.25);
+    outline: none;
+}
+
+.total-score {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-align: center;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    border-radius: 8px;
+    border: 2px solid #e1f5fe;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Botões profissionais */
+.btn-professional {
+    border-radius: 25px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: var(--transition);
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-professional::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-professional:hover::before {
+    left: 100%;
+}
+
+.btn-professional:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.btn-advance {
+    background: linear-gradient(135deg, var(--success-color) 0%, #20c997 100%);
+    color: white;
+}
+
+.btn-eliminate {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #e74c3c 100%);
+    color: white;
+}
+
+.btn-save {
+    background: linear-gradient(135deg, var(--info-color) 0%, #3498db 100%);
+    color: white;
+}
+
+.btn-print {
+    background: linear-gradient(135deg, var(--warning-color) 0%, #f39c12 100%);
+    color: #333;
+}
+
+/* Área do pódio */
+.podium-area {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: var(--border-radius);
+    padding: 3rem 2rem;
+    margin: 2rem 0;
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.podium-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="confetti" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="8" cy="8" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23confetti)"/></svg>');
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.podium-step {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    color: #333;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    margin-bottom: 1rem;
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.podium-step:hover {
+    transform: translateY(-5px) scale(1.02);
+}
+
+.podium-step.first {
+    background: linear-gradient(135deg, var(--gold-color) 0%, #ffed4e 100%);
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+}
+
+.podium-step.second {
+    background: linear-gradient(135deg, var(--silver-color) 0%, #e5e5e5 100%);
+}
+
+.podium-step.third {
+    background: linear-gradient(135deg, var(--bronze-color) 0%, #deb887 100%);
+}
+
+/* Cards de estatísticas */
+.stats-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    border-top: 4px solid var(--accent-color);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+}
+
+.stats-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.stats-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.stats-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* Animações de conteúdo */
+.phase-content {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: var(--transition);
+}
+
+.phase-content.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    
+    .header-kata {
+        padding: 1.5rem 1rem;
+        margin: 0 -1rem 2rem -1rem;
+        border-radius: 0;
+    }
+    
+    .header-kata h1 {
+        font-size: 1.8rem;
+    }
+    
+    .phase-tab {
+        padding: 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .athlete-card {
+        padding: 1rem;
+    }
+    
+    .athlete-avatar {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .btn-professional {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .stats-number {
+        font-size: 2rem;
+    }
+}
+
+/* Impressão */
+@media print {
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .content {
+        margin-left: 0 !important;
+    }
+    
+    .header-kata {
+        background: #333 !important;
+        color: white !important;
+        break-after: avoid;
+    }
+    
+    .athlete-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 1rem;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .no-print {
+        display: none !important;
+    }
+    
+    .phase-selector,
+    .btn-professional,
+    .classify-btn,
+    .eliminate-btn {
+        display: none !important;
+    }
+    
+    .podium-area {
+        background: #f8f9fa !important;
+        color: black !important;
+    }
+    
+    .podium-step {
+        border: 2px solid #ddd;
+    }
+}
+
+/* Estados de carregamento */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--accent-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+}

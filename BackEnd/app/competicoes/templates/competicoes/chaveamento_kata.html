@@ -6,342 +6,890 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'competicoes/css/chaveamento_kata.css' %}">
-    <link rel="stylesheet" href="{% static 'competicoes/css/atletas_categoria.css' %}">
-    <title>{{ competicao.nome }} | KeyChart</title>
+    <title>Chaveamento de Kata - {{ categoria.nome }} | KeyChart</title>
     <style>
-        .athlete-row:hover {
+        :root {
+            --primary-color: #1a1f36;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ff6b35;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --dark-color: #343a40;
+            --light-color: #f8f9fa;
+            --gold-color: #ffd700;
+            --silver-color: #c0c0c0;
+            --bronze-color: #cd7f32;
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --border-radius: 12px;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .content {
+            margin-left: 250px;
             transition: all 0.3s ease;
+            min-height: 100vh;
         }
-        .nota-input {
-            width: 70px;
-            text-align: center;
+
+        .header-kata {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
         }
-        .avatar-img {
+
+        .header-kata::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .phase-selector {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .phase-tab {
+            padding: 1rem 2rem;
+            border: none;
+            background: #f8f9fa;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+        }
+
+        .phase-tab.active {
+            background: white;
+            color: var(--primary-color);
+            border-bottom-color: var(--accent-color);
+        }
+
+        .phase-tab:hover {
+            background: #e9ecef;
+            color: var(--primary-color);
+        }
+
+        .kata-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            border: none;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .kata-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .athlete-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--card-shadow);
+            border-left: 4px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .athlete-card.qualified {
+            border-left-color: var(--success-color);
+            background: linear-gradient(135deg, #f8fff8 0%, #ffffff 100%);
+        }
+
+        .athlete-card.eliminated {
+            border-left-color: var(--danger-color);
+            background: linear-gradient(135deg, #fff8f8 0%, #ffffff 100%);
+            opacity: 0.7;
+        }
+
+        .athlete-card.podium-1st {
+            border-left-color: var(--gold-color);
+            background: linear-gradient(135deg, #fefdf6 0%, #ffffff 100%);
+        }
+
+        .athlete-card.podium-2nd {
+            border-left-color: var(--silver-color);
+            background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
+        }
+
+        .athlete-card.podium-3rd {
+            border-left-color: var(--bronze-color);
+            background: linear-gradient(135deg, #fdf9f3 0%, #ffffff 100%);
+        }
+
+        .athlete-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .ranking-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
             width: 40px;
             height: 40px;
-            object-fit: cover;
             border-radius: 50%;
-            border: 2px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 0.9rem;
+            border: 3px solid white;
+            box-shadow: var(--card-shadow);
         }
-        .table-header {
-            background-color: #343a40;
+
+        .ranking-1st { background: linear-gradient(135deg, var(--gold-color) 0%, #ffed4e 100%); color: #333; }
+        .ranking-2nd { background: linear-gradient(135deg, var(--silver-color) 0%, #e5e5e5 100%); color: #333; }
+        .ranking-3rd { background: linear-gradient(135deg, var(--bronze-color) 0%, #deb887 100%); }
+        .ranking-other { background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); }
+
+        .score-display {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 8px;
+            padding: 0.5rem;
+            text-align: center;
+            margin: 0.25rem 0;
+        }
+
+        .score-input {
+            width: 85px;
+            height: 45px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        /* Melhorias para campos de input maiores */
+        .score-group {
+            margin-bottom: 0.75rem;
+        }
+        
+        .score-group label {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--dark-color);
+        }
+        
+        .form-control-sm.score-input {
+            height: 40px;
+            font-size: 1rem;
+        }
+        
+        .score-input:disabled {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .score-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(255, 107, 53, 0.25);
+        }
+
+        .total-score {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-align: center;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 8px;
+            border: 2px solid #e1f5fe;
+        }
+
+        .btn-professional {
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-professional:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn-advance {
+            background: linear-gradient(135deg, var(--success-color) 0%, #20c997 100%);
             color: white;
         }
-        .total-score {
-            font-weight: bold;
-            color: #0d6efd;
-        }
-        .filter-section {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+
+        .btn-eliminate {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #e74c3c 100%);
+            color: white;
         }
 
-        /* Estilos para faixas */
-        .faixa-branca {
-            background-color: #ffffff;
-            border-left: 4px solid #c0c0c0;
-        }
-        .faixa-azul {
-            background-color: #f0f8ff;
-            border-left: 4px solid #1e90ff;
-        }
-        .faixa-amarela {
-            background-color: #fffff0;
-            border-left: 4px solid #ffd700;
-        }
-        .faixa-verde {
-            background-color: #f0fff0;
-            border-left: 4px solid #2e8b57;
-        }
-        .faixa-roxa {
-            background-color: #f8f0ff;
-            border-left: 4px solid #800080;
-        }
-        .faixa-marrom {
-            background-color: #fff8f0;
-            border-left: 4px solid #8b4513;
-        }
-        .faixa-preta {
-            background-color: #f0f0f0;
-            border-left: 4px solid #000000;
+        .btn-save {
+            background: linear-gradient(135deg, var(--info-color) 0%, #3498db 100%);
+            color: white;
         }
 
-        /* Modal com ícone */
-        .modal-icon {
-            font-size: 2rem;
+        .btn-print {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #f39c12 100%);
+            color: #333;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, var(--success-color) 0%, #27ae60 100%);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-download:hover {
+            background: linear-gradient(135deg, #27ae60 0%, var(--success-color) 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .phase-content {
+            display: none;
+        }
+
+        .phase-content.active {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .podium-area {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin: 2rem 0;
+            color: white;
+        }
+
+        .podium-step {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            color: #333;
+            box-shadow: var(--card-shadow);
+            position: relative;
             margin-bottom: 1rem;
         }
-        .modal-success .modal-icon {
-            color: #28a745;
+
+        .podium-step.first {
+            background: linear-gradient(135deg, var(--gold-color) 0%, #ffed4e 100%);
         }
-        .modal-info .modal-icon {
-            color: #17a2b8;
+
+        .podium-step.second {
+            background: linear-gradient(135deg, var(--silver-color) 0%, #e5e5e5 100%);
+        }
+
+        .podium-step.third {
+            background: linear-gradient(135deg, var(--bronze-color) 0%, #deb887 100%);
+        }
+
+        .faixa-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 4px;
+            border-radius: 2px;
+            margin-right: 0.5rem;
+        }
+
+        .faixa-branca { background-color: #ffffff; border: 1px solid #ccc; }
+        .faixa-azul { background-color: #1e90ff; }
+        .faixa-amarela { background-color: #ffd700; }
+        .faixa-verde { background-color: #2e8b57; }
+        .faixa-roxa { background-color: #800080; }
+        .faixa-marrom { background-color: #8b4513; }
+        .faixa-preta { background-color: #000000; }
+
+        .view-toggle {
+            background: white;
+            border-radius: 25px;
+            padding: 0.25rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .view-toggle .btn {
+            border-radius: 20px;
+            border: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-toggle .btn.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 10px rgba(26, 31, 54, 0.3);
+        }
+
+        @media print {
+            .content { margin-left: 0; }
+            .header-kata { break-after: avoid; }
+            .athlete-card { break-inside: avoid; }
+            .no-print { display: none !important; }
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            border-top: 4px solid var(--accent-color);
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stats-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Botões desabilitados */
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Animações para bloqueio */
+        .score-input.locked {
+            animation: lockAnimation 0.3s ease-in-out;
+        }
+        
+        @keyframes lockAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Status badges melhorados */
+        .status-badge {
+            animation: fadeInBadge 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeInBadge {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Notificação de avanço de fase */
+        .advance-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-left: 5px solid var(--success-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            z-index: 9999;
+            max-width: 400px;
+            animation: slideInNotification 0.5s ease-out;
+        }
+        
+        .advance-content {
+            text-align: center;
+        }
+        
+        .advance-content i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .advance-content h5 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .advance-content p {
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+        
+        .advance-content small {
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        @keyframes slideInNotification {
+            0% { 
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% { 
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
 <body>
-
     {% include 'sidebar.html' %}
-    {% block content %}
+    
     <div class="content" id="content">
-        <div class="header d-flex align-items-center justify-content-between bg-dark text-white p-3">
-            <div class="d-flex align-items-center">
-                <i class="bi bi-arrow-left back-icon me-3" onclick="window.history.back()" style="cursor: pointer;"></i>
-                <div>
-                    <h2 class="mb-0 fw-bold">{{ competicao.nome }}</h2>
-                    <small class="text-white-50">{{ competicao.descricao|default:"Competição de Artes Marciais" }}</small>
-                </div>
-            </div>
-            <span class="badge bg-light text-dark fs-6">
-                <i class="bi bi-people-fill me-1"></i> {{ atletas|length }} Atletas
-            </span>
-        </div>
-
-        <div class="container-fluid mt-4 px-4">
-            <div class="card">
-                <div class="card-header text-white d-flex justify-content-between align-items-center table-header">
-                    <div>
-                        <h4 class="mb-0"><i class="bi bi-diagram-3 me-2"></i>Chaveamento de Kata</h4>
+        <!-- Header Profissional -->
+        <div class="header-kata">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-link text-white p-0 me-3 no-print" onclick="window.history.back()" 
+                                style="font-size: 1.5rem; text-decoration: none;">
+                            <i class="bi bi-arrow-left"></i>
+                        </button>
+                        <div>
+                            <h1 class="mb-0 fw-bold">
+                                <i class="fas fa-hand-paper me-3"></i>Chaveamento de Kata
+                            </h1>
+                            <h4 class="mb-0 opacity-75">{{ categoria.nome }}</h4>
+                            <small class="opacity-50">{{ competicao.nome }} - {{ competicao.data|date:"d/m/Y" }}</small>
+                        </div>
                     </div>
-                    <div class="d-flex gap-2">
-                        {% if chaveamento_existente %}
-                        <span class="badge bg-success d-flex align-items-center">
-                            <i class="bi bi-check-circle me-1"></i> Chaveamento Gerado
-                        </span>
-                        {% endif %}
-                        <button class="btn btn-sm btn-light" id="exportData">
-                            <i class="bi bi-download me-1"></i> Exportar
+                    <div class="d-flex align-items-center gap-3 no-print">
+                        <div class="view-toggle">
+                            <button class="btn btn-sm active" id="cardViewBtn" data-view="cards">
+                                <i class="bi bi-grid-3x3-gap me-1"></i>Cards
+                            </button>
+                            <button class="btn btn-sm" id="tableViewBtn" data-view="table">
+                                <i class="bi bi-table me-1"></i>Tabela
+                            </button>
+                        </div>
+                        <div class="stats-card d-inline-block" style="min-width: 120px;">
+                            <div class="stats-number">{{ atletas|length }}</div>
+                            <div class="stats-label">Atletas</div>
+                        </div>
+                        <button class="btn btn-professional btn-download" onclick="downloadPDF()">
+                            <i class="fas fa-download me-2"></i>Baixar PDF
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <div class="card-body">
-                    <!-- Filtros -->
-                    <div class="filter-section">
-                        <div class="row">
-                            <div class="col-md-4 mb-2">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                                    <input type="text" class="form-control" placeholder="Buscar atleta..." id="searchInput">
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <select class="form-select" id="cityFilter">
-                                    <option value="">Todas as cidades</option>
-                                    {% for cidade in cidades_distintas %}
-                                    <option value="{{ cidade }}">{{ cidade }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <select class="form-select" id="stateFilter">
-                                    <option value="">Todos os estados</option>
-                                    {% for estado in estados_distintos %}
-                                    <option value="{{ estado }}">{{ estado }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+        <main class="container-fluid py-4">
+            <!-- Seletor de Fases -->
+            <div class="phase-selector no-print">
+                <div class="d-flex">
+                    <button class="phase-tab active flex-fill" data-phase="eliminatorias">
+                        <i class="bi bi-funnel me-2"></i>Eliminatórias
+                        <small class="d-block">1ª Fase</small>
+                    </button>
+                    <button class="phase-tab flex-fill" data-phase="semifinal">
+                        <i class="bi bi-trophy me-2"></i>Semifinal
+                        <small class="d-block">2ª Fase</small>
+                    </button>
+                    <button class="phase-tab flex-fill" data-phase="final">
+                        <i class="fas fa-crown me-2"></i>Final
+                        <small class="d-block">3ª Fase</small>
+                    </button>
+                    <button class="phase-tab flex-fill" data-phase="podium">
+                        <i class="fas fa-medal me-2"></i>Pódio
+                        <small class="d-block">Resultado</small>
+                    </button>
+                </div>
+            </div>
 
-                    <!-- Tabela de Atletas - PARTE CORRIGIDA -->
-                    <div class="table-responsive">
-                        <form id="formResultados">
-                            {% csrf_token %}
-                            <table class="table table-bordered table-hover align-middle" id="kataTable">
-                                <thead class="table-header">
-                                    <tr>
-                                        <th width="5%">ID</th>
-                                        <th width="15%">Atleta</th>
-                                        <th width="10%">Cidade/Estado</th>
-                                        <th width="10%">Academia</th>
-                                        <th width="8%">Nota 1</th>
-                                        <th width="8%">Nota 2</th>
-                                        <th width="8%">Nota 3</th>
-                                        <th width="8%">Nota 4</th>
-                                        <th width="8%">Nota 5</th>
-                                        <th width="8%">Total</th>
-                                        <th width="12%">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for atleta in atletas %}
-                                    {% with resultado=resultados|get_item:atleta.id %}
-                                    <tr class="athlete-row faixa-{{ atleta.faixa|lower }}" data-atleta-id="{{ atleta.id }}">
-                                        <td class="fw-bold">{{ atleta.id }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar me-2">
-                                                    <img src="{% if atleta.foto %}{{ atleta.foto.url }}{% else %}{% static 'competicoes/img/foto_atleta.png' %}{% endif %}"
-                                                         class="avatar-img" alt="Avatar">
-                                                </div>
-                                                <div>
-                                                    <div class="fw-semibold">{{ atleta.nome_completo }}</div>
-                                                    <small class="text-muted">{{ atleta.get_faixa_display }}</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            {{ atleta.cidade }}/{{ atleta.get_estado_display }}
-                                        </td>
-                                        <td>
-                                            {% if atleta.academia %}{{ atleta.academia.nome }}{% else %}--{% endif %}
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm nota-input"
-                                                   name="nota1_{{ atleta.id }}"
-                                                   value="{% if resultado %}{{ resultado.nota1|stringformat:".1f" }}{% else %}0.0{% endif %}"
-                                                   min="0" max="10" step="0.1"
-                                                   {% if resultado or chaveamento_existente %}readonly{% endif %}>
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm nota-input"
-                                                   name="nota2_{{ atleta.id }}"
-                                                   value="{% if resultado %}{{ resultado.nota2|stringformat:".1f" }}{% else %}0.0{% endif %}"
-                                                   min="0" max="10" step="0.1"
-                                                   {% if resultado or chaveamento_existente %}readonly{% endif %}>
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm nota-input"
-                                                   name="nota3_{{ atleta.id }}"
-                                                   value="{% if resultado %}{{ resultado.nota3|stringformat:".1f" }}{% else %}0.0{% endif %}"
-                                                   min="0" max="10" step="0.1"
-                                                   {% if resultado or chaveamento_existente %}readonly{% endif %}>
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm nota-input"
-                                                   name="nota4_{{ atleta.id }}"
-                                                   value="{% if resultado %}{{ resultado.nota4|stringformat:".1f" }}{% else %}0.0{% endif %}"
-                                                   min="0" max="10" step="0.1"
-                                                   {% if resultado or chaveamento_existente %}readonly{% endif %}>
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm nota-input"
-                                                   name="nota5_{{ atleta.id }}"
-                                                   value="{% if resultado %}{{ resultado.nota5|stringformat:".1f" }}{% else %}0.0{% endif %}"
-                                                   min="0" max="10" step="0.1"
-                                                   {% if resultado or chaveamento_existente %}readonly{% endif %}>
-                                        </td>
-                                        <td class="total-score">
-                                            {% if resultado %}{{ resultado.total|stringformat:".1f" }}{% else %}0.0{% endif %}
-                                        </td>
-                                        <td>
-                                            <div class="d-flex gap-1">
-                                                {% if not resultado and not chaveamento_existente %}
-                                                <button type="button" class="btn btn-sm btn-success btn-salvar">
-                                                    <i class="bi bi-save"></i> Salvar
-                                                </button>
-                                                {% endif %}
-                                                <button type="button" class="btn btn-sm btn-info text-white btn-visualizar"
-                                                        data-bs-toggle="modal" data-bs-target="#visualizarModal"
-                                                        data-atleta-id="{{ atleta.id }}">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endwith %}
-                                    {% empty %}
-                                    <tr>
-                                        <td colspan="11" class="text-center py-4">
-                                            <div class="alert alert-info">
-                                                <i class="bi bi-info-circle me-2"></i> Nenhum atleta inscrito nesta categoria.
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            {% if not chaveamento_existente and atletas %}
-                            <div class="text-end mt-3">
-                                <button type="button" id="btnSalvarTodos" class="btn btn-primary">
-                                    <i class="bi bi-save-fill me-1"></i> Salvar Todos os Resultados
-                                </button>
-                            </div>
-                            {% endif %}
-                        </form>
+            <!-- Estatísticas -->
+            <div class="row mb-4 no-print">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number" id="totalAtletas">{{ atletas|length }}</div>
+                        <div class="stats-label">Total de Atletas</div>
                     </div>
                 </div>
-
-                <div class="card-footer bg-light d-flex justify-content-between align-items-center">
-                    <div class="text-muted small">
-                        <i class="bi bi-info-circle me-1"></i>
-                        {% if chaveamento_existente %}
-                        O chaveamento já foi gerado. As notas não podem mais ser alteradas.
-                        {% else %}
-                        Clique no ícone de visualização para ver detalhes do atleta
-                        {% endif %}
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number" id="atletasClassificados">0</div>
+                        <div class="stats-label">Classificados</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number" id="atletasEliminados">0</div>
+                        <div class="stats-label">Eliminados</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number" id="faseAtual">1</div>
+                        <div class="stats-label">Fase Atual</div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <!-- Fase: Eliminatórias -->
+            <div class="phase-content active" id="eliminatorias">
+                <div class="kata-card">
+                    <div class="card-header" style="background: linear-gradient(135deg, #1a1f36 0%, #2c3e50 100%); color: white;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">
+                                <i class="bi bi-funnel me-2"></i>1ª Fase - Eliminatórias
+                            </h4>
+                            <div class="d-flex gap-2 no-print">
+                                <button class="btn btn-professional btn-save" id="savePhase1">
+                                    <i class="bi bi-save me-1"></i>Salvar Notas
+                                </button>
+                                <button class="btn btn-professional btn-advance" id="advanceToSemifinal">
+                                    <i class="bi bi-arrow-right me-1"></i>Avançar para Semifinal
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Vista em Cards -->
+                        <div class="view-content" id="eliminatorias-cards">
+                            <div class="row" id="eliminatoriasContainer">
+                                {% for atleta in atletas %}
+                                <div class="col-lg-6 mb-3">
+                                    <div class="athlete-card" data-atleta-id="{{ atleta.id }}">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <img src="{% if atleta.foto %}{{ atleta.foto.url }}{% else %}{% static 'competicoes/img/foto_atleta.png' %}{% endif %}"
+                                                 class="athlete-avatar me-3" alt="Foto do Atleta">
+                                            <div class="flex-grow-1">
+                                                <h5 class="mb-1 fw-bold">{{ atleta.nome_completo }}</h5>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="faixa-indicator faixa-{{ atleta.faixa|lower }}"></span>
+                                                    <span class="text-muted me-3">{{ atleta.get_faixa_display }}</span>
+                                                    <small class="text-muted">{{ atleta.cidade }}/{{ atleta.get_estado_display }}</small>
+                                                </div>
+                                                {% if atleta.academia %}
+                                                <small class="text-info">{{ atleta.academia.nome }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Notas dos Juízes -->
+                                        <div class="row mb-3">
+                                            <div class="col-12">
+                                                <label class="form-label fw-bold">Notas dos Juízes (0.0 - 10.0)</label>
+                                            </div>
+                                            <div class="col">
+                                                <div class="score-display">
+                                                    <label class="form-label mb-1">Juiz 1</label>
+                                                    <input type="number" class="form-control score-input" 
+                                                           name="nota1_{{ atleta.id }}" min="0" max="10" step="0.1" 
+                                                           value="0.0" placeholder="0.0">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="score-display">
+                                                    <label class="form-label mb-1">Juiz 2</label>
+                                                    <input type="number" class="form-control score-input" 
+                                                           name="nota2_{{ atleta.id }}" min="0" max="10" step="0.1" 
+                                                           value="0.0" placeholder="0.0">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="score-display">
+                                                    <label class="form-label mb-1">Juiz 3</label>
+                                                    <input type="number" class="form-control score-input" 
+                                                           name="nota3_{{ atleta.id }}" min="0" max="10" step="0.1" 
+                                                           value="0.0" placeholder="0.0">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="score-display">
+                                                    <label class="form-label mb-1">Juiz 4</label>
+                                                    <input type="number" class="form-control score-input" 
+                                                           name="nota4_{{ atleta.id }}" min="0" max="10" step="0.1" 
+                                                           value="0.0" placeholder="0.0">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="score-display">
+                                                    <label class="form-label mb-1">Juiz 5</label>
+                                                    <input type="number" class="form-control score-input" 
+                                                           name="nota5_{{ atleta.id }}" min="0" max="10" step="0.1" 
+                                                           value="0.0" placeholder="0.0">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="total-score">
+                                                    <label class="form-label mb-1 fw-bold">Total</label>
+                                                    <div class="total-value">0.0</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-between align-items-center no-print">
+                                            <small class="text-muted">Posição: <span class="position-indicator">-</span></small>
+                                            <div class="status-display text-center">
+                                                <small class="classification-status text-muted">Aguardando resultado</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="col-12">
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle me-2"></i>Nenhum atleta inscrito nesta categoria.
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Vista em Tabela -->
+                        <div class="view-content d-none" id="eliminatorias-table">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th style="width: 50px;">#</th>
+                                            <th>Atleta</th>
+                                            <th class="text-center">Juiz 1</th>
+                                            <th class="text-center">Juiz 2</th>
+                                            <th class="text-center">Juiz 3</th>
+                                            <th class="text-center">Juiz 4</th>
+                                            <th class="text-center">Juiz 5</th>
+                                            <th class="text-center">Total</th>
+                                            <th class="text-center no-print">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for atleta in atletas %}
+                                        <tr class="athlete-row" data-atleta-id="{{ atleta.id }}">
+                                            <td class="position-indicator fw-bold">{{ forloop.counter }}</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="{% if atleta.foto %}{{ atleta.foto.url }}{% else %}{% static 'competicoes/img/foto_atleta.png' %}{% endif %}"
+                                                         class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;" alt="Foto">
+                                                    <div>
+                                                        <div class="fw-bold">{{ atleta.nome_completo }}</div>
+                                                        <small class="text-muted">
+                                                            <span class="faixa-indicator faixa-{{ atleta.faixa|lower }}"></span>
+                                                            {{ atleta.get_faixa_display }} - {{ atleta.cidade }}/{{ atleta.get_estado_display }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="number" class="form-control form-control-sm score-input text-center" 
+                                                       name="nota1_{{ atleta.id }}" min="0" max="10" step="0.1" value="0.0" style="width: 70px;">
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="number" class="form-control form-control-sm score-input text-center" 
+                                                       name="nota2_{{ atleta.id }}" min="0" max="10" step="0.1" value="0.0" style="width: 70px;">
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="number" class="form-control form-control-sm score-input text-center" 
+                                                       name="nota3_{{ atleta.id }}" min="0" max="10" step="0.1" value="0.0" style="width: 70px;">
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="number" class="form-control form-control-sm score-input text-center" 
+                                                       name="nota4_{{ atleta.id }}" min="0" max="10" step="0.1" value="0.0" style="width: 70px;">
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="number" class="form-control form-control-sm score-input text-center" 
+                                                       name="nota5_{{ atleta.id }}" min="0" max="10" step="0.1" value="0.0" style="width: 70px;">
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="fw-bold text-primary total-value-table" style="font-size: 1.1rem;">0.0</div>
+                                            </td>
+                                            <td class="text-center no-print">
+                                                <div class="status-display">
+                                                    <small class="classification-status text-muted">Aguardando</small>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="9" class="text-center">
+                                                <div class="alert alert-info mb-0">
+                                                    <i class="bi bi-info-circle me-2"></i>Nenhum atleta inscrito nesta categoria.
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fase: Semifinal -->
+            <div class="phase-content" id="semifinal">
+                <div class="kata-card">
+                    <div class="card-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">
+                                <i class="bi bi-trophy me-2"></i>2ª Fase - Semifinal
+                            </h4>
+                            <div class="d-flex gap-2 no-print">
+                                <button class="btn btn-professional btn-save" id="savePhase2">
+                                    <i class="bi bi-save me-1"></i>Salvar Notas
+                                </button>
+                                <button class="btn btn-professional btn-advance" id="advanceToFinal">
+                                    <i class="bi bi-arrow-right me-1"></i>Avançar para Final
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="alert alert-info mb-4">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Semifinal:</strong> Os melhores atletas das eliminatórias competem por uma vaga na final.
+                        </div>
+                        <div class="row" id="semifinalContainer">
+                            <!-- Atletas classificados serão adicionados aqui via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fase: Final -->
+            <div class="phase-content" id="final">
+                <div class="kata-card">
+                    <div class="card-header" style="background: linear-gradient(135deg, #ffc107 0%, #f39c12 100%); color: #333;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">
+                                <i class="fas fa-crown me-2"></i>3ª Fase - Final
+                            </h4>
+                            <div class="d-flex gap-2 no-print">
+                                <button class="btn btn-professional btn-save" id="savePhase3">
+                                    <i class="bi bi-save me-1"></i>Salvar Notas
+                                </button>
+                                <button class="btn btn-professional btn-advance" id="generatePodium">
+                                    <i class="fas fa-medal me-1"></i>Gerar Pódio
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="alert alert-warning mb-4">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>Final:</strong> Disputa pelo 1º, 2º e 3º lugar entre os finalistas.
+                        </div>
+                        <div class="row" id="finalContainer">
+                            <!-- Finalistas serão adicionados aqui via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fase: Pódio -->
+            <div class="phase-content" id="podium">
+                <div class="podium-area">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold">
+                            <i class="fas fa-trophy me-3"></i>Pódio Final
+                        </h2>
+                        <p class="mb-0">Categoria: {{ categoria.nome }}</p>
+                    </div>
+                    
+                    <div class="row justify-content-center">
+                        <div class="col-md-4">
+                            <div class="podium-step second" id="secondPlace">
+                                <div class="ranking-badge ranking-2nd">2º</div>
+                                <div class="text-center">
+                                    <img src="{% static 'competicoes/img/foto_atleta.png' %}" class="athlete-avatar mb-3" alt="2º Lugar">
+                                    <h5 class="fw-bold">2º Lugar</h5>
+                                    <p class="mb-1">Aguardando resultado...</p>
+                                    <div class="total-score">0.0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="podium-step first" id="firstPlace">
+                                <div class="ranking-badge ranking-1st">1º</div>
+                                <div class="text-center">
+                                    <img src="{% static 'competicoes/img/foto_atleta.png' %}" class="athlete-avatar mb-3" alt="1º Lugar">
+                                    <h5 class="fw-bold">1º Lugar</h5>
+                                    <p class="mb-1">Aguardando resultado...</p>
+                                    <div class="total-score">0.0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="podium-step third" id="thirdPlace">
+                                <div class="ranking-badge ranking-3rd">3º</div>
+                                <div class="text-center">
+                                    <img src="{% static 'competicoes/img/foto_atleta.png' %}" class="athlete-avatar mb-3" alt="3º Lugar">
+                                    <h5 class="fw-bold">3º Lugar</h5>
+                                    <p class="mb-1">Aguardando resultado...</p>
+                                    <div class="total-score">0.0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <!-- Modal Visualizar -->
-    <div class="modal fade" id="visualizarModal" tabindex="-1" aria-labelledby="visualizarModalLabel" aria-hidden="true">
+    <!-- Modais -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="visualizarModalLabel"><i class="bi bi-person-badge me-2"></i>Detalhes do Atleta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">
+                        <i class="bi bi-check-circle text-success me-2"></i>Confirmação
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="text-center mb-3">
-                        <img id="modal-foto" src="{% static 'competicoes/img/foto_atleta.png' %}" class="img-thumbnail rounded-circle" width="120" alt="Foto do Atleta">
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <p><strong>Nome:</strong> <span id="modal-nome">-</span></p>
-                            <p><strong>Idade:</strong> <span id="modal-idade">-</span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Faixa:</strong> <span id="modal-faixa">-</span></p>
-                            <p><strong>Peso:</strong> <span id="modal-peso">-</span></p>
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <p><strong>Cidade/Estado:</strong> <span id="modal-cidade">-</span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Academia:</strong> <span id="modal-academia">-</span></p>
-                        </div>
-                    </div>
-                    <hr>
-                    <h6 class="mb-3">Notas</h6>
-                    <div class="row">
-                        <div class="col-2 text-center">
-                            <p class="mb-1"><small>Nota 1</small></p>
-                            <h5 id="modal-nota1">-</h5>
-                        </div>
-                        <div class="col-2 text-center">
-                            <p class="mb-1"><small>Nota 2</small></p>
-                            <h5 id="modal-nota2">-</h5>
-                        </div>
-                        <div class="col-2 text-center">
-                            <p class="mb-1"><small>Nota 3</small></p>
-                            <h5 id="modal-nota3">-</h5>
-                        </div>
-                        <div class="col-2 text-center">
-                            <p class="mb-1"><small>Nota 4</small></p>
-                            <h5 id="modal-nota4">-</h5>
-                        </div>
-                        <div class="col-2 text-center">
-                            <p class="mb-1"><small>Nota 5</small></p>
-                            <h5 id="modal-nota5">-</h5>
-                        </div>
-                        <div class="col-2 text-center">
-                            <p class="mb-1"><small>Total</small></p>
-                            <h5 class="text-primary" id="modal-total">-</h5>
-                        </div>
-                    </div>
+                    <p id="modalMessage">Operação realizada com sucesso!</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
@@ -350,226 +898,1188 @@
         </div>
     </div>
 
-    <!-- Modal Confirmação -->
-    <div class="modal fade modal-success" id="confirmacaoModal" tabindex="-1" aria-labelledby="confirmacaoModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body text-center p-4">
-                    <div class="modal-icon">
-                        <i class="bi bi-check-circle-fill"></i>
-                    </div>
-                    <h4 class="mb-3">Notas salvas com sucesso!</h4>
-                    <p>As notas do atleta foram atualizadas no sistema.</p>
-                    <button type="button" class="btn btn-success mt-2" data-bs-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endblock %}
-
-    {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elementos do DOM
-            const searchInput = document.getElementById('searchInput');
-            const cityFilter = document.getElementById('cityFilter');
-            const stateFilter = document.getElementById('stateFilter');
-            const athleteRows = document.querySelectorAll('.athlete-row');
-            const notaInputs = document.querySelectorAll('.nota-input');
-            const visualizarButtons = document.querySelectorAll('.btn-visualizar');
-            const salvarButtons = document.querySelectorAll('.btn-salvar');
-            const btnSalvarTodos = document.getElementById('btnSalvarTodos');
-            const formResultados = document.getElementById('formResultados');
-            const confirmacaoModal = new bootstrap.Modal(document.getElementById('confirmacaoModal'));
-            const visualizarModal = new bootstrap.Modal(document.getElementById('visualizarModal'));
+    console.log('Script iniciando...');
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM carregado, iniciando kataManager...');
+        
+        // Configuração inicial
+        const kataManager = {
+            currentPhase: 'eliminatorias',
+            currentView: 'cards',
+            atletas: {},
+            phases: {
+                eliminatorias: { athletes: [], completed: false, saved: false },
+                semifinal: { athletes: [], completed: false, saved: false },
+                final: { athletes: [], completed: false, saved: false },
+                podium: { athletes: [] }
+            },
+            
+            // Inicialização
+            init() {
+                console.log('Iniciando kataManager...');
+                try {
+                    this.bindEvents();
+                    console.log('bindEvents OK');
+                    this.loadAthletes();
+                    console.log('loadAthletes OK');
+                    this.updateStats();
+                    console.log('updateStats OK');
+                    this.checkSavedPhases();
+                    console.log('checkSavedPhases OK');
+                    console.log('kataManager inicializado com sucesso!');
+                } catch (error) {
+                    console.error('Erro na inicialização:', error);
+                }
+            },
+            
+            // Vincula eventos
+            bindEvents() {
+                console.log('Vinculando eventos...');
+                // Navegação entre fases
+                document.querySelectorAll('.phase-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const phase = e.target.closest('.phase-tab').dataset.phase;
+                        this.switchPhase(phase);
+                    });
+                });
 
-            // Função para filtrar atletas
-            function filterAthletes() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const cityValue = cityFilter.value.toLowerCase();
-                const stateValue = stateFilter.value.toLowerCase();
+                // Alternância entre views
+                document.getElementById('cardViewBtn')?.addEventListener('click', () => {
+                    this.switchView('cards');
+                });
 
-                athleteRows.forEach(row => {
-                    const name = row.querySelector('.fw-semibold').textContent.toLowerCase();
-                    const location = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-                    const city = location.split('/')[0].trim();
-                    const state = location.split('/')[1] ? location.split('/')[1].trim() : '';
-
-                    const matchesSearch = name.includes(searchTerm);
-                    const matchesCity = cityValue === '' || city.includes(cityValue);
-                    const matchesState = stateValue === '' || state.includes(stateValue);
-
-                    if (matchesSearch && matchesCity && matchesState) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
+                document.getElementById('tableViewBtn')?.addEventListener('click', () => {
+                    this.switchView('table');
+                });
+                
+                // Cálculo automático de totais
+                document.querySelectorAll('.score-input').forEach(input => {
+                    input.addEventListener('input', (e) => {
+                        this.calculateTotal(e.target.closest('.athlete-card, .athlete-row'));
+                    });
+                });
+                
+                // Botões de salvamento
+                document.getElementById('savePhase1')?.addEventListener('click', () => this.savePhase('eliminatorias'));
+                document.getElementById('savePhase2')?.addEventListener('click', () => this.savePhase('semifinal'));
+                document.getElementById('savePhase3')?.addEventListener('click', () => this.savePhase('final'));
+                
+                // Botões de avanço
+                document.getElementById('advanceToSemifinal')?.addEventListener('click', () => this.advancePhase('semifinal'));
+                document.getElementById('advanceToFinal')?.addEventListener('click', () => this.advancePhase('final'));
+                document.getElementById('generatePodium')?.addEventListener('click', () => this.generatePodium());
+                
+                // Debug: Adiciona evento para testar inputs (temporário)
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                        e.preventDefault();
+                        this.debugInputs();
                     }
                 });
-            }
-
-            // Função para calcular o total (eliminando maior e menor nota)
-            function calculateTotal(row) {
-                const inputs = row.querySelectorAll('.nota-input');
-                let notas = [];
-
-                inputs.forEach(input => {
-                    const nota = parseFloat(input.value) || 0;
-                    notas.push(nota);
-                });
-
-                // Ordena as notas e remove a maior e a menor
-                if (notas.length >= 3) {
-                    notas.sort((a, b) => a - b);
-                    const notasValidas = notas.slice(1, -1); // Remove a primeira (menor) e última (maior)
-                    const total = notasValidas.reduce((sum, nota) => sum + nota, 0);
-                    row.querySelector('.total-score').textContent = total.toFixed(1);
-                    return total;
-                } else {
-                    const total = notas.reduce((sum, nota) => sum + nota, 0);
-                    row.querySelector('.total-score').textContent = total.toFixed(1);
-                    return total;
-                }
-            }
-
-            // Event Listeners
-            searchInput.addEventListener('keyup', filterAthletes);
-            cityFilter.addEventListener('change', filterAthletes);
-            stateFilter.addEventListener('change', filterAthletes);
-
-            // Calcular totais quando as notas mudam
-            notaInputs.forEach(input => {
-                input.addEventListener('change', function() {
-                    const row = this.closest('tr');
-                    calculateTotal(row);
-                });
-            });
-
-            // Botão Visualizar - Preenche o modal com dados reais
-            visualizarButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    const atletaId = row.getAttribute('data-atleta-id');
-                    const notas = row.querySelectorAll('.nota-input');
-
-                    // Preenche os dados básicos
-                    document.getElementById('modal-nome').textContent = row.querySelector('.fw-semibold').textContent;
-                    document.getElementById('modal-faixa').textContent = row.querySelector('.text-muted').textContent;
-                    document.getElementById('modal-cidade').textContent = row.querySelector('td:nth-child(3)').textContent;
-                    document.getElementById('modal-academia').textContent = row.querySelector('td:nth-child(4)').textContent;
-
-                    // Preenche as notas
-                    document.getElementById('modal-nota1').textContent = notas[0].value;
-                    document.getElementById('modal-nota2').textContent = notas[1].value;
-                    document.getElementById('modal-nota3').textContent = notas[2].value;
-                    document.getElementById('modal-nota4').textContent = notas[3].value;
-                    document.getElementById('modal-nota5').textContent = notas[4].value;
-                    document.getElementById('modal-total').textContent = row.querySelector('.total-score').textContent;
-
-                    // Atualiza a foto se existir
-                    const imgSrc = row.querySelector('.avatar-img').src;
-                    document.getElementById('modal-foto').src = imgSrc;
-
-                    // Mostra o modal
-                    visualizarModal.show();
-                });
-            });
-
-            // Botão Salvar Individual
-            salvarButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const row = this.closest('tr');
-                    const atletaId = row.getAttribute('data-atleta-id');
-                    const notaInputs = row.querySelectorAll('.nota-input');
-
-                    const data = {
-                        'atleta_id': atletaId,
-                        'nota1': notaInputs[0].value,
-                        'nota2': notaInputs[1].value,
-                        'nota3': notaInputs[2].value,
-                        'nota4': notaInputs[3].value,
-                        'nota5': notaInputs[4].value,
-                        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                
+                console.log('DICA: Pressione Ctrl+Shift+D para debug dos inputs');
+            },
+            
+            // Carrega atletas iniciais
+            loadAthletes() {
+                document.querySelectorAll('#eliminatorias .athlete-card').forEach(card => {
+                    const atletaId = card.dataset.atletaId;
+                    const name = card.querySelector('h5').textContent.trim();
+                    const faixa = card.querySelector('.text-muted').textContent.trim();
+                    const location = card.querySelector('small.text-muted').textContent.trim();
+                    const academia = card.querySelector('small.text-info')?.textContent.trim() || '';
+                    const photo = card.querySelector('.athlete-avatar').src;
+                    
+                    this.atletas[atletaId] = {
+                        id: atletaId,
+                        name: name,
+                        faixa: faixa,
+                        location: location,
+                        academia: academia,
+                        photo: photo,
+                        scores: { eliminatorias: 0, semifinal: 0, final: 0 },
+                        status: 'active',
+                        position: 0
                     };
-
-                    fetch("{% url 'competicoes:chaveamento_kata' categoria.id %}", {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams(data)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Atualiza o total na tabela
-                            row.querySelector('.total-score').textContent = data.total;
-
-                            // Desabilita edição
-                            notaInputs.forEach(input => input.readOnly = true);
-                            button.disabled = true;
-
-                            confirmacaoModal.show();
-
-                            // Atualiza o modal de visualização se estiver aberto
-                            if (visualizarModal._isShown) {
-                                document.getElementById('modal-nota1').textContent = notaInputs[0].value;
-                                document.getElementById('modal-nota2').textContent = notaInputs[1].value;
-                                document.getElementById('modal-nota3').textContent = notaInputs[2].value;
-                                document.getElementById('modal-nota4').textContent = notaInputs[3].value;
-                                document.getElementById('modal-nota5').textContent = notaInputs[4].value;
-                                document.getElementById('modal-total').textContent = data.total;
+                    
+                    this.phases.eliminatorias.athletes.push(atletaId);
+                });
+            },
+            
+            // Verifica fases já salvas e atualiza status inicial
+            checkSavedPhases() {
+                try {
+                    console.log('Carregando dados do backend...');
+                    
+                    // Dados do backend (Django template) com proteção
+                    let savedPhases = {};
+                    let eliminatoriasResults = [];
+                    let semifinalResults = [];
+                    let finalResults = [];
+                    
+                    try {
+                        savedPhases = JSON.parse('{{ fases_salvas_json|escapejs }}' || '{}');
+                    } catch (e) {
+                        console.warn('Erro ao carregar fases salvas:', e);
+                        savedPhases = {};
+                    }
+                    
+                    try {
+                        eliminatoriasResults = JSON.parse('{{ resultados_eliminatorias_json|escapejs }}' || '[]');
+                    } catch (e) {
+                        console.warn('Erro ao carregar resultados eliminatórias:', e);
+                        eliminatoriasResults = [];
+                    }
+                    
+                    try {
+                        semifinalResults = JSON.parse('{{ resultados_semifinal_json|escapejs }}' || '[]');
+                    } catch (e) {
+                        console.warn('Erro ao carregar resultados semifinal:', e);
+                        semifinalResults = [];
+                    }
+                    
+                    try {
+                        finalResults = JSON.parse('{{ resultados_final_json|escapejs }}' || '[]');
+                    } catch (e) {
+                        console.warn('Erro ao carregar resultados final:', e);
+                        finalResults = [];
+                    }
+                    
+                    console.log('Dados carregados:', {
+                        savedPhases,
+                        eliminatoriasResults: eliminatoriasResults.length,
+                        semifinalResults: semifinalResults.length,
+                        finalResults: finalResults.length
+                    });
+                    
+                    // Atualiza status das fases
+                    Object.keys(savedPhases).forEach(phase => {
+                        if (savedPhases[phase]) {
+                            this.phases[phase].saved = true;
+                            this.phases[phase].completed = true;
+                            
+                            // Desabilita inputs da fase salva
+                            document.querySelectorAll(`#${phase} .score-input`).forEach(input => {
+                                input.disabled = true;
+                            });
+                            
+                            // Atualiza botão de salvar
+                            const saveBtn = this.getSaveButton(phase);
+                            if (saveBtn) {
+                                saveBtn.disabled = true;
+                                saveBtn.innerHTML = '<i class="fas fa-check"></i> Salvo';
+                                saveBtn.classList.remove('btn-primary');
+                                saveBtn.classList.add('btn-success');
                             }
                         }
                     });
-                });
-            });
-
-            // Botão Salvar Todos
-            if (btnSalvarTodos) {
-                btnSalvarTodos.addEventListener('click', function() {
-                    if (confirm('Tem certeza que deseja salvar TODOS os resultados? Esta ação não pode ser desfeita.')) {
-                        // Desabilita todos os inputs e botões
-                        document.querySelectorAll('.nota-input').forEach(input => {
-                            input.readOnly = true;
-                        });
-                        document.querySelectorAll('.btn-salvar').forEach(btn => {
-                            btn.disabled = true;
-                        });
-                        this.disabled = true;
-
-                        // Envia o formulário via AJAX
-                        fetch("{% url 'competicoes:chaveamento_kata' categoria.id %}", {
-                            method: 'POST',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                            },
-                            body: new FormData(formResultados)
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                confirmacaoModal.show();
-                                setTimeout(() => location.reload(), 1500);
+                    
+                    // Carrega resultados salvos das eliminatórias
+                    if (eliminatoriasResults && eliminatoriasResults.length > 0) {
+                        this.loadPhaseResults('eliminatorias', eliminatoriasResults);
+                    }
+                    
+                    // Carrega resultados salvos da semifinal
+                    if (semifinalResults && semifinalResults.length > 0) {
+                        this.loadPhaseResults('semifinal', semifinalResults);
+                    }
+                    
+                    // Carrega resultados salvos da final
+                    if (finalResults && finalResults.length > 0) {
+                        this.loadPhaseResults('final', finalResults);
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar fases salvas:', error);
+                }
+            },
+            
+            // Função auxiliar para obter botão de salvamento
+            getSaveButton(phase) {
+                const buttonMap = {
+                    'eliminatorias': 'savePhase1',
+                    'semifinal': 'savePhase2',
+                    'final': 'savePhase3'
+                };
+                return document.getElementById(buttonMap[phase]);
+            },
+            
+            // Carrega resultados de uma fase específica
+            loadPhaseResults(phase, results) {
+                results.forEach(result => {
+                    const atletaId = result.atleta.id;
+                    
+                    // Atualiza dados do atleta
+                    if (this.atletas[atletaId]) {
+                        this.atletas[atletaId].scores[phase] = result.total;
+                        this.atletas[atletaId].status = result.status || 'active';
+                        this.atletas[atletaId].position = result.posicao || 0;
+                    }
+                    
+                    // Atualiza interface - busca o card do atleta
+                    const athleteCard = document.querySelector(`#${phase} .athlete-card[data-atleta-id="${atletaId}"]`);
+                    if (athleteCard) {
+                        // Atualiza notas nos inputs
+                        athleteCard.querySelector(`[name="nota1_${atletaId}"]`).value = result.nota1 || 0;
+                        athleteCard.querySelector(`[name="nota2_${atletaId}"]`).value = result.nota2 || 0;
+                        athleteCard.querySelector(`[name="nota3_${atletaId}"]`).value = result.nota3 || 0;
+                        athleteCard.querySelector(`[name="nota4_${atletaId}"]`).value = result.nota4 || 0;
+                        athleteCard.querySelector(`[name="nota5_${atletaId}"]`).value = result.nota5 || 0;
+                        
+                        // Atualiza total
+                        const totalDisplay = athleteCard.querySelector('.total-value');
+                        if (totalDisplay) {
+                            totalDisplay.textContent = result.total.toFixed(1);
+                        }
+                        
+                        // Atualiza posição
+                        const positionIndicator = athleteCard.querySelector('.position-indicator');
+                        if (positionIndicator) {
+                            positionIndicator.textContent = result.posicao || '-';
+                        }
+                        
+                        // Atualiza status visual
+                        const statusElement = athleteCard.querySelector('.classification-status');
+                        if (statusElement && result.salvo) {
+                            if (result.status === 'classificado') {
+                                statusElement.textContent = `Qualificado (${result.total.toFixed(1)})`;
+                                statusElement.className = 'classification-status text-success fw-bold';
+                                athleteCard.classList.add('qualified');
+                                athleteCard.classList.remove('eliminated');
+                            } else if (result.status === 'eliminado') {
+                                if (result.total === 0) {
+                                    statusElement.textContent = 'Eliminado (sem pontuação)';
+                                } else {
+                                    statusElement.textContent = `Eliminado (${result.total.toFixed(1)})`;
+                                }
+                                statusElement.className = 'classification-status text-danger fw-bold';
+                                athleteCard.classList.add('eliminated');
+                                athleteCard.classList.remove('qualified');
                             }
-                        });
+                        }
+                    }
+                    
+                    // Também atualiza na view de tabela se existir
+                    const athleteRow = document.querySelector(`#${phase}-table .athlete-row[data-atleta-id="${atletaId}"]`);
+                    if (athleteRow) {
+                        athleteRow.querySelector(`[name="nota1_${atletaId}"]`).value = result.nota1 || 0;
+                        athleteRow.querySelector(`[name="nota2_${atletaId}"]`).value = result.nota2 || 0;
+                        athleteRow.querySelector(`[name="nota3_${atletaId}"]`).value = result.nota3 || 0;
+                        athleteRow.querySelector(`[name="nota4_${atletaId}"]`).value = result.nota4 || 0;
+                        athleteRow.querySelector(`[name="nota5_${atletaId}"]`).value = result.nota5 || 0;
+                        
+                        const totalDisplay = athleteRow.querySelector('.total-value-table');
+                        if (totalDisplay) {
+                            totalDisplay.textContent = result.total.toFixed(1);
+                        }
                     }
                 });
-            }
-
-            // Atualiza os totais iniciais para os atletas com resultados salvos
-            athleteRows.forEach(row => {
-                const notaInputs = row.querySelectorAll('.nota-input');
-                const hasResult = Array.from(notaInputs).some(input => input.readOnly);
-
-                if (hasResult) {
-                    calculateTotal(row);
+            },
+            
+            // Calcula total das notas (elimina maior e menor)
+            calculateTotal(element) {
+                const inputs = element.querySelectorAll('.score-input');
+                const scores = Array.from(inputs).map(input => parseFloat(input.value) || 0);
+                
+                if (scores.length >= 3) {
+                    // Remove maior e menor nota
+                    scores.sort((a, b) => a - b);
+                    const validScores = scores.slice(1, -1);
+                    const total = validScores.reduce((sum, score) => sum + score, 0);
+                    
+                    // Atualiza display - cards ou tabela
+                    const totalDisplay = element.querySelector('.total-value') || element.querySelector('.total-value-table');
+                    if (totalDisplay) {
+                        totalDisplay.textContent = total.toFixed(1);
+                    }
+                    
+                    // Atualiza dados do atleta
+                    const atletaId = element.dataset.atletaId;
+                    if (this.atletas[atletaId]) {
+                        this.atletas[atletaId].scores[this.currentPhase] = total;
+                    }
+                    
+                    return total;
                 }
-            });
-        });
+                return 0;
+            },
+
+            // Alterna entre views (cards/tabela)
+            switchView(view) {
+                this.currentView = view;
+                
+                // Atualiza botões
+                document.querySelectorAll('[data-view]').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-view="${view}"]`).classList.add('active');
+                
+                // Atualiza conteúdo
+                const phaseId = this.currentPhase;
+                const cardsView = document.getElementById(`${phaseId}-cards`);
+                const tableView = document.getElementById(`${phaseId}-table`);
+                
+                if (view === 'cards') {
+                    cardsView?.classList.remove('d-none');
+                    tableView?.classList.add('d-none');
+                } else {
+                    cardsView?.classList.add('d-none');
+                    tableView?.classList.remove('d-none');
+                }
+                
+                // Sincroniza dados entre views
+                this.syncViewData();
+            },
+
+            // Sincroniza dados entre cards e tabela
+            syncViewData() {
+                Object.keys(this.atletas).forEach(atletaId => {
+                    const cardInputs = document.querySelectorAll(`#${this.currentPhase}-cards [data-atleta-id="${atletaId}"] .score-input`);
+                    const tableInputs = document.querySelectorAll(`#${this.currentPhase}-table [data-atleta-id="${atletaId}"] .score-input`);
+                    
+                    // Sincroniza valores dos inputs
+                    for (let i = 0; i < Math.min(cardInputs.length, tableInputs.length); i++) {
+                        if (this.currentView === 'cards') {
+                            tableInputs[i].value = cardInputs[i].value;
+                        } else {
+                            cardInputs[i].value = tableInputs[i].value;
+                        }
+                    }
+                    
+                    // Recalcula totais
+                    const cardElement = document.querySelector(`#${this.currentPhase}-cards [data-atleta-id="${atletaId}"]`);
+                    const tableElement = document.querySelector(`#${this.currentPhase}-table [data-atleta-id="${atletaId}"]`);
+                    
+                    if (cardElement) this.calculateTotal(cardElement);
+                    if (tableElement) this.calculateTotal(tableElement);
+                });
+            },
+            
+            // Troca de fase
+            switchPhase(phase) {
+                // Atualiza tabs
+                document.querySelectorAll('.phase-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-phase="${phase}"]`).classList.add('active');
+                
+                // Atualiza conteúdo
+                document.querySelectorAll('.phase-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(phase).classList.add('active');
+                
+                this.currentPhase = phase;
+                this.updateStats();
+            },
+            
+            // Atualiza posições
+            updatePositions() {
+                const currentAthletes = this.phases[this.currentPhase].athletes
+                    .map(id => ({ id, score: this.atletas[id].scores[this.currentPhase] || 0 }))
+                    .sort((a, b) => b.score - a.score);
+                
+                currentAthletes.forEach((athlete, index) => {
+                    const card = document.querySelector(`[data-atleta-id="${athlete.id}"]`);
+                    if (card) {
+                        const positionIndicator = card.querySelector('.position-indicator');
+                        if (positionIndicator) {
+                            positionIndicator.textContent = `${index + 1}º`;
+                        }
+                        this.atletas[athlete.id].position = index + 1;
+                    }
+                });
+            },
+            
+            // Função de debug para testar a coleta de dados
+            debugInputs() {
+                console.log('=== DEBUG DE INPUTS ===');
+                console.log('Fase atual:', this.currentPhase);
+                
+                // Testa diferentes seletores
+                const seletores = [
+                    `#${this.currentPhase} input[type="number"]`,
+                    `#${this.currentPhase}-cards input[type="number"]`,
+                    `.phase-content.active input[type="number"]`,
+                    '.score-input',
+                    'input[name^="nota"]'
+                ];
+                
+                seletores.forEach(seletor => {
+                    const inputs = document.querySelectorAll(seletor);
+                    console.log(`Seletor "${seletor}": ${inputs.length} inputs encontrados`);
+                    if (inputs.length > 0) {
+                        console.log('  Primeiros 3 inputs:', Array.from(inputs).slice(0, 3).map(input => ({
+                            name: input.name,
+                            value: input.value,
+                            id: input.id,
+                            className: input.className
+                        })));
+                    }
+                });
+                
+                // Verifica se há atletas carregados
+                console.log('Atletas carregados:', Object.keys(this.atletas).length);
+                console.log('IDs dos atletas:', Object.keys(this.atletas));
+            },
+            
+            // Salva fase
+            savePhase(phase) {
+                console.log(`SALVANDO FASE: ${phase}`);
+                
+                if (this.phases[phase].saved) {
+                    this.showError('Esta fase já foi salva e não pode ser alterada.');
+                    return;
+                }
+                
+                const scores = {};
+                
+                // Busca todos os inputs de notas na fase atual de forma robusta
+                console.log(`Buscando inputs na fase: ${phase}`);
+                console.log(`Fase atual do sistema: ${this.currentPhase}`);
+                
+                // Primeiro, tenta buscar inputs na fase específica
+                let allInputs = document.querySelectorAll(`#${phase} input[type="number"]`);
+                console.log(`Inputs encontrados com seletor #${phase}: ${allInputs.length}`);
+                
+                // Se não encontrou, tenta buscar na fase ativa
+                if (allInputs.length === 0) {
+                    allInputs = document.querySelectorAll(`#${phase}-cards input[type="number"]`);
+                    console.log(`Inputs encontrados com seletor #${phase}-cards: ${allInputs.length}`);
+                }
+                
+                // Se ainda não encontrou, busca na view ativa
+                if (allInputs.length === 0) {
+                    allInputs = document.querySelectorAll(`.phase-content.active input[type="number"]`);
+                    console.log(`Inputs encontrados na fase ativa: ${allInputs.length}`);
+                }
+                
+                // Debug: Lista todos os inputs encontrados
+                allInputs.forEach((input, index) => {
+                    console.log(`Input ${index}: name="${input.name}", value="${input.value}", type="${input.type}", placeholder="${input.placeholder}"`);
+                });
+                
+                if (allInputs.length === 0) {
+                    this.showError('Nenhum campo de nota foi encontrado. Verifique se você está na fase correta.');
+                    return;
+                }
+                
+                // Agrupa inputs por atleta
+                const atletasData = {};
+                allInputs.forEach(input => {
+                    const name = input.name;
+                    console.log(`Processando input: name="${name}", value="${input.value}"`);
+                    
+                    if (name && name.includes('_')) {
+                        const parts = name.split('_');
+                        if (parts.length === 2) {
+                            const notaNum = parts[0]; // nota1, nota2, etc.
+                            const atletaId = parts[1]; // ID do atleta
+                            
+                            if (!atletasData[atletaId]) {
+                                atletasData[atletaId] = {};
+                            }
+                            
+                            // Verifica se o valor está vazio ou é string vazia
+                            const rawValue = input.value;
+                            console.log(`Raw value para ${name}: "${rawValue}" (tipo: ${typeof rawValue})`);
+                            
+                            let valor = 0;
+                            if (rawValue !== '' && rawValue !== null && rawValue !== undefined) {
+                                valor = parseFloat(rawValue);
+                                if (isNaN(valor)) {
+                                    console.warn(`Valor inválido para ${name}: "${rawValue}" - convertido para 0`);
+                                    valor = 0;
+                                }
+                            }
+                            
+                            atletasData[atletaId][notaNum] = valor;
+                            
+                            console.log(`Atleta ${atletaId} - ${notaNum}: ${valor} (input value: "${rawValue}", parsed: ${valor})`);
+                        } else {
+                            console.warn(`Nome do input com formato incorreto: "${name}"`);
+                        }
+                    } else {
+                        console.warn(`Input ignorado - name inválido ou sem underscore: "${name}"`);
+                    }
+                });
+                
+                console.log('Dados coletados dos atletas:', atletasData);
+                
+                // Converte para formato esperado pelo backend
+                Object.keys(atletasData).forEach(atletaId => {
+                    const atletaNotas = atletasData[atletaId];
+                    console.log(`Processando atleta ${atletaId}:`, atletaNotas);
+                    
+                    if (atletaNotas.nota1 !== undefined && atletaNotas.nota2 !== undefined && 
+                        atletaNotas.nota3 !== undefined && atletaNotas.nota4 !== undefined && 
+                        atletaNotas.nota5 !== undefined) {
+                        
+                        // Validação adicional - verifica se pelo menos uma nota é maior que 0
+                        const temNotaValida = Object.values(atletaNotas).some(nota => nota > 0);
+                        
+                        scores[atletaId] = {
+                            nota1: atletaNotas.nota1,
+                            nota2: atletaNotas.nota2,
+                            nota3: atletaNotas.nota3,
+                            nota4: atletaNotas.nota4,
+                            nota5: atletaNotas.nota5
+                        };
+                        
+                        const soma = atletaNotas.nota1 + atletaNotas.nota2 + atletaNotas.nota3 + atletaNotas.nota4 + atletaNotas.nota5;
+                        console.log(`ATLETA ${atletaId} - SOMA: ${soma} - TEM NOTA VÁLIDA: ${temNotaValida} - NOTAS:`, scores[atletaId]);
+                        
+                        if (!temNotaValida) {
+                            console.warn(`ATENÇÃO: Atleta ${atletaId} tem todas as notas zeradas!`);
+                        }
+                    } else {
+                        console.error(`Atleta ${atletaId} não tem todas as 5 notas:`, atletaNotas);
+                    }
+                });
+                
+                if (Object.keys(scores).length === 0) {
+                    this.showError('Nenhuma nota válida encontrada para salvar. Verifique se os campos estão preenchidos corretamente.');
+                    console.error('Nenhum score coletado. Dados dos atletas:', atletasData);
+                    console.error('Todos os inputs encontrados:', Array.from(allInputs).map(input => ({
+                        name: input.name,
+                        value: input.value,
+                        type: input.type
+                    })));
+                    return;
+                }
+                
+                // Verifica se pelo menos um atleta tem notas diferentes de zero
+                const atletasComNotas = Object.values(scores).filter(atletaScores => {
+                    return Object.values(atletaScores).some(nota => nota > 0);
+                });
+                
+                console.log(`Total de atletas processados: ${Object.keys(scores).length}`);
+                console.log(`Atletas com pelo menos uma nota > 0: ${atletasComNotas.length}`);
+                console.log('Resumo das notas por atleta:');
+                Object.keys(scores).forEach(atletaId => {
+                    const atletaScores = scores[atletaId];
+                    const total = Object.values(atletaScores).reduce((sum, nota) => sum + nota, 0);
+                    const maxNota = Math.max(...Object.values(atletaScores));
+                    console.log(`  Atleta ${atletaId}: Total=${total.toFixed(1)}, Maior nota=${maxNota.toFixed(1)}, Notas:`, atletaScores);
+                });
+                
+                if (atletasComNotas.length === 0) {
+                    this.showError('Todas as notas estão zeradas. Por favor, insira pelo menos uma nota válida maior que 0.');
+                    console.error('Todas as notas estão zeradas:', scores);
+                    return;
+                }
+                
+                console.log('ENVIANDO PARA BACKEND:', scores);
+                console.log(`Atletas com notas válidas: ${atletasComNotas.length} de ${Object.keys(scores).length}`);
+                
+                // Envia para o backend
+                fetch(window.location.href, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken()
+                    },
+                    body: JSON.stringify({
+                        action: 'save_scores',
+                        fase: phase,
+                        scores: scores
+                    })
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('RESPOSTA DO BACKEND:', data);
+                    if (data.success) {
+                        this.showConfirmation(data.message || `Notas da ${phase} salvas com sucesso!`);
+                        this.phases[phase].completed = true;
+                        this.phases[phase].saved = true;
+                        this.lockPhaseInputs(phase);
+                        
+                        if (data.qualified_athletes && data.advance_count !== undefined) {
+                            console.log(`${data.advance_count} atletas avançaram`);
+                            this.updateAthletesFromBackend(phase, data.qualified_athletes);
+                        }
+                    } else {
+                        this.showError(data.error || 'Erro ao salvar notas');
+                    }
+                })
+                .catch(error => {
+                    console.error('ERRO:', error);
+                    this.showError(`Erro de conexão: ${error.message}`);
+                });
+            },
+            
+            // Avança para próxima fase
+            advancePhase(nextPhase) {
+                const currentPhaseData = this.phases[this.currentPhase];
+                const qualifiedAthletes = currentPhaseData.athletes
+                    .filter(id => this.atletas[id].status === 'qualified')
+                    .map(id => ({ id, score: this.atletas[id].scores[this.currentPhase] || 0 }))
+                    .sort((a, b) => b.score - a.score);
+                
+                // Determina quantos atletas avançam
+                let advanceCount = 0;
+                if (nextPhase === 'semifinal') {
+                    advanceCount = Math.min(8, qualifiedAthletes.length); // Top 8 para semifinal
+                } else if (nextPhase === 'final') {
+                    advanceCount = Math.min(4, qualifiedAthletes.length); // Top 4 para final
+                }
+                
+                const advancingAthletes = qualifiedAthletes.slice(0, advanceCount);
+                
+                // Envia para o backend
+                fetch(window.location.href, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken()
+                    },
+                    body: JSON.stringify({
+                        action: 'advance_phase',
+                        next_phase: nextPhase,
+                        qualified_athletes: advancingAthletes.map(a => a.id)
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Atualiza estado local
+                        this.phases[nextPhase].athletes = advancingAthletes.map(a => a.id);
+                        
+                        // Cria cards para a próxima fase
+                        this.createPhaseCards(nextPhase, advancingAthletes);
+                        
+                        // Avança para a próxima fase
+                        this.switchPhase(nextPhase);
+                        
+                        this.showConfirmation(data.message || `${advancingAthletes.length} atletas avançaram para a ${nextPhase}!`);
+                    } else {
+                        this.showError(data.error || 'Erro ao avançar fase');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    this.showError('Erro de conexão');
+                });
+            },
+            
+            // Cria cards para nova fase
+            createPhaseCards(phase, athletes) {
+                const container = document.getElementById(`${phase}Container`);
+                container.innerHTML = '';
+                
+                athletes.forEach(athlete => {
+                    const atletaData = this.atletas[athlete.id];
+                    const cardHTML = this.createAthleteCardHTML(atletaData, phase);
+                    container.insertAdjacentHTML('beforeend', cardHTML);
+                });
+                
+                // Rebind eventos para novos cards
+                this.bindCardEvents(phase);
+            },
+            
+            // Cria HTML do card do atleta
+            createAthleteCardHTML(atleta, phase) {
+                return `
+                    <div class="col-lg-6 mb-3">
+                        <div class="athlete-card" data-atleta-id="${atleta.id}">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="${atleta.photo}" class="athlete-avatar me-3" alt="Foto do Atleta">
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-1 fw-bold">${atleta.name}</h5>
+                                    <div class="d-flex align-items-center">
+                                        <span class="faixa-indicator faixa-branca"></span>
+                                        <span class="text-muted me-3">${atleta.faixa}</span>
+                                        <small class="text-muted">${atleta.location}</small>
+                                    </div>
+                                    ${atleta.academia ? `<small class="text-info">${atleta.academia}</small>` : ''}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Notas dos Juízes (0.0 - 10.0)</label>
+                                </div>
+                                ${[1,2,3,4,5].map(i => `
+                                    <div class="col">
+                                        <div class="score-display">
+                                            <label class="form-label mb-1">Juiz ${i}</label>
+                                            <input type="number" class="form-control score-input" 
+                                                   name="nota${i}_${atleta.id}" min="0" max="10" step="0.1" 
+                                                   value="0.0" placeholder="0.0">
+                                        </div>
+                                    </div>
+                                `).join('')}
+                                <div class="col">
+                                    <div class="total-score">
+                                        <label class="form-label mb-1 fw-bold">Total</label>
+                                        <div class="total-value">0.0</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center no-print">
+                                <small class="text-muted">Posição: <span class="position-indicator">-</span></small>
+                                <div class="status-display text-center">
+                                    <small class="classification-status text-muted">Aguardando resultado</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            // Vincula eventos aos novos cards
+            bindCardEvents(phase) {
+                document.querySelectorAll(`#${phase} .score-input`).forEach(input => {
+                    input.addEventListener('input', (e) => {
+                        this.calculateTotal(e.target.closest('.athlete-card'));
+                    });
+                });
+            },
+            
+            // Gera pódio final
+            generatePodium() {
+                const finalAthletes = this.phases.final.athletes
+                    .map(id => ({ id, athlete: this.atletas[id], score: this.atletas[id].scores.final || 0 }))
+                    .sort((a, b) => b.score - a.score);
+                
+                // Atualiza pódio
+                if (finalAthletes.length >= 1) {
+                    this.updatePodiumPosition('firstPlace', finalAthletes[0]);
+                }
+                if (finalAthletes.length >= 2) {
+                    this.updatePodiumPosition('secondPlace', finalAthletes[1]);
+                }
+                if (finalAthletes.length >= 3) {
+                    this.updatePodiumPosition('thirdPlace', finalAthletes[2]);
+                }
+                
+                this.switchPhase('podium');
+                this.showConfirmation('Pódio gerado com sucesso!');
+            },
+            
+            // Atualiza posição no pódio
+            updatePodiumPosition(elementId, athleteData) {
+                const element = document.getElementById(elementId);
+                const img = element.querySelector('.athlete-avatar');
+                const name = element.querySelector('p');
+                const score = element.querySelector('.total-score');
+                
+                img.src = athleteData.athlete.photo;
+                name.textContent = athleteData.athlete.name;
+                score.textContent = athleteData.score.toFixed(1);
+            },
+            
+            // Atualiza atletas com dados do backend
+            updateAthletesFromBackend(phase, qualifiedAthletes) {
+                console.log('Atualizando atletas com dados do backend:', qualifiedAthletes);
+                
+                // Primeiro, reseta todos os status
+                Object.keys(this.atletas).forEach(atletaId => {
+                    this.atletas[atletaId].status = 'active';
+                    const athleteCard = document.querySelector(`.athlete-card[data-atleta-id="${atletaId}"]`);
+                    if (athleteCard) {
+                        athleteCard.classList.remove('qualified', 'eliminated');
+                        const statusElement = athleteCard.querySelector('.classification-status');
+                        if (statusElement) {
+                            statusElement.textContent = 'Aguardando resultado';
+                            statusElement.className = 'classification-status text-muted';
+                        }
+                    }
+                });
+                
+                // Aplica a classificação do backend
+                qualifiedAthletes.forEach((athlete, index) => {
+                    const atletaId = athlete.id.toString();
+                    
+                    if (this.atletas[atletaId]) {
+                        // Atualiza status do atleta
+                        this.atletas[atletaId].status = athlete.status || 'active';
+                        
+                        // Busca o card do atleta
+                        const athleteCard = document.querySelector(`.athlete-card[data-atleta-id="${atletaId}"]`);
+                        if (athleteCard) {
+                            // Atualiza visual baseado no status
+                            if (athlete.status === 'qualified') {
+                                athleteCard.classList.add('qualified');
+                                athleteCard.classList.remove('eliminated');
+                                
+                                const statusElement = athleteCard.querySelector('.classification-status');
+                                if (statusElement) {
+                                    statusElement.textContent = `Qualificado (${athlete.total ? athlete.total.toFixed(1) : '0.0'})`;
+                                    statusElement.className = 'classification-status text-success fw-bold';
+                                }
+                            } else if (athlete.status === 'eliminated') {
+                                athleteCard.classList.add('eliminated');
+                                athleteCard.classList.remove('qualified');
+                                
+                                const statusElement = athleteCard.querySelector('.classification-status');
+                                if (statusElement) {
+                                    if (athlete.total === 0) {
+                                        statusElement.textContent = 'Eliminado (sem pontuação)';
+                                    } else {
+                                        statusElement.textContent = `Eliminado (${athlete.total ? athlete.total.toFixed(1) : '0.0'})`;
+                                    }
+                                    statusElement.className = 'classification-status text-danger fw-bold';
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // Atualiza estatísticas
+                this.updateStats();
+            },
+
+            updateStats() {
+                const total = Object.keys(this.atletas).length;
+                const qualified = Object.values(this.atletas).filter(a => a.status === 'qualified').length;
+                const eliminated = Object.values(this.atletas).filter(a => a.status === 'eliminated').length;
+                
+                document.getElementById('totalAtletas').textContent = total;
+                document.getElementById('atletasClassificados').textContent = qualified;
+                document.getElementById('atletasEliminados').textContent = eliminated;
+                
+                const phaseNumber = {
+                    'eliminatorias': 1,
+                    'semifinal': 2,
+                    'final': 3,
+                    'podium': 4
+                };
+                document.getElementById('faseAtual').textContent = phaseNumber[this.currentPhase] || 1;
+            },
+            
+            // Obtém CSRF token
+            getCsrfToken() {
+                const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                             document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                             document.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
+                return token;
+            },
+            
+            // Mostra mensagem de erro
+            showError(message) {
+                console.error('Erro:', message);
+                
+                // Remove notificações existentes
+                document.querySelectorAll('.error-notification').forEach(n => n.remove());
+                
+                const notification = document.createElement('div');
+                notification.className = 'error-notification';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #dc3545;
+                    color: white;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    z-index: 9999;
+                    max-width: 400px;
+                `;
+                notification.innerHTML = `
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 5000);
+            },
+            
+            // Mostra mensagem de confirmação
+            showConfirmation(message) {
+                console.log('Sucesso:', message);
+                
+                // Remove notificações existentes
+                document.querySelectorAll('.success-notification').forEach(n => n.remove());
+                
+                const notification = document.createElement('div');
+                notification.className = 'success-notification';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #28a745;
+                    color: white;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    z-index: 9999;
+                    max-width: 400px;
+                `;
+                notification.innerHTML = `
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+            },
+            
+            // Bloqueia edição dos inputs de uma fase
+            lockPhaseInputs(phase) {
+                // Bloqueia inputs nos cards
+                document.querySelectorAll(`#${phase}-cards .score-input`).forEach(input => {
+                    input.disabled = true;
+                    input.classList.add('locked');
+                });
+                
+                // Bloqueia inputs na tabela
+                document.querySelectorAll(`#${phase}-table .score-input`).forEach(input => {
+                    input.disabled = true;
+                    input.classList.add('locked');
+                });
+                
+                // Desabilita botão de salvar
+                const saveButton = document.getElementById(`savePhase${this.getPhaseNumber(phase)}`);
+                if (saveButton) {
+                    saveButton.disabled = true;
+                    saveButton.textContent = 'Notas Salvas';
+                    saveButton.classList.add('btn-secondary');
+                    saveButton.classList.remove('btn-save');
+                }
+            },
+            
+            // Converte nome da fase para número
+            getPhaseNumber(phase) {
+                const phaseMap = {
+                    'eliminatorias': '1',
+                    'semifinal': '2',
+                    'final': '3'
+                };
+                return phaseMap[phase] || '1';
+            },
+            
+            // Avanço automático de fase
+            autoAdvancePhase(currentPhase, qualifiedAthletes = []) {
+                const phaseTransitions = {
+                    'eliminatorias': 'semifinal',
+                    'semifinal': 'final',
+                    'final': 'podium'
+                };
+                
+                const nextStage = phaseTransitions[currentPhase];
+                
+                if (!nextStage) return;
+                
+                // Coleta todas as notas da fase atual
+                const athletes = this.phases[currentPhase].athletes;
+                const athleteScores = [];
+                
+                athletes.forEach(id => {
+                    const cardElement = document.querySelector(`#${currentPhase}-cards [data-atleta-id="${id}"]`);
+                    const tableElement = document.querySelector(`#${currentPhase}-table [data-atleta-id="${id}"]`);
+                    const element = cardElement || tableElement;
+                    
+                    if (element) {
+                        const inputs = element.querySelectorAll('.score-input');
+                        const scores = Array.from(inputs).map(input => parseFloat(input.value) || 0);
+                        
+                        // Calcula total eliminando maior e menor nota
+                        if (scores.length >= 3) {
+                            scores.sort((a, b) => a - b);
+                            const validScores = scores.slice(1, -1);
+                            const total = validScores.reduce((sum, score) => sum + score, 0);
+                            
+                            athleteScores.push({
+                                id: id,
+                                name: this.atletas[id]?.name || 'Atleta',
+                                total: total,
+                                element: element
+                            });
+                        }
+                    }
+                });
+                
+                // Ordena por pontuação (decrescente)
+                athleteScores.sort((a, b) => b.total - a.total);
+                
+                // Determina quantos atletas avançam baseado na fase e critérios
+                let advanceCount = 0;
+                const totalAthletes = athleteScores.length;
+                
+                if (nextStage === 'semifinal') {
+                    // Para semifinal: máximo 8 atletas ou metade dos competidores
+                    advanceCount = Math.min(8, Math.max(4, Math.floor(totalAthletes / 2)));
+                } else if (nextStage === 'final') {
+                    // Para final: máximo 4 atletas
+                    advanceCount = Math.min(4, Math.max(2, Math.floor(totalAthletes / 2)));
+                } else if (nextStage === 'podium') {
+                    // Para pódio: os 3 melhores
+                    advanceCount = Math.min(3, totalAthletes);
+                }
+                
+                // Log para debug
+                console.log(`Fase: ${currentPhase} -> ${nextStage}`);
+                console.log(`Total de atletas: ${totalAthletes}`);
+                console.log(`Atletas que avançam: ${advanceCount}`);
+                console.log('Pontuações:', athleteScores.map(a => `${a.name}: ${a.total}`));
+                
+                // Classifica atletas automaticamente
+                athleteScores.forEach((athlete, index) => {
+                    if (index < advanceCount && athlete.total > 0) {
+                        // Qualificado - apenas se tem pontuação e está entre os melhores
+                        this.atletas[athlete.id].status = 'qualified';
+                        athlete.element.classList.add('qualified');
+                        athlete.element.classList.remove('eliminated');
+                        
+                        // Atualiza status no elemento
+                        const statusElement = athlete.element.querySelector('.classification-status');
+                        if (statusElement) {
+                            statusElement.textContent = `Qualificado (${athlete.total.toFixed(1)})`;
+                            statusElement.className = 'classification-status text-success fw-bold';
+                        }
+                        
+                        // Adiciona badge de qualificado
+                        const badge = athlete.element.querySelector('.status-badge') || document.createElement('div');
+                        badge.className = 'status-badge qualified-badge';
+                        badge.innerHTML = '<i class="fas fa-check"></i> Qualificado';
+                        if (!athlete.element.querySelector('.status-badge')) {
+                            athlete.element.appendChild(badge);
+                        }
+                    } else {
+                        // Eliminado - não está entre os melhores OU tem pontuação zero
+                        this.atletas[athlete.id].status = 'eliminated';
+                        athlete.element.classList.add('eliminated');
+                        athlete.element.classList.remove('qualified');
+                        
+                        // Atualiza status no elemento
+                        const statusElement = athlete.element.querySelector('.classification-status');
+                        if (statusElement) {
+                            if (athlete.total === 0) {
+                                statusElement.textContent = 'Eliminado (sem pontuação)';
+                            } else {
+                                statusElement.textContent = `Eliminado (${athlete.total.toFixed(1)})`;
+                            }
+                            statusElement.className = 'classification-status text-danger fw-bold';
+                        }
+                        
+                        // Adiciona badge de eliminado
+                        const badge = athlete.element.querySelector('.status-badge') || document.createElement('div');
+                        badge.className = 'status-badge eliminated-badge';
+                        badge.innerHTML = '<i class="fas fa-times"></i> Eliminado';
+                        if (!athlete.element.querySelector('.status-badge')) {
+                            athlete.element.appendChild(badge);
+                        }
+                    }
+                });
+                
+                // Determina próxima fase e habilita botão se necessário
+                const phaseMapping = {
+                    'eliminatorias': 'semifinal',
+                    'semifinal': 'final',
+                    'final': 'podium'
+                };
+                
+                const targetPhase = phaseMapping[currentPhase];
+                if (targetPhase && advanceCount > 0) {
+                    this.showAdvanceNotification(targetPhase, advanceCount);
+                    this.enableAdvanceButton(targetPhase);
+                }
+                
+                // Atualiza estatísticas
+                this.updateStats();
+            },
+            
+            // Mostra notificação de avanço
+            showAdvanceNotification(targetPhase, advanceCount) {
+                const notification = document.createElement('div');
+                notification.className = 'advance-notification';
+                notification.innerHTML = `
+                    <div class="advance-content">
+                        <i class="fas fa-trophy text-warning"></i>
+                        <h5>Classificação Concluída!</h5>
+                        <p>${advanceCount} atletas qualificados para a ${targetPhase}</p>
+                        <small>Clique em "Avançar" para prosseguir</small>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 5000);
+            },
+            
+            // Habilita botão de avanço
+            enableAdvanceButton(targetPhase) {
+                const buttonMap = {
+                    'semifinal': 'advanceToSemifinal',
+                    'final': 'advanceToFinal',
+                    'podium': 'generatePodium'
+                };
+                
+                const buttonId = buttonMap[targetPhase];
+                if (buttonId) {
+                    const button = document.getElementById(buttonId);
+                    if (button) {
+                        button.disabled = false;
+                        button.classList.remove('btn-secondary');
+                        button.classList.add('btn-advance');
+                    }
+                }
+            },
+            
+            // Adiciona badge de status
+            addStatusBadge(element, status) {
+                // Remove badge existente
+                const existingBadge = element.querySelector('.status-badge');
+                if (existingBadge) {
+                    existingBadge.remove();
+                }
+                
+                const badge = document.createElement('div');
+                badge.className = `status-badge ${status}-badge`;
+                
+                if (status === 'qualified') {
+                    badge.innerHTML = '<i class="fas fa-check"></i> Qualificado';
+                } else {
+                    badge.innerHTML = '<i class="fas fa-times"></i> Eliminado';
+                }
+                
+                element.appendChild(badge);
+            },
+        };
+        
+        // Inicializa o sistema
+        kataManager.init();
+    });
+    
+    // Função para baixar PDF
+    function downloadPDF() {
+        console.log('Iniciando download do PDF...');
+        const categoriaId = {{ categoria.id }};
+        const url = `/keychart/competicoes/categoria/${categoriaId}/atletas/chaveamento_kata/pdf/`;
+        
+        // Abre em nova aba para download
+        window.open(url, '_blank');
+        
+        // Ou usar fetch para download direto
+        // fetch(url)
+        //     .then(response => response.blob())
+        //     .then(blob => {
+        //         const url = window.URL.createObjectURL(blob);
+        //         const a = document.createElement('a');
+        //         a.style.display = 'none';
+        //         a.href = url;
+        //         a.download = `Kata_{{ categoria.competicao.nome }}_{{ categoria.nome }}_${new Date().toISOString().slice(0,10)}.pdf`;
+        //         document.body.appendChild(a);
+        //         a.click();
+        //         window.URL.revokeObjectURL(url);
+        //     })
+        //     .catch(error => {
+        //         console.error('Erro ao baixar PDF:', error);
+        //         alert('Erro ao gerar PDF. Tente novamente.');
+        //     });
+    }
     </script>
-    {% endblock %}
 </body>
 </html>

@@ -28,6 +28,9 @@ from .models import ResultadoKata
 from django.http.response import HttpResponse, JsonResponse
 from django.core.exceptions import ValidationError
 from decimal import Decimal
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+import io
 
 # Função para criar Competições
 def criar_competicao(request):
@@ -565,88 +568,414 @@ def excluir_atleta(request, pk):
 
 # Função responsavel por renderizar a pagina de Chaveamento
 def chaveamento_kata(request, categoria_id):
+    from .models import ChaveamentoKata
+    import json
+    
     categoria = get_object_or_404(Categoria, id=categoria_id)
     atletas = Atleta.objects.filter(categoria=categoria).select_related('academia')
-
-    # Verifica se TODOS os atletas já têm resultados (para o chaveamento completo)
-    chaveamento_existente = ResultadoKata.objects.filter(categoria=categoria).count() == atletas.count()
-
-    # Para os filtros
-    cidades_distintas = atletas.order_by('cidade').values_list('cidade', flat=True).distinct()
-    estados_distintos = atletas.order_by('estado').values_list('estado', flat=True).distinct()
-
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        # Processa requisições AJAX individuais
-        atleta_id = request.POST.get('atleta_id')
-        atleta = get_object_or_404(Atleta, id=atleta_id)
-
-        nota1 = float(request.POST.get('nota1', 0))
-        nota2 = float(request.POST.get('nota2', 0))
-        nota3 = float(request.POST.get('nota3', 0))
-        nota4 = float(request.POST.get('nota4', 0))
-        nota5 = float(request.POST.get('nota5', 0))
-
-        resultado, created = ResultadoKata.objects.update_or_create(
-            atleta=atleta,
+    
+    # Cria ou obtém o chaveamento para esta categoria
+    chaveamento, created = ChaveamentoKata.objects.get_or_create(
+        categoria=categoria,
+        defaults={'competicao': categoria.competicao}
+    )
+    
+    # Se acabou de criar, inicializa os resultados das eliminatórias
+    if created:
+        with transaction.atomic():
+            for atleta in atletas:
+                ResultadoKata.objects.get_or_create(
+                    atleta=atleta,
+                    categoria=categoria,
+                    fase='eliminatorias',
+                    defaults={
+                        'competicao': categoria.competicao,
+                        'nota1': 0.0, 'nota2': 0.0, 'nota3': 0.0, 'nota4': 0.0, 'nota5': 0.0
+                    }
+                )
+    
+    # Verifica quais fases já foram salvas
+    fases_salvas = {}
+    for fase in ['eliminatorias', 'semifinal', 'final']:
+        fases_salvas[fase] = ResultadoKata.objects.filter(
             categoria=categoria,
-            defaults={
-                'nota1': nota1,
-                'nota2': nota2,
-                'nota3': nota3,
-                'nota4': nota4,
-                'nota5': nota5,
-                'competicao': categoria.competicao
-            }
-        )
+            fase=fase,
+            salvo=True
+        ).exists()
+    
+    # Processa requisições AJAX
+    if request.method == 'POST':
+        try:
+            if request.content_type == 'application/json':
+                data = json.loads(request.body)
+                action = data.get('action')
+                
+                if action == 'save_scores':
+                    return handle_save_scores(request, data, categoria, chaveamento)
+                elif action == 'advance_phase':
+                    return handle_advance_phase(request, data, categoria, chaveamento)
+                elif action == 'classify_athlete':
+                    return handle_classify_athlete(request, data, categoria)
+                elif action == 'eliminate_athlete':
+                    return handle_eliminate_athlete(request, data, categoria)
+                    
+            else:  # Form data para compatibilidade
+                return handle_form_submission(request, categoria, chaveamento)
+                
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    # Carrega dados para o template
+    context = {
+        'competicao': categoria.competicao,
+        'categoria': categoria,
+        'atletas': atletas,
+        'chaveamento': chaveamento,
+        'resultados_eliminatorias': get_phase_results(categoria, 'eliminatorias'),
+        'resultados_semifinal': get_phase_results(categoria, 'semifinal'),
+        'resultados_final': get_phase_results(categoria, 'final'),
+        'podio': chaveamento.get_podio() if chaveamento.finalizado else [],
+        'cidades_distintas': atletas.values_list('cidade', flat=True).distinct().order_by('cidade'),
+        'estados_distintos': atletas.values_list('estado', flat=True).distinct().order_by('estado'),
+        'fases_salvas': fases_salvas,
+        # Dados serializados para JavaScript
+        'fases_salvas_json': json.dumps(fases_salvas),
+        'resultados_eliminatorias_json': json.dumps([
+            {
+                'atleta': {'id': r.atleta.id},
+                'nota1': float(r.nota1),
+                'nota2': float(r.nota2),
+                'nota3': float(r.nota3),
+                'nota4': float(r.nota4),
+                'nota5': float(r.nota5),
+                'total': float(r.total),
+                'posicao': r.posicao,
+                'status': r.status,
+                'salvo': r.salvo
+            } for r in get_phase_results(categoria, 'eliminatorias')
+        ]),
+        'resultados_semifinal_json': json.dumps([
+            {
+                'atleta': {'id': r.atleta.id},
+                'nota1': float(r.nota1),
+                'nota2': float(r.nota2),
+                'nota3': float(r.nota3),
+                'nota4': float(r.nota4),
+                'nota5': float(r.nota5),
+                'total': float(r.total),
+                'posicao': r.posicao,
+                'status': r.status,
+                'salvo': r.salvo
+            } for r in get_phase_results(categoria, 'semifinal')
+        ]),
+        'resultados_final_json': json.dumps([
+            {
+                'atleta': {'id': r.atleta.id},
+                'nota1': float(r.nota1),
+                'nota2': float(r.nota2),
+                'nota3': float(r.nota3),
+                'nota4': float(r.nota4),
+                'nota5': float(r.nota5),
+                'total': float(r.total),
+                'posicao': r.posicao,
+                'status': r.status,
+                'salvo': r.salvo
+            } for r in get_phase_results(categoria, 'final')
+        ]),
+    }
+    
+    return render(request, 'competicoes/chaveamento_kata.html', context)
 
-        # Verifica novamente se todos os atletas já têm resultados
-        todos_salvos = ResultadoKata.objects.filter(categoria=categoria).count() == atletas.count()
 
+def get_phase_results(categoria, fase):
+    """Retorna os resultados de uma fase específica"""
+    return ResultadoKata.objects.filter(
+        categoria=categoria,
+        fase=fase
+    ).select_related('atleta', 'atleta__academia').order_by('-total', 'posicao')
+
+
+def handle_save_scores(request, data, categoria, chaveamento):
+    """Salva as notas de uma fase"""
+    try:
+        fase = data.get('fase', 'eliminatorias')
+        scores_data = data.get('scores', {})
+        
+        print(f"DEBUG: === INÍCIO SALVAMENTO ===")
+        print(f"DEBUG: Fase: {fase}")
+        print(f"DEBUG: Data completa recebida: {data}")
+        print(f"DEBUG: Scores data: {scores_data}")
+        print(f"DEBUG: Tipo de scores_data: {type(scores_data)}")
+        print(f"DEBUG: Número de atletas a processar: {len(scores_data)}")
+        
+        # Verifica se há dados para processar
+        if not scores_data:
+            print("DEBUG: ERRO - Nenhum dado de scores recebido!")
+            return JsonResponse({
+                'success': False, 
+                'error': 'Nenhum dado de notas foi recebido.'
+            })
+        
+        # Verifica se a fase já foi salva
+        existing_results = ResultadoKata.objects.filter(
+            categoria=categoria,
+            fase=fase,
+            salvo=True
+        ).exists()
+        
+        if existing_results:
+            return JsonResponse({
+                'success': False, 
+                'error': 'Esta fase já foi salva e não pode ser alterada.'
+            })
+        
+        with transaction.atomic():
+            qualified_athletes = []
+            
+            for atleta_id, scores in scores_data.items():
+                print(f"DEBUG: --- Processando Atleta {atleta_id} ---")
+                print(f"DEBUG: Scores recebidos: {scores}")
+                print(f"DEBUG: Tipo de scores: {type(scores)}")
+                
+                # Converte e valida cada nota
+                nota1 = float(scores.get('nota1', 0)) if scores.get('nota1') else 0.0
+                nota2 = float(scores.get('nota2', 0)) if scores.get('nota2') else 0.0
+                nota3 = float(scores.get('nota3', 0)) if scores.get('nota3') else 0.0
+                nota4 = float(scores.get('nota4', 0)) if scores.get('nota4') else 0.0
+                nota5 = float(scores.get('nota5', 0)) if scores.get('nota5') else 0.0
+                
+                print(f"DEBUG: Notas convertidas - N1:{nota1}, N2:{nota2}, N3:{nota3}, N4:{nota4}, N5:{nota5}")
+                
+                resultado, created = ResultadoKata.objects.update_or_create(
+                    atleta_id=atleta_id,
+                    categoria=categoria,
+                    fase=fase,
+                    defaults={
+                        'competicao': categoria.competicao,
+                        'nota1': nota1,
+                        'nota2': nota2,
+                        'nota3': nota3,
+                        'nota4': nota4,
+                        'nota5': nota5,
+                        'salvo': True  # Marca como salvo
+                    }
+                )
+                
+                print(f"DEBUG: Resultado salvo - Total calculado: {resultado.total}")
+                print(f"DEBUG: Status do resultado: {resultado.status}")
+                
+                # Adiciona à lista para classificação
+                qualified_athletes.append({
+                    'id': int(atleta_id),
+                    'total': resultado.total
+                })
+            
+            # Atualiza posições da fase
+            update_positions_for_phase(categoria, fase)
+            
+            # Ordena atletas por pontuação (decrescente)
+            qualified_athletes.sort(key=lambda x: x['total'], reverse=True)
+            
+            print(f"DEBUG: Atletas ordenados: {qualified_athletes}")
+            
+            # Determina quantos atletas avançam baseado nas regras oficiais de Kata
+            total_athletes = len(qualified_athletes)
+            advance_count = 0
+            
+            if fase == 'eliminatorias':
+                # Regras oficiais para eliminatórias de Kata
+                if total_athletes <= 4:
+                    # Com 4 ou menos atletas, todos vão para final
+                    advance_count = total_athletes
+                elif total_athletes <= 8:
+                    # Com 5-8 atletas, top 4 para final
+                    advance_count = min(4, total_athletes)
+                elif total_athletes <= 16:
+                    # Com 9-16 atletas, top 8 para semifinal
+                    advance_count = min(8, total_athletes)
+                else:
+                    # Com mais de 16 atletas, top 16 para próxima fase
+                    advance_count = min(16, total_athletes)
+                    
+            elif fase == 'semifinal':
+                # Da semifinal sempre passam 4 para final (ou menos se houver menos competidores)
+                advance_count = min(4, total_athletes)
+                
+            elif fase == 'final':
+                # Na final, os 3 melhores vão para o pódio
+                advance_count = min(3, total_athletes)
+            
+            print(f"DEBUG: Fase {fase} - Total atletas: {total_athletes}, Avançam: {advance_count}")
+            print(f"DEBUG: Critério aplicado: Regras oficiais WKF para Kata")
+            
+            # Filtrar atletas com pontuação mínima (configurável)
+            # Para Kata, tradicionalmente exige-se uma pontuação mínima para avançar
+            # Você pode ajustar este valor conforme as regras da sua competição
+            PONTUACAO_MINIMA = 5.0  # Altere aqui para ajustar a pontuação mínima
+            atletas_com_pontuacao_minima = [a for a in qualified_athletes if a['total'] >= PONTUACAO_MINIMA]
+            
+            if len(atletas_com_pontuacao_minima) < advance_count:
+                print(f"DEBUG: Apenas {len(atletas_com_pontuacao_minima)} atletas atingiram a pontuação mínima de {PONTUACAO_MINIMA}")
+                advance_count = len(atletas_com_pontuacao_minima)
+            
+            # Aplica classificação automática
+            for i, athlete in enumerate(qualified_athletes):
+                atleta_id = athlete['id']
+                resultado = ResultadoKata.objects.get(
+                    atleta_id=atleta_id,
+                    categoria=categoria,
+                    fase=fase
+                )
+                
+                # Verifica se o atleta se classifica, tem pontuação válida E atinge a pontuação mínima
+                if (i < advance_count and 
+                    athlete['total'] > 0 and 
+                    athlete['total'] >= PONTUACAO_MINIMA):
+                    resultado.status = 'classificado'
+                    athlete['status'] = 'qualified'
+                    print(f"DEBUG: Atleta {atleta_id} CLASSIFICADO (posição {i+1}, total {athlete['total']})")
+                else:
+                    resultado.status = 'eliminado'
+                    athlete['status'] = 'eliminated'
+                    if athlete['total'] < PONTUACAO_MINIMA:
+                        print(f"DEBUG: Atleta {atleta_id} ELIMINADO por pontuação insuficiente (posição {i+1}, total {athlete['total']} < {PONTUACAO_MINIMA})")
+                    else:
+                        print(f"DEBUG: Atleta {atleta_id} ELIMINADO por classificação (posição {i+1}, total {athlete['total']})")
+                
+                resultado.save()
+        
         return JsonResponse({
             'success': True,
-            'total': resultado.total,
-            'atleta_id': atleta_id,
-            'todos_salvos': todos_salvos  # Adiciona esta informação na resposta
+            'message': f'Notas da {fase} salvas com sucesso! {advance_count} atletas classificados (regras WKF Kata).',
+            'qualified_athletes': qualified_athletes,
+            'advance_count': advance_count,
+            'total_athletes': total_athletes,
+            'pontuacao_minima': 5.0,
+            'criterio': 'Regras oficiais WKF para competições de Kata'
         })
-    elif request.method == 'POST':
-        # Processa o salvamento em lote
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+
+def handle_advance_phase(request, data, categoria, chaveamento):
+    """Avança para a próxima fase"""
+    try:
+        next_phase = data.get('next_phase')
+        qualified_athletes = data.get('qualified_athletes', [])
+        
         with transaction.atomic():
+            # Cria resultados para a próxima fase
+            for atleta_id in qualified_athletes:
+                ResultadoKata.objects.get_or_create(
+                    atleta_id=atleta_id,
+                    categoria=categoria,
+                    fase=next_phase,
+                    defaults={
+                        'competicao': categoria.competicao,
+                        'nota1': 0.0, 'nota2': 0.0, 'nota3': 0.0, 'nota4': 0.0, 'nota5': 0.0,
+                        'status': 'ativo'
+                    }
+                )
+            
+            # Atualiza o chaveamento
+            chaveamento.fase_atual = next_phase
+            if next_phase == 'final' and len(qualified_athletes) <= 4:
+                chaveamento.finalizado = True
+                chaveamento.data_finalizacao = timezone.now()
+            chaveamento.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'{len(qualified_athletes)} atletas avançaram para {next_phase}!'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+
+def handle_classify_athlete(request, data, categoria):
+    """Classifica um atleta"""
+    try:
+        atleta_id = data.get('atleta_id')
+        fase = data.get('fase', 'eliminatorias')
+        
+        resultado = ResultadoKata.objects.get(
+            atleta_id=atleta_id,
+            categoria=categoria,
+            fase=fase
+        )
+        resultado.status = 'classificado'
+        resultado.save()
+        
+        return JsonResponse({'success': True})
+        
+    except ResultadoKata.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Resultado não encontrado'})
+
+
+def handle_eliminate_athlete(request, data, categoria):
+    """Elimina um atleta"""
+    try:
+        atleta_id = data.get('atleta_id')
+        fase = data.get('fase', 'eliminatorias')
+        
+        resultado = ResultadoKata.objects.get(
+            atleta_id=atleta_id,
+            categoria=categoria,
+            fase=fase
+        )
+        resultado.status = 'eliminado'
+        resultado.save()
+        
+        return JsonResponse({'success': True})
+        
+    except ResultadoKata.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Resultado não encontrado'})
+
+
+def handle_form_submission(request, categoria, chaveamento):
+    """Manipula submissões de formulário (compatibilidade)"""
+    try:
+        with transaction.atomic():
+            atletas = Atleta.objects.filter(categoria=categoria)
+            
             for atleta in atletas:
                 nota1 = float(request.POST.get(f'nota1_{atleta.id}', 0))
                 nota2 = float(request.POST.get(f'nota2_{atleta.id}', 0))
                 nota3 = float(request.POST.get(f'nota3_{atleta.id}', 0))
                 nota4 = float(request.POST.get(f'nota4_{atleta.id}', 0))
                 nota5 = float(request.POST.get(f'nota5_{atleta.id}', 0))
-
+                
                 ResultadoKata.objects.update_or_create(
                     atleta=atleta,
                     categoria=categoria,
+                    fase='eliminatorias',
                     defaults={
-                        'nota1': nota1,
-                        'nota2': nota2,
-                        'nota3': nota3,
-                        'nota4': nota4,
-                        'nota5': nota5,
+                        'nota1': nota1, 'nota2': nota2, 'nota3': nota3,
+                        'nota4': nota4, 'nota5': nota5,
                         'competicao': categoria.competicao
                     }
                 )
+            
+            update_positions_for_phase(categoria, 'eliminatorias')
+        
+        return JsonResponse({'success': True})
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
 
-            return JsonResponse({'success': True})
 
-    # Carrega resultados existentes
-    resultados = ResultadoKata.objects.filter(atleta__in=atletas, categoria=categoria)
-    resultados_dict = {resultado.atleta_id: resultado for resultado in resultados}
-
-    context = {
-        'competicao': categoria.competicao,
-        'categoria': categoria,
-        'atletas': atletas,
-        'cidades_distintas': cidades_distintas,
-        'estados_distintos': estados_distintos,
-        'resultados': resultados_dict,
-        'chaveamento_existente': chaveamento_existente,
-    }
-    return render(request, 'competicoes/chaveamento_kata.html', context)
+def update_positions_for_phase(categoria, fase):
+    """Atualiza as posições dos atletas em uma fase"""
+    resultados = ResultadoKata.objects.filter(
+        categoria=categoria,
+        fase=fase
+    ).order_by('-total')
+    
+    for index, resultado in enumerate(resultados, 1):
+        resultado.posicao = index
+        resultado.save(update_fields=['posicao'])
 
 # Função para chaveamento Kumitê
 def chaveamento_kumite(request, categoria_id):
@@ -907,3 +1236,74 @@ def listar_arbitros(request):
         'success': True,
         'arbitros': arbitros_data
     })
+
+
+def chaveamento_kata_pdf(request, categoria_id):
+    """Gera PDF com os resultados do chaveamento de Kata"""
+    from .models import ChaveamentoKata
+    
+    categoria = get_object_or_404(Categoria, id=categoria_id)
+    atletas = Atleta.objects.filter(categoria=categoria).select_related('academia')
+    
+    # Obtém o chaveamento
+    try:
+        chaveamento = ChaveamentoKata.objects.get(categoria=categoria)
+    except ChaveamentoKata.DoesNotExist:
+        # Se não existe chaveamento, cria um vazio para não quebrar
+        chaveamento = None
+    
+    # Carrega dados organizados para o PDF
+    context = {
+        'competicao': categoria.competicao,
+        'categoria': categoria,
+        'atletas': atletas,
+        'chaveamento': chaveamento,
+        'resultados_eliminatorias': get_phase_results(categoria, 'eliminatorias'),
+        'resultados_semifinal': get_phase_results(categoria, 'semifinal'),
+        'resultados_final': get_phase_results(categoria, 'final'),
+        'podio': chaveamento.get_podio() if chaveamento and chaveamento.finalizado else [],
+        'data_geracao': timezone.now(),
+    }
+    
+    # Organiza resultados por fase para o PDF
+    context['fases'] = []
+    
+    # Eliminatórias
+    if context['resultados_eliminatorias']:
+        context['fases'].append({
+            'nome': 'Eliminatórias',
+            'resultados': context['resultados_eliminatorias']
+        })
+    
+    # Semifinal
+    if context['resultados_semifinal']:
+        context['fases'].append({
+            'nome': 'Semifinal',
+            'resultados': context['resultados_semifinal']
+        })
+    
+    # Final
+    if context['resultados_final']:
+        context['fases'].append({
+            'nome': 'Final',
+            'resultados': context['resultados_final']
+        })
+    
+    # Renderiza o template HTML para PDF
+    template = get_template('competicoes/chaveamento_kata_pdf.html')
+    html = template.render(context)
+    
+    # Cria o PDF
+    result = io.BytesIO()
+    pdf = pisa.pisaDocument(io.BytesIO(html.encode("UTF-8")), result)
+    
+    if not pdf.err:
+        # Prepara a resposta
+        response = HttpResponse(result.getvalue(), content_type='application/pdf')
+        filename = f'Kata_{categoria.competicao.nome}_{categoria.nome}_{timezone.now().strftime("%Y%m%d_%H%M")}.pdf'
+        # Remove caracteres especiais do nome do arquivo
+        filename = ''.join(c for c in filename if c.isalnum() or c in '._- ')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+    
+    return HttpResponse(f'Erro ao gerar PDF: {pdf.err}', status=500)
