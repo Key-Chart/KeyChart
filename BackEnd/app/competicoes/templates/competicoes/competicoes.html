@@ -12,6 +12,294 @@
     <link rel="stylesheet" href="{% static 'competicoes/css/competicoes.css' %}">
     <title>Competições | KeyChart</title>
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #ecf0f1;
+            --accent-color: #27ae60;
+            --success-color: #27ae60;
+            --info-color: #3498db;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --card-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --border-color: #bdc3c7;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ecf0f1;
+        }
+
+        .content {
+            margin-left: 250px;
+            transition: all 0.2s ease;
+            min-height: 100vh;
+            background-color: #ecf0f1;
+            padding: 2rem;
+        }
+
+        .header {
+            background: #343A40;
+            color: #ffffff;
+            border-bottom: 1px solid #495057;
+            padding: 1.5rem 0;
+            margin: -2rem -2rem 2rem -2rem;
+        }
+
+        .header .container-fluid {
+            padding: 0 2rem;
+        }
+
+        /* Cards de estatísticas modernos */
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            min-height: 120px;
+            overflow: hidden;
+            color: var(--text-primary);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            opacity: 0.8;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .stat-card .label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.75rem;
+        }
+
+        /* Cards e componentes */
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            background: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            background: #f8f9fa;
+            color: var(--text-primary);
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+        }
+
+        /* Formulários */
+        .form-control, .form-select {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            background: #ffffff;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+            outline: none;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        /* Botões */
+        .btn {
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            text-transform: none;
+            font-size: 0.85rem;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1a252f;
+            border-color: #1a252f;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+            border-color: #229954;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-outline-secondary {
+            border-color: #95a5a6;
+            color: #95a5a6;
+            background: transparent;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #95a5a6;
+            color: white;
+        }
+
+        /* Tabelas */
+        .table {
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .table thead th {
+            background: #343A40;
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .table tbody td {
+            padding: 0.875rem 1rem;
+            vertical-align: middle;
+            border-color: var(--border-color);
+        }
+
+        /* Badges */
+        .badge {
+            padding: 0.35rem 0.65rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Status badges específicos */
+        .bg-success {
+            background-color: var(--success-color) !important;
+        }
+
+        .bg-warning {
+            background-color: var(--warning-color) !important;
+        }
+
+        .bg-danger {
+            background-color: var(--danger-color) !important;
+        }
+
+        .bg-info {
+            background-color: var(--info-color) !important;
+        }
+
+        /* Modais */
+        .modal-content {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.25rem;
+        }
+
+        .modal-body {
+            padding: 1.25rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 1.25rem;
+        }
+
+        .custom-modal {
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: none;
+        }
+
+        .custom-modal .modal-header {
+            border-radius: 8px 8px 0 0;
+            background: #343A40;
+            color: white;
+        }
+
         /* Modal Imprimir e Exportar */
         .modal-custom {
             display: none;
@@ -32,13 +320,13 @@
             border: none;
             width: 90%;
             max-width: 500px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             animation: modalFadeIn 0.3s;
         }
 
         @keyframes modalFadeIn {
-            from {opacity: 0; transform: translateY(-20px);}
+            from {opacity: 0; transform: translateY(-10px);}
             to {opacity: 1; transform: translateY(0);}
         }
 
@@ -49,71 +337,62 @@
 
         .modal-message {
             margin-bottom: 25px;
-            color: #555;
+            color: var(--text-secondary);
         }
 
-        /* Modal customizado */
-        .custom-modal {
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            border: none;
-        }
-
-        .custom-modal .modal-header {
-            border-radius: 10px 10px 0 0;
-            background: #343A40;
-            color: white;
-        }
-
-        .badge-inscricoes-abertas {
-            background-color: #28a745;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-
-        .badge-inscricoes-fechadas {
-            background-color: #dc3545;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-
-        /* Estilos para os tabs */
+        /* Tabs */
         .nav-tabs .nav-link {
-            color: #495057;
+            color: var(--text-secondary);
             border: none;
             padding: 10px 20px;
             font-weight: 500;
         }
 
         .nav-tabs .nav-link.active {
-            color: #0d6efd;
+            color: var(--primary-color);
             background-color: transparent;
-            border-bottom: 3px solid #0d6efd;
+            border-bottom: 3px solid var(--primary-color);
         }
 
         .nav-tabs .nav-link:hover:not(.active) {
-            color: #0d6efd;
-            border-bottom: 3px solid #dee2e6;
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--border-color);
         }
 
         .tab-content {
             padding: 20px 0;
         }
 
-        /* Estilização dos filtros */
+        /* Input groups */
         .input-group-text {
-            background-color: #f8f9fa !important;
+            background-color: #f8f9fa;
+            border-color: var(--border-color);
         }
-        .form-control:focus, .form-select:focus {
-            border-color: #86b7fe;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+
+        /* Empty states */
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            color: var(--text-secondary);
         }
-        .btn-filter {
-            transition: all 0.3s ease;
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.5;
+            color: var(--text-secondary);
+        }
+
+        .empty-state h5 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 0.85rem;
         }
 
         /* Estilos para o modal maior */
@@ -163,41 +442,42 @@
         {% endif %}
 
         <!-- Conteúdo -->
-        <main class="container-fluid py-4">            <!-- Cards de Estatísticas -->
+        <main class="container-fluid py-4">
+            <!-- Cards de Estatísticas -->
             <div class="row mb-4">
                 <div class="col-md-3 mb-3">
-                    <div class="stat-card bg-primary">
+                    <div class="stat-card">
                         <i class="fas fa-trophy"></i>
-                        <div class="label">Total de Competições</div>
                         <div class="number">{{ total_competicoes }}</div>
+                        <div class="label">Total de Competições</div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <div class="stat-card bg-success">
-                        <i class="fas fa-running"></i>
+                    <div class="stat-card">
+                        <i class="fas fa-running" style="color: var(--success-color);"></i>
+                        <div class="number" style="color: var(--success-color);">{{ competicoes_ativas }}</div>
                         <div class="label">Competições Ativas</div>
-                        <div class="number">{{ competicoes_ativas }}</div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <div class="stat-card bg-warning text-dark">
-                        <i class="fas fa-flag-checkered"></i>
+                    <div class="stat-card">
+                        <i class="fas fa-flag-checkered" style="color: var(--warning-color);"></i>
+                        <div class="number" style="color: var(--warning-color);">{{ competicoes_finalizadas }}</div>
                         <div class="label">Competições Finalizadas</div>
-                        <div class="number">{{ competicoes_finalizadas }}</div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <div class="stat-card bg-info text-white">
-                        <i class="fas fa-clock"></i>
+                    <div class="stat-card">
+                        <i class="fas fa-clock" style="color: var(--info-color);"></i>
+                        <div class="number" style="color: var(--info-color);">{{ competicoes_em_breve }}</div>
                         <div class="label">Em Breve</div>
-                        <div class="number">{{ competicoes_em_breve }}</div>
                     </div>
                 </div>
             </div>
 
             <!-- Filtros Avançados -->
             <div class="card mb-4 shadow-sm">
-                <div class="card-header bg-light">
+                <div class="card-header bg-white border-bottom">
                     <div class="d-flex justify-content-between align-items-center">
                         <h6 class="mb-0 text-muted">
                             <i class="bi bi-funnel me-2"></i>Filtros de Busca
@@ -330,7 +610,7 @@
             </div>
             
             <!-- Tabela de Competições -->
-            <div class="card shadow-sm">
+            <div class="card shadow-sm" style="margin-top: 1.5rem;">
                 <div class="card-header" style="background: linear-gradient(135deg, #343A40 0%, #495057 100%); color: #ffffff;">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
@@ -360,24 +640,24 @@
                     {% if listar_competicoes %}
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
-                                <thead class="table-light">
+                                <thead>
                                     <tr>
-                                        <th class="border-0">
+                                        <th class="border-0" style="background: transparent; padding: 1rem; color: var(--text-primary); font-weight: 600;">
                                             <i class="bi bi-trophy text-primary me-1"></i>Nome
                                         </th>
-                                        <th class="border-0">
+                                        <th class="border-0" style="background: transparent; padding: 1rem; color: var(--text-primary); font-weight: 600;">
                                             <i class="bi bi-calendar text-success me-1"></i>Data de Início
                                         </th>
-                                        <th class="border-0">
+                                        <th class="border-0" style="background: transparent; padding: 1rem; color: var(--text-primary); font-weight: 600;">
                                             <i class="bi bi-geo-alt text-warning me-1"></i>Local
                                         </th>
-                                        <th class="border-0">
+                                        <th class="border-0" style="background: transparent; padding: 1rem; color: var(--text-primary); font-weight: 600;">
                                             <i class="bi bi-info-circle text-info me-1"></i>Status
                                         </th>
-                                        <th class="border-0">
+                                        <th class="border-0" style="background: transparent; padding: 1rem; color: var(--text-primary); font-weight: 600;">
                                             <i class="bi bi-person-check text-secondary me-1"></i>Inscrições
                                         </th>
-                                        <th class="border-0 text-center">
+                                        <th class="border-0 text-center" style="background: transparent; padding: 1rem; color: var(--text-primary); font-weight: 600;">
                                             <i class="bi bi-gear text-muted me-1"></i>Ações
                                         </th>
                                     </tr>

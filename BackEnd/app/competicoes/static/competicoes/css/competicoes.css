@@ -1,15 +1,24 @@
 /* Definição de cores principais */
 :root {
-    --primary-color: #ffffff;
-    --secondary-color: #f8f9fa;
-    --accent-color: #ffc107;
-    --dark-color: #343a40;
+    --primary-color: #2c3e50;
+    --secondary-color: #ecf0f1;
+    --accent-color: #27ae60;
+    --dark-color: #343A40;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --info-color: #3498db;
+    --light-color: #ecf0f1;
+    --muted-color: #7f8c8d;
 }
 
 /* Estilos básicos do body */
 body {
-    font-size: 1rem;
-    zoom: 1;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #2c3e50;
+    background-color: #f8f9fa;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -20,13 +29,16 @@ body {
     margin-left: 250px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     min-height: 100vh;
+    padding: 2rem;
+    background-color: #f8f9fa;
 }
 
 /* Header do site */
 .header {
-    background: var(--primary-color);
+    background: var(--dark-color);
     color: white;
-    padding: 1.5rem;
+    padding: 1.5rem 2rem;
+    margin: -2rem -2rem 2rem -2rem;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     position: relative;
 }
@@ -46,20 +58,27 @@ body {
 
 /* Estilo padrão dos cards */
 .card {
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    transition: all 0.3s;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
     margin-bottom: 2rem;
     overflow: hidden;
+    background-color: white;
+}
+
+.card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
 }
 
 /* Header do card */
 .card-header {
-    background-color: var(--primary-color);
+    background-color: var(--dark-color);
     color: white;
     padding: 1.25rem 1.5rem;
     border-bottom: none;
+    font-weight: 600;
 }
 
 /* Título dos cards */
@@ -74,97 +93,124 @@ body {
 .stat-card {
     position: relative;
     overflow: hidden;
-    border-radius: 10px;
+    border-radius: 12px;
     color: white;
-    padding: 1.5rem;
-    transition: all 0.3s;
+    padding: 1.8rem;
+    transition: all 0.3s ease;
     height: 100%;
+    border-top: 4px solid rgba(255,255,255,0.3);
 }
 
 /* Efeito hover nos stat-cards */
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
 /* Ícone de fundo nos stat-cards */
 .stat-card i {
     position: absolute;
-    font-size: 4.5rem;
-    opacity: 0.2;
-    right: 20px;
+    font-size: 3.5rem;
+    opacity: 0.15;
+    right: 1.5rem;
     top: 50%;
     transform: translateY(-50%);
 }
 
 /* Número dentro dos stat-cards */
 .stat-card .number {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 700;
-    margin: 10px 0;
+    margin: 8px 0;
+    position: relative;
+    z-index: 2;
 }
 
 /* Rótulo dentro dos stat-cards */
 .stat-card .label {
-    font-size: 1rem;
+    font-size: 0.9rem;
     opacity: 0.9;
+    font-weight: 500;
+    position: relative;
+    z-index: 2;
 }
 
 /* Estilo da tabela */
 .table {
     margin-bottom: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
 }
 
 /* Cabeçalho da tabela */
 .table thead th {
-    border-bottom: 2px solid #e9ecef;
+    background-color: var(--dark-color);
+    color: white;
+    border-bottom: none;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     letter-spacing: 0.5px;
-    color: #6c757d;
+    padding: 1rem;
 }
 
 /* Linhas do corpo da tabela */
 .table tbody tr {
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #e9ecef;
 }
 
 /* Hover nas linhas da tabela */
 .table tbody tr:hover {
-    background-color: rgba(20, 108, 67, 0.05);
+    background-color: rgba(44, 62, 80, 0.04);
 }
 
 /* Células da tabela */
 .table td, .table th {
     vertical-align: middle;
-    padding: 1rem;
+    padding: 0.9rem 1rem;
+    border-top: none;
 }
 
 /* Estilo padrão para badges */
 .badge {
-    padding: 6px 10px;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* Badge para status ativo */
 .badge-active {
-    background-color: rgba(25, 135, 84, 0.1);
-    color: var(--primary-color);
+    background-color: var(--success-color);
+    color: white;
 }
 
 /* Badge para status finalizado */
 .badge-finished {
-    background-color: rgba(220, 53, 69, 0.1);
-    color: #dc3545;
+    background-color: var(--muted-color);
+    color: white;
 }
 
 /* Badge para status futuro */
 .badge-upcoming {
-    background-color: rgba(13, 110, 253, 0.1);
-    color: #0d6efd;
+    background-color: var(--info-color);
+    color: white;
+}
+
+/* Badge para inscrições abertas */
+.badge-inscricoes-abertas {
+    background-color: var(--info-color);
+    color: white;
+}
+
+/* Badge para inscrições fechadas */
+.badge-inscricoes-fechadas {
+    background-color: var(--danger-color);
+    color: white;
 }
 
 /* Sidebar escondida */
@@ -185,6 +231,97 @@ body {
 /* Conteúdo expandido quando sidebar recolhida */
 .content-expanded {
     margin-left: 60px;
+}
+
+/* Botões personalizados */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 0.85rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #243447;
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #219a52;
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Formulários */
+.form-control {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.15);
+}
+
+.form-select {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.15);
+}
+
+/* Input Groups */
+.input-group {
+    margin-bottom: 1rem;
+}
+
+.input-group .form-control {
+    border-right: none;
+}
+
+.input-group .btn {
+    border-left: none;
+}
+
+/* Filtros */
+.filters-container {
+    background-color: white;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 
@@ -223,11 +360,29 @@ body {
     
     .content {
         margin-left: 0;
+        padding: 1rem;
+    }
+    
+    .header {
+        margin: -1rem -1rem 1rem -1rem;
+        padding: 1.5rem 1rem;
     }
     
     .toggle-btn {
         left: 20px;
         top: 20px;
+    }
+    
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+    
+    .filters-container {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        border-radius: 8px;
     }
 }
 
@@ -252,8 +407,20 @@ body {
 
 /* Modal customizado */
 .custom-modal .modal-header {
-    background-color: var(--primary-color);
+    background-color: var(--dark-color);
     color: white;
+    border-bottom: none;
+}
+
+.custom-modal .modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+.custom-modal .modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
 }
 
 .custom-modal .modal-footer .btn-primary {
@@ -261,50 +428,32 @@ body {
     border-color: var(--primary-color);
 }
 
-/* Estilos adicionais */
-.badge-active {
-    background-color: #28a745;
-    color: white;
+.custom-modal .modal-footer .btn-primary:hover {
+    background-color: #243447;
+    border-color: #243447;
 }
 
-.badge-finished {
-    background-color: #6c757d;
-    color: white;
+/* Estado vazio */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--muted-color);
 }
 
-.badge-upcoming {
-    background-color: #ffc107;
-    color: #212529;
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
 }
 
-.badge-inscricoes-abertas {
-    background-color: #17a2b8;
-    color: white;
+.empty-state h4 {
+    color: var(--muted-color);
+    margin-bottom: 0.5rem;
 }
 
-.badge-inscricoes-fechadas {
-    background-color: #dc3545;
-    color: white;
+.empty-state p {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
 }
 
-.stat-card {
-    border-radius: 10px;
-    padding: 20px;
-    color: white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
 
-.stat-card i {
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.stat-card .number {
-    font-size: 1.8rem;
-    font-weight: bold;
-}
-
-.custom-modal .modal-header {
-    background: #343A40;
-    color: white;
-}
