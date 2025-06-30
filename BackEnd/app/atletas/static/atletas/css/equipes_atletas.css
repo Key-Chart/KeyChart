@@ -1,17 +1,32 @@
 :root {
-    --primary-color: #343A40;
-    --secondary-color: #f8f9fa;
-    --dark-color: #343a40;
+    --primary-color: #2c3e50;
+    --secondary-color: #95a5a6;
+    --success-color: #27ae60;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --info-color: #3498db;
+    --light-color: #ecf0f1;
+    --dark-color: #34495e;
+    --muted-color: #7f8c8d;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #2c3e50;
 }
 
-#img-logo {
-    height: 35px;
-    margin-right: 10px;
+/* Header */
+.header {
+    background: linear-gradient(135deg, #343A40 0%, #2c3e50 100%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem 0;
+}
+
+.header h2 {
+    font-weight: 600;
+    margin: 0;
+    font-size: 1.75rem;
 }
 
 /* Conteúdo Principal */
@@ -21,129 +36,299 @@ body {
     min-height: 100vh;
 }
 
-.header h2 {
-    font-weight: 600;
-    margin-bottom: 0;
-    display: flex;
-    align-items: center;
+@media (max-width: 992px) {
+    .content {
+        margin-left: 0;
+    }
 }
 
-.header h2 i {
-    margin-right: 12px;
-}
-
-/* Cards */
-.card {
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    transition: all 0.3s;
-    margin-bottom: 2rem;
+/* Cards de Estatísticas */
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    border-top: 4px solid transparent;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
     overflow: hidden;
 }
 
-.card-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 1.25rem 1.5rem;
-    border-bottom: none;
+.stat-card:hover {
+    transform: none !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.card-title {
-    font-weight: 600;
-    margin-bottom: 0;
+.stat-card:nth-child(1) {
+    border-top-color: var(--primary-color);
+}
+
+.stat-card:nth-child(2) {
+    border-top-color: var(--info-color);
+}
+
+.stat-card:nth-child(3) {
+    border-top-color: var(--warning-color);
+}
+
+.stat-card:nth-child(4) {
+    border-top-color: var(--success-color);
+}
+
+.icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--primary-color), #34495e);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, var(--info-color), #2980b9);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, var(--warning-color), #d68910);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, var(--success-color), #229954);
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.font-weight-bold {
+    font-weight: 600;
+}
+
+.font-weight-bolder {
+    font-weight: 700;
+}
+
+/* Cards Gerais */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid #eee;
+    padding: 1.25rem 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Filtros */
+.form-label {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    color: var(--muted-color);
+}
+
+.form-control, .form-select {
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.15);
+}
+
+.input-group-text {
+    border: 1px solid #e1e5e9;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+}
+
+.input-group .form-control {
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+}
+
+/* Botões */
+.btn {
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background: #1a252f;
+    border-color: #1a252f;
+    transform: none !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-success {
+    background: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.btn-success:hover {
+    background: #1e8449;
+    border-color: #1e8449;
+    transform: none !important;
 }
 
 /* Tabela */
 .table {
     margin-bottom: 0;
+    font-size: 0.875rem;
 }
 
 .table thead th {
-    border-bottom: 2px solid #e9ecef;
+    border: none;
+    font-size: 0.8125rem;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.8rem;
     letter-spacing: 0.5px;
-    color: #6c757d;
+    padding: 1rem 1.5rem;
+    color: var(--muted-color);
+}
+
+.table tbody td {
+    border: none;
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
 }
 
 .table tbody tr {
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
 .table tbody tr:hover {
-    background-color: rgba(20, 108, 67, 0.05);
+    background-color: rgba(44, 62, 80, 0.03);
 }
 
-.table td, .table th {
-    vertical-align: middle;
-    padding: 1rem;
+.border-bottom {
+    border-color: #f1f3f4 !important;
 }
 
-/* Badges */
+/* Badges Modernos */
 .badge {
-    padding: 6px 10px;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    letter-spacing: 0.025em;
 }
 
-.badge-active {
-    background-color: rgba(25, 135, 84, 0.1);
-    color: var(--primary-color);
+.bg-info-subtle {
+    background-color: rgba(52, 152, 219, 0.1) !important;
 }
 
-.badge-inactive {
-    background-color: rgba(220, 53, 69, 0.1);
-    color: #dc3545;
+.text-info {
+    color: var(--info-color) !important;
 }
 
-.badge-kata {
-    background-color: rgba(111, 66, 193, 0.1);
-    color: #6f42c1;
+.border-info-subtle {
+    border-color: rgba(52, 152, 219, 0.2) !important;
 }
 
-.badge-kumite {
-    background-color: rgba(253, 126, 20, 0.1);
-    color: #fd7e14;
+.bg-warning-subtle {
+    background-color: rgba(243, 156, 18, 0.1) !important;
+}
+
+.text-warning {
+    color: var(--warning-color) !important;
+}
+
+.border-warning-subtle {
+    border-color: rgba(243, 156, 18, 0.2) !important;
+}
+
+.bg-success-subtle {
+    background-color: rgba(39, 174, 96, 0.1) !important;
+}
+
+.text-success {
+    color: var(--success-color) !important;
+}
+
+.border-success-subtle {
+    border-color: rgba(39, 174, 96, 0.2) !important;
+}
+
+.bg-danger-subtle {
+    background-color: rgba(231, 76, 60, 0.1) !important;
+}
+
+.text-danger {
+    color: var(--danger-color) !important;
+}
+
+.border-danger-subtle {
+    border-color: rgba(231, 76, 60, 0.2) !important;
 }
 
 /* Avatar */
-.avatar {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    object-fit: cover;
+.rounded-circle {
+    border: 2px solid #f8f9fa;
 }
-
 
 /* Botões de Ação */
-.btn-action {
-    padding: 0.375rem 0.75rem;
-    border-radius: 50px;
-    font-weight: 500;
-    transition: all 0.2s;
+.btn-group .btn {
+    border-radius: 6px;
+    margin-right: 0.25rem;
 }
 
-/* Animação */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+.btn-group .btn:last-child {
+    margin-right: 0;
 }
 
-.table tbody tr {
-    animation: fadeIn 0.3s ease-out forwards;
-    opacity: 0;
+.btn-outline-primary:hover,
+.btn-outline-warning:hover,
+.btn-outline-danger:hover,
+.btn-outline-success:hover {
+    transform: none !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.table tbody tr:nth-child(1) { animation-delay: 0.1s; }
-.table tbody tr:nth-child(2) { animation-delay: 0.2s; }
-.table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+/* Estado Vazio */
+.text-center .bi {
+    opacity: 0.6;
+}
 
-/* Modal Imprimir e Exportar */
+/* Modais Customizados */
 .modal-custom {
     display: none;
     position: fixed;
@@ -152,38 +337,154 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(3px);
 }
 
 .modal-custom-content {
-    background-color: #fefefe;
-    margin: 10% auto;
-    padding: 30px;
+    background-color: white;
+    margin: 8% auto;
+    padding: 2rem;
     border: none;
     width: 90%;
     max-width: 500px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    animation: modalFadeIn 0.3s;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.3s ease-out;
 }
 
-@keyframes modalFadeIn {
-    from {opacity: 0; transform: translateY(-20px);}
-    to {opacity: 1; transform: translateY(0);}
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .modal-icon {
-    font-size: 4rem;
-    margin-bottom: 20px;
+    font-size: 3rem;
+    margin-bottom: 1rem;
 }
 
 .modal-title {
-    margin-bottom: 15px;
+    font-size: 1.5rem;
     font-weight: 600;
+    margin-bottom: 1rem;
 }
 
 .modal-message {
-    margin-bottom: 25px;
-    color: #555;
+    margin-bottom: 1.5rem;
+    color: var(--muted-color);
+    line-height: 1.5;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 0.75rem;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* Regras para remover todos os efeitos de scale/transform em botões */
+.btn, 
+.btn-primary, 
+.btn-secondary, 
+.btn-success, 
+.btn-danger, 
+.btn-warning, 
+.btn-info, 
+.btn-light, 
+.btn-dark,
+.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-success,
+.btn-outline-danger,
+.btn-outline-warning,
+.btn-outline-info,
+.btn-outline-light,
+.btn-outline-dark,
+button {
+    transform: none !important;
+    scale: none !important;
+}
+
+.btn:hover,
+.btn:focus,
+.btn:active,
+.btn:focus-visible,
+.btn.active,
+.btn:not(:disabled):not(.disabled):active,
+.btn:not(:disabled):not(.disabled).active,
+button:hover,
+button:focus,
+button:active,
+button:focus-visible,
+button.active,
+button:not(:disabled):not(.disabled):active,
+button:not(:disabled):not(.disabled).active {
+    transform: none !important;
+    scale: none !important;
+}
+
+/* Remover efeitos de todos os cards */
+.card,
+.stat-card {
+    transform: none !important;
+    scale: none !important;
+}
+
+.card:hover,
+.card:focus,
+.card:active,
+.stat-card:hover,
+.stat-card:focus,
+.stat-card:active {
+    transform: none !important;
+    scale: none !important;
+}
+
+/* Remover efeitos de todos os elementos interativos */
+*:hover,
+*:focus,
+*:active,
+*:focus-visible {
+    transform: none !important;
+    scale: none !important;
+}
+
+/* Específico para elementos do Bootstrap/MDB */
+.ripple-surface:hover,
+.ripple-surface:focus,
+.ripple-surface:active,
+.ripple-surface:focus-visible {
+    transform: none !important;
+    scale: none !important;
+}
+
+/* Remover keyframes de animação que usam scale */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
