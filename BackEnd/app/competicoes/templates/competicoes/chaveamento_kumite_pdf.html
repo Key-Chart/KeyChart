@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaveamento de Kumitê - {{ categoria.nome }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #e74c3c;
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .header h2 {
+            color: #2c3e50;
+            margin: 5px 0;
+            font-size: 18px;
+        }
+        
+        .header .info {
+            margin-top: 10px;
+            color: #666;
+        }
+        
+        .phase-section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        
+        .phase-title {
+            background: #2c3e50;
+            color: white;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .match-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .match-card {
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .match-header {
+            background: #ecf0f1;
+            padding: 8px 12px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .match-body {
+            padding: 15px;
+        }
+        
+        .athlete-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .athlete-row:last-child {
+            border-bottom: none;
+        }
+        
+        .athlete-info {
+            flex: 1;
+        }
+        
+        .athlete-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .athlete-details {
+            font-size: 10px;
+            color: #666;
+            margin-top: 2px;
+        }
+        
+        .athlete-score {
+            font-size: 24px;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .athlete-score.aka {
+            color: #e74c3c;
+        }
+        
+        .athlete-score.ao {
+            color: #3498db;
+        }
+        
+        .athlete-label {
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .athlete-label.aka {
+            color: #e74c3c;
+        }
+        
+        .athlete-label.ao {
+            color: #3498db;
+        }
+        
+        .vs-divider {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #95a5a6;
+            margin: 10px 0;
+        }
+        
+        .match-result {
+            background: #f8f9fa;
+            padding: 8px;
+            margin-top: 10px;
+            border-left: 4px solid #27ae60;
+            font-size: 11px;
+        }
+        
+        .match-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-finalizada {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .status-agendada {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .status-em-andamento {
+            background: #3498db;
+            color: white;
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 1cm;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 10px;
+        }
+        
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            text-align: center;
+            border: 1px solid #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        
+        .no-matches {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>CHAVEAMENTO DE KUMITÊ</h1>
+        <h2>{{ categoria.nome }}</h2>
+        <div class="info">
+            <strong>{{ competicao.nome }}</strong><br>
+            {{ competicao.data_inicio|date:"d/m/Y" }} - {{ competicao.local }}<br>
+            Gerado em: {{ data_geracao|date:"d/m/Y H:i" }}
+        </div>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="statistics">
+        <div class="stat-card">
+            <div class="stat-number">{{ chaveamento.get_numero_atletas }}</div>
+            <div class="stat-label">Total de Atletas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {% with total_partidas=0 %}
+                    {% for fase, partidas in partidas_por_fase.items %}
+                        {% for partida in partidas %}
+                            {% if partida.status == 'finalizada' %}
+                                {{ total_partidas|add:1 }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endwith %}
+            </div>
+            <div class="stat-label">Partidas Finalizadas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ chaveamento.fase_atual|capfirst }}</div>
+            <div class="stat-label">Fase Atual</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {% if chaveamento.finalizado %}
+                    CONCLUÍDO
+                {% else %}
+                    EM ANDAMENTO
+                {% endif %}
+            </div>
+            <div class="stat-label">Status</div>
+        </div>
+    </div>
+
+    <!-- Conteúdo das Fases -->
+    {% for fase in fases %}
+        {% with partidas=partidas_por_fase|get_item:fase %}
+            <div class="phase-section">
+                <div class="phase-title">
+                    {% if fase == 'final' %}
+                        FINAL
+                    {% elif fase == 'semifinal' %}
+                        SEMIFINAIS
+                    {% elif fase == 'quartas' %}
+                        QUARTAS DE FINAL
+                    {% elif fase == 'oitavas' %}
+                        OITAVAS DE FINAL
+                    {% else %}
+                        {{ fase|upper }}
+                    {% endif %}
+                </div>
+                
+                {% if partidas %}
+                    <div class="match-grid">
+                        {% for partida in partidas %}
+                            <div class="match-card">
+                                <div class="match-header">
+                                    Partida {{ partida.round_numero }}
+                                    <span class="match-status status-{{ partida.status }}">
+                                        {{ partida.get_status_display }}
+                                    </span>
+                                </div>
+                                <div class="match-body">
+                                    <!-- Atleta AKA -->
+                                    <div class="athlete-row">
+                                        <div class="athlete-info">
+                                            <div class="athlete-label aka">AKA (Vermelho)</div>
+                                            {% if partida.atleta1 %}
+                                                <div class="athlete-name">{{ partida.atleta1.nome_completo }}</div>
+                                                <div class="athlete-details">
+                                                    {{ partida.atleta1.faixa }} - {{ partida.atleta1.academia.nome }}
+                                                </div>
+                                            {% else %}
+                                                <div class="athlete-name">Aguardando...</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="athlete-score aka">
+                                            {% if partida.atleta1 %}{{ partida.pontos_atleta1 }}{% else %}-{% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vs-divider">VS</div>
+                                    
+                                    <!-- Atleta AO -->
+                                    <div class="athlete-row">
+                                        <div class="athlete-info">
+                                            <div class="athlete-label ao">AO (Azul)</div>
+                                            {% if partida.atleta2 %}
+                                                <div class="athlete-name">{{ partida.atleta2.nome_completo }}</div>
+                                                <div class="athlete-details">
+                                                    {{ partida.atleta2.faixa }} - {{ partida.atleta2.academia.nome }}
+                                                </div>
+                                            {% else %}
+                                                <div class="athlete-name">Aguardando...</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="athlete-score ao">
+                                            {% if partida.atleta2 %}{{ partida.pontos_atleta2 }}{% else %}-{% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    {% if partida.status == 'finalizada' %}
+                                        <div class="match-result">
+                                            <strong>Resultado:</strong> {{ partida.get_resultado_display }}<br>
+                                            {% if partida.vencedor %}
+                                                <strong>Vencedor:</strong> {{ partida.vencedor.nome_completo }}
+                                            {% endif %}
+                                            {% if partida.observacoes %}
+                                                <br><strong>Obs:</strong> {{ partida.observacoes }}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-matches">
+                        Nenhuma partida encontrada para esta fase.
+                    </div>
+                {% endif %}
+            </div>
+        {% endwith %}
+    {% endfor %}
+
+    <div class="footer">
+        KeyChart - Sistema de Gerenciamento de Competições de Karatê
+    </div>
+</body>
+</html>

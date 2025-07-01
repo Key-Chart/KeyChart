@@ -10,7 +10,7 @@ from django.contrib import messages
 import random
 import math
 from django.db import transaction
-from .models import ResultadoKata
+from .models import ResultadoKata, ChaveamentoKumite, PartidaKumite, PontuacaoKumite
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
@@ -979,78 +979,272 @@ def update_positions_for_phase(categoria, fase):
 
 # Função para chaveamento Kumitê
 def chaveamento_kumite(request, categoria_id):
+    from .models import ChaveamentoKumite, PartidaKumite, PontuacaoKumite
+    import json
+    
     categoria = get_object_or_404(Categoria, id=categoria_id)
-    competicao = categoria.competicao
-    atletas = list(Atleta.objects.filter(categoria=categoria))
-
-    # Se não houver atletas, retorna com aviso
-    if not atletas:
-        messages.error(request, "Não há atletas cadastrados nesta categoria.")
-        return render(request, 'competicoes/chaveamento_kumite.html', {
-            'competicao': competicao,
-            'categoria': categoria,
-            'partidas': [],
-            'num_atletas': 0,
-            'current_phase': 1,
-            'max_phases': 1,
-            'fase_atual': 'Sem atletas',
-            'is_final': False,
-        })
-
-    # Embaralha os atletas para criar chaveamento aleatório
-    random.shuffle(atletas)
-    num_atletas = len(atletas)
-
-    # Verifica se o número de atletas é potência de 2
-    if not (num_atletas & (num_atletas - 1) == 0):
-        messages.warning(request, f"O número de atletas ({num_atletas}) não é uma potência de 2. Serão adicionados 'byes'.")
-
-    # Calcula o número total de fases
-    max_phases = math.ceil(math.log2(num_atletas)) + 1
-
-    # Divide os atletas em AKA (vermelho) e AO (azul)
-    metade = (num_atletas + 1) // 2
-    atletas_aka = atletas[:metade]
-    atletas_ao = atletas[metade:]
-
-    # Cria as partidas da primeira fase
-    partidas = []
-    for i in range(max(len(atletas_aka), len(atletas_ao))):
-        aka = atletas_aka[i] if i < len(atletas_aka) else None
-        ao = atletas_ao[i] if i < len(atletas_ao) else None
-        partidas.append({
-            'numero': i + 1,
-            'aka': aka,
-            'ao': ao,
-            'area': chr(65 + (i % 3)),  # Áreas A, B, C, etc.
-        })
-
-    # Determina o nome da fase atual
-    if len(partidas) == 1:
-        fase_atual = "Final"
-        is_final = True
-    elif len(partidas) == 2:
-        fase_atual = "Semifinais"
-        is_final = False
-    elif len(partidas) >= 4:
-        fase_atual = "Quartas de Final"
-        is_final = False
-    else:
-        fase_atual = f"Fase {math.ceil(math.log2(len(partidas)) + 1)}"
-        is_final = False
-
+    atletas = Atleta.objects.filter(categoria=categoria).select_related('academia')
+    
+    # Cria ou obtém o chaveamento para esta categoria
+    chaveamento, created = ChaveamentoKumite.objects.get_or_create(
+        categoria=categoria,
+        defaults={
+            'competicao': categoria.competicao,
+            'tipo_chaveamento': 'eliminacao_simples'
+        }
+    )
+    
+    # Se acabou de criar, inicializa as partidas
+    if created:
+        inicializar_chaveamento_kumite(chaveamento, atletas)
+    
+    # Processa requisições AJAX
+    if request.method == 'POST':
+        try:
+            if request.content_type == 'application/json':
+                data = json.loads(request.body)
+                action = data.get('action')
+                
+                if action == 'finalizar_partida':
+                    return handle_finalizar_partida(request, data, categoria, chaveamento)
+                elif action == 'avancar_fase':
+                    return handle_avancar_fase_kumite(request, data, categoria, chaveamento)
+                elif action == 'registrar_pontuacao':
+                    return handle_registrar_pontuacao(request, data, categoria)
+                    
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'error': 'Dados JSON inválidos'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    # Obtém todas as partidas organizadas por fase
+    partidas_por_fase = {}
+    fases = chaveamento.determinar_fases()
+    
+    for fase in fases:
+        partidas = PartidaKumite.objects.filter(
+            chaveamento=chaveamento,
+            fase=fase
+        ).order_by('round_numero')
+        partidas_por_fase[fase] = partidas
+    
+    # Dados para o template
     context = {
-        'competicao': competicao,
+        'competicao': categoria.competicao,
         'categoria': categoria,
-        'partidas': partidas,
-        'num_atletas': num_atletas,
-        'current_phase': 1,
-        'max_phases': max_phases,
-        'fase_atual': fase_atual,
-        'is_final': is_final,
+        'chaveamento': chaveamento,
+        'atletas': atletas,
+        'partidas_por_fase': partidas_por_fase,
+        'fases': fases,
+        'fase_atual': chaveamento.fase_atual,
+        'num_atletas': atletas.count(),
+        'finalizado': chaveamento.finalizado,
     }
-
+    
     return render(request, 'competicoes/chaveamento_kumite.html', context)
+
+
+def inicializar_chaveamento_kumite(chaveamento, atletas):
+    """Inicializa o chaveamento de kumitê com as partidas da primeira fase"""
+    with transaction.atomic():
+        atletas_list = list(atletas)
+        random.shuffle(atletas_list)
+        
+        # Determina a primeira fase
+        num_atletas = len(atletas_list)
+        if num_atletas <= 2:
+            primeira_fase = 'final'
+        elif num_atletas <= 4:
+            primeira_fase = 'semifinal'
+        elif num_atletas <= 8:
+            primeira_fase = 'quartas'
+        elif num_atletas <= 16:
+            primeira_fase = 'oitavas'
+        else:
+            primeira_fase = 'primeira_fase'
+        
+        chaveamento.fase_atual = primeira_fase
+        chaveamento.save()
+        
+        # Cria as partidas da primeira fase
+        partidas_criadas = 0
+        i = 0
+        while i < len(atletas_list):
+            atleta1 = atletas_list[i] if i < len(atletas_list) else None
+            atleta2 = atletas_list[i + 1] if i + 1 < len(atletas_list) else None
+            
+            if atleta1:  # Só cria partida se há pelo menos um atleta
+                partida = PartidaKumite.objects.create(
+                    chaveamento=chaveamento,
+                    categoria=chaveamento.categoria,
+                    competicao=chaveamento.competicao,
+                    fase=primeira_fase,
+                    round_numero=partidas_criadas + 1,
+                    atleta1=atleta1,
+                    atleta2=atleta2,
+                    status='agendada'
+                )
+                partidas_criadas += 1
+            
+            i += 2
+
+
+def handle_finalizar_partida(request, data, categoria, chaveamento):
+    """Finaliza uma partida e registra o resultado"""
+    try:
+        partida_id = data.get('partida_id')
+        resultado = data.get('resultado')
+        pontos_atleta1 = data.get('pontos_atleta1', 0)
+        pontos_atleta2 = data.get('pontos_atleta2', 0)
+        advertencias_atleta1 = data.get('advertencias_atleta1', 0)
+        advertencias_atleta2 = data.get('advertencias_atleta2', 0)
+        observacoes = data.get('observacoes', '')
+        
+        partida = get_object_or_404(PartidaKumite, id=partida_id, chaveamento=chaveamento)
+        
+        with transaction.atomic():
+            partida.status = 'finalizada'
+            partida.resultado = resultado
+            partida.pontos_atleta1 = pontos_atleta1
+            partida.pontos_atleta2 = pontos_atleta2
+            partida.advertencias_atleta1 = advertencias_atleta1
+            partida.advertencias_atleta2 = advertencias_atleta2
+            partida.observacoes = observacoes
+            partida.data_fim = timezone.now()
+            
+            # Determina o vencedor
+            partida.determinar_vencedor()
+            partida.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Partida finalizada com sucesso!',
+            'vencedor': partida.vencedor.nome_completo if partida.vencedor else 'Empate'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+
+def handle_avancar_fase_kumite(request, data, categoria, chaveamento):
+    """Avança para a próxima fase do kumitê"""
+    try:
+        fase_atual = chaveamento.fase_atual
+        proxima_fase = chaveamento.get_proximo_fase(fase_atual)
+        
+        if not proxima_fase:
+            return JsonResponse({'success': False, 'error': 'Não há próxima fase'})
+        
+        # Verifica se todas as partidas da fase atual foram finalizadas
+        partidas_pendentes = PartidaKumite.objects.filter(
+            chaveamento=chaveamento,
+            fase=fase_atual,
+            status__in=['agendada', 'em_andamento']
+        ).count()
+        
+        if partidas_pendentes > 0:
+            return JsonResponse({
+                'success': False, 
+                'error': f'Ainda há {partidas_pendentes} partidas pendentes na fase atual'
+            })
+        
+        # Obtém os vencedores da fase atual
+        vencedores = []
+        partidas_fase_atual = PartidaKumite.objects.filter(
+            chaveamento=chaveamento,
+            fase=fase_atual,
+            status='finalizada'
+        ).order_by('round_numero')
+        
+        for partida in partidas_fase_atual:
+            if partida.vencedor:
+                vencedores.append(partida.vencedor)
+        
+        # Cria as partidas da próxima fase
+        with transaction.atomic():
+            partidas_criadas = 0
+            i = 0
+            while i < len(vencedores):
+                atleta1 = vencedores[i] if i < len(vencedores) else None
+                atleta2 = vencedores[i + 1] if i + 1 < len(vencedores) else None
+                
+                if atleta1:
+                    PartidaKumite.objects.create(
+                        chaveamento=chaveamento,
+                        categoria=chaveamento.categoria,
+                        competicao=chaveamento.competicao,
+                        fase=proxima_fase,
+                        round_numero=partidas_criadas + 1,
+                        atleta1=atleta1,
+                        atleta2=atleta2,
+                        status='agendada'
+                    )
+                    partidas_criadas += 1
+                
+                i += 2
+            
+            # Atualiza a fase atual do chaveamento
+            chaveamento.fase_atual = proxima_fase
+            if proxima_fase == 'final':
+                # Verifica se é a última fase
+                partidas_final = PartidaKumite.objects.filter(
+                    chaveamento=chaveamento,
+                    fase='final'
+                ).count()
+                if partidas_final == 1:
+                    chaveamento.finalizado = True
+                    chaveamento.data_finalizacao = timezone.now()
+            
+            chaveamento.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Avançado para {proxima_fase}. {partidas_criadas} partidas criadas.',
+            'proxima_fase': proxima_fase,
+            'partidas_criadas': partidas_criadas
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+
+def handle_registrar_pontuacao(request, data, categoria):
+    """Registra pontuação durante uma partida"""
+    try:
+        partida_id = data.get('partida_id')
+        atleta_id = data.get('atleta_id')
+        tipo_pontuacao = data.get('tipo')
+        pontos = data.get('pontos', 0)
+        observacoes = data.get('observacoes', '')
+        
+        partida = get_object_or_404(PartidaKumite, id=partida_id)
+        atleta = get_object_or_404(Atleta, id=atleta_id)
+        
+        # Cria o registro de pontuação
+        PontuacaoKumite.objects.create(
+            partida=partida,
+            atleta=atleta,
+            tipo=tipo_pontuacao,
+            pontos=pontos,
+            observacoes=observacoes
+        )
+        
+        # Atualiza os pontos na partida
+        if atleta == partida.atleta1:
+            partida.pontos_atleta1 += pontos
+        elif atleta == partida.atleta2:
+            partida.pontos_atleta2 += pontos
+        
+        partida.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Pontuação registrada com sucesso!',
+            'pontos_totais': partida.pontos_atleta1 if atleta == partida.atleta1 else partida.pontos_atleta2
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
 
 def chaveamento_kumite_teste(request):
     return render(request, 'competicoes/chaveamento_kumite_teste.html')
@@ -1307,3 +1501,47 @@ def chaveamento_kata_pdf(request, categoria_id):
         return response
     
     return HttpResponse(f'Erro ao gerar PDF: {pdf.err}', status=500)
+
+def chaveamento_kumite_pdf(request, categoria_id):
+    """Gera PDF do chaveamento de Kumitê"""
+    try:
+        categoria = get_object_or_404(Categoria, id=categoria_id)
+        chaveamento = get_object_or_404(ChaveamentoKumite, categoria=categoria)
+        
+        # Obtém todas as partidas organizadas por fase
+        partidas_por_fase = {}
+        fases = chaveamento.determinar_fases()
+        
+        for fase in fases:
+            partidas = PartidaKumite.objects.filter(
+                chaveamento=chaveamento,
+                fase=fase
+            ).order_by('round_numero')
+            partidas_por_fase[fase] = partidas
+        
+        context = {
+            'competicao': categoria.competicao,
+            'categoria': categoria,
+            'chaveamento': chaveamento,
+            'partidas_por_fase': partidas_por_fase,
+            'fases': fases,
+            'data_geracao': timezone.now()
+        }
+        
+        # Renderiza o template PDF
+        template = get_template('competicoes/chaveamento_kumite_pdf.html')
+        html = template.render(context)
+        
+        # Cria o PDF
+        result = io.BytesIO()
+        pdf = pisa.pisaDocument(io.BytesIO(html.encode("UTF-8")), result)
+        
+        if not pdf.err:
+            response = HttpResponse(result.getvalue(), content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="Kumite_{categoria.competicao.nome}_{categoria.nome}.pdf"'
+            return response
+        else:
+            return HttpResponse('Erro ao gerar PDF', status=500)
+            
+    except Exception as e:
+        return HttpResponse(f'Erro: {str(e)}', status=500)

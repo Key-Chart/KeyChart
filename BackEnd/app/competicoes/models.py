@@ -221,3 +221,163 @@ class ChaveamentoKata(models.Model):
         if self.finalizado:
             return self.get_resultados_fase('final')[:3]
         return []
+
+# Modelos para Kumitê
+class ChaveamentoKumite(models.Model):
+    TIPO_CHAVEAMENTO_CHOICES = [
+        ('eliminacao_simples', 'Eliminação Simples'),
+        ('eliminacao_dupla', 'Eliminação Dupla'),
+        ('grupo_eliminacao', 'Grupos + Eliminação'),
+    ]
+    
+    categoria = models.OneToOneField(Categoria, on_delete=models.CASCADE, related_name='chaveamento_kumite')
+    competicao = models.ForeignKey(Competicao, on_delete=models.CASCADE)
+    tipo_chaveamento = models.CharField(
+        max_length=20,
+        choices=TIPO_CHAVEAMENTO_CHOICES,
+        default='eliminacao_simples'
+    )
+    fase_atual = models.CharField(max_length=50, default='oitavas')
+    finalizado = models.BooleanField(default=False)
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    data_finalizacao = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Chaveamento Kumite - {self.categoria.nome}"
+
+    def get_numero_atletas(self):
+        """Retorna o número de atletas na categoria"""
+        from app.atletas.models import Atleta
+        return Atleta.objects.filter(categoria=self.categoria).count()
+
+    def determinar_fases(self):
+        """Determina as fases baseado no número de atletas"""
+        num_atletas = self.get_numero_atletas()
+        if num_atletas <= 2:
+            return ['final']
+        elif num_atletas <= 4:
+            return ['semifinal', 'final']
+        elif num_atletas <= 8:
+            return ['quartas', 'semifinal', 'final']
+        elif num_atletas <= 16:
+            return ['oitavas', 'quartas', 'semifinal', 'final']
+        else:
+            return ['primeira_fase', 'oitavas', 'quartas', 'semifinal', 'final']
+
+    def get_proximo_fase(self, fase_atual):
+        """Retorna a próxima fase"""
+        fases = self.determinar_fases()
+        try:
+            index_atual = fases.index(fase_atual)
+            if index_atual < len(fases) - 1:
+                return fases[index_atual + 1]
+        except ValueError:
+            pass
+        return None
+
+
+class PartidaKumite(models.Model):
+    STATUS_CHOICES = [
+        ('agendada', 'Agendada'),
+        ('em_andamento', 'Em Andamento'),
+        ('finalizada', 'Finalizada'),
+        ('cancelada', 'Cancelada'),
+    ]
+    
+    RESULTADO_CHOICES = [
+        ('vitoria_atleta1', 'Vitória Atleta 1'),
+        ('vitoria_atleta2', 'Vitória Atleta 2'),
+        ('empate', 'Empate'),
+        ('wo_atleta1', 'WO Atleta 1'),
+        ('wo_atleta2', 'WO Atleta 2'),
+        ('desqualificacao_atleta1', 'Desqualificação Atleta 1'),
+        ('desqualificacao_atleta2', 'Desqualificação Atleta 2'),
+    ]
+
+    chaveamento = models.ForeignKey(ChaveamentoKumite, on_delete=models.CASCADE, related_name='partidas')
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    competicao = models.ForeignKey(Competicao, on_delete=models.CASCADE)
+    fase = models.CharField(max_length=50)
+    round_numero = models.IntegerField(default=1)
+    
+    # Atletas
+    atleta1 = models.ForeignKey('atletas.Atleta', on_delete=models.CASCADE, related_name='partidas_kumite_atleta1', null=True, blank=True)
+    atleta2 = models.ForeignKey('atletas.Atleta', on_delete=models.CASCADE, related_name='partidas_kumite_atleta2', null=True, blank=True)
+    
+    # Resultado da partida
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='agendada')
+    resultado = models.CharField(max_length=30, choices=RESULTADO_CHOICES, null=True, blank=True)
+    vencedor = models.ForeignKey('atletas.Atleta', on_delete=models.CASCADE, related_name='vitorias_kumite', null=True, blank=True)
+    
+    # Pontuação detalhada
+    pontos_atleta1 = models.IntegerField(default=0)
+    pontos_atleta2 = models.IntegerField(default=0)
+    
+    # Advertências e punições
+    advertencias_atleta1 = models.IntegerField(default=0)  # Chukoku
+    advertencias_atleta2 = models.IntegerField(default=0)
+    penalidades_atleta1 = models.IntegerField(default=0)   # Keikoku, Hansoku-chui, Hansoku
+    penalidades_atleta2 = models.IntegerField(default=0)
+    
+    # Metadados
+    tempo_luta = models.DurationField(null=True, blank=True)
+    observacoes = models.TextField(blank=True, null=True)
+    data_inicio = models.DateTimeField(null=True, blank=True)
+    data_fim = models.DateTimeField(null=True, blank=True)
+    data_criacao = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('chaveamento', 'fase', 'round_numero')
+        ordering = ['fase', 'round_numero']
+
+    def __str__(self):
+        atleta1_nome = self.atleta1.nome_completo if self.atleta1 else "TBD"
+        atleta2_nome = self.atleta2.nome_completo if self.atleta2 else "TBD"
+        return f"{self.fase} - {atleta1_nome} vs {atleta2_nome}"
+
+    def determinar_vencedor(self):
+        """Determina o vencedor baseado nas regras do karatê"""
+        if self.resultado in ['vitoria_atleta1', 'wo_atleta1', 'desqualificacao_atleta2']:
+            self.vencedor = self.atleta1
+        elif self.resultado in ['vitoria_atleta2', 'wo_atleta2', 'desqualificacao_atleta1']:
+            self.vencedor = self.atleta2
+        else:
+            self.vencedor = None
+        self.save()
+
+    def get_status_display_custom(self):
+        """Retorna o status formatado"""
+        if self.status == 'finalizada':
+            if self.vencedor:
+                return f"Vencedor: {self.vencedor.nome_completo}"
+            return "Empate"
+        return self.get_status_display()
+
+
+class PontuacaoKumite(models.Model):
+    TIPO_PONTUACAO_CHOICES = [
+        ('ippon', 'Ippon (3 pontos)'),
+        ('waza_ari', 'Waza-ari (2 pontos)'),
+        ('yuko', 'Yuko (1 ponto)'),
+    ]
+    
+    TIPO_PENALIDADE_CHOICES = [
+        ('chukoku', 'Chukoku (Advertência)'),
+        ('keikoku', 'Keikoku (Penalidade)'),
+        ('hansoku_chui', 'Hansoku-chui (Penalidade Grave)'),
+        ('hansoku', 'Hansoku (Desqualificação)'),
+    ]
+
+    partida = models.ForeignKey(PartidaKumite, on_delete=models.CASCADE, related_name='pontuacoes')
+    atleta = models.ForeignKey('atletas.Atleta', on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=20, choices=TIPO_PONTUACAO_CHOICES + TIPO_PENALIDADE_CHOICES)
+    pontos = models.IntegerField(default=0)
+    tempo_acao = models.DurationField(null=True, blank=True)
+    observacoes = models.TextField(blank=True, null=True)
+    data_criacao = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['data_criacao']
+
+    def __str__(self):
+        return f"{self.atleta.nome_completo} - {self.get_tipo_display()} ({self.pontos})"
