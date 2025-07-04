@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Count
 from app.competicoes.models import PartidaKumite, Competicao, Categoria
 from django.core.paginator import Paginator
@@ -71,4 +71,20 @@ def partidas(request):
     return render(request, 'partidas_chaveamento/partidas.html', context)
 
 def chaveamento(request):
-    return render(request, 'partidas_chaveamento/chaveamento.html')
+    partida_id = request.GET.get('partida_id')
+    partida = None
+    
+    if partida_id:
+        try:
+            partida = get_object_or_404(PartidaKumite, id=partida_id)
+            print(f"DEBUG: Partida encontrada - ID: {partida.id}, Status: {partida.status}")
+        except Exception as e:
+            print(f"DEBUG: Erro ao buscar partida - {e}")
+    else:
+        print("DEBUG: Nenhum partida_id fornecido")
+    
+    context = {
+        'partida': partida,
+    }
+    
+    return render(request, 'partidas_chaveamento/chaveamento.html', context)

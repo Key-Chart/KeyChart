@@ -445,3 +445,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Função para exportar relatório
+function exportarRelatorio() {
+    showLoading('main-content');
+    
+    // Coletar dados dos filtros aplicados
+    const form = document.querySelector('.filters-card form');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+    
+    // Adicionar parâmetro de exportação
+    params.append('export', 'excel');
+    
+    // Criar link temporário para download
+    const downloadLink = document.createElement('a');
+    downloadLink.href = `${window.location.pathname}?${params.toString()}`;
+    downloadLink.download = `relatorio_partidas_${new Date().toISOString().split('T')[0]}.xlsx`;
+    
+    // Simular clique para iniciar download
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    
+    hideLoading('main-content');
+    
+    showNotification('Relatório exportado com sucesso!', 'success');
+}

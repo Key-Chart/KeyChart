@@ -1,0 +1,252 @@
+/* Arquivo CSS específico para a tela de chaveamento */
+
+/* Estilos adicionais para o chaveamento */
+.chaveamento-container {
+    transition: all 0.3s ease;
+}
+
+.chaveamento-container:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.atleta-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.atleta-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.atleta-card:hover::before {
+    left: 100%;
+}
+
+.vs-container {
+    position: relative;
+}
+
+.vs-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #e74c3c, transparent);
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.vs-text {
+    position: relative;
+    z-index: 2;
+    background: white;
+    display: inline-block;
+    padding: 0 1rem;
+}
+
+.score {
+    position: relative;
+    z-index: 2;
+}
+
+.score.winner {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.status-badge {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn-custom {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-custom::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.match-details {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.detail-item {
+    transition: background-color 0.2s ease;
+}
+
+.detail-item:hover {
+    background-color: rgba(0,123,255,0.05);
+}
+
+.academy-badge {
+    transition: all 0.3s ease;
+}
+
+.academy-badge:hover {
+    background: #007bff;
+    color: white;
+    transform: scale(1.05);
+}
+
+.athlete-photo {
+    transition: all 0.3s ease;
+}
+
+.athlete-photo:hover {
+    transform: scale(1.1);
+    border-color: #007bff;
+}
+
+/* Responsividade aprimorada */
+@media (max-width: 992px) {
+    .vs-container::before {
+        display: none;
+    }
+    
+    .vs-text {
+        background: transparent;
+    }
+}
+
+@media (max-width: 768px) {
+    .btn-custom {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+    
+    .chaveamento-actions {
+        padding: 0 1rem;
+    }
+    
+    .athlete-photo {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .score {
+        font-size: 1.8rem;
+    }
+    
+    .academy-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
+}
+
+/* Cores específicas para status */
+.status-em-andamento {
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0.7;
+    }
+}
+
+.status-finalizada {
+    box-shadow: 0 0 10px rgba(39, 174, 96, 0.3);
+}
+
+.status-agendada {
+    background: linear-gradient(45deg, #cce7ff, #e6f3ff);
+}
+
+/* Melhorias visuais para vencedor */
+.atleta-card.vencedor {
+    animation: winner-glow 3s infinite;
+}
+
+@keyframes winner-glow {
+    0%, 100% {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(39, 174, 96, 0.3);
+    }
+}
+
+/* Efeitos de loading */
+.loading {
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading::before {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 10;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
