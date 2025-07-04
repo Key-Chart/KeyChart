@@ -117,6 +117,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'app/competicoes/static'),
     os.path.join(BASE_DIR, 'app/autenticacao/static'),
     os.path.join(BASE_DIR, 'app/atletas/static'),
+    os.path.join(BASE_DIR, 'app/partidas_chaveamento/static'),
 ]
 
 # Tipo de chave primária padrão
