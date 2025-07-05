@@ -1,0 +1,459 @@
+/* Definição de cores principais */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #ecf0f1;
+    --accent-color: #27ae60;
+    --dark-color: #343A40;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --info-color: #3498db;
+    --light-color: #ecf0f1;
+    --muted-color: #7f8c8d;
+}
+
+/* Estilos básicos do body */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #2c3e50;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Área principal do conteúdo */
+.content {
+    margin-left: 250px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: #f8f9fa;
+}
+
+/* Header do site */
+.header {
+    background: var(--dark-color);
+    color: white;
+    padding: 1.5rem 2rem;
+    margin: -2rem -2rem 2rem -2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+/* Título dentro do header */
+.header h2 {
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Ícone no título do header */
+.header h2 i {
+    margin-right: 12px;
+}
+
+/* Estilo padrão dos cards */
+.card {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    background-color: white;
+}
+
+.card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+}
+
+/* Header do card */
+.card-header {
+    background-color: var(--dark-color);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    border-bottom: none;
+    font-weight: 600;
+}
+
+/* Título dos cards */
+.card-title {
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Cards de estatísticas */
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    color: white;
+    padding: 1.8rem;
+    transition: all 0.3s ease;
+    height: 100%;
+    border-top: 4px solid rgba(255,255,255,0.3);
+}
+
+/* Efeito hover nos stat-cards */
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Ícone de fundo nos stat-cards */
+.stat-card i {
+    position: absolute;
+    font-size: 3.5rem;
+    opacity: 0.15;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Número dentro dos stat-cards */
+.stat-card .number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 8px 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Rótulo dentro dos stat-cards */
+.stat-card .label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    font-weight: 500;
+    position: relative;
+    z-index: 2;
+}
+
+/* Estilo da tabela */
+.table {
+    margin-bottom: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+/* Cabeçalho da tabela */
+.table thead th {
+    background-color: var(--dark-color);
+    color: white;
+    border-bottom: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+}
+
+/* Linhas do corpo da tabela */
+.table tbody tr {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Hover nas linhas da tabela */
+.table tbody tr:hover {
+    background-color: rgba(44, 62, 80, 0.04);
+}
+
+/* Células da tabela */
+.table td, .table th {
+    vertical-align: middle;
+    padding: 0.9rem 1rem;
+    border-top: none;
+}
+
+/* Estilo padrão para badges */
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Badge para status ativo */
+.badge-active {
+    background-color: var(--success-color);
+    color: white;
+}
+
+/* Badge para status finalizado */
+.badge-finished {
+    background-color: var(--muted-color);
+    color: white;
+}
+
+/* Badge para status futuro */
+.badge-upcoming {
+    background-color: var(--info-color);
+    color: white;
+}
+
+/* Badge para inscrições abertas */
+.badge-inscricoes-abertas {
+    background-color: var(--info-color);
+    color: white;
+}
+
+/* Badge para inscrições fechadas */
+.badge-inscricoes-fechadas {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Sidebar escondida */
+.sidebar-hidden {
+    width: 60px;
+}
+
+/* Links centralizados na sidebar escondida */
+.sidebar-hidden a {
+    text-align: center;
+}
+
+/* Esconde o texto dos links na sidebar escondida */
+.sidebar-hidden a span {
+    display: none;
+}
+
+/* Conteúdo expandido quando sidebar recolhida */
+.content-expanded {
+    margin-left: 60px;
+}
+
+/* Botões personalizados */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 0.85rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #243447;
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #219a52;
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Formulários */
+.form-control {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.15);
+}
+
+.form-select {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.15);
+}
+
+/* Input Groups */
+.input-group {
+    margin-bottom: 1rem;
+}
+
+.input-group .form-control {
+    border-right: none;
+}
+
+.input-group .btn {
+    border-left: none;
+}
+
+/* Filtros */
+.filters-container {
+    background-color: white;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+
+/* Tela de carregamento */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    display: none;
+}
+
+/* Spinner de carregamento */
+.custom-spinner {
+    width: 3rem;
+    height: 3rem;
+    color: var(--primary-color);
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    
+    .header {
+        margin: -1rem -1rem 1rem -1rem;
+        padding: 1.5rem 1rem;
+    }
+    
+    .toggle-btn {
+        left: 20px;
+        top: 20px;
+    }
+    
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+    
+    .filters-container {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        border-radius: 8px;
+    }
+}
+
+/* Animação de fade-in nas linhas da tabela */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Aplicar animação nas linhas da tabela */
+.table tbody tr {
+    animation: fadeIn 0.3s ease-out forwards;
+    opacity: 0;
+}
+
+/* Atraso entre linhas da tabela para o fadeIn */
+.table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+.table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+.table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+.table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+.table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+
+/* Modal customizado */
+.custom-modal .modal-header {
+    background-color: var(--dark-color);
+    color: white;
+    border-bottom: none;
+}
+
+.custom-modal .modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+.custom-modal .modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+}
+
+.custom-modal .modal-footer .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.custom-modal .modal-footer .btn-primary:hover {
+    background-color: #243447;
+    border-color: #243447;
+}
+
+/* Estado vazio */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--muted-color);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state h4 {
+    color: var(--muted-color);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+

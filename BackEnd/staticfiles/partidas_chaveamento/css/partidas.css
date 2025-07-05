@@ -1,0 +1,270 @@
+/* Estilos específicos para a tela de partidas */
+
+/* Ajustes para a sidebar quando collapsed */
+@media (max-width: 768px) {
+    .content {
+        margin-left: 0;
+    }
+}
+
+/* Melhorias nas estatísticas */
+.stat-card {
+    cursor: pointer;
+    border-left: 4px solid transparent;
+}
+
+.stat-card.total {
+    border-left-color: #3498db;
+}
+
+.stat-card.em-andamento {
+    border-left-color: #f39c12;
+}
+
+.stat-card.finalizadas {
+    border-left-color: #27ae60;
+}
+
+.stat-card.agendadas {
+    border-left-color: #9b59b6;
+}
+
+/* Animações suaves */
+.stat-card, .card, .btn {
+    transition: all 0.3s ease;
+}
+
+/* Melhorias nos badges de status */
+.badge-status-em-andamento {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Melhorias na tabela */
+.table tbody tr {
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+    border-left-color: var(--primary-color);
+    background-color: #f8f9fa !important;
+    transform: translateX(2px);
+}
+
+/* Avatar placeholder quando não há foto */
+.athlete-avatar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    min-width: 35px;
+    min-height: 35px;
+}
+
+/* Melhorias nos filtros */
+.filters-card {
+    border-left: 4px solid var(--primary-color);
+}
+
+/* Loader personalizado */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Toast notifications */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1055;
+}
+
+/* Botões de ação em grupo */
+.btn-group .btn {
+    margin: 0;
+    border-radius: 0;
+}
+
+.btn-group .btn:first-child {
+    border-radius: 4px 0 0 4px;
+}
+
+.btn-group .btn:last-child {
+    border-radius: 0 4px 4px 0;
+}
+
+.btn-group .btn:only-child {
+    border-radius: 4px;
+}
+
+/* Modal melhorado */
+.modal-content {
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.modal-footer {
+    border-top: 2px solid #f8f9fa;
+}
+
+/* Formatação especial para resultado de partidas */
+.match-result {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Estado vazio melhorado */
+.empty-state {
+    padding: 4rem 2rem;
+}
+
+.empty-state i {
+    opacity: 0.3;
+}
+
+/* Print styles */
+@media print {
+    .btn, .btn-group, .filters-card, .modal {
+        display: none !important;
+    }
+    
+    .content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .header {
+        margin: 0 !important;
+        background: white !important;
+        color: black !important;
+    }
+    
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+}
+
+/* Melhorias de acessibilidade */
+.btn:focus, .form-control:focus, .form-select:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Scroll suave */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Loading states */
+.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Tooltips personalizados */
+[data-tooltip] {
+    position: relative;
+    cursor: help;
+}
+
+[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 1000;
+    font-size: 12px;
+}
+
+/* Responsividade aprimorada */
+@media (max-width: 576px) {
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+    
+    .filters-card .row > div {
+        margin-bottom: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .athlete-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .athlete-avatar {
+        align-self: center;
+    }
+}
+
+/* Estados de hover melhorados */
+.stat-card:hover .number {
+    transform: scale(1.1);
+}
+
+.stat-card:hover i {
+    transform: rotate(360deg);
+}
+
+/* Gradientes personalizados para diferentes estados */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}

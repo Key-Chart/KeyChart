@@ -46,7 +46,7 @@
             background-size: cover;
         }
 
-        /* Estilos do Chat Container */
+        /* Estilos do Chat Container Melhorado */
 .chat-container {
     position: fixed;
     bottom: 20px;
@@ -59,91 +59,185 @@
     height: auto;
 }
 
-/* Botão de toggle do chat - VERSÃO CORRIGIDA */
+/* Botão de toggle do chat melhorado */
 .chat-toggle-btn {
     position: fixed;
     bottom: 20px;
     right: 20px;
     z-index: 1001;
-    background-color: #198754 !important;
+    background: linear-gradient(135deg, #198754, #157347) !important;
     border-radius: 50% !important;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 20px rgba(25, 135, 84, 0.4);
     border: none;
     color: white;
     font-size: 1.5rem;
+    transition: all 0.3s ease;
 }
 
-/* Online status dentro do botão */
+.chat-toggle-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(25, 135, 84, 0.6);
+}
+
 .chat-toggle-btn .online-status {
-    display: none; /* Esconde o texto "Online" no botão pequeno */
+    display: none;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
 .chat-card {
-    width: 350px;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    max-height: 600px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     background-color: white;
     display: none;
     flex-direction: column;
     overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
 .chat-header {
-    padding: 15px;
+    padding: 20px;
     background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
     color: white;
 }
 
+.avatar-container {
+    position: relative;
+}
+
 .avatar-img {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.avatar-status {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.avatar-status.online {
+    background-color: #28a745;
+}
+
+.chat-controls {
+    display: flex;
+    align-items: center;
 }
 
 .status-indicator {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
 }
 
 .status-dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     display: inline-block;
+    animation: pulse-dot 2s infinite;
 }
 
 .status-dot.online {
     background-color: #28a745;
 }
 
+@keyframes pulse-dot {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
 .chat-body {
-    padding: 15px;
-    height: 350px;
+    padding: 20px;
+    height: 400px;
     overflow-y: auto;
-    background-color: #f8f9fa;
+    background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+    scroll-behavior: smooth;
+}
+
+.chat-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.chat-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
 
 .message-content {
     display: flex;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
 }
 
 .message-bubble {
-    margin-left: 10px;
-    max-width: 80%;
+    margin-left: 15px;
+    max-width: 85%;
+    word-wrap: break-word;
 }
 
 .bot-message .message-bubble {
-    background-color: #e9ecef;
-    padding: 10px 15px;
-    border-radius: 15px 15px 15px 0;
+    background: linear-gradient(135deg, #e9ecef, #f8f9fa);
+    padding: 15px 20px;
+    border-radius: 20px 20px 20px 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .user-message {
@@ -151,95 +245,180 @@
 }
 
 .user-message .message-bubble {
-    background-color: #007bff;
+    background: linear-gradient(135deg, #007bff, #0056b3);
     color: white;
-    padding: 10px 15px;
-    border-radius: 15px 15px 0 15px;
+    padding: 15px 20px;
+    border-radius: 20px 20px 5px 20px;
     margin-left: 0;
-    margin-right: 10px;
+    margin-right: 15px;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
 }
 
 .message-time {
     display: block;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: #6c757d;
-    margin-top: 5px;
+    margin-top: 8px;
     text-align: right;
+}
+
+.user-message .message-time {
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .quick-options {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .btn-quick-option {
-    background-color: #f1f1f1;
-    border: none;
-    border-radius: 20px;
-    padding: 8px 15px;
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    border: 2px solid #e9ecef;
+    border-radius: 15px;
+    padding: 10px 15px;
     text-align: left;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .btn-quick-option:hover {
-    background-color: #e2e2e2;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border-color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
-.chat-footer {
-    padding: 15px;
-    background-color: white;
+.quick-suggestions {
+    padding: 15px 20px;
+    background: #f8f9fa;
     border-top: 1px solid #e9ecef;
 }
 
+.suggestions-header {
+    margin-bottom: 10px;
+}
+
+.suggestions-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
 .contact-form {
-    padding: 15px;
-    background-color: #f8f9fa;
+    padding: 20px;
+    background: #f8f9fa;
+    max-height: 500px;
+    overflow-y: auto;
 }
 
 .form-header {
-    text-align: center;
     margin-bottom: 20px;
 }
 
 .form-header h6 {
     font-weight: bold;
     margin-bottom: 5px;
+    color: #495057;
 }
 
 .form-header p {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: #6c757d;
+    margin-bottom: 0;
 }
 
-/* Animações */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+.chat-footer {
+    padding: 15px 20px;
+    background-color: white;
+    border-top: 1px solid #e9ecef;
 }
 
-.message-content {
-    animation: fadeIn 0.3s ease-out;
+.typing-indicator-container {
+    padding: 5px 0;
+    margin-bottom: 10px;
+}
+
+.chat-footer-info {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e9ecef;
+}
+
+.input-group .form-control {
+    border-radius: 25px 0 0 25px;
+    border-right: none;
+    padding: 12px 20px;
+}
+
+.input-group .btn {
+    border-radius: 0 25px 25px 0;
+    padding: 12px 20px;
+}
+
+.input-group .btn:first-child {
+    border-radius: 25px 0 0 25px;
+    border-right: none;
+}
+
+/* Animações para digitação */
+.typing-indicator .typing-dots {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 0;
+}
+
+.typing-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #6c757d;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: 0s; }
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+    0%, 60%, 100% { 
+        transform: translateY(0); 
+        opacity: 0.5; 
+    }
+    30% { 
+        transform: translateY(-10px); 
+        opacity: 1; 
+    }
 }
 
 /* Responsivo */
 @media (max-width: 576px) {
     .chat-card {
-        width: 100%;
-        height: 100%;
+        width: 100vw;
+        height: 100vh;
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
         border-radius: 0;
+        max-height: none;
     }
 
     .chat-toggle-btn {
         bottom: 20px;
         right: 20px;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .chat-body {
+        height: calc(100vh - 200px);
     }
 }
         </style>        
@@ -270,10 +449,10 @@
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="stat-card" id="card01">
                         <div class="stat-card-content">
-                            <h5><i class="bi bi-trophy-fill me-2"></i>Total de Campeonatos</h5>
-                            <p class="fs-2">12</p>
+                            <h5><i class="bi bi-trophy-fill me-2"></i>Total de Competições</h5>
+                            <p class="fs-2">{{ total_competicoes }}</p>
                             <small class="d-flex align-items-center">
-                                <i class="bi bi-arrow-up-circle-fill me-1"></i> 2 novos este mês
+                                <i class="bi bi-arrow-up-circle-fill me-1"></i> {{ competicoes_recentes|length }} recentes
                             </small>
                         </div>
                     </div>
@@ -281,10 +460,10 @@
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="stat-card" id="card02">
                         <div class="stat-card-content">
-                            <h5><i class="bi bi-people-fill me-2"></i>Equipes Cadastradas</h5>
-                            <p class="fs-2">48</p>
+                            <h5><i class="bi bi-people-fill me-2"></i>Academias Cadastradas</h5>
+                            <p class="fs-2">{{ total_academias }}</p>
                             <small class="d-flex align-items-center">
-                                <i class="bi bi-arrow-up-circle-fill me-1"></i> 5 novas esta semana
+                                <i class="bi bi-building me-1"></i> Ativas no sistema
                             </small>
                         </div>
                     </div>
@@ -293,9 +472,9 @@
                     <div class="stat-card" id="card03">
                         <div class="stat-card-content">
                             <h5><i class="bi bi-person-badge-fill me-2"></i>Atletas Registrados</h5>
-                            <p class="fs-2">256</p>
+                            <p class="fs-2">{{ total_atletas }}</p>
                             <small class="d-flex align-items-center">
-                                <i class="bi bi-arrow-up-circle-fill me-1"></i> 12 novos hoje
+                                <i class="bi bi-person-plus-fill me-1"></i> Total cadastrados
                             </small>
                         </div>
                     </div>
@@ -304,10 +483,58 @@
                     <div class="stat-card" id="card04">
                         <div class="stat-card-content">
                             <h5><i class="bi bi-calendar-event-fill me-2"></i>Partidas Hoje</h5>
-                            <p class="fs-2">6</p>
+                            <p class="fs-2">{{ partidas_hoje }}</p>
                             <small class="d-flex align-items-center">
-                                <i class="bi bi-clock-fill me-1"></i> 2 em andamento
+                                <i class="bi bi-clock-fill me-1"></i> {{ partidas_em_andamento }} em andamento
                             </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estatísticas Adicionais -->
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="display-4 text-primary mb-2">
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <h4 class="text-primary">{{ media_kata }}</h4>
+                            <p class="text-muted mb-0">Média Geral Kata</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="display-4 text-success mb-2">
+                                <i class="bi bi-gender-male"></i>
+                            </div>
+                            <h4 class="text-success">{{ masculinos }}</h4>
+                            <p class="text-muted mb-0">Atletas Masculinos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="display-4 text-danger mb-2">
+                                <i class="bi bi-gender-female"></i>
+                            </div>
+                            <h4 class="text-danger">{{ femininos }}</h4>
+                            <p class="text-muted mb-0">Atletas Femininas</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="display-4 text-warning mb-2">
+                                <i class="bi bi-calendar-week"></i>
+                            </div>
+                            <h4 class="text-warning">{{ proximas_partidas|length }}</h4>
+                            <p class="text-muted mb-0">Próximas Partidas</p>
                         </div>
                     </div>
                 </div>
@@ -316,14 +543,66 @@
             <div class="row mt-4">
                 <div class="col-12 col-md-6 mb-3">
                     <div class="card p-3" id="grafico01">
-                        <h5>🥋 Ranking de Equipes</h5>
+                        <h5><i class="bi bi-building me-2"></i>Top Academias por Atletas</h5>
                         <canvas id="rankingChart"></canvas>
                     </div>
                 </div>
                 <div class="col-12 col-md-6 mb-3">
                     <div class="card p-3" id="grafico02">
-                        <h5>🥋 Pontuação por Kata</h5>
+                        <h5><i class="bi bi-person-lines-fill me-2"></i>Inscrições por Mês</h5>
                         <canvas id="goalsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Novos gráficos -->
+            <div class="row mt-4">
+                <div class="col-12 col-md-4 col-lg-3 mb-3">
+                    <div class="card p-3 h-100">
+                        <h6><i class="bi bi-award me-2"></i>Distribuição por Faixas</h6>
+                        <canvas id="faixasChart" style="max-height: 250px;"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 col-lg-3 mb-3">
+                    <div class="card p-3 h-100">
+                        <h6><i class="bi bi-geo-alt me-2"></i>Top Estados</h6>
+                        <canvas id="estadosChart" style="max-height: 250px;"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 col-lg-6 mb-3">
+                    <div class="card p-3 h-100">
+                        <h6><i class="bi bi-people-fill me-2"></i>Atletas Mais Ativos</h6>
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-sm table-hover">
+                                <thead class="table-dark sticky-top">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Nome</th>
+                                        <th>Academia</th>
+                                        <th class="text-center">Participações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for atleta in atletas_ativos %}
+                                    <tr>
+                                        <td><span class="badge bg-primary">{{ forloop.counter }}</span></td>
+                                        <td><strong>{{ atleta.nome_completo }}</strong></td>
+                                        <td>{{ atleta.academia.nome|default:"N/A" }}</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success">{{ atleta.participacoes }}</span>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">
+                                            <i class="bi bi-info-circle"></i>
+                                            Nenhum atleta encontrado
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -336,158 +615,189 @@
                             <table class="table table-hover table-bordered">
                                 <thead class="" style="background: #343A40;">
                                     <tr>
-                                        <th class="text-center align-middle" style="color: white;">Data</th>
-                                        <th class="text-center align-middle" style="color: white;">Equipe 1</th>
-                                        <th class="text-center align-middle" style="color: white;">Equipe 2</th>
-                                        <th class="text-center align-middle" style="color: white;">Local</th>
-                                        <th class="text-center align-middle" style="color: white;">Árbitro</th>
+                                        <th class="text-center align-middle" style="color: white;">Data/Hora</th>
+                                        <th class="text-center align-middle" style="color: white;">Atleta 1</th>
+                                        <th class="text-center align-middle" style="color: white;">VS</th>
+                                        <th class="text-center align-middle" style="color: white;">Atleta 2</th>
+                                        <th class="text-center align-middle" style="color: white;">Competição</th>
+                                        <th class="text-center align-middle" style="color: white;">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for partida in proximas_partidas %}
                                     <tr>
                                         <td class="text-nowrap text-center align-middle">
-                                            <span class="badge bg-primary rounded-pill">20/03/2025</span>
+                                            <span class="badge bg-primary rounded-pill">{{ partida.data_inicio|date:"d/m/Y" }}</span>
+                                            <br>
+                                            <small class="text-muted">{{ partida.data_inicio|time:"H:i" }}</small>
                                         </td>
                                         <td class="align-middle">
                                             <div class="d-flex align-items-center">
-                                                <i class="fas fa-users me-2 text-primary"></i>
-                                                <span>Equipe A</span>
+                                                {% if partida.atleta1.foto %}
+                                                    <img src="{{ partida.atleta1.foto.url }}" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;" alt="{{ partida.atleta1.nome_completo }}">
+                                                {% else %}
+                                                    <i class="fas fa-user-circle me-2 text-primary fs-4"></i>
+                                                {% endif %}
+                                                <div>
+                                                    <div class="fw-bold">{{ partida.atleta1.nome_completo }}</div>
+                                                    <small class="text-muted">{{ partida.atleta1.academia.nome|default:"Academia não informada" }}</small>
+                                                </div>
                                             </div>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <span class="badge bg-dark">VS</span>
                                         </td>
                                         <td class="align-middle">
                                             <div class="d-flex align-items-center">
-                                                <i class="fas fa-users me-2 text-danger"></i>
-                                                <span>Equipe B</span>
+                                                {% if partida.atleta2.foto %}
+                                                    <img src="{{ partida.atleta2.foto.url }}" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;" alt="{{ partida.atleta2.nome_completo }}">
+                                                {% else %}
+                                                    <i class="fas fa-user-circle me-2 text-danger fs-4"></i>
+                                                {% endif %}
+                                                <div>
+                                                    <div class="fw-bold">{{ partida.atleta2.nome_completo }}</div>
+                                                    <small class="text-muted">{{ partida.atleta2.academia.nome|default:"Academia não informada" }}</small>
+                                                </div>
                                             </div>
                                         </td>
                                         <td class="align-middle">
-                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
-                                            Estádio Central
+                                            <div class="fw-bold">{{ partida.chaveamento.categoria.competicao.nome }}</div>
+                                            <small class="text-muted">{{ partida.chaveamento.categoria.nome }}</small>
                                         </td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-warning text-dark">Pai Erminio</span>
+                                        <td class="text-center align-middle">
+                                            {% if partida.status == 'agendada' %}
+                                                <span class="badge bg-warning text-dark">Agendada</span>
+                                            {% elif partida.status == 'em_andamento' %}
+                                                <span class="badge bg-success">Em Andamento</span>
+                                            {% elif partida.status == 'finalizada' %}
+                                                <span class="badge bg-secondary">Finalizada</span>
+                                            {% else %}
+                                                <span class="badge bg-info">{{ partida.get_status_display }}</span>
+                                            {% endif %}
                                         </td>
                                     </tr>
+                                    {% empty %}
                                     <tr>
-                                        <td class="text-nowrap text-center align-middle">
-                                            <span class="badge bg-primary rounded-pill">21/03/2025</span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-users me-2 text-primary"></i>
-                                                <span>Equipe C</span>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-users me-2 text-danger"></i>
-                                                <span>Equipe D</span>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">
-                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
-                                            Estádio Norte
-                                        </td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-warning text-dark">Alan</span>
+                                        <td colspan="6" class="text-center text-muted py-4">
+                                            <i class="bi bi-calendar-x me-2"></i>
+                                            Nenhuma partida agendada para os próximos dias
                                         </td>
                                     </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Nova seção: Top Academias e Atletas Ativos -->
+            <div class="row mt-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card p-3">
+                        <h5 class="mb-3"><i class="bi bi-building me-2"></i>Top Academias</h5>
+                        <div class="list-group list-group-flush">
+                            {% for academia in top_academias %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-bold">{{ academia.nome }}</div>
+                                    <small class="text-muted">{{ academia.cidade }}/{{ academia.estado }}</small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">{{ academia.total_atletas }} atletas</span>
+                            </div>
+                            {% empty %}
+                            <div class="text-center text-muted py-3">
+                                <i class="bi bi-building me-2"></i>
+                                Nenhuma academia cadastrada
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="card p-3">
+                        <h5 class="mb-3"><i class="bi bi-person-check me-2"></i>Atletas Mais Ativos</h5>
+                        <div class="list-group list-group-flush">
+                            {% for atleta in atletas_ativos %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    {% if atleta.foto %}
+                                        <img src="{{ atleta.foto.url }}" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover;" alt="{{ atleta.nome_completo }}">
+                                    {% else %}
+                                        <i class="fas fa-user-circle me-3 text-primary fs-3"></i>
+                                    {% endif %}
+                                    <div>
+                                        <div class="fw-bold">{{ atleta.nome_completo }}</div>
+                                        <small class="text-muted">{{ atleta.academia.nome|default:"Academia não informada" }}</small>
+                                    </div>
+                                </div>
+                                <span class="badge bg-success rounded-pill">{{ atleta.participacoes }} participações</span>
+                            </div>
+                            {% empty %}
+                            <div class="text-center text-muted py-3">
+                                <i class="bi bi-person me-2"></i>
+                                Nenhum atleta ativo
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Nova seção: Competições Recentes -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card p-3">
+                        <h5 class="mb-3"><i class="bi bi-trophy me-2"></i>Competições Recentes (Últimos 30 dias)</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
                                     <tr>
-                                        <td class="text-nowrap text-center align-middle">
-                                            <span class="badge bg-primary rounded-pill">22/03/2025</span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-users me-2 text-primary"></i>
-                                                <span>Equipe E</span>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-users me-2 text-danger"></i>
-                                                <span>Equipe F</span>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">
-                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
-                                            Estádio Sul
-                                        </td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-warning text-dark">Luan</span>
-                                        </td>
+                                        <th>Nome</th>
+                                        <th>Data</th>
+                                        <th>Local</th>
+                                        <th>Modalidade</th>
+                                        <th>Status</th>
+                                        <th>Atletas</th>
                                     </tr>
+                                </thead>
+                                <tbody>
+                                    {% for competicao in competicoes_recentes %}
                                     <tr>
-                                        <td class="text-nowrap text-center align-middle">
-                                            <span class="badge bg-primary rounded-pill">23/03/2025</span>
+                                        <td>
+                                            <div class="fw-bold">{{ competicao.nome }}</div>
                                         </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-users me-2 text-primary"></i>
-                                                <span>Equipe G</span>
-                                            </div>
+                                        <td>
+                                            <span class="badge bg-light text-dark">{{ competicao.data_inicio|date:"d/m/Y" }}</span>
                                         </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-users me-2 text-danger"></i>
-                                                <span>Equipe H</span>
-                                            </div>
+                                        <td>
+                                            <i class="bi bi-geo-alt me-1"></i>{{ competicao.local }}
                                         </td>
-                                        <td class="align-middle">
-                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
-                                            Estádio Leste
+                                        <td>
+                                            <span class="badge bg-info">{{ competicao.modalidade }}</span>
                                         </td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-warning text-dark">Marcus</span>
+                                        <td>
+                                            {% if competicao.status == 'Ativa' %}
+                                                <span class="badge bg-success">{{ competicao.status }}</span>
+                                            {% elif competicao.status == 'Finalizada' %}
+                                                <span class="badge bg-secondary">{{ competicao.status }}</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark">{{ competicao.status }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-primary rounded-pill">{{ competicao.atletas.count }} atletas</span>
                                         </td>
                                     </tr>
+                                    {% empty %}
                                     <tr>
-                                        <td class="text-nowrap text-center align-middle">
-                                            <span class="badge bg-primary rounded-pill">24/03/2025</span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-users me-2 text-primary"></i>
-                                                <span>Equipe I</span>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-users me-2 text-danger"></i>
-                                                <span>Equipe J</span>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">
-                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
-                                            Estádio Oeste
-                                        </td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-warning text-dark">Emanuel</span>
+                                        <td colspan="6" class="text-center text-muted py-4">
+                                            <i class="bi bi-trophy me-2"></i>
+                                            Nenhuma competição recente
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td class="text-nowrap text-center align-middle">
-                                            <span class="badge bg-primary rounded-pill">24/03/2025</span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-users me-2 text-primary"></i>
-                                                <span>Equipe I</span>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-users me-2 text-danger"></i>
-                                                <span>Equipe J</span>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">
-                                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
-                                            Estádio Oeste
-                                        </td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-warning text-dark">Rafael</span>
-                                        </td>
-                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -500,98 +810,205 @@
     </div>
 
     <!-- Chat Container -->
+    <!-- Chat Container Melhorado -->
     <div class="chat-container collapsed" id="chatContainer">
         <button class="btn btn-success chat-toggle-btn" onclick="toggleChat()">
-            <i class="bi bi-chat-dots"></i> <span class="online-status">Online</span>
+            <i class="bi bi-chat-dots"></i> 
+            <span class="online-status">Online</span>
+            <span class="notification-badge" id="chatNotification" style="display: none;">1</span>
         </button>
 
         <div class="chat-card" id="chatWindow">
+            <!-- Header melhorado -->
             <div class="chat-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
-                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-                             alt="avatar" class="avatar-img">
+                        <div class="avatar-container">
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
+                                 alt="avatar" class="avatar-img">
+                            <span class="avatar-status online"></span>
+                        </div>
                         <div class="ms-3">
-                            <h5 class="mb-0">Suporte KeyChart</h5>
+                            <h5 class="mb-0">Assistente KeyChart</h5>
                             <div class="status-indicator">
                                 <span class="status-dot online"></span>
-                                <small class="text-muted">Online</small>
+                                <small class="text-muted">Online - Resposta rápida</small>
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn-close" onclick="toggleChat()"></button>
+                    <div class="chat-controls">
+                        <button type="button" class="btn btn-sm btn-outline-light me-2" onclick="clearChat()" title="Limpar conversa">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                        <button type="button" class="btn-close btn-close-white" onclick="toggleChat()"></button>
+                    </div>
                 </div>
             </div>
 
+            <!-- Corpo do chat -->
             <div class="chat-body" id="chatMessages">
-                <!-- Mensagens iniciais do bot -->
-                <div class="bot-message">
-                    <div class="message-content">
-                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-                             alt="avatar" class="avatar-img">
-                        <div class="message-bubble">
-                            <p>Olá! Sou o assistente virtual da KeyChart. Como posso te ajudar hoje?</p>
-                            <div class="quick-options">
-                                <button class="btn-quick-option" onclick="selectQuickOption(1)">Dúvidas sobre competições</button>
-                                <button class="btn-quick-option" onclick="selectQuickOption(2)">Problemas técnicos</button>
-                                <button class="btn-quick-option" onclick="selectQuickOption(3)">Falar com suporte</button>
-                                <button class="btn-quick-option" onclick="selectQuickOption(4)">Documentação</button>
-                            </div>
-                            <small class="message-time">Agora</small>
-                        </div>
-                    </div>
+                <!-- Mensagem de boas-vindas será adicionada via JavaScript -->
+            </div>
+
+            <!-- Área de sugestões rápidas -->
+            <div class="quick-suggestions" id="quickSuggestions" style="display: none;">
+                <div class="suggestions-header">
+                    <small class="text-muted">Sugestões rápidas:</small>
+                </div>
+                <div class="suggestions-list">
+                    <button class="btn btn-sm btn-outline-primary me-1 mb-1" onclick="sendQuickMessage('Como criar uma competição?')">
+                        📝 Criar competição
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary me-1 mb-1" onclick="sendQuickMessage('Como cadastrar atletas?')">
+                        👤 Cadastrar atletas
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary me-1 mb-1" onclick="sendQuickMessage('Onde vejo os relatórios?')">
+                        📊 Relatórios
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary me-1 mb-1" onclick="sendQuickMessage('Tenho um problema técnico')">
+                        🔧 Suporte técnico
+                    </button>
                 </div>
             </div>
 
-            <!-- Formulário de contato (inicialmente oculto) -->
+            <!-- Formulário de contato melhorado -->
             <div class="contact-form" id="contactForm" style="display: none;">
-                <div class="form-header">
-                    <h6>Preencha seus dados para continuar</h6>
-                    <p>Nossa equipe entrará em contato em breve</p>
+                <div class="form-header text-center">
+                    <i class="bi bi-headset fs-1 text-primary mb-2"></i>
+                    <h6>Falar com nossa equipe</h6>
+                    <p class="small text-muted">Preencha o formulário e nossa equipe entrará em contato</p>
                 </div>
-                <form id="supportForm">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Nome completo</label>
-                        <input type="text" class="form-control" id="name" required>
+                <form id="supportForm" onsubmit="submitContactForm(); return false;">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Nome completo *</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">E-mail *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="(11) 99999-9999">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="company" class="form-label">Academia/Organização</label>
+                            <input type="text" class="form-control" id="company" name="company">
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label for="email" class="form-label">E-mail</label>
-                        <input type="email" class="form-control" id="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="phone" class="form-label">Telefone</label>
-                        <input type="tel" class="form-control" id="phone">
-                    </div>
-                    <div class="mb-3">
-                        <label for="subject" class="form-label">Assunto</label>
-                        <select class="form-select" id="subject" required>
-                            <option value="">Selecione...</option>
-                            <option value="Problema técnico">Problema técnico</option>
+                        <label for="subject" class="form-label">Assunto *</label>
+                        <select class="form-select" id="subject" name="subject" required>
+                            <option value="">Selecione o assunto...</option>
                             <option value="Dúvida sobre competições">Dúvida sobre competições</option>
-                            <option value="Sugestão">Sugestão</option>
-                            <option value="Outro">Outro</option>
+                            <option value="Problema técnico">Problema técnico</option>
+                            <option value="Dúvida sobre atletas">Dúvida sobre atletas</option>
+                            <option value="Dúvida sobre relatórios">Dúvida sobre relatórios</option>
+                            <option value="Sugestão">Sugestão de melhoria</option>
+                            <option value="Comercial">Questão comercial</option>
+                            <option value="Outro">Outro assunto</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="message" class="form-label">Mensagem</label>
-                        <textarea class="form-control" id="message" rows="3" required></textarea>
+                        <label for="priority" class="form-label">Prioridade</label>
+                        <select class="form-select" id="priority" name="priority">
+                            <option value="normal">Normal</option>
+                            <option value="high">Alta</option>
+                            <option value="urgent">Urgente</option>
+                        </select>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Enviar solicitação</button>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Descrição detalhada *</label>
+                        <textarea class="form-control" id="message" name="message" rows="4" 
+                                  placeholder="Descreva sua dúvida ou problema com o máximo de detalhes possível..." required></textarea>
+                        <div class="form-text">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle"></i>
+                                Quanto mais detalhes, melhor poderemos te ajudar
+                            </small>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            <i class="bi bi-send"></i> Enviar solicitação
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="cancelContactForm()">
+                            <i class="bi bi-x-lg"></i> Cancelar
+                        </button>
+                    </div>
                 </form>
             </div>
 
+            <!-- Footer do chat melhorado -->
             <div class="chat-footer">
+                <div class="typing-indicator-container" id="typingIndicator" style="display: none;">
+                    <small class="text-muted">
+                        <i class="bi bi-three-dots"></i> Assistente está digitando...
+                    </small>
+                </div>
                 <div class="input-group">
+                    <button class="btn btn-outline-secondary" type="button" onclick="toggleSuggestions()" title="Sugestões rápidas">
+                        <i class="bi bi-lightbulb"></i>
+                    </button>
                     <input type="text" class="form-control" id="userMessage"
-                           placeholder="Digite sua mensagem..." disabled>
-                    <button class="btn btn-primary" id="sendButton" onclick="sendMessage()" disabled>
+                           placeholder="Digite sua mensagem... (Enter para enviar)">
+                    <button class="btn btn-primary" id="sendButton" onclick="sendMessage()">
                         <i class="bi bi-send"></i>
                     </button>
+                </div>
+                <div class="chat-footer-info">
+                    <small class="text-muted d-flex justify-content-between">
+                        <span>💬 Suporte 24/7</span>
+                        <span id="messageCount">0 mensagens</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
                 </div>
             </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Dados do Django para JavaScript -->
+    <script>
+        // Dados para os gráficos
+        const dashboardData = {
+            academias: [
+                {% for academia in top_academias %}
+                {
+                    nome: "{{ academia.nome|escapejs }}",
+                    total: {{ academia.total_atletas }}
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            inscricoes: {
+                labels: {{ labels_meses|safe }},
+                data: {{ inscricoes_data|safe }}
+            },
+            faixas: [
+                {% for faixa in distribuicao_faixas %}
+                {
+                    label: "{{ faixa.faixa|capfirst }}",
+                    value: {{ faixa.total }}
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            estados: [
+                {% for estado in distribuicao_estados %}
+                {
+                    label: "{{ estado.estado }}",
+                    value: {{ estado.total }}
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ]
+        };
+    </script>
+    
     <script src="{% static 'dashboard/js/dashboard.js' %}"></script>
 
 </body>

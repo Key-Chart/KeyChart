@@ -1,0 +1,198 @@
+:root {
+    --primary-color: #343A40;
+    --secondary-color: #f8f9fa;
+    --accent-color: #ffc107;
+    --dark-color: #343a40;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+}
+
+#img-logo {
+    height: 35px;
+    margin-right: 10px;
+}
+
+/* Conteúdo Principal */
+.content {
+    margin-left: 250px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 100vh;
+}
+
+/* Header */
+.header {
+    background: var(--primary-color);
+    color: #F5F7FA;
+    padding: 1.5rem;
+    position: relative;
+}
+
+.header h2 {
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+.header h2 i {
+    margin-right: 12px;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background-color: white;
+    color: rgb(0, 0, 0);
+    padding: 1.25rem 1.5rem;
+    border-bottom: none;
+}
+
+.card-title {
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Formulários */
+.form-control, .form-select {
+    border-radius: 8px;
+    padding: 10px 15px;
+}
+
+/* Tabelas */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+}
+
+.table tbody tr {
+    transition: all 0.2s;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(20, 108, 67, 0.05);
+}
+
+.table td, .table th {
+    vertical-align: middle;
+    padding: 1rem;
+}
+
+/* Badges */
+.badge {
+    padding: 6px 10px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.badge-active {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: var(--primary-color);
+}
+
+.badge-finished {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.badge-suspended {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.badge-male {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+}
+
+.badge-female {
+    background-color: rgba(214, 51, 132, 0.1);
+    color: #d63384;
+}
+
+.badge-kata {
+    background-color: rgba(111, 66, 193, 0.1);
+    color: #6f42c1;
+}
+
+.badge-kumite {
+    background-color: rgba(253, 126, 20, 0.1);
+    color: #fd7e14;
+}
+
+
+/* Botão Voltar */
+.btn-back {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+    border: none;
+    transition: all 0.3s;
+}
+
+.btn-back:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .content {
+        margin-left: 0;
+    }
+
+    .toggle-btn {
+        left: 20px;
+        top: 20px;
+    }
+}
+
+/* Animação */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.table tbody tr {
+    animation: fadeIn 0.3s ease-out forwards;
+    opacity: 0;
+}
+
+.table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+.table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+.table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+.table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+.table tbody tr:nth-child(5) { animation-delay: 0.5s; }
