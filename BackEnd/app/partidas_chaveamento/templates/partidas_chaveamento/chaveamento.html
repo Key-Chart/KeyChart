@@ -2,160 +2,508 @@
 
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'competicoes/css/competicoes.css' %}">
-    <title>Chaveamento</title>
+    <link rel="stylesheet" href="{% static 'partidas_chaveamento/css/chaveamento.css' %}">
+    <title>Chaveamento | KeyChart</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #ecf0f1;
+            --accent-color: #27ae60;
+            --success-color: #27ae60;
+            --info-color: #3498db;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --card-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --border-color: #bdc3c7;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ecf0f1;
+        }
+
+        .content {
+            margin-left: 250px;
+            transition: margin-left 0.2s ease;
+            min-height: 100vh;
+            background-color: #ecf0f1;
+            padding: 2rem;
+        }
+
+        /* Ajuste para sidebar fechada */
+        .sidebar-collapsed .content {
+            margin-left: 0;
+        }
+
+        /* CSS específico para corrigir problemas de layout */
+        
+        /* Garantir que o conteúdo não sobreponha o sidebar */
+        body.sidebar-open .content {
+            margin-left: 250px;
+        }
+        
+        body.sidebar-closed .content {
+            margin-left: 0;
+        }
+        
+        /* Forçar ajuste correto independente do CSS externo */
+        .content {
+            width: calc(100% - 250px) !important;
+            margin-left: 250px !important;
+            transition: all 0.3s ease;
+        }
+        
+        /* Quando sidebar está fechada/oculta */
+        @media (max-width: 768px) {
+            .content {
+                width: 100% !important;
+                margin-left: 0 !important;
+            }
+        }
+        
+        /* Garantir que tabelas não ultrapassem os limites */
+        .table-responsive {
+            overflow-x: auto;
+            max-width: 100%;
+        }
+        
+        .card {
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #343A40;
+            color: #ffffff;
+            border-bottom: 1px solid #495057;
+            padding: 1.5rem 0;
+            margin: -2rem -2rem 2rem -2rem;
+        }
+
+        .chaveamento-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .partida-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .vs-container {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin: 2rem 0;
+        }
+
+        .atleta-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            transition: transform 0.2s ease;
+            border-left: 4px solid #3498db;
+        }
+
+        .atleta-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .atleta-card.vencedor {
+            border-left-color: #27ae60;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f9f0 100%);
+        }
+
+        .vs-text {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #e74c3c;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .score.winner {
+            color: #27ae60;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .status-em-andamento {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-finalizada {
+            background: #d1f2eb;
+            color: #0f5132;
+        }
+
+        .status-agendada {
+            background: #cce7ff;
+            color: #004085;
+        }
+
+        .chaveamento-actions {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .btn-custom {
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 0.5rem;
+        }
+
+        .match-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .detail-item {
+            border-bottom: 1px solid #e9ecef;
+            padding: 0.5rem 0;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .athlete-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #e9ecef;
+            margin-bottom: 1rem;
+        }
+
+        .academy-badge {
+            background: #e9ecef;
+            color: #495057;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .header {
+                margin: -1rem -1rem 1rem -1rem;
+            }
+            
+            .vs-text {
+                font-size: 2rem;
+            }
+            
+            .score {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
-
     {% include 'sidebar.html' %}
 
     <div class="content" id="content">
         <!-- Header -->
-        <div class="header" style="background: #ffffff; color: #343A40;">
+        <div class="header">
             <div class="container-fluid">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2><i class="bi bi-diagram-3"></i>
-                        chaveamentos</h2>
+                    <div>
+                        <h2><i class="bi bi-diagram-3 me-2"></i>Chaveamento - Controle de Partida</h2>
+                        <p class="mb-0 opacity-75">Gerenciamento completo da partida em tempo real</p>
+                    </div>
+                    <div>
+                        <a href="{% url 'partidas_chaveamento:home' %}" class="btn btn-light btn-sm me-2">
+                            <i class="bi bi-arrow-left me-1"></i>Voltar às Partidas
+                        </a>
+                        <button class="btn btn-success btn-sm" onclick="window.print()">
+                            <i class="bi bi-printer me-1"></i>Imprimir
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Conteúdo -->
-        <main class="container-fluid py-4">
-            <!-- Tabela de Chaveamento -->
-            <div class="card">
-                <div class="card-header" style="background-color: #343A40;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0 text-white">
-                            <i class="bi bi-link-45deg me-2"></i>Chaveamento e Tabelas
-                        </h5>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Campeonato</th>
-                                    <th>Sexo</th>
-                                    <th>Nome</th>
-                                    <th>Tipo</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Kata Individual Masculino -->
-                                <tr>
-                                    <td>Copa Regional 2025</td>
-                                    <td>Masculino</td>
-                                    <td>Kata Individual - Faixa Preta</td>
-                                    <td>Kata</td>
-                                    <td><span class="badge bg-success">Ativo</span></td>
-                                    <td>
-                                        <a href="chaveamento_kata.html" class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        
-                                    </td>
-                                </tr>
-    
-                                <!-- Kata Individual Feminino -->
-                                <tr>
-                                    <td>Campeonato Estadual</td>
-                                    <td>Feminino</td>
-                                    <td>Kata Individual - Faixa Preta</td>
-                                    <td>Kata</td>
-                                    <td><span class="badge bg-success">Ativo</span></td>
-                                    <td>
-                                        <a href="chaveamento_kata.html" class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        
-                                    </td>
-                                </tr>
-    
-                                <!-- Kumite Masculino -->
-                                <tr>
-                                    <td>Copa Regional 2025</td>
-                                    <td>Masculino</td>
-                                    <td>Kumite -67kg</td>
-                                    <td>Kumite</td>
-                                    <td><span class="badge bg-success">Ativo</span></td>
-                                    <td>
-                                        <a href="chaveamento_kumite.html" class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        
-                                    </td>
-                                </tr>
-    
-                                <!-- Kumite Feminino -->
-                                <tr>
-                                    <td>Campeonato Estadual</td>
-                                    <td>Feminino</td>
-                                    <td>Kumite -55kg</td>
-                                    <td>Kumite</td>
-                                    <td><span class="badge bg-success">Ativo</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-    
-                                <!-- Outras categorias de exemplo -->
-                                <tr>
-                                    <td>Copa Regional 2025</td>
-                                    <td>Masculino</td>
-                                    <td>Kata Individual - Faixa Marrom</td>
-                                    <td>Kata</td>
-                                    <td><span class="badge bg-warning text-dark">Pendente</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="card-footer bg-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="text-muted small">
-                            Mostrando 1 a 5 de 12 categorias
+
+        {% if partida %}
+        <!-- Informações da Partida -->
+        <div class="partida-info">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h3 class="mb-2">
+                        <i class="bi bi-trophy me-2"></i>{{ partida.competicao.nome }}
+                    </h3>
+                    <h5 class="mb-3">{{ partida.categoria.nome }} - {{ partida.categoria.get_sexo_display }} - {{ partida.categoria.get_tipo_display }}</h5>
+                    <div class="d-flex flex-wrap gap-3">
+                        <div>
+                            <i class="bi bi-calendar-event me-1"></i>
+                            <strong>Data:</strong> {{ partida.data_inicio|date:"d/m/Y H:i" }}
                         </div>
-                        <nav>
-                            <ul class="pagination pagination-sm mb-0">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1">Anterior</a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Próximo</a>
-                                </li>
-                            </ul>
-                        </nav>
+                        <div>
+                            <i class="bi bi-geo-alt me-1"></i>
+                            <strong>Local:</strong> {{ partida.competicao.local }}
+                        </div>
+                        <div>
+                            <i class="bi bi-flag me-1"></i>
+                            <strong>Fase:</strong> {{ partida.fase|title }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <span class="status-badge status-{{ partida.status|lower|cut:' '|cut:'_' }}">
+                        {{ partida.get_status_display }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confronto Principal -->
+        <div class="chaveamento-container">
+            <div class="row align-items-center">
+                <!-- Atleta 1 -->
+                <div class="col-md-5">
+                    <div class="atleta-card {% if partida.vencedor == partida.atleta1 %}vencedor{% endif %}">
+                        <div class="text-center">
+                            {% if partida.atleta1.foto %}
+                                <img src="{{ partida.atleta1.foto.url }}" alt="{{ partida.atleta1.nome_completo }}" class="athlete-photo">
+                            {% else %}
+                                <div class="athlete-photo bg-light d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-person-fill text-muted" style="font-size: 2rem;"></i>
+                                </div>
+                            {% endif %}
+                            <h4 class="mb-2">{{ partida.atleta1.nome_completo }}</h4>
+                            <span class="academy-badge">{{ partida.atleta1.academia.nome }}</span>
+                            <div class="score mt-3 {% if partida.vencedor == partida.atleta1 %}winner{% endif %}">
+                                {{ partida.pontos_atleta1 }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VS -->
+                <div class="col-md-2">
+                    <div class="vs-container">
+                        <div class="vs-text">VS</div>
+                    </div>
+                </div>
+
+                <!-- Atleta 2 -->
+                <div class="col-md-5">
+                    <div class="atleta-card {% if partida.vencedor == partida.atleta2 %}vencedor{% endif %}">
+                        <div class="text-center">
+                            {% if partida.atleta2.foto %}
+                                <img src="{{ partida.atleta2.foto.url }}" alt="{{ partida.atleta2.nome_completo }}" class="athlete-photo">
+                            {% else %}
+                                <div class="athlete-photo bg-light d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-person-fill text-muted" style="font-size: 2rem;"></i>
+                                </div>
+                            {% endif %}
+                            <h4 class="mb-2">{{ partida.atleta2.nome_completo }}</h4>
+                            <span class="academy-badge">{{ partida.atleta2.academia.nome }}</span>
+                            <div class="score mt-3 {% if partida.vencedor == partida.atleta2 %}winner{% endif %}">
+                                {{ partida.pontos_atleta2 }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
+
+        <!-- Detalhes da Partida -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="chaveamento-container">
+                    <h5 class="mb-3"><i class="bi bi-info-circle me-2"></i>Detalhes da Partida</h5>
+                    <div class="match-details">
+                        <div class="detail-item">
+                            <div class="row">
+                                <div class="col-6 detail-label">Resultado:</div>
+                                <div class="col-6">
+                                    {% if partida.resultado %}
+                                        {{ partida.get_resultado_display }}
+                                    {% else %}
+                                        <span class="text-muted">Aguardando resultado</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="row">
+                                <div class="col-6 detail-label">Vencedor:</div>
+                                <div class="col-6">
+                                    {% if partida.vencedor %}
+                                        <strong class="text-success">{{ partida.vencedor.nome_completo }}</strong>
+                                    {% else %}
+                                        <span class="text-muted">Partida em andamento</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="row">
+                                <div class="col-6 detail-label">Round:</div>
+                                <div class="col-6">{{ partida.round_numero }}</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="row">
+                                <div class="col-6 detail-label">Data de Criação:</div>
+                                <div class="col-6">{{ partida.data_criacao|date:"d/m/Y H:i" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="chaveamento-container">
+                    <h5 class="mb-3"><i class="bi bi-exclamation-triangle me-2"></i>Advertências e Penalidades</h5>
+                    <div class="match-details">
+                        <div class="detail-item">
+                            <div class="row">
+                                <div class="col-8 detail-label">Advertências {{ partida.atleta1.nome_completo|truncatechars:15 }}:</div>
+                                <div class="col-4">
+                                    <span class="badge bg-warning">{{ partida.advertencias_atleta1 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="row">
+                                <div class="col-8 detail-label">Penalidades {{ partida.atleta1.nome_completo|truncatechars:15 }}:</div>
+                                <div class="col-4">
+                                    <span class="badge bg-danger">{{ partida.penalidades_atleta1 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="row">
+                                <div class="col-8 detail-label">Advertências {{ partida.atleta2.nome_completo|truncatechars:15 }}:</div>
+                                <div class="col-4">
+                                    <span class="badge bg-warning">{{ partida.advertencias_atleta2 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="row">
+                                <div class="col-8 detail-label">Penalidades {{ partida.atleta2.nome_completo|truncatechars:15 }}:</div>
+                                <div class="col-4">
+                                    <span class="badge bg-danger">{{ partida.penalidades_atleta2 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ações do Chaveamento -->
+        {% if partida.status != 'finalizada' %}
+        <div class="chaveamento-actions">
+            <button class="btn btn-primary btn-custom" onclick="iniciarPartida()">
+                <i class="bi bi-play-fill me-2"></i>Iniciar Partida
+            </button>
+            <button class="btn btn-warning btn-custom" onclick="pausarPartida()">
+                <i class="bi bi-pause-fill me-2"></i>Pausar
+            </button>
+            <button class="btn btn-success btn-custom" onclick="finalizarPartida()">
+                <i class="bi bi-stop-fill me-2"></i>Finalizar
+            </button>
+            <button class="btn btn-info btn-custom" onclick="atualizarPlacar()">
+                <i class="bi bi-arrow-clockwise me-2"></i>Atualizar Placar
+            </button>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- Quando não há partida selecionada -->
+        <div class="chaveamento-container text-center py-5">
+            <i class="bi bi-diagram-3 display-1 text-muted mb-4"></i>
+            <h3 class="text-muted mb-3">Nenhuma Partida Selecionada</h3>
+            <p class="text-muted mb-4">Selecione uma partida da lista para visualizar o chaveamento completo.</p>
+            <a href="{% url 'partidas_chaveamento:home' %}" class="btn btn-primary btn-custom">
+                <i class="bi bi-arrow-left me-2"></i>Voltar às Partidas
+            </a>
+        </div>
+        {% endif %}
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
     <script src="{% static 'partidas_chaveamento/js/chaveamento.js' %}"></script>
-    <script src="{% static 'dashboard/js/dashboard.js' %}"></script>
+    <script>
+        function iniciarPartida() {
+            // Implementar lógica para iniciar partida
+            alert('Funcionalidade de iniciar partida será implementada');
+        }
+
+        function pausarPartida() {
+            // Implementar lógica para pausar partida
+            alert('Funcionalidade de pausar partida será implementada');
+        }
+
+        function finalizarPartida() {
+            // Implementar lógica para finalizar partida
+            alert('Funcionalidade de finalizar partida será implementada');
+        }
+
+        function atualizarPlacar() {
+            // Implementar lógica para atualizar placar
+            alert('Funcionalidade de atualizar placar será implementada');
+        }
+
+        // Auto-refresh da página a cada 30 segundos se a partida estiver em andamento
+        {% if partida.status == 'em_andamento' %}
+        setInterval(function() {
+            location.reload();
+        }, 30000);
+        {% endif %}
+    </script>
 </body>
 </html>

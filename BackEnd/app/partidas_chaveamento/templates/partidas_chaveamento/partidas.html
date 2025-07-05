@@ -10,8 +10,357 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'competicoes/css/competicoes.css' %}">
-    <title>Partidas | KeyChart</title>
+    <link rel="stylesheet" href="{% static 'partidas_chaveamento/css/partidas.css' %}">
+    <title>Histórico de Partidas | KeyChart</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #ecf0f1;
+            --accent-color: #27ae60;
+            --success-color: #27ae60;
+            --info-color: #3498db;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --card-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --border-color: #bdc3c7;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ecf0f1;
+        }
+
+        .content {
+            margin-left: 250px;
+            transition: all 0.2s ease;
+            min-height: 100vh;
+            background-color: #ecf0f1;
+            padding: 2rem;
+        }
+
+        .header {
+            background: #343A40;
+            color: #ffffff;
+            border-bottom: 1px solid #495057;
+            padding: 1.5rem 0;
+            margin: -2rem -2rem 2rem -2rem;
+        }
+
+        .header .container-fluid {
+            padding: 0 2rem;
+        }
+
+        /* Cards de estatísticas modernos */
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            min-height: 120px;
+            overflow: hidden;
+            color: var(--text-primary);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+
+        .stat-card.total::before {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+        }
+
+        .stat-card.em-andamento::before {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+        }
+
+        .stat-card.finalizadas::before {
+            background: linear-gradient(90deg, #27ae60, #229954);
+        }
+
+        .stat-card.agendadas::before {
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+
+        .stat-card.total i { color: #3498db; }
+        .stat-card.em-andamento i { color: #f39c12; }
+        .stat-card.finalizadas i { color: #27ae60; }
+        .stat-card.agendadas i { color: #9b59b6; }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .stat-card .label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.75rem;
+        }
+
+        /* Cards e componentes */
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            background: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            background: #f8f9fa;
+            color: var(--text-primary);
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+        }
+
+        .card-header.bg-dark {
+            background: #343A40 !important;
+            color: white !important;
+        }
+
+        /* Formulários */
+        .form-control, .form-select {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            background: #ffffff;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+            outline: none;
+        }
+
+        /* Botões */
+        .btn {
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            text-transform: none;
+            font-size: 0.85rem;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            border-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-info {
+            background: var(--info-color);
+            border-color: var(--info-color);
+            color: white;
+        }
+
+        /* Tabelas */
+        .table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+
+        .table thead th {
+            background: #f8f9fa;
+            color: var(--text-primary);
+            font-weight: 600;
+            border: none;
+            padding: 1rem 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .table tbody td {
+            padding: 1rem 0.75rem;
+            border-bottom: 1px solid #f1f3f4;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Badges */
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        .badge-status-em-andamento {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .badge-status-finalizada {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #b8daff;
+        }
+
+        .badge-status-agendada {
+            background: #e2e3e5;
+            color: #383d41;
+            border: 1px solid #d6d8db;
+        }
+
+        .badge-status-cancelada {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f1b0b7;
+        }
+
+        /* Avatares de atletas */
+        .athlete-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f8f9fa;
+        }
+
+        .athlete-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .athlete-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .athlete-academy {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Resultado da partida */
+        .match-result {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .header {
+                margin: -1rem -1rem 1rem -1rem;
+            }
+
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+
+            .table-responsive {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Filtros */
+        .filters-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .search-section {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 0.5rem;
+        }
+
+        .input-group-text {
+            background: white;
+            border-right: none;
+            color: var(--text-secondary);
+        }
+
+        .input-group .form-control {
+            border-left: none;
+        }
+
+        .input-group .form-control:focus {
+            border-left: none;
+            box-shadow: none;
+        }
+
+        /* Paginação */
+        .pagination .page-link {
+            color: var(--primary-color);
+            border-color: var(--border-color);
+            padding: 0.5rem 0.75rem;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .pagination .page-link:hover {
+            background-color: #f8f9fa;
+            border-color: var(--primary-color);
+        }
+    </style>
 </head>
 <body>
 
@@ -20,324 +369,373 @@
     <!-- Conteúdo Principal -->
     <div class="content" id="content">
         <!-- Header -->
-        <div class="header" style="background: #343A40;">
+        <div class="header">
             <div class="container-fluid">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h2><i class="bi bi-calendar-check"></i> Histórico de Partidas</h2>
+                    <div>
+                        <h2><i class="bi bi-calendar-check me-2"></i>Histórico de Partidas</h2>
+                        <p class="mb-0 opacity-75">Gerencie e acompanhe todas as partidas realizadas</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-light btn-sm me-2" onclick="window.print()">
+                            <i class="bi bi-printer me-1"></i>Imprimir
+                        </button>
+                        <button class="btn btn-info btn-sm" onclick="exportarRelatorio()">
+                            <i class="bi bi-file-earmark-excel me-1"></i>Exportar
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <!-- Conteúdo -->
-        <main class="container-fluid py-4">
-            <!-- Filtros -->
-            <div class="row mb-4">
-                <div class="col-md-4 mb-3">
+        <!-- Estatísticas -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="stat-card total">
+                    <i class="bi bi-calendar-event"></i>
+                    <div class="number">{{ total_partidas|default:0 }}</div>
+                    <div class="label">Total de Partidas</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="stat-card em-andamento">
+                    <i class="bi bi-play-circle"></i>
+                    <div class="number">{{ partidas_em_andamento|default:0 }}</div>
+                    <div class="label">Em Andamento</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="stat-card finalizadas">
+                    <i class="bi bi-check-circle"></i>
+                    <div class="number">{{ partidas_finalizadas|default:0 }}</div>
+                    <div class="label">Finalizadas</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="stat-card agendadas">
+                    <i class="bi bi-clock"></i>
+                    <div class="number">{{ partidas_agendadas|default:0 }}</div>
+                    <div class="label">Agendadas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-card">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Buscar</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" placeholder="Buscar partida...">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" name="q" 
+                               value="{{ search_query }}" 
+                               placeholder="Nome do atleta, competição...">
                     </div>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <select class="form-select">
-                        <option selected>Todas as competições</option>
-                        <option>Copa Regional 2025</option>
-                        <option>Torneio Estadual</option>
+                <div class="col-md-3">
+                    <label class="form-label">Competição</label>
+                    <select class="form-select" name="competicao">
+                        <option value="">Todas as competições</option>
+                        {% for comp in competicoes %}
+                            <option value="{{ comp.id }}" {% if comp.id|stringformat:"s" == competicao_selecionada %}selected{% endif %}>
+                                {{ comp.nome }}
+                            </option>
+                        {% endfor %}
                     </select>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <input type="date" class="form-control">
+                <div class="col-md-2">
+                    <label class="form-label">Data</label>
+                    <input type="date" class="form-control" name="data" value="{{ data_filtro }}">
                 </div>
-                <div class="col-md-1 mb-3">
-                    <button type="button" class="btn btn-warning w-100 d-inline-flex align-items-center justify-content-center">
-                        <i class="bi bi-eraser me-2"></i> Limpar
+                <div class="col-md-2">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" name="status">
+                        <option value="">Todos os status</option>
+                        <option value="em_andamento" {% if status_filtro == 'em_andamento' %}selected{% endif %}>Em Andamento</option>
+                        <option value="finalizada" {% if status_filtro == 'finalizada' %}selected{% endif %}>Finalizada</option>
+                        <option value="agendada" {% if status_filtro == 'agendada' %}selected{% endif %}>Agendada</option>
+                    </select>
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i>
                     </button>
                 </div>
-                <div class="col-md-1 mb-3">
-                    <button type="button" class="btn btn-info w-100 d-inline-flex align-items-center justify-content-center">
-                        <i class="bi bi-search me-2"></i> Buscar
-                    </button>
-                </div>                                
+            </form>
+        </div>
+        
+        <!-- Tabela de Partidas -->
+        <div class="card">
+            <div class="card-header bg-dark">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-ul me-2"></i>Partidas Realizadas
+                    </h5>
+                    <div>
+                        <button class="btn btn-outline-light btn-sm me-2">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Atualizar
+                        </button>
+                        <button class="btn btn-outline-light btn-sm me-2">
+                            <i class="bi bi-printer me-1"></i>Imprimir
+                        </button>
+                        <button class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-download me-1"></i>Exportar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if partidas %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-calendar3 me-1"></i>Data/Hora</th>
+                                <th><i class="bi bi-person me-1"></i>Atleta 1</th>
+                                <th><i class="bi bi-vs me-1"></i>VS</th>
+                                <th><i class="bi bi-person me-1"></i>Atleta 2</th>
+                                <th><i class="bi bi-trophy me-1"></i>Competição</th>
+                                <th><i class="bi bi-tag me-1"></i>Categoria</th>
+                                <th><i class="bi bi-award me-1"></i>Resultado</th>
+                                <th><i class="bi bi-flag me-1"></i>Status</th>
+                                <th><i class="bi bi-gear me-1"></i>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for partida in partidas %}
+                            <tr>
+                                <td>
+                                    {% if partida.data_inicio %}
+                                        {{ partida.data_inicio|date:"d/m/Y" }}<br>
+                                        <small class="text-muted">{{ partida.data_inicio|time:"H:i" }}</small>
+                                    {% else %}
+                                        <span class="text-muted">Não definida</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="athlete-info">
+                                        {% if partida.atleta1.foto %}
+                                            <img src="{{ partida.atleta1.foto.url }}" class="athlete-avatar" alt="{{ partida.atleta1.nome_completo }}">
+                                        {% else %}
+                                            <div class="athlete-avatar bg-secondary d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-person text-white"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="athlete-name">{{ partida.atleta1.nome_completo }}</div>
+                                            {% if partida.atleta1.academia %}
+                                                <div class="athlete-academy">{{ partida.atleta1.academia.nome }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <i class="bi bi-vs fs-5 text-muted"></i>
+                                </td>
+                                <td>
+                                    <div class="athlete-info">
+                                        {% if partida.atleta2.foto %}
+                                            <img src="{{ partida.atleta2.foto.url }}" class="athlete-avatar" alt="{{ partida.atleta2.nome_completo }}">
+                                        {% else %}
+                                            <div class="athlete-avatar bg-secondary d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-person text-white"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="athlete-name">{{ partida.atleta2.nome_completo }}</div>
+                                            {% if partida.atleta2.academia %}
+                                                <div class="athlete-academy">{{ partida.atleta2.academia.nome }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">{{ partida.competicao.nome }}</div>
+                                    <small class="text-muted">{{ partida.competicao.modalidade }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark">{{ partida.categoria.nome }}</span>
+                                </td>
+                                <td>
+                                    {% if partida.status == 'finalizada' %}
+                                        <div class="match-result">
+                                            {{ partida.pontos_atleta1 }} - {{ partida.pontos_atleta2 }}
+                                        </div>
+                                        {% if partida.vencedor %}
+                                            <small class="text-success">
+                                                <i class="bi bi-trophy-fill me-1"></i>{{ partida.vencedor.nome_completo }}
+                                            </small>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if partida.status == 'em_andamento' %}
+                                        <span class="badge badge-status-em-andamento">
+                                            <i class="bi bi-play-circle me-1"></i>Em Andamento
+                                        </span>
+                                    {% elif partida.status == 'finalizada' %}
+                                        <span class="badge badge-status-finalizada">
+                                            <i class="bi bi-check-circle me-1"></i>Finalizada
+                                        </span>
+                                    {% elif partida.status == 'agendada' %}
+                                        <span class="badge badge-status-agendada">
+                                            <i class="bi bi-clock me-1"></i>Agendada
+                                        </span>
+                                    {% elif partida.status == 'cancelada' %}
+                                        <span class="badge badge-status-cancelada">
+                                            <i class="bi bi-x-circle me-1"></i>Cancelada
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{% url 'partidas_chaveamento:chaveamento' %}?partida_id={{ partida.id }}" 
+                                           class="btn btn-outline-primary btn-sm" 
+                                           title="Ver Chaveamento">
+                                            <i class="bi bi-diagram-3"></i>
+                                        </a>
+                                        {% if partida.status != 'finalizada' %}
+                                        <button class="btn btn-outline-warning btn-sm" 
+                                                title="Editar" 
+                                                data-mdb-toggle="modal" 
+                                                data-mdb-target="#editMatchModal"
+                                                onclick="editMatch({{ partida.id }})">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        {% endif %}
+                                        <button class="btn btn-outline-info btn-sm" 
+                                                title="Relatório"
+                                                onclick="generateReport({{ partida.id }})">
+                                            <i class="bi bi-file-text"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
+                    <h5 class="text-muted">Nenhuma partida encontrada</h5>
+                    <p class="text-muted">Não há partidas iniciadas no momento ou que correspondam aos filtros aplicados.</p>
+                </div>
+                {% endif %}
             </div>
             
-            <!-- Tabela de Partidas -->
-            <div class="card">
-                <div class="card-header" style="background-color: #343A40;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">
-                            <i class="bi bi-clock-history me-2"></i>Últimas Partidas
-                        </h5>
-                        <div>
-                            <button class="btn btn-sm btn-primary me-2 border border-white">
-                                <i class="bi bi-printer"></i> Imprimir
-                            </button>
-                            <button class="btn btn-sm btn-success border border-white">
-                                <i class="bi bi-download"></i> Exportar
-                            </button>
-                        </div>                                                
+            {% if partidas.has_other_pages %}
+            <div class="card-footer bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-muted small">
+                        Mostrando {{ partidas.start_index }} a {{ partidas.end_index }} de {{ partidas.paginator.count }} partidas
                     </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Equipe 1</th>
-                                    <th>Equipe 2</th>
-                                    <th>Local</th>
-                                    <th>Árbitro</th>
-                                    <th>Resultado</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>20/03/2025<br><small class="text-muted">14:00</small></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Equipe A">
-                                            <span>Equipe A</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Equipe B">
-                                            <span>Equipe B</span>
-                                        </div>
-                                    </td>
-                                    <td>Estádio Central</td>
-                                    <td>Pai Erminio</td>
-                                    <td><span class="badge badge-win badge-result">2-1</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1" title="Detalhes" data-mdb-toggle="modal" data-mdb-target="#viewModal">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        
-                                        <button class="btn btn-sm btn-outline-secondary" title="Editar" data-mdb-toggle="modal" data-mdb-target="#editMatchModal">
-                                            <i class="bi bi-pencil"></i>
-                                          </button>
-                                          
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>21/03/2025<br><small class="text-muted">16:30</small></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Equipe C">
-                                            <span>Equipe C</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Equipe D">
-                                            <span>Equipe D</span>
-                                        </div>
-                                    </td>
-                                    <td>Estádio Norte</td>
-                                    <td>Alan</td>
-                                    <td><span class="badge badge-win badge-result">3-0</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-secondary" title="Editar">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>22/03/2025<br><small class="text-muted">10:00</small></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Equipe E">
-                                            <span>Equipe E</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Equipe F">
-                                            <span>Equipe F</span>
-                                        </div>
-                                    </td>
-                                    <td>Estádio Sul</td>
-                                    <td>Luan</td>
-                                    <td><span class="badge badge-draw badge-result">1-1</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-secondary" title="Editar">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>23/03/2025<br><small class="text-muted">15:45</small></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Equipe G">
-                                            <span>Equipe G</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Equipe H">
-                                            <span>Equipe H</span>
-                                        </div>
-                                    </td>
-                                    <td>Estádio Leste</td>
-                                    <td>Marcus</td>
-                                    <td><span class="badge badge-loss badge-result">0-2</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-secondary" title="Editar">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>24/03/2025<br><small class="text-muted">19:00</small></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Equipe I">
-                                            <span>Equipe I</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Equipe J">
-                                            <span>Equipe J</span>
-                                        </div>
-                                    </td>
-                                    <td>Estádio Oeste</td>
-                                    <td>Emanuel</td>
-                                    <td><span class="badge badge-win badge-result">4-3</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary me-1" title="Detalhes">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-secondary" title="Editar">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="card-footer bg-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="text-muted small">
-                            Mostrando 1 a 5 de 25 partidas
-                        </div>
-                        <nav>
-                            <ul class="pagination pagination-sm mb-0">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1">Anterior</a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            {% if partidas.has_previous %}
                                 <li class="page-item">
-                                    <a class="page-link" href="#">Próximo</a>
+                                    <a class="page-link" href="?page={{ partidas.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if competicao_selecionada %}&competicao={{ competicao_selecionada }}{% endif %}{% if data_filtro %}&data={{ data_filtro }}{% endif %}{% if status_filtro %}&status={{ status_filtro }}{% endif %}">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
                                 </li>
-                            </ul>
-                        </nav>
-                    </div>
+                            {% endif %}
+                            
+                            {% for num in partidas.paginator.page_range %}
+                                {% if partidas.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > partidas.number|add:'-3' and num < partidas.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if competicao_selecionada %}&competicao={{ competicao_selecionada }}{% endif %}{% if data_filtro %}&data={{ data_filtro }}{% endif %}{% if status_filtro %}&status={{ status_filtro }}{% endif %}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if partidas.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ partidas.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if competicao_selecionada %}&competicao={{ competicao_selecionada }}{% endif %}{% if data_filtro %}&data={{ data_filtro }}{% endif %}{% if status_filtro %}&status={{ status_filtro }}{% endif %}">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
                 </div>
             </div>
-        </main>
+            {% endif %}
+        </div>
     </div>
 
     <!-- Modal Detalhes da Partida -->
-<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content custom-modal">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewModalLabel"><i class="bi bi-trophy me-2"></i>Detalhes da Partida</h5>
-                <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong><i class="bi bi-calendar me-2"></i>Data:</strong> 20/03/2025</p>
-                        <p><strong><i class="bi bi-clock me-2"></i>Horário:</strong> 14:00</p>
-                        <p><strong><i class="bi bi-geo-alt me-2"></i>Local:</strong> Estádio Central</p>
-                        <p><strong><i class="bi bi-person-badge me-2"></i>Árbitro:</strong> Pai Erminio</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong><i class="bi bi-people me-2"></i>Equipes:</strong> Equipe A vs Equipe B</p>
-                        <p><strong><i class="bi bi-list-ol me-2"></i>Resultado:</strong> 2 - 1</p>
-                        <p><strong><i class="bi bi-info-circle me-2"></i>Status:</strong> <span class="badge badge-active">Finalizada</span></p>
+    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="viewModalLabel">
+                        <i class="bi bi-eye me-2"></i>Detalhes da Partida
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="match-details-content">
+                        <!-- Conteúdo será carregado via JavaScript -->
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <hr>
-                <h6 class="fw-bold"><i class="bi bi-journal-text me-2"></i>Resumo da Partida</h6>
-                <p>Partida equilibrada entre Equipe A e Equipe B. Equipe A levou a melhor com um gol no segundo tempo.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-mdb-dismiss="modal">Fechar</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Fechar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="printMatchDetails()">
+                        <i class="bi bi-printer me-2"></i>Imprimir
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Modal Editar Partida -->
-<div class="modal fade" id="editMatchModal" tabindex="-1" aria-labelledby="editMatchModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content custom-modal">
-        <div class="modal-header text-white bg-dark">
-          <h5 class="modal-title" id="editMatchModalLabel"><i class="bi bi-pencil-square me-2"></i>Editar Partida</h5>
-          <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Fechar"></button>
+    <!-- Modal Editar Partida -->
+    <div class="modal fade" id="editMatchModal" tabindex="-1" aria-labelledby="editMatchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="editMatchModalLabel">
+                        <i class="bi bi-pencil-square me-2"></i>Editar Partida
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editMatchForm">
+                        <div id="edit-match-content">
+                            <!-- Conteúdo será carregado via JavaScript -->
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Carregando...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="saveMatchChanges()">
+                        <i class="bi bi-check-circle me-2"></i>Salvar Alterações
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          <form id="editMatchForm">
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="editMatchDate" class="form-label">Data</label>
-                <input type="date" class="form-control" id="editMatchDate" value="2025-03-20" required>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="editMatchTime" class="form-label">Horário</label>
-                <input type="time" class="form-control" id="editMatchTime" value="14:00" required>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="editTeam1" class="form-label">Equipe 1</label>
-                <input type="text" class="form-control" id="editTeam1" value="Equipe A" required>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="editTeam2" class="form-label">Equipe 2</label>
-                <input type="text" class="form-control" id="editTeam2" value="Equipe B" required>
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="editLocation" class="form-label">Local</label>
-              <input type="text" class="form-control" id="editLocation" value="Estádio Central" required>
-            </div>
-            <div class="mb-3">
-              <label for="editReferee" class="form-label">Árbitro</label>
-              <input type="text" class="form-control" id="editReferee" value="Pai Erminio" required>
-            </div>
-            <div class="mb-3">
-              <label for="editScore" class="form-label">Resultado</label>
-              <input type="text" class="form-control" id="editScore" value="2-1" required>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-mdb-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-success" onclick="saveMatchChanges()">Salvar Alterações</button>
-        </div>
-      </div>
     </div>
-  </div>
 
-    <!-- MDB JS -->
+    <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
     <script src="{% static 'partidas_chaveamento/js/partidas.js' %}"></script>
     
