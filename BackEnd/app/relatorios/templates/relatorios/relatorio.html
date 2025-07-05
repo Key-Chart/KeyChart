@@ -1,267 +1,953 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- MDB CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
-    <link rel="stylesheet" href="{% static 'configuracoes/css/configuracoes.css' %}">
-    <title>Relatórios | KeyChart</title>
+    <title>Relatórios - KeyChart</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Estilos customizados -->
+    <link rel="stylesheet" href="{% static 'relatorios/css/relatorio.css' %}">
+    
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #ecf0f1;
+            --accent-color: #27ae60;
+            --success-color: #27ae60;
+            --info-color: #3498db;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --card-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --border-color: #bdc3c7;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ecf0f1;
+        }
+
+        .content {
+            margin-left: 250px;
+            transition: all 0.2s ease;
+            min-height: 100vh;
+            background-color: #ecf0f1;
+            padding: 2rem;
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 992px) {
+            .content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #343A40 0%, #495057 100%);
+            color: #ffffff;
+            border-bottom: 1px solid #495057;
+            padding: 1.5rem 2rem;
+            margin: -2rem -2rem 2rem -2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+
+        /* Botões do header melhorados */
+        .btn-group .btn {
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            border-radius: 8px;
+            margin-left: 0.5rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-outline-primary {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-outline-primary:hover {
+            background: #007bff;
+            border-color: #007bff;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0, 123, 255, 0.2);
+        }
+
+        .btn-outline-success {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-outline-success:hover {
+            background: #28a745;
+            border-color: #28a745;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(40, 167, 69, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border: none;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0, 86, 179, 0.3);
+        }
+
+        /* Cards melhorados */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            background: #ffffff;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff, #28a745, #ffc107, #dc3545);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid #dee2e6;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Cards de estatísticas especiais */
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: none;
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #007bff, #28a745);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem auto;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .bg-primary { 
+            background: linear-gradient(135deg, #007bff, #0056b3) !important; 
+        }
+        .bg-success { 
+            background: linear-gradient(135deg, #28a745, #1e7e34) !important; 
+        }
+        .bg-info { 
+            background: linear-gradient(135deg, #17a2b8, #117a8b) !important; 
+        }
+        .bg-warning { 
+            background: linear-gradient(135deg, #ffc107, #e0a800) !important; 
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #343a40;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-detail {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
-
+    <!-- Sidebar -->
     {% include 'sidebar.html' %}
 
     <!-- Conteúdo Principal -->
     <div class="content" id="content">
-        <!-- Header -->
-        <div class="header" style="background: #343A40;">
-            <div class="container-fluid">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h2 style="color: rgb(255, 255, 255);"><i class="bi bi-file-earmark-text"></i> Relatórios</h2>
-                    <button class="btn btn-sm" style="background-color: white; color: #343A40; border: 1px solid #ccc;">
-                        <i class="bi bi-question-circle"></i> Ajuda
-                    </button>                    
+        <div class="container-fluid">
+            <!-- Header da página -->
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="page-title">
+                            <i class="bi bi-file-earmark-text-fill text-primary"></i>
+                            Relatórios Analíticos
+                        </h1>
+                        <p class="page-subtitle">Dashboard completo com insights e métricas do sistema</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary" onclick="exportReport('pdf')">
+                                <i class="bi bi-file-pdf"></i> Exportar PDF
+                            </button>
+                            <button type="button" class="btn btn-outline-success" onclick="exportReport('excel')">
+                                <i class="bi bi-file-excel"></i> Exportar Excel
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="refreshData()">
+                                <i class="bi bi-arrow-clockwise"></i> Atualizar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cartões de Estatísticas Principais -->
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <i class="bi bi-trophy-fill"></i>
+                        <div class="number">{{ total_competicoes }}</div>
+                        <div class="label">Total de Competições</div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card success">
+                        <i class="bi bi-people-fill"></i>
+                        <div class="number">{{ total_atletas }}</div>
+                        <div class="label">Atletas Registrados</div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card info">
+                        <i class="bi bi-calendar-check-fill"></i>
+                        <div class="number">{{ total_partidas }}</div>
+                        <div class="label">Partidas (30 dias)</div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card warning">
+                        <i class="bi bi-star-fill"></i>
+                        <div class="number">{{ media_notas_kata }}</div>
+                        <div class="label">Média Kata</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Filtros -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0" style="color: #343A40;">
+                                <i class="bi bi-funnel me-2"></i>Filtros Avançados
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form class="row g-3">
+                                <div class="col-md-3">
+                                    <label for="competicaoFiltro" class="form-label">Competição</label>
+                                    <select class="form-select" id="competicaoFiltro">
+                                        <option value="">Todas</option>
+                                        <option value="competicao1">Campeonato A</option>
+                                        <option value="competicao2">Campeonato B</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="periodoFiltro" class="form-label">Período</label>
+                                    <select class="form-select" id="periodoFiltro">
+                                        <option value="30">Últimos 30 dias</option>
+                                        <option value="90">Últimos 3 meses</option>
+                                        <option value="365">Último ano</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="categoriaFiltro" class="form-label">Categoria</label>
+                                    <select class="form-select" id="categoriaFiltro">
+                                        <option value="">Todas</option>
+                                        <option value="kata">Kata</option>
+                                        <option value="kumite">Kumite</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
+                                    <button type="button" class="btn btn-primary w-100" onclick="aplicarFiltros()">
+                                        <i class="bi bi-search me-1"></i>Aplicar Filtros
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos e Análises -->
+            <div class="row mb-4">
+                <!-- Gráfico de Evolução de Inscrições -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-graph-up"></i>
+                                Evolução de Inscrições
+                            </h5>
+                            <div class="card-tools">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="toggleChartType('inscricoes')">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="inscricoesChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Distribuição por Sexo -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-pie-chart"></i>
+                                Distribuição por Sexo
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="sexoChart" width="300" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segunda linha de gráficos -->
+            <div class="row mb-4">
+                <!-- Status das Partidas -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-activity"></i>
+                                Status das Partidas
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="partidasChart" width="300" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Distribuição por Faixas Etárias -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-people"></i>
+                                Faixas Etárias
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="idadesChart" width="300" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Distribuição por Faixas -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-award"></i>
+                                Distribuição por Faixas
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="faixasChart" width="300" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabelas de Rankings e Dados -->
+            <div class="row mb-4">
+                <!-- Top Atletas Kata -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card data-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-trophy"></i>
+                                Top 10 Atletas - Kata
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Atleta</th>
+                                            <th>Academia</th>
+                                            <th>Média</th>
+                                            <th>Participações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for atleta in top_atletas_kata %}
+                                        <tr>
+                                            <td>
+                                                <span class="ranking-badge">{{ forloop.counter }}</span>
+                                            </td>
+                                            <td>
+                                                <strong>{{ atleta.atleta__nome_completo }}</strong>
+                                                <br><small class="text-muted">{{ atleta.atleta__estado }}</small>
+                                            </td>
+                                            <td>{{ atleta.atleta__academia__nome|default:"N/A" }}</td>
+                                            <td>
+                                                <span class="score-badge">{{ atleta.media_total|floatformat:2 }}</span>
+                                            </td>
+                                            <td>{{ atleta.participacoes }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted">
+                                                <i class="bi bi-info-circle"></i>
+                                                Nenhum dado disponível
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Academias -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card data-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-building"></i>
+                                Top 10 Academias
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Academia</th>
+                                            <th>Localização</th>
+                                            <th>Atletas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for academia in top_academias %}
+                                        <tr>
+                                            <td>
+                                                <span class="ranking-badge">{{ forloop.counter }}</span>
+                                            </td>
+                                            <td>
+                                                <strong>{{ academia.academia__nome }}</strong>
+                                            </td>
+                                            <td>
+                                                {{ academia.academia__cidade }}/{{ academia.academia__estado }}
+                                            </td>
+                                            <td>
+                                                <span class="count-badge">{{ academia.total_atletas }}</span>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">
+                                                <i class="bi bi-info-circle"></i>
+                                                Nenhum dado disponível
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dados de Estados e Categorias -->
+            <div class="row mb-4">
+                <!-- Distribuição por Estados -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card data-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-geo-alt"></i>
+                                Top Estados
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress-list">
+                                {% for estado in distribuicao_estados %}
+                                <div class="progress-item">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="state-name">{{ estado.estado }}</span>
+                                        <span class="state-count">{{ estado.total }}</span>
+                                    </div>
+                                    <div class="progress progress-sm">
+                                        <div class="progress-bar bg-primary" role="progressbar" 
+                                             style="width: {% widthratio estado.total total_atletas 100 %}%"></div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <p class="text-muted text-center">
+                                    <i class="bi bi-info-circle"></i>
+                                    Nenhum dado disponível
+                                </p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categorias Mais Populares -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card data-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-tags"></i>
+                                Categorias Populares
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="category-list">
+                                {% for categoria in categorias_populares %}
+                                <div class="category-item">
+                                    <div class="category-info">
+                                        <h6 class="category-name">{{ categoria.nome }}</h6>
+                                        <small class="text-muted">
+                                            {{ categoria.get_sexo_display }} - {{ categoria.get_tipo_display }}
+                                        </small>
+                                    </div>
+                                    <div class="category-count">
+                                        <span class="badge bg-primary">{{ categoria.total_atletas }}</span>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <p class="text-muted text-center">
+                                    <i class="bi bi-info-circle"></i>
+                                    Nenhum dado disponível
+                                </p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Competições Recentes -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card data-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-calendar-event"></i>
+                                Competições Recentes
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="competition-list">
+                                {% for competicao in competicoes_recentes %}
+                                <div class="competition-item">
+                                    <div class="competition-info">
+                                        <h6 class="competition-name">{{ competicao.nome }}</h6>
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar3"></i>
+                                            {{ competicao.data_inicio|date:"d/m/Y" }}
+                                        </small>
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="bi bi-geo-alt"></i>
+                                            {{ competicao.local }}
+                                        </small>
+                                    </div>
+                                    <div class="competition-status">
+                                        {% if competicao.status == 'Ativa' %}
+                                            <span class="badge bg-success">{{ competicao.status }}</span>
+                                        {% elif competicao.status == 'Finalizada' %}
+                                            <span class="badge bg-secondary">{{ competicao.status }}</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">{{ competicao.status }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <p class="text-muted text-center">
+                                    <i class="bi bi-info-circle"></i>
+                                    Nenhum dado disponível
+                                </p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Relatórios por Tipo -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0" style="color: #343A40;">
+                                <i class="bi bi-clipboard-data me-2"></i>Relatórios Específicos
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-4">
+                                <!-- Relatório de Desempenho das Equipes -->
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="card-title mb-0" style="color: #343A40;">
+                                                    <i class="bi bi-graph-up me-2"></i>Desempenho das Equipes
+                                                </h6>
+                                                <span class="badge bg-primary">Análise</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="text-muted">Selecione a competição e o período para gerar o relatório de desempenho das equipes:</p>
+                                            <form>
+                                                <div class="row">
+                                                    <div class="col-12 mb-3">
+                                                        <label for="competicaoRelatorio" class="form-label">Competição</label>
+                                                        <select class="form-select" id="competicaoRelatorio" required>
+                                                            <option value="">Escolha a Competição</option>
+                                                            <option value="competicao1">Campeonato A</option>
+                                                            <option value="competicao2">Campeonato B</option>
+                                                            <option value="competicao3">Copa Regional 2025</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-12 mb-3">
+                                                        <label for="dataRelatorio" class="form-label">Período</label>
+                                                        <input type="date" class="form-control" id="dataRelatorio" required>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="bi bi-file-earmark-bar-graph me-1"></i> Gerar Relatório
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-secondary">
+                                                        <i class="bi bi-download me-1"></i> Exportar
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Relatório de Desempenho Individual -->
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="card-title mb-0" style="color: #343A40;">
+                                                    <i class="bi bi-person-lines-fill me-2"></i>Desempenho Individual
+                                                </h6>
+                                                <span class="badge bg-info">Detalhado</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="text-muted">Selecione o atleta e a competição para gerar o relatório de desempenho individual:</p>
+                                            <form>
+                                                <div class="row">
+                                                    <div class="col-12 mb-3">
+                                                        <label for="atletaRelatorio" class="form-label">Atleta</label>
+                                                        <select class="form-select" id="atletaRelatorio" required>
+                                                            <option value="">Escolha o Atleta</option>
+                                                            <option value="atleta1">Atleta A</option>
+                                                            <option value="atleta2">Atleta B</option>
+                                                            <option value="atleta3">Atleta C</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-12 mb-3">
+                                                        <label for="competicaoAtleta" class="form-label">Competição</label>
+                                                        <select class="form-select" id="competicaoAtleta" required>
+                                                            <option value="">Escolha a Competição</option>
+                                                            <option value="competicao1">Campeonato A</option>
+                                                            <option value="competicao2">Campeonato B</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="bi bi-file-earmark-person me-1"></i> Gerar Relatório
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-secondary">
+                                                        <i class="bi bi-download me-1"></i> Exportar
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Relatório de Partidas -->
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="card-title mb-0" style="color: #343A40;">
+                                                    <i class="bi bi-calendar-check me-2"></i>Partidas
+                                                </h6>
+                                                <span class="badge bg-success">Estatísticas</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="text-muted">Selecione a data ou a competição para gerar o relatório de partidas (placares e estatísticas):</p>
+                                            <form>
+                                                <div class="row">
+                                                    <div class="col-12 mb-3">
+                                                        <label for="competicaoPartidas" class="form-label">Competição</label>
+                                                        <select class="form-select" id="competicaoPartidas" required>
+                                                            <option value="">Escolha a Competição</option>
+                                                            <option value="competicao1">Campeonato A</option>
+                                                            <option value="competicao2">Campeonato B</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-12 mb-3">
+                                                        <label for="dataPartidas" class="form-label">Data</label>
+                                                        <input type="date" class="form-control" id="dataPartidas" required>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Gerar Relatório
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-secondary">
+                                                        <i class="bi bi-download me-1"></i> Exportar
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Relatório Financeiro -->
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="card-title mb-0" style="color: #343A40;">
+                                                    <i class="bi bi-cash-stack me-2"></i>Financeiro
+                                                </h6>
+                                                <span class="badge bg-warning">Monetário</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="text-muted">Se houver taxas de inscrição, você pode gerar o relatório financeiro aqui:</p>
+                                            <form>
+                                                <div class="row">
+                                                    <div class="col-12 mb-3">
+                                                        <label for="competicaoFinanceiro" class="form-label">Competição</label>
+                                                        <select class="form-select" id="competicaoFinanceiro" required>
+                                                            <option value="">Escolha a Competição</option>
+                                                            <option value="competicao1">Campeonato A</option>
+                                                            <option value="competicao2">Campeonato B</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-12 mb-3">
+                                                        <label for="periodoFinanceiro" class="form-label">Período</label>
+                                                        <input type="month" class="form-control" id="periodoFinanceiro">
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="bi bi-file-earmark-bar-graph me-1"></i> Gerar Relatório
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-secondary">
+                                                        <i class="bi bi-download me-1"></i> Exportar
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rodapé com informações do relatório -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card report-footer">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <h6 class="mb-1">
+                                        <i class="bi bi-info-circle-fill text-primary"></i>
+                                        Informações do Relatório
+                                    </h6>
+                                    <p class="text-muted mb-0">
+                                        Relatório gerado automaticamente em {{ "now"|date:"d/m/Y H:i" }}
+                                    </p>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <small class="text-muted">
+                                        <strong>KeyChart System</strong> - Dashboard Analítico
+                                        <br>
+                                        Dados atualizados em tempo real
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Conteúdo -->
-        <main class="container-fluid py-4">
-            <!-- Filtros Gerais -->
-            <div class="row mb-4">
-                <div class="col-md-4 mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" placeholder="Buscar relatório...">
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <select class="form-select">
-                        <option selected>Todas as competições</option>
-                        <option>Copa Regional 2025</option>
-                        <option>Torneio Estadual</option>
-                    </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <input type="date" class="form-control">
-                </div>
-            </div>
-            
-            <!-- Relatório de Desempenho das Equipes -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0" style="color: #343A40;">
-                            <i class="bi bi-graph-up me-2"></i>Desempenho das Equipes
-                        </h5>
-                        <span class="badge-report" style="color: #343A40;">Análise</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">Selecione a competição e o período para gerar o relatório de desempenho das equipes:</p>
-                    <form>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="competicaoRelatorio" class="form-label">Competição</label>
-                                <select class="form-select" id="competicaoRelatorio" required>
-                                    <option value="">Escolha a Competição</option>
-                                    <option value="competicao1">Campeonato A</option>
-                                    <option value="competicao2">Campeonato B</option>
-                                    <option value="competicao3">Copa Regional 2025</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="dataRelatorio" class="form-label">Período</label>
-                                <input type="date" class="form-control" id="dataRelatorio" required>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-file-earmark-bar-graph me-1"></i> Gerar Relatório
-                            </button>
-                            <button type="button" class="btn btn-outline-black">
-                                <i class="bi bi-download me-1"></i> Exportar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Relatório de Desempenho Individual -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0" style="color: #343A40;">
-                            <i class="bi bi-person-lines-fill me-2"></i>Desempenho Individual
-                        </h5>
-                        <span class="badge-report" style="color: #343A40;">Detalhado</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">Selecione o jogador e a competição para gerar o relatório de desempenho individual:</p>
-                    <form>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="jogadorRelatorio" class="form-label">Jogador</label>
-                                <select class="form-select" id="jogadorRelatorio" required>
-                                    <option value="">Escolha o Jogador</option>
-                                    <option value="jogador1">Jogador A</option>
-                                    <option value="jogador2">Jogador B</option>
-                                    <option value="jogador3">Jogador C</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="competicaoJogador" class="form-label">Competição</label>
-                                <select class="form-select" id="competicaoJogador" required>
-                                    <option value="">Escolha a Competição</option>
-                                    <option value="competicao1">Campeonato A</option>
-                                    <option value="competicao2">Campeonato B</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-file-earmark-person me-1"></i> Gerar Relatório
-                            </button>
-                            <button type="button" class="btn btn-outline-black">
-                                <i class="bi bi-download me-1"></i> Exportar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Relatório de Partidas -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0" style="color: #343A40;">
-                            <i class="bi bi-calendar-check me-2"></i>Partidas
-                        </h5>
-                        <span class="badge-report" style="color: #343A40;">Estatísticas</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">Selecione a data ou a competição para gerar o relatório de partidas (placares e estatísticas):</p>
-                    <form>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="competicaoPartidas" class="form-label">Competição</label>
-                                <select class="form-select" id="competicaoPartidas" required>
-                                    <option value="">Escolha a Competição</option>
-                                    <option value="competicao1">Campeonato A</option>
-                                    <option value="competicao2">Campeonato B</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="dataPartidas" class="form-label">Data</label>
-                                <input type="date" class="form-control" id="dataPartidas" required>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Gerar Relatório
-                            </button>
-                            <button type="button" class="btn btn-outline-black">
-                                <i class="bi bi-download me-1"></i> Exportar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Relatório de Cartões e Penalizações -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0" style="color: #343A40;">
-                            <i class="bi bi-exclamation-triangle me-2"></i>Cartões e Penalizações
-                        </h5>
-                        <span class="badge-report" style="color: #343A40;">Disciplinar</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">Selecione a competição para gerar o relatório de cartões e penalizações:</p>
-                    <form>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="competicaoCartoes" class="form-label">Competição</label>
-                                <select class="form-select" id="competicaoCartoes" required>
-                                    <option value="">Escolha a Competição</option>
-                                    <option value="competicao1">Campeonato A</option>
-                                    <option value="competicao2">Campeonato B</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="tipoCartoes" class="form-label">Tipo de Cartão</label>
-                                <select class="form-select" id="tipoCartoes">
-                                    <option value="">Todos</option>
-                                    <option value="amarelo">Amarelo</option>
-                                    <option value="vermelho">Vermelho</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-file-earmark-medical me-1"></i> Gerar Relatório
-                            </button>
-                            <button type="button" class="btn btn-outline-black">
-                                <i class="bi bi-download me-1"></i> Exportar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Relatório Financeiro -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0" style="color: #343A40;">
-                            <i class="bi bi-cash-stack me-2"></i>Financeiro
-                        </h5>
-                        <span class="badge-report" style="color: #343A40;">Monetário</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">Se houver taxas de inscrição, você pode gerar o relatório financeiro aqui:</p>
-                    <form>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="competicaoFinanceiro" class="form-label">Competição</label>
-                                <select class="form-select" id="competicaoFinanceiro" required>
-                                    <option value="">Escolha a Competição</option>
-                                    <option value="competicao1">Campeonato A</option>
-                                    <option value="competicao2">Campeonato B</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="periodoFinanceiro" class="form-label">Período</label>
-                                <input type="month" class="form-control" id="periodoFinanceiro">
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-file-earmark-bar-graph me-1"></i> Gerar Relatório
-                            </button>
-                            <button type="button" class="btn btn-outline-black">
-                                <i class="bi bi-download me-1"></i> Exportar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </main>
     </div>
 
-    <!-- MDB JS -->
-    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
-    <script src="{% static 'relatorios/js/relatorio.js' %}"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'relatorios/js/relatorio_main.js' %}"></script>
+    
+    <!-- Dados para os gráficos -->
+    <script>
+        // Dados do Django para JavaScript
+        const chartData = {
+            inscricoes: {
+                labels: {{ meses_labels|safe }},
+                data: {{ inscricoes_data|safe }}
+            },
+            sexo: {
+                masculino: {{ atletas_masculinos }},
+                feminino: {{ atletas_femininos }}
+            },
+            partidas: {
+                finalizadas: {{ partidas_finalizadas }},
+                em_andamento: {{ partidas_em_andamento }},
+                agendadas: {{ partidas_agendadas }}
+            },
+            idades: [
+                {% for idade in idades_distribuicao %}
+                {label: '{{ idade.faixa }}', value: {{ idade.total }}},
+                {% endfor %}
+            ],
+            faixas: [
+                {% for faixa in distribuicao_faixas %}
+                {label: '{{ faixa.faixa|capfirst }}', value: {{ faixa.total }}},
+                {% endfor %}
+            ]
+        };
+        
+        // Inicializar gráficos quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof initializeCharts === 'function') {
+                initializeCharts();
+            }
+        });
+
+        // Função para exportar relatórios
+        function exportReport(format) {
+            console.log('Exportando relatório em formato:', format);
+            // Implementar lógica de exportação
+        }
+
+        // Função para atualizar dados
+        function refreshData() {
+            console.log('Atualizando dados do relatório...');
+            // Implementar lógica de atualização
+            location.reload();
+        }
+
+        // Função para aplicar filtros
+        function aplicarFiltros() {
+            console.log('Aplicando filtros...');
+            // Implementar lógica de filtros
+        }
+
+        // Função para alternar tipo de gráfico
+        function toggleChartType(chartId) {
+            console.log('Alternando tipo do gráfico:', chartId);
+            // Implementar lógica de alternância
+        }
+    </script>
 </body>
 </html>
