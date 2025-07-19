@@ -255,14 +255,16 @@ class ChaveamentoKumite(models.Model):
     def determinar_fases(self):
         """Determina as fases baseado no número de atletas"""
         num_atletas = self.get_numero_atletas()
+        
+        # Sempre retorna todas as fases necessárias para o chaveamento completo
         if num_atletas <= 2:
             return ['final']
         elif num_atletas <= 4:
-            return ['semifinal', 'final']
+            return ['primeira_fase', 'final']
         elif num_atletas <= 8:
-            return ['quartas', 'semifinal', 'final']
+            return ['primeira_fase', 'semifinal', 'final']
         elif num_atletas <= 16:
-            return ['oitavas', 'quartas', 'semifinal', 'final']
+            return ['primeira_fase', 'quartas', 'semifinal', 'final']
         else:
             return ['primeira_fase', 'oitavas', 'quartas', 'semifinal', 'final']
 

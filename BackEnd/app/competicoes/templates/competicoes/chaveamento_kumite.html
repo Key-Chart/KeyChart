@@ -13,6 +13,7 @@
     <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css">
     <link rel="stylesheet" href="{% static 'competicoes/css/competicoes.css' %}">
+    <link rel="stylesheet" href="{% static 'competicoes/css/gracket.css' %}">
     <title>Chaveamento de Kumitê - {{ categoria.nome }} | KeyChart</title>
     <style>
         :root {
@@ -437,6 +438,10 @@
             background: linear-gradient(135deg, #3498db 0%, #2980b9 100%) !important;
         }
     </style>
+    <!-- jQuery para o gracket.js -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Gracket.js para chaveamento -->
+    <script src="{% static 'js/jquery.gracket.min.js' %}"></script>
 </head>
 <body>
     {% include 'sidebar.html' %}
@@ -467,6 +472,18 @@
                     
                     <div class="d-flex align-items-center gap-3 no-print">
                         <span class="text-light">{{ num_atletas }} atletas</span>
+                        {% if pode_mostrar_chaveamento_completo %}
+                            <button class="btn btn-info" onclick="verChaveamentoCompleto()">
+                                <i class="fas fa-sitemap me-2"></i>Chaveamento Completo
+                            </button>
+                        {% else %}
+                            <button class="btn btn-secondary" disabled title="É necessário finalizar pelo menos 50% das partidas para visualizar o chaveamento completo">
+                                <i class="fas fa-sitemap me-2"></i>Chaveamento Completo
+                                <small class="d-block" style="font-size: 0.7rem;">
+                                    ({{ partidas_finalizadas }}/{{ total_partidas }} partidas finalizadas)
+                                </small>
+                            </button>
+                        {% endif %}
                         <button class="btn btn-success" onclick="gerarPDF()">
                             <i class="fas fa-download me-2"></i>Baixar PDF
                         </button>
@@ -488,14 +505,14 @@
                 <div class="col-md-3">
                     <div class="stat-card">
                         <i class="fas fa-trophy"></i>
-                        <div class="number" id="partidasFinalizadas">0</div>
+                        <div class="number" id="partidasFinalizadas">{{ partidas_finalizadas }}</div>
                         <div class="label">Partidas Finalizadas</div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stat-card">
                         <i class="fas fa-clock"></i>
-                        <div class="number" id="partidasPendentes">{{ num_atletas|floatformat:0 }}</div>
+                        <div class="number" id="partidasPendentes">{{ partidas_pendentes }}</div>
                         <div class="label">Partidas Pendentes</div>
                     </div>
                 </div>
@@ -712,6 +729,39 @@
             </div>
             {% endif %}
         </main>
+    </div>
+
+    <!-- Modal para Chaveamento Completo -->
+    <div class="modal fade" id="chaveamentoCompletoModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-sitemap me-2"></i>Chaveamento Completo - {{ categoria.nome }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="chaveamento-gracket" class="g_gracket">
+                                    <!-- O chaveamento será carregado aqui via JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Fechar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="gerarPDFChaveamento()">
+                        <i class="fas fa-download me-2"></i>Baixar Chaveamento PDF
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal para Finalizar Partida -->
@@ -1030,6 +1080,68 @@
                     delay: 4000
                 });
                 toast.show();
+            },
+
+            // Ver chaveamento completo
+            verChaveamentoCompleto() {
+                // Verificar se o botão está habilitado
+                const botao = document.querySelector('button[onclick="verChaveamentoCompleto()"]');
+                if (botao && botao.disabled) {
+                    this.showWarning('É necessário finalizar pelo menos 50% das partidas para visualizar o chaveamento completo.');
+                    return;
+                }
+                
+                // Busca os dados do chaveamento do backend
+                fetch(window.location.href + 'chaveamento-dados/', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': this.getCsrfToken()
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Abre o modal
+                        const modal = new bootstrap.Modal(document.getElementById('chaveamentoCompletoModal'));
+                        modal.show();
+                        
+                        // Aguarda o modal ser totalmente exibido antes de inicializar o gracket
+                        document.getElementById('chaveamentoCompletoModal').addEventListener('shown.bs.modal', () => {
+                            this.inicializarGracket(data.chaveamento_data, data.round_labels);
+                        }, { once: true });
+                    } else {
+                        this.showError(data.error || 'Erro ao carregar dados do chaveamento');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    this.showError('Erro de conexão ao carregar chaveamento');
+                });
+            },
+
+            // Inicializa o gracket com os dados
+            inicializarGracket(chaveamentoData, roundLabels = null) {
+                try {
+                    // Limpa o container
+                    $('#chaveamento-gracket').empty();
+                    
+                    // Labels padrão baseados no número de rodadas
+                    const defaultLabels = ['Primeira Fase', 'Semifinais', 'Final', 'Campeão'];
+                    
+                    // Usa os labels fornecidos ou os padrão
+                    const labels = roundLabels || defaultLabels;
+                    
+                    // Inicializa o gracket
+                    $('#chaveamento-gracket').gracket({
+                        src: chaveamentoData,
+                        roundLabels: labels
+                    });
+                    
+                    this.showSuccess('Chaveamento carregado com sucesso!');
+                } catch (error) {
+                    console.error('Erro ao inicializar gracket:', error);
+                    this.showError('Erro ao exibir o chaveamento');
+                }
             }
         };
 
@@ -1040,6 +1152,8 @@
         window.salvarResultado = () => kumiteManager.salvarResultado();
         window.avancarFase = (faseAtual) => kumiteManager.avancarFase(faseAtual);
         window.gerarPDF = () => window.open(window.location.href + 'pdf/', '_blank');
+        window.verChaveamentoCompleto = () => kumiteManager.verChaveamentoCompleto();
+        window.gerarPDFChaveamento = () => window.print();
 
         console.log('Kumitê Manager inicializado com sucesso!');
     });
