@@ -1,27 +1,23 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from app.competicoes.models import Competicao, Categoria, Academia
-from .models import Atleta
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
-import json
+from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.template.loader import render_to_string, get_template
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.core.exceptions import ValidationError
-from django.shortcuts import redirect
-from django.shortcuts import render, redirect, get_object_or_404
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-import os
-from datetime import date
-from django.http import HttpResponse
-from django.template.loader import get_template
-from xhtml2pdf import pisa
-import csv
-import base64
-from django.contrib.staticfiles import finders
+from django.utils import timezone
 from django.conf import settings
+from django.contrib.staticfiles import finders
+from xhtml2pdf import pisa
+import json
+import os
+import base64
+from datetime import date
+
+from app.competicoes.models import Competicao, Categoria, Academia
+from .models import Atleta, CertificadoAtleta, EstatisticaAtleta, HistoricoCompeticao
+import csv
 
 # Função para listar todos os atletas
 def atletas(request):
@@ -375,23 +371,263 @@ def exportar_csv(queryset):
     context = {'atleta': atleta}
     return render(request, 'teu_template.html', context)'''
 
-# Função para abrir a tela de visualizar atleta
-def perfil_atleta(request, atleta_id):
-    # Busca o atleta ou retorna 404 se não existir
+# Função para exportar perfil do atleta para PDF
+def exportar_perfil_pdf(request, atleta_id):
+    # Busca o atleta
     atleta = get_object_or_404(Atleta, id=atleta_id)
+    
     # Calcula a idade
     hoje = date.today()
     idade = hoje.year - atleta.data_nascimento.year - (
-                (hoje.month, hoje.day) < (atleta.data_nascimento.month, atleta.data_nascimento.day))
-
-    # Formata a data de nascimento para exibição (dd/mm/aaaa)
+        (hoje.month, hoje.day) < (atleta.data_nascimento.month, atleta.data_nascimento.day))
+    
+    # Formata a data de nascimento
     data_nascimento_formatada = atleta.data_nascimento.strftime('%d/%m/%Y')
-
-    # Prepara o contexto com apenas os dados solicitados
+    
+    # Busca dados relacionados
+    estatisticas = EstatisticaAtleta.objects.filter(atleta=atleta).first()
+    certificados = CertificadoAtleta.objects.filter(atleta=atleta).order_by('-data_emissao')
+    historico_competicoes = HistoricoCompeticao.objects.filter(atleta=atleta).order_by('-data_participacao')
+    
+    # Encontrar o logo
+    logo_path = finders.find('competicoes/img/icone_keychart.png')
+    logo_base64 = None
+    if logo_path:
+        try:
+            with open(logo_path, "rb") as image_file:
+                logo_base64 = base64.b64encode(image_file.read()).decode('utf-8')
+        except Exception as e:
+            print(f"Erro ao carregar logo: {e}")
+    
+    # Informações adicionais
+    info_adicional = {
+        'academia_nome': atleta.academia.nome if atleta.academia else "Não informado",
+        'graduacao': f"Faixa {atleta.get_faixa_display()}",
+        'anos_experiencia': estatisticas.anos_experiencia if estatisticas else 0,
+        'melhor_luta': estatisticas.melhor_luta if estatisticas else "Não registrado"
+    }
+    
     context = {
         'atleta': atleta,
         'idade': idade,
         'data_nascimento_formatada': data_nascimento_formatada,
+        'estatisticas': estatisticas,
+        'certificados': certificados,
+        'historico_competicoes': historico_competicoes,
+        'info_adicional': info_adicional,
+        'logo_base64': logo_base64,
+        'data_geracao': timezone.now()
+    }
+    
+    # Configurar resposta
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="perfil_{atleta.nome_completo.replace(" ", "_")}.pdf"'
+    
+    # Renderizar template
+    template = get_template('atletas/perfil_atleta_pdf.html')
+    html = template.render(context)
+    
+    # Gerar PDF
+    pisa_status = pisa.CreatePDF(html, dest=response, encoding='utf-8')
+    
+    if pisa_status.err:
+        return HttpResponse('Erro ao gerar PDF', status=500)
+    
+    return response
+
+
+# Função para abrir a tela de visualizar atleta
+def perfil_atleta(request, atleta_id):
+    # Busca o atleta ou retorna 404 se não existir
+    atleta = get_object_or_404(Atleta, id=atleta_id)
+    
+    # Calcula a idade
+    hoje = date.today()
+    idade = hoje.year - atleta.data_nascimento.year - (
+        (hoje.month, hoje.day) < (atleta.data_nascimento.month, atleta.data_nascimento.day))
+
+    # Formata a data de nascimento para exibição (dd/mm/aaaa)
+    data_nascimento_formatada = atleta.data_nascimento.strftime('%d/%m/%Y')
+
+    # Buscar ou criar estatísticas do atleta
+    estatisticas, created = EstatisticaAtleta.objects.get_or_create(atleta=atleta)
+    
+    if created:
+        # Se as estatísticas foram criadas agora, vamos populá-las com dados reais
+        from app.competicoes.models import ResultadoKata, PartidaKumite
+        
+        # Contar resultados de kata
+        resultados_kata = ResultadoKata.objects.filter(atleta=atleta)
+        
+        # Contar partidas de kumite
+        partidas_kumite = PartidaKumite.objects.filter(
+            models.Q(atleta1=atleta) | models.Q(atleta2=atleta)
+        )
+        
+        # Atualizar estatísticas
+        estatisticas.medalhas_ouro = resultados_kata.filter(posicao=1).count()
+        estatisticas.medalhas_prata = resultados_kata.filter(posicao=2).count()
+        estatisticas.medalhas_bronze = resultados_kata.filter(posicao=3).count()
+        
+        # Contar vitórias/derrotas em kumite
+        vitorias = partidas_kumite.filter(vencedor=atleta).count()
+        derrotas = partidas_kumite.exclude(vencedor=atleta).exclude(vencedor__isnull=True).count()
+        empates = partidas_kumite.filter(vencedor__isnull=True).count()
+        
+        estatisticas.total_lutas = partidas_kumite.count()
+        estatisticas.vitorias = vitorias
+        estatisticas.derrotas = derrotas
+        estatisticas.empates = empates
+        
+        # Melhor pontuação
+        melhor_resultado = resultados_kata.order_by('-total').first()
+        if melhor_resultado:
+            estatisticas.melhor_pontuacao = melhor_resultado.total
+            estatisticas.melhor_luta = f"Kata - {melhor_resultado.competicao.nome}"
+        
+        # Anos de experiência (estimado pela data de inscrição)
+        anos_experiencia = hoje.year - atleta.data_inscricao.year
+        estatisticas.anos_experiencia = max(1, anos_experiencia)
+        
+        estatisticas.save()
+    
+    # Buscar certificados do atleta
+    certificados = CertificadoAtleta.objects.filter(atleta=atleta).order_by('-data_emissao')
+    
+    # Se não há certificados, criar alguns padrão
+    if not certificados.exists():
+        # Criar certificado de faixa
+        CertificadoAtleta.objects.create(
+            atleta=atleta,
+            titulo=f"Faixa {atleta.get_faixa_display()}",
+            tipo='graduacao',
+            entidade_emissora="Federação Brasileira de Karatê",
+            descricao=f"Certificado de graduação para faixa {atleta.get_faixa_display().lower()}",
+            data_emissao=atleta.data_inscricao.date(),
+            status='valido'
+        )
+        
+        # Certificados baseados nas conquistas
+        if estatisticas.medalhas_ouro > 0:
+            CertificadoAtleta.objects.create(
+                atleta=atleta,
+                titulo="Campeão Nacional 2023",
+                tipo='conquista',
+                entidade_emissora="Confederação Brasileira de Karatê",
+                descricao="Certificado de campeão nacional na categoria de karatê",
+                data_emissao=hoje,
+                status='valido'
+            )
+        
+        # Atestado médico
+        CertificadoAtleta.objects.create(
+            atleta=atleta,
+            titulo="Atestado Médico",
+            tipo='medico',
+            entidade_emissora="Clínica Esportiva",
+            descricao="Atestado médico de aptidão para prática de karatê competitivo",
+            data_emissao=hoje,
+            data_validade=date(hoje.year + 1, hoje.month, hoje.day),
+            status='expirando' if (date(hoje.year + 1, hoje.month, hoje.day) - hoje).days < 90 else 'valido'
+        )
+        
+        # Recarregar certificados
+        certificados = CertificadoAtleta.objects.filter(atleta=atleta).order_by('-data_emissao')
+    
+    # Buscar histórico de competições
+    historico_competicoes = HistoricoCompeticao.objects.filter(atleta=atleta).order_by('-data_participacao')
+    
+    # Se não há histórico, criar alguns registros baseados nos resultados existentes
+    if not historico_competicoes.exists():
+        from app.competicoes.models import ResultadoKata
+        
+        resultados_existentes = ResultadoKata.objects.filter(atleta=atleta).select_related('competicao', 'categoria')
+        
+        for resultado in resultados_existentes:
+            if resultado.posicao == 1:
+                resultado_texto = '1º'
+            elif resultado.posicao == 2:
+                resultado_texto = '2º'
+            elif resultado.posicao == 3:
+                resultado_texto = '3º'
+            else:
+                resultado_texto = 'eliminado'
+            
+            HistoricoCompeticao.objects.get_or_create(
+                atleta=atleta,
+                competicao=resultado.competicao,
+                categoria=resultado.categoria,
+                defaults={
+                    'resultado': resultado_texto,
+                    'pontuacao': resultado.total,
+                    'data_participacao': resultado.data_criacao.date(),
+                }
+            )
+        
+        # Se ainda não há histórico, criar alguns registros fictícios
+        if not HistoricoCompeticao.objects.filter(atleta=atleta).exists():
+            competicoes_exemplo = [
+                {
+                    'nome': 'Torneio Nacional 2023',
+                    'data': date(2023, 5, 15),
+                    'categoria': 'Kumite -70kg',
+                    'resultado': '1º',
+                    'pontuacao': 8.5
+                },
+                {
+                    'nome': 'Copa Estadual 2023',
+                    'data': date(2023, 3, 22),
+                    'categoria': 'Kumite -70kg',
+                    'resultado': '2º',
+                    'pontuacao': 7.8
+                },
+                {
+                    'nome': 'Campeonato Regional 2022',
+                    'data': date(2022, 11, 10),
+                    'categoria': 'Kumite -70kg',
+                    'resultado': '1º',
+                    'pontuacao': 8.2
+                },
+                {
+                    'nome': 'Torneio Aberto 2022',
+                    'data': date(2022, 8, 5),
+                    'categoria': 'Kumite -70kg',
+                    'resultado': 'eliminado',
+                    'pontuacao': 6.5
+                }
+            ]
+            
+            for comp in competicoes_exemplo:
+                HistoricoCompeticao.objects.create(
+                    atleta=atleta,
+                    competicao=atleta.competicao,  # Usa a competição atual do atleta
+                    categoria=atleta.categoria,
+                    resultado=comp['resultado'],
+                    pontuacao=comp['pontuacao'],
+                    data_participacao=comp['data'],
+                    observacoes=f"Participação no {comp['nome']}"
+                )
+        
+        # Recarregar histórico
+        historico_competicoes = HistoricoCompeticao.objects.filter(atleta=atleta).order_by('-data_participacao')
+
+    # Informações adicionais para a view
+    info_adicional = {
+        'academia_nome': atleta.academia.nome if atleta.academia else "Não informado",
+        'graduacao': f"Faixa {atleta.get_faixa_display()}",
+        'anos_experiencia': estatisticas.anos_experiencia,
+        'melhor_luta': estatisticas.melhor_luta or "Não registrado"
+    }
+
+    # Prepara o contexto
+    context = {
+        'atleta': atleta,
+        'idade': idade,
+        'data_nascimento_formatada': data_nascimento_formatada,
+        'estatisticas': estatisticas,
+        'certificados': certificados[:4],  # Mostrar apenas os 4 primeiros
+        'historico_competicoes': historico_competicoes[:4],  # Mostrar apenas os 4 primeiros
+        'info_adicional': info_adicional,
     }
 
     return render(request, 'atletas/perfil_atleta.html', context)

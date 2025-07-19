@@ -74,7 +74,9 @@ class Competicao(models.Model):
     data_atualizacao = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.nome} ({self.data_inicio.year})"
+        if self.data_inicio:
+            return f"{self.nome} ({self.data_inicio.year})"
+        return self.nome
     
     @property
     def valor_final_inscricao(self):

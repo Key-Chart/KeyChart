@@ -1518,7 +1518,7 @@ def chaveamento_kumite_pdf(request, categoria_id):
                 fase=fase
             ).order_by('round_numero')
             partidas_por_fase[fase] = partidas
-        
+
         context = {
             'competicao': categoria.competicao,
             'categoria': categoria,
