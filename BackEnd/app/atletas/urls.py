@@ -20,4 +20,5 @@ urlpatterns = [
     #path('atletas/ativar/', views.ativar_atleta, name='ativar_atleta'),
     #path('atletas/editar/<int:atleta_id>/', views.editar_atleta, name='editar_atleta'),
     path('atletas/perfil/<int:atleta_id>/', views.perfil_atleta, name='perfil_atleta'),
+    path('atletas/perfil/<int:atleta_id>/pdf/', views.exportar_perfil_pdf, name='exportar_perfil_pdf'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

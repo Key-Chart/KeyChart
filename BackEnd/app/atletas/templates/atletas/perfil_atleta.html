@@ -48,9 +48,9 @@
                         {% endif %}
                         <h4 class="mb-1">{{ atleta.nome_completo }}</h4>
                         <p class="text-muted mb-3">Atleta Profissional</p>
-                        <button class="btn btn-pdf">
+                        <a href="{% url 'equipes_atletas:exportar_perfil_pdf' atleta.id %}" class="btn btn-pdf" target="_blank">
                             <i class="bi bi-file-earmark-pdf me-2"></i>Exportar para PDF
-                        </button>
+                        </a>
                     </div>
 
                     <!-- Coluna das Informações -->
@@ -147,31 +147,31 @@
                             <div class="row text-center mb-4">
                                 <div class="col-md-4">
                                     <div class="stats-card">
-                                        <div class="stat-value">50</div>
+                                        <div class="stat-value">{{ estatisticas.total_lutas }}</div>
                                         <div class="stat-label">Total de Lutas</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="stats-card">
-                                        <div class="stat-value">40</div>
+                                        <div class="stat-value">{{ estatisticas.vitorias }}</div>
                                         <div class="stat-label">Vitórias</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="stats-card">
-                                        <div class="stat-value">80%</div>
+                                        <div class="stat-value">{{ estatisticas.taxa_vitoria }}%</div>
                                         <div class="stat-label">Taxa de Vitórias</div>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="progress mb-3">
-                                <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar" role="progressbar" style="width: {{ estatisticas.taxa_vitoria }}%" aria-valuenow="{{ estatisticas.taxa_vitoria }}" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                             <div class="d-flex justify-content-between mb-1">
-                                <span>Vitórias (40)</span>
-                                <span>Derrotas (8)</span>
-                                <span>Empates (2)</span>
+                                <span>Vitórias ({{ estatisticas.vitorias }})</span>
+                                <span>Derrotas ({{ estatisticas.derrotas }})</span>
+                                <span>Empates ({{ estatisticas.empates }})</span>
                             </div>
                         </div>
                     </div>
@@ -187,19 +187,19 @@
                             <div class="info-section">
                                 <div class="info-item">
                                     <h6><i class="bi bi-building me-2 text-primary"></i>Academia</h6>
-                                    <p>Academia Central de Karatê</p>
+                                    <p>{{ info_adicional.academia_nome }}</p>
                                 </div>
                                 <div class="info-item">
                                     <h6><i class="bi bi-award me-2 text-primary"></i>Graduação</h6>
-                                    <p>Faixa Preta - 2º Dan</p>
+                                    <p>{{ info_adicional.graduacao }}</p>
                                 </div>
                                 <div class="info-item">
                                     <h6><i class="bi bi-calendar3 me-2 text-primary"></i>Anos de Experiência</h6>
-                                    <p>10 anos</p>
+                                    <p>{{ info_adicional.anos_experiencia }} anos</p>
                                 </div>
                                 <div class="info-item">
                                     <h6><i class="bi bi-trophy me-2 text-primary"></i>Melhor Luta</h6>
-                                    <p>Vitória por Nocaute (Torneio Nacional 2023)</p>
+                                    <p>{{ info_adicional.melhor_luta }}</p>
                                 </div>
                             </div>
                         </div>
@@ -214,89 +214,51 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <!-- Certificado 1 -->
+                        {% for certificado in certificados %}
+                        <!-- Certificado {{ forloop.counter }} -->
                         <div class="col-md-6 mb-4">
                             <div class="card certificate-card h-100">
                                 <div class="card-body">
-                                    <span class="badge bg-success certificate-badge">Válido</span>
+                                    {% if certificado.status == 'valido' %}
+                                        <span class="badge bg-success certificate-badge">Válido</span>
+                                    {% elif certificado.status == 'expirando' %}
+                                        <span class="badge bg-warning text-dark certificate-badge">Expirando</span>
+                                    {% elif certificado.status == 'expirado' %}
+                                        <span class="badge bg-danger certificate-badge">Expirado</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary certificate-badge">{{ certificado.get_status_display }}</span>
+                                    {% endif %}
+                                    
                                     <div class="d-flex align-items-center mb-3">
-                                        <i class="bi bi-award-fill certificate-icon me-3"></i>
+                                        {% if certificado.tipo == 'graduacao' %}
+                                            <i class="bi bi-award-fill certificate-icon me-3"></i>
+                                        {% elif certificado.tipo == 'conquista' %}
+                                            <i class="bi bi-trophy-fill certificate-icon me-3"></i>
+                                        {% elif certificado.tipo == 'medico' %}
+                                            <i class="bi bi-heart-pulse-fill certificate-icon me-3"></i>
+                                        {% elif certificado.tipo == 'arbitragem' %}
+                                            <i class="bi bi-person-badge-fill certificate-icon me-3"></i>
+                                        {% else %}
+                                            <i class="bi bi-file-earmark-text-fill certificate-icon me-3"></i>
+                                        {% endif %}
                                         <div>
-                                            <h5 class="mb-1">Faixa Preta - 2º Dan</h5>
-                                            <p class="text-muted mb-0">Federação Brasileira de Karatê</p>
+                                            <h5 class="mb-1">{{ certificado.titulo }}</h5>
+                                            <p class="text-muted mb-0">{{ certificado.entidade_emissora }}</p>
                                         </div>
                                     </div>
-                                    <p class="card-text">Certificado de graduação para faixa preta 2º Dan, concedido após exame técnico e comprovação de tempo de prática.</p>
+                                    <p class="card-text">{{ certificado.descricao|default:"Certificado válido." }}</p>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">Emitido em: 15/03/2023</small>
+                                        <small class="text-muted">Emitido em: {{ certificado.data_emissao|date:"d/m/Y" }}</small>
                                         <button class="btn btn-sm btn-outline-primary">Visualizar</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Certificado 2 -->
-                        <div class="col-md-6 mb-4">
-                            <div class="card certificate-card h-100">
-                                <div class="card-body">
-                                    <span class="badge bg-success certificate-badge">Válido</span>
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="bi bi-trophy-fill certificate-icon me-3"></i>
-                                        <div>
-                                            <h5 class="mb-1">Campeão Nacional 2023</h5>
-                                            <p class="text-muted mb-0">Confederação Brasileira de Karatê</p>
-                                        </div>
-                                    </div>
-                                    <p class="card-text">Certificado de campeão nacional na categoria Kumite -70kg no Torneio Nacional de Karatê 2023.</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">Emitido em: 20/05/2023</small>
-                                        <button class="btn btn-sm btn-outline-primary">Visualizar</button>
-                                    </div>
-                                </div>
-                            </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <p class="text-center text-muted">Nenhum certificado encontrado.</p>
                         </div>
-                        
-                        <!-- Certificado 3 -->
-                        <div class="col-md-6 mb-4">
-                            <div class="card certificate-card h-100">
-                                <div class="card-body">
-                                    <span class="badge bg-warning text-dark certificate-badge">Expirando</span>
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="bi bi-heart-pulse-fill certificate-icon me-3"></i>
-                                        <div>
-                                            <h5 class="mb-1">Atestado Médico</h5>
-                                            <p class="text-muted mb-0">Clínica Esportiva Belém</p>
-                                        </div>
-                                    </div>
-                                    <p class="card-text">Atestado médico de aptidão para prática de karatê competitivo, válido por 1 ano.</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">Emitido em: 10/01/2023</small>
-                                        <button class="btn btn-sm btn-outline-primary">Visualizar</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Certificado 4 -->
-                        <div class="col-md-6 mb-4">
-                            <div class="card certificate-card h-100">
-                                <div class="card-body">
-                                    <span class="badge bg-success certificate-badge">Válido</span>
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="bi bi-person-badge-fill certificate-icon me-3"></i>
-                                        <div>
-                                            <h5 class="mb-1">Curso de Arbitragem</h5>
-                                            <p class="text-muted mb-0">Federação Paraense de Karatê</p>
-                                        </div>
-                                    </div>
-                                    <p class="card-text">Certificado de conclusão do curso de arbitragem nível básico, com 40 horas de duração.</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">Emitido em: 05/08/2022</small>
-                                        <button class="btn btn-sm btn-outline-primary">Visualizar</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
                     
                     <!-- Botão para adicionar novo certificado -->
@@ -324,37 +286,33 @@
                                     <th>Resultado</th>
                                     <th>Pontuação</th>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Torneio Nacional 2023</td>
-                                    <td>15/05/2023</td>
-                                    <td>Kumite -70kg</td>
-                                    <td><span class="badge badge-success">1º Lugar</span></td>
-                                    <td>8.5</td>
-                                </tr>
-                                <tr>
-                                    <td>Copa Estadual 2023</td>
-                                    <td>22/03/2023</td>
-                                    <td>Kumite -70kg</td>
-                                    <td><span class="badge badge-success">2º Lugar</span></td>
-                                    <td>7.8</td>
-                                </tr>
-                                <tr>
-                                    <td>Campeonato Regional 2022</td>
-                                    <td>10/11/2022</td>
-                                    <td>Kumite -70kg</td>
-                                    <td><span class="badge badge-success">1º Lugar</span></td>
-                                    <td>8.2</td>
-                                </tr>
-                                <tr>
-                                    <td>Torneio Aberto 2022</td>
-                                    <td>05/08/2022</td>
-                                    <td>Kumite -70kg</td>
-                                    <td><span class="badge badge-danger">Eliminado</span></td>
-                                    <td>6.5</td>
-                                </tr>
-                            </tbody>
+                            </thead>                        <tbody>
+                            {% for historico in historico_competicoes %}
+                            <tr>
+                                <td>{{ historico.observacoes|default:historico.competicao.nome }}</td>
+                                <td>{{ historico.data_participacao|date:"d/m/Y" }}</td>
+                                <td>{{ historico.categoria.nome|default:"Categoria Geral" }}</td>
+                                <td>
+                                    {% if historico.resultado == '1º' %}
+                                        <span class="badge badge-success">1º Lugar</span>
+                                    {% elif historico.resultado == '2º' %}
+                                        <span class="badge badge-success">2º Lugar</span>
+                                    {% elif historico.resultado == '3º' %}
+                                        <span class="badge badge-success">3º Lugar</span>
+                                    {% elif historico.resultado == 'eliminado' %}
+                                        <span class="badge badge-danger">Eliminado</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">{{ historico.get_resultado_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ historico.pontuacao|floatformat:1 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">Nenhum histórico de competição encontrado.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
                         </table>
                     </div>
                 </div>

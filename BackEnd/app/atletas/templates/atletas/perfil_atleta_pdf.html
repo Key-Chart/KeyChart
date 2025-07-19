@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil do Atleta - {{ atleta.nome_completo }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.4;
+            color: #333;
+            font-size: 12px;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 3px solid #0066cc;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0066cc;
+            margin-bottom: 5px;
+        }
+        
+        .header h2 {
+            font-size: 16px;
+            color: #666;
+            font-weight: normal;
+        }
+        
+        .header .date {
+            font-size: 10px;
+            color: #999;
+            margin-top: 10px;
+        }
+        
+        /* Seções */
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            background-color: #0066cc;
+            color: white;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+        
+        /* Tabelas */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+        }
+        
+        .info-table td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        .info-table .label {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            width: 35%;
+            color: #333;
+        }
+        
+        .info-table .value {
+            background-color: white;
+            width: 65%;
+        }
+        
+        /* Tabela de dados */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+        }
+        
+        .data-table th {
+            background-color: #f0f0f0;
+            padding: 10px 8px;
+            border: 1px solid #ddd;
+            font-weight: bold;
+            text-align: left;
+            font-size: 11px;
+        }
+        
+        .data-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            font-size: 11px;
+        }
+        
+        .data-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        /* Estatísticas em grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            background-color: #f0f0f0;
+            padding: 15px 10px;
+            text-align: center;
+            border-right: 1px solid #ddd;
+        }
+        
+        .stat-item:last-child {
+            border-right: none;
+        }
+        
+        .stat-number {
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            color: #0066cc;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .badge-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .badge-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .badge-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .badge-secondary {
+            background-color: #e2e3e5;
+            color: #383d41;
+            border: 1px solid #d6d8db;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+        
+        /* Utilitários */
+        .text-center { text-align: center; }
+        .font-bold { font-weight: bold; }
+        .no-data {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+        }
+        
+        /* Quebra de página */
+        .page-break {
+            page-break-before: always;
+        }
+        
+        @media print {
+            .section {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>{{ atleta.nome_completo }}</h1>
+        <h2>Perfil Completo do Atleta</h2>
+        <div class="date">Relatório gerado em {{ data_geracao|date:"d/m/Y H:i" }} - KeyChart System</div>
+    </div>
+
+    <!-- Informações Pessoais -->
+    <div class="section">
+        <div class="section-title">INFORMAÇÕES PESSOAIS</div>
+        <table class="info-table">
+            <tr>
+                <td class="label">Nome Completo:</td>
+                <td class="value">{{ atleta.nome_completo }}</td>
+            </tr>
+            <tr>
+                <td class="label">Data de Nascimento:</td>
+                <td class="value">{{ atleta.data_nascimento|date:"d/m/Y" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Idade:</td>
+                <td class="value">{{ idade }} anos</td>
+            </tr>
+            <tr>
+                <td class="label">Sexo:</td>
+                <td class="value">{% if atleta.sexo == 'M' %}Masculino{% elif atleta.sexo == 'F' %}Feminino{% else %}Não informado{% endif %}</td>
+            </tr>
+            <tr>
+                <td class="label">CPF:</td>
+                <td class="value">{{ atleta.cpf|default:"Não informado" }}</td>
+            </tr>
+            <tr>
+                <td class="label">RG:</td>
+                <td class="value">{{ atleta.rg|default:"Não informado" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Email:</td>
+                <td class="value">{{ atleta.email|default:"Não informado" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Telefone:</td>
+                <td class="value">{{ atleta.telefone|default:"Não informado" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Peso:</td>
+                <td class="value">{% if atleta.peso %}{{ atleta.peso }} kg{% else %}Não informado{% endif %}</td>
+            </tr>
+            <tr>
+                <td class="label">Altura:</td>
+                <td class="value">{% if atleta.altura %}{{ atleta.altura }} cm{% else %}Não informado{% endif %}</td>
+            </tr>
+            <tr>
+                <td class="label">Faixa:</td>
+                <td class="value">{{ atleta.get_faixa_display|default:"Não informado" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Academia:</td>
+                <td class="value">{{ atleta.academia.nome|default:"Não informado" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Cidade:</td>
+                <td class="value">{{ atleta.cidade|default:"Não informado" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Estado:</td>
+                <td class="value">{{ atleta.get_estado_display|default:"Não informado" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Estatísticas de Desempenho -->
+    <div class="section">
+        <div class="section-title">ESTATÍSTICAS DE DESEMPENHO</div>
+        {% if estatisticas %}
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">{{ estatisticas.total_lutas }}</span>
+                    <span class="stat-label">Total de Lutas</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ estatisticas.vitorias }}</span>
+                    <span class="stat-label">Vitórias</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ estatisticas.derrotas }}</span>
+                    <span class="stat-label">Derrotas</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ estatisticas.total_medalhas }}</span>
+                    <span class="stat-label">Medalhas</span>
+                </div>
+            </div>
+            
+            <table class="info-table">
+                <tr>
+                    <td class="label">Taxa de Vitórias:</td>
+                    <td class="value">{{ estatisticas.taxa_vitoria }}%</td>
+                </tr>
+                <tr>
+                    <td class="label">Empates:</td>
+                    <td class="value">{{ estatisticas.empates|default:"0" }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Medalhas de Ouro:</td>
+                    <td class="value">{{ estatisticas.medalhas_ouro|default:"0" }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Medalhas de Prata:</td>
+                    <td class="value">{{ estatisticas.medalhas_prata|default:"0" }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Medalhas de Bronze:</td>
+                    <td class="value">{{ estatisticas.medalhas_bronze|default:"0" }}</td>
+                </tr>
+            </table>
+        {% else %}
+            <div class="no-data">Nenhuma estatística disponível</div>
+        {% endif %}
+    </div>
+
+    <!-- Certificados e Conquistas -->
+    <div class="section">
+        <div class="section-title">CERTIFICADOS E CONQUISTAS</div>
+        {% if certificados %}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Descrição</th>
+                        <th>Data de Emissão</th>
+                        <th>Validade</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for certificado in certificados %}
+                    <tr>
+                        <td class="font-bold">{{ certificado.titulo }}</td>
+                        <td>{{ certificado.descricao|default:"Certificado válido" }}</td>
+                        <td>{{ certificado.data_emissao|date:"d/m/Y" }}</td>
+                        <td>{% if certificado.data_validade %}{{ certificado.data_validade|date:"d/m/Y" }}{% else %}Permanente{% endif %}</td>
+                        <td>
+                            {% if certificado.status == 'ativo' %}
+                                <span class="badge badge-success">Ativo</span>
+                            {% elif certificado.status == 'expirado' %}
+                                <span class="badge badge-danger">Expirado</span>
+                            {% else %}
+                                <span class="badge badge-warning">Pendente</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="no-data">Nenhum certificado encontrado</div>
+        {% endif %}
+    </div>
+
+    <!-- Histórico de Competições -->
+    <div class="section">
+        <div class="section-title">HISTÓRICO DE COMPETIÇÕES</div>
+        {% if historico_competicoes %}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Competição</th>
+                        <th>Data</th>
+                        <th>Categoria</th>
+                        <th>Resultado</th>
+                        <th>Pontuação</th>
+                        <th>Observações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for historico in historico_competicoes %}
+                    <tr>
+                        <td class="font-bold">{{ historico.competicao|default:"Competição não informada" }}</td>
+                        <td>{{ historico.data_participacao|date:"d/m/Y"|default:"Data não informada" }}</td>
+                        <td>{{ historico.categoria|default:"Categoria não informada" }}</td>
+                        <td>
+                            {% if historico.resultado == '1º' %}
+                                <span class="badge badge-success">1º Lugar</span>
+                            {% elif historico.resultado == '2º' %}
+                                <span class="badge badge-success">2º Lugar</span>
+                            {% elif historico.resultado == '3º' %}
+                                <span class="badge badge-success">3º Lugar</span>
+                            {% elif historico.resultado == 'eliminado' %}
+                                <span class="badge badge-danger">Eliminado</span>
+                            {% else %}
+                                <span class="badge badge-secondary">{{ historico.resultado }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{% if historico.pontuacao %}{{ historico.pontuacao|floatformat:1 }} pts{% else %}N/A{% endif %}</td>
+                        <td>{{ historico.observacoes|default:"-" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="no-data">Nenhum histórico de competição encontrado</div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p><strong>KeyChart System</strong> - Sistema de Gestão de Competições de Artes Marciais</p>
+        <p>Este documento contém informações confidenciais do atleta</p>
+        <p>Documento gerado automaticamente pelo sistema em {{ data_geracao|date:"d/m/Y H:i" }}</p>
+    </div>
+</body>
+</html>
