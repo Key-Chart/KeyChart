@@ -1028,6 +1028,20 @@ def chaveamento_kumite(request, categoria_id):
         ).order_by('round_numero')
         partidas_por_fase[fase] = partidas
     
+    # Contar partidas finalizadas para determinar se pode mostrar chaveamento completo
+    total_partidas = PartidaKumite.objects.filter(chaveamento=chaveamento).count()
+    partidas_finalizadas = PartidaKumite.objects.filter(
+        chaveamento=chaveamento,
+        status='finalizada'
+    ).count()
+    partidas_pendentes = total_partidas - partidas_finalizadas
+    
+    # Pelo menos 50% das partidas devem estar finalizadas para mostrar chaveamento completo
+    pode_mostrar_chaveamento_completo = (
+        total_partidas > 0 and 
+        (partidas_finalizadas / total_partidas) >= 0.5
+    ) or chaveamento.finalizado
+
     # Dados para o template
     context = {
         'competicao': categoria.competicao,
@@ -1039,9 +1053,215 @@ def chaveamento_kumite(request, categoria_id):
         'fase_atual': chaveamento.fase_atual,
         'num_atletas': atletas.count(),
         'finalizado': chaveamento.finalizado,
+        'total_partidas': total_partidas,
+        'partidas_finalizadas': partidas_finalizadas,
+        'partidas_pendentes': partidas_pendentes,
+        'pode_mostrar_chaveamento_completo': pode_mostrar_chaveamento_completo,
     }
     
     return render(request, 'competicoes/chaveamento_kumite.html', context)
+
+
+def chaveamento_kumite_dados(request, categoria_id):
+    """Retorna os dados do chaveamento no formato esperado pelo gracket.js"""
+    from .models import ChaveamentoKumite, PartidaKumite
+    
+    categoria = get_object_or_404(Categoria, id=categoria_id)
+    
+    try:
+        chaveamento = ChaveamentoKumite.objects.get(categoria=categoria)
+        partidas = PartidaKumite.objects.filter(chaveamento=chaveamento).order_by('fase', 'round_numero')
+        
+        # Organiza os dados no formato esperado pelo gracket.js
+        dados_gracket = organizar_dados_gracket(partidas)
+        
+        # Cria labels das rodadas baseado nas fases reais do chaveamento
+        fases_chaveamento = chaveamento.determinar_fases()
+        round_labels = []
+        
+        # Mapeamento de nomes das fases para labels amigáveis
+        fase_labels = {
+            'primeira_fase': 'Primeira Fase',
+            'oitavas': 'Oitavas de Final',
+            'quartas': 'Quartas de Final',
+            'semifinal': 'Semifinais',
+            'final': 'Final'
+        }
+        
+        # Adiciona labels baseado nas fases do chaveamento
+        for fase in fases_chaveamento:
+            if fase in fase_labels:
+                round_labels.append(fase_labels[fase])
+        
+        # Sempre adiciona "Campeão" no final
+        round_labels.append('Campeão')
+        
+        return JsonResponse({
+            'success': True,
+            'chaveamento_data': dados_gracket,
+            'round_labels': round_labels
+        })
+        
+    except ChaveamentoKumite.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Chaveamento não encontrado para esta categoria'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Erro ao carregar dados: {str(e)}'
+        })
+
+
+def organizar_dados_gracket(partidas):
+    """Organiza as partidas no formato esperado pelo gracket.js"""
+    if not partidas:
+        return []
+    
+    # Agrupa partidas por fase
+    dados_por_fase = {}
+    chaveamento = None
+    for partida in partidas:
+        fase = partida.fase
+        if fase not in dados_por_fase:
+            dados_por_fase[fase] = []
+        dados_por_fase[fase].append(partida)
+        if chaveamento is None:
+            chaveamento = partida.chaveamento
+    
+    resultado = []
+    
+    # Primeira rodada - sempre a primeira_fase com todos os atletas
+    if 'primeira_fase' in dados_por_fase:
+        round_data = []
+        partidas_fase = sorted(dados_por_fase['primeira_fase'], key=lambda x: x.round_numero)
+        
+        for partida in partidas_fase:
+            match_data = []
+            
+            # Adiciona atleta 1 se existir
+            if partida.atleta1:
+                atleta1_data = {
+                    'name': partida.atleta1.nome_completo,
+                    'id': f'atleta-{partida.atleta1.id}',
+                    'seed': partida.round_numero * 2 - 1,
+                    'score': partida.pontos_atleta1 if partida.status == 'finalizada' and partida.pontos_atleta1 is not None else 0
+                }
+                match_data.append(atleta1_data)
+            
+            # Adiciona atleta 2 se existir
+            if partida.atleta2:
+                atleta2_data = {
+                    'name': partida.atleta2.nome_completo,
+                    'id': f'atleta-{partida.atleta2.id}',
+                    'seed': partida.round_numero * 2,
+                    'score': partida.pontos_atleta2 if partida.status == 'finalizada' and partida.pontos_atleta2 is not None else 0
+                }
+                match_data.append(atleta2_data)
+            
+            if match_data:
+                round_data.append(match_data)
+        
+        if round_data:
+            resultado.append(round_data)
+            
+            # Obtem as fases reais do chaveamento, excluindo a primeira_fase
+            if chaveamento:
+                fases_chaveamento = chaveamento.determinar_fases()
+                fases_ordem = [fase for fase in fases_chaveamento if fase != 'primeira_fase']
+            else:
+                # Fallback caso não consiga obter o chaveamento
+                fases_ordem = ['semifinal', 'final']
+            
+            num_jogos_atual = len(round_data) // 2
+            
+            for i, fase in enumerate(fases_ordem):
+                if num_jogos_atual < 1:
+                    break
+                    
+                round_data = []
+                
+                if fase in dados_por_fase:
+                    # Se há dados reais para esta fase
+                    partidas_fase = sorted(dados_por_fase[fase], key=lambda x: x.round_numero)
+                    
+                    for partida in partidas_fase:
+                        match_data = []
+                        
+                        # Adiciona atleta1 se existir
+                        if partida.atleta1:
+                            atleta1_data = {
+                                'name': partida.atleta1.nome_completo,
+                                'id': f'atleta-{partida.atleta1.id}',
+                                'seed': partida.round_numero * 2 - 1,
+                                'score': partida.pontos_atleta1 if partida.status == 'finalizada' and partida.pontos_atleta1 is not None else 0
+                            }
+                            match_data.append(atleta1_data)
+                        
+                        # Adiciona atleta2 se existir
+                        if partida.atleta2:
+                            atleta2_data = {
+                                'name': partida.atleta2.nome_completo,
+                                'id': f'atleta-{partida.atleta2.id}',
+                                'seed': partida.round_numero * 2,
+                                'score': partida.pontos_atleta2 if partida.status == 'finalizada' and partida.pontos_atleta2 is not None else 0
+                            }
+                            match_data.append(atleta2_data)
+                        elif partida.atleta1:
+                            # Se só tem atleta1, adiciona um placeholder para o segundo
+                            placeholder_data = {
+                                'name': 'Aguardando...',
+                                'id': f'aguardando-{fase}-{partida.round_numero}-2',
+                                'seed': partida.round_numero * 2,
+                                'score': 0
+                            }
+                            match_data.append(placeholder_data)
+                        
+                        if match_data:
+                            round_data.append(match_data)
+                else:
+                    # Se não há dados, cria placeholders para os confrontos
+                    for j in range(num_jogos_atual):
+                        match_data = []
+                        
+                        # Adiciona dois placeholders por confronto
+                        for k in range(2):
+                            placeholder_data = {
+                                'name': 'Aguardando...',
+                                'id': f'placeholder-{fase}-{j+1}-{k+1}',
+                                'seed': (j * 2) + k + 1,
+                                'score': 0
+                            }
+                            match_data.append(placeholder_data)
+                        
+                        round_data.append(match_data)
+                
+                if round_data:
+                    resultado.append(round_data)
+                    num_jogos_atual = max(1, len(round_data) // 2)
+            
+            # Adiciona rodada do campeão
+            if 'final' in dados_por_fase:
+                partida_final = next((p for p in dados_por_fase['final'] if p.status == 'finalizada'), None)
+                if partida_final and partida_final.vencedor:
+                    campeao_data = [{
+                        'name': f'🏆 {partida_final.vencedor.nome_completo}',
+                        'id': f'campeao-{partida_final.vencedor.id}',
+                        'seed': 1,
+                        'score': partida_final.pontos_atleta1 if partida_final.vencedor == partida_final.atleta1 else partida_final.pontos_atleta2
+                    }]
+                    resultado.append([campeao_data])
+                else:
+                    # Placeholder para campeão
+                    resultado.append([[{
+                        'name': '🏆 Campeão',
+                        'id': 'campeao-placeholder',
+                        'seed': 1,
+                        'score': 0
+                    }]])
+    
+    return resultado
 
 
 def inicializar_chaveamento_kumite(chaveamento, atletas):
@@ -1050,18 +1270,8 @@ def inicializar_chaveamento_kumite(chaveamento, atletas):
         atletas_list = list(atletas)
         random.shuffle(atletas_list)
         
-        # Determina a primeira fase
-        num_atletas = len(atletas_list)
-        if num_atletas <= 2:
-            primeira_fase = 'final'
-        elif num_atletas <= 4:
-            primeira_fase = 'semifinal'
-        elif num_atletas <= 8:
-            primeira_fase = 'quartas'
-        elif num_atletas <= 16:
-            primeira_fase = 'oitavas'
-        else:
-            primeira_fase = 'primeira_fase'
+        # Sempre começar com a primeira fase para mostrar o chaveamento completo
+        primeira_fase = 'primeira_fase'
         
         chaveamento.fase_atual = primeira_fase
         chaveamento.save()
