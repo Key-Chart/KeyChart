@@ -17,6 +17,7 @@ urlpatterns = [
     path('keychart/configuracoes/', include('app.configuracoes.urls')),
     path('keychart/', include('app.partidas_chaveamento.urls')),
     path('keychart/relatorio/', include('app.relatorios.urls')),
+    path('keychart/estatisticas/', include('app.estatisticas.urls')),
 
     path('.well-known/appspecific/com.chrome.devtools.json', lambda r: HttpResponseNotFound()),
 ]

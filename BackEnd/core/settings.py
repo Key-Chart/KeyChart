@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'app.configuracoes',
     'app.partidas_chaveamento',
     'app.relatorios',
+    'app.estatisticas',
 ]
 
 # Middlewares
@@ -123,7 +124,10 @@ STATICFILES_DIRS = [
 # Tipo de chave primária padrão
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+# Configurações de autenticação
+LOGIN_URL = '/keychart/login/'
+LOGIN_REDIRECT_URL = '/keychart/'
+LOGOUT_REDIRECT_URL = '/keychart/login/'
 
 # Configurações de email (ajuste conforme seu servidor)
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')

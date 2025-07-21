@@ -1,0 +1,101 @@
+/* Toast Notifications CSS */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 300px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    z-index: 9999;
+}
+
+.toast-notification.show {
+    transform: translateX(0);
+}
+
+.toast-notification.toast-success {
+    border-color: #28a745;
+}
+
+.toast-notification.toast-error {
+    border-color: #dc3545;
+}
+
+.toast-notification.toast-warning {
+    border-color: #ffc107;
+}
+
+.toast-notification.toast-info {
+    border-color: #17a2b8;
+}
+
+.toast-notification i {
+    font-size: 1.2rem;
+}
+
+.toast-notification.toast-success i {
+    color: #28a745;
+}
+
+.toast-notification.toast-error i {
+    color: #dc3545;
+}
+
+.toast-notification.toast-warning i {
+    color: #ffc107;
+}
+
+.toast-notification.toast-info i {
+    color: #17a2b8;
+}
+
+.toast-notification span {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toast-close:hover {
+    color: #495057;
+}
+
+/* Loading Spinner Animation */
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Responsive adjustments for toast */
+@media (max-width: 480px) {
+    .toast-notification {
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        transform: translateY(-100px);
+    }
+    
+    .toast-notification.show {
+        transform: translateY(0);
+    }
+}

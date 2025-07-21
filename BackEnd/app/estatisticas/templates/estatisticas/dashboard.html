@@ -1,0 +1,907 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Estatísticas | KeyChart</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Estilos customizados -->
+    <link rel="stylesheet" href="{% static 'estatisticas/css/estatisticas.css' %}">
+    <link rel="shortcut icon" href="{% static 'competicoes/img/icone_keychart.png' %}" type="image/x-icon">
+    
+    <style>
+        :root {
+            --primary-stats: #2c3e50;
+            --accent-stats: #3498db;
+            --success-stats: #27ae60;
+            --warning-stats: #f39c12;
+            --danger-stats: #e74c3c;
+            --info-stats: #8e44ad;
+            --light-stats: #ecf0f1;
+            --dark-stats: #34495e;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    {% include 'sidebar.html' %}
+
+    <!-- Conteúdo Principal -->
+    <div class="content" id="content">
+        <!-- Header -->
+        <div class="header">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2><i class="bi bi-graph-up-arrow me-2"></i>Dashboard de Estatísticas</h2>
+                        <p class="mb-0 text-white-50">Análises em tempo real do sistema KeyChart</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-light btn-sm" id="refreshData">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Atualizar
+                        </button>
+                        <button class="btn btn-outline-light btn-sm" onclick="toggleAutoRefresh()">
+                            <i class="bi bi-play-circle me-1" id="autoRefreshIcon"></i>
+                            <span id="autoRefreshText">Auto Refresh</span>
+                        </button>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-download me-1"></i>Exportar
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="exportDashboard('pdf')">
+                                    <i class="bi bi-file-pdf me-2"></i>PDF
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" onclick="exportDashboard('excel')">
+                                    <i class="bi bi-file-excel me-2"></i>Excel
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" onclick="exportDashboard('image')">
+                                    <i class="bi bi-image me-2"></i>Imagem
+                                </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo do Dashboard -->
+        <main class="container-fluid py-4">
+            <!-- Alertas do Sistema -->
+            {% if alertas %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="alert-container">
+                        {% for alerta in alertas %}
+                        <div class="alert alert-{{ alerta.tipo }} alert-dismissible fade show animate__animated animate__fadeInDown" role="alert">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-{% if alerta.tipo == 'warning' %}exclamation-triangle{% elif alerta.tipo == 'danger' %}x-circle{% elif alerta.tipo == 'success' %}check-circle{% else %}info-circle{% endif %} me-3 fs-5"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">{{ alerta.titulo }}</h6>
+                                    <p class="mb-1">{{ alerta.mensagem }}</p>
+                                    {% if alerta.acao %}
+                                    <small class="text-muted">
+                                        <i class="bi bi-lightbulb me-1"></i>{{ alerta.acao }}
+                                    </small>
+                                    {% endif %}
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-{{ alerta.tipo }}-subtle text-{{ alerta.tipo }} border border-{{ alerta.tipo }}-subtle">
+                                        {{ alerta.prioridade|title }}
+                                    </span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Cards de Métricas Principais -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
+                    <div class="stat-card primary animate__animated animate__fadeInUp">
+                        <div class="stat-icon">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" data-metric="total_atletas">{{ metricas_principais.total_atletas|default:"0" }}</h3>
+                            <p class="stat-label">Total de Atletas</p>
+                            <div class="stat-footer">
+                                <span class="stat-change {% if metricas_principais.crescimento_atletas > 0 %}positive{% else %}negative{% endif %}">
+                                    <i class="bi bi-{% if metricas_principais.crescimento_atletas > 0 %}arrow-up{% else %}arrow-down{% endif %}"></i>
+                                    {{ metricas_principais.crescimento_atletas|default:"0" }}%
+                                </span>
+                                <small class="text-muted">este mês</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
+                    <div class="stat-card success animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+                        <div class="stat-icon">
+                            <i class="bi bi-person-check-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" data-metric="atletas_ativos">{{ metricas_principais.atletas_ativos|default:"0" }}</h3>
+                            <p class="stat-label">Atletas Ativos</p>
+                            <div class="stat-footer">
+                                <span class="stat-percentage">
+                                    {{ metricas_principais.atletas_ativos|default:"0" }} de {{ metricas_principais.total_atletas|default:"0" }}
+                                </span>
+                                <small class="text-muted">ativos</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
+                    <div class="stat-card warning animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+                        <div class="stat-icon">
+                            <i class="bi bi-trophy-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" data-metric="total_competicoes">{{ metricas_principais.total_competicoes|default:"0" }}</h3>
+                            <p class="stat-label">Competições</p>
+                            <div class="stat-footer">
+                                <span class="stat-detail">
+                                    <i class="bi bi-calendar-month"></i>
+                                    {{ metricas_principais.competicoes_mes|default:"0" }} este mês
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
+                    <div class="stat-card info animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+                        <div class="stat-icon">
+                            <i class="bi bi-calendar-check-fill"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" data-metric="partidas_hoje">{{ metricas_principais.partidas_hoje|default:"0" }}</h3>
+                            <p class="stat-label">Partidas Hoje</p>
+                            <div class="stat-footer">
+                                <span class="stat-detail">
+                                    <i class="bi bi-clock"></i>
+                                    Agenda diária
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos Principais -->
+            <div class="row mb-4">
+                <!-- Evolução de Inscrições -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card chart-card animate__animated animate__fadeInLeft">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-graph-up me-2"></i>Evolução de Inscrições
+                                </h5>
+                                <div class="chart-controls">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="toggleChartType('evolucao')">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="evolucaoChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Distribuição por Sexo -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card chart-card animate__animated animate__fadeInRight">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-pie-chart me-2"></i>Distribuição por Sexo
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="sexoChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segunda Linha de Gráficos -->
+            <div class="row mb-4">
+                <!-- Distribuição por Categoria -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card chart-card animate__animated animate__fadeInUp">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-layers me-2"></i>Distribuição por Categoria
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="categoriaChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Academias -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card data-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-building me-2"></i>Top 5 Academias
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="academy-list">
+                                {% for academia in top_academias %}
+                                <div class="academy-item">
+                                    <div class="academy-rank">{{ forloop.counter }}</div>
+                                    <div class="academy-info">
+                                        <h6 class="academy-name">{{ academia.nome }}</h6>
+                                        <small class="text-muted">{{ academia.cidade }}, {{ academia.estado }}</small>
+                                    </div>
+                                    <div class="academy-stats">
+                                        <span class="badge bg-primary rounded-pill">{{ academia.total_atletas }} atletas</span>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="text-center text-muted py-4">
+                                    <i class="bi bi-building fs-1 mb-3"></i>
+                                    <p>Nenhuma academia encontrada</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPIs e Métricas Avançadas -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card animate__animated animate__fadeInUp">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-speedometer2 me-2"></i>Indicadores de Performance (KPIs)
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <div class="kpi-item">
+                                        <div class="kpi-icon bg-success">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                        </div>
+                                        <div class="kpi-content">
+                                            <h4 class="kpi-value">{{ metricas_principais.taxa_finalizacao|default:"0" }}%</h4>
+                                            <p class="kpi-label">Taxa de Finalização</p>
+                                            <small class="text-muted">Partidas finalizadas</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                    <div class="kpi-item">
+                                        <div class="kpi-icon bg-info">
+                                            <i class="bi bi-people-fill"></i>
+                                        </div>
+                                        <div class="kpi-content">
+                                            <h4 class="kpi-value">{{ metricas_principais.media_atletas_competicao|default:"0" }}</h4>
+                                            <p class="kpi-label">Média Atletas/Comp.</p>
+                                            <small class="text-muted">Por competição</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                    <div class="kpi-item">
+                                        <div class="kpi-icon bg-warning">
+                                            <i class="bi bi-graph-up-arrow"></i>
+                                        </div>
+                                        <div class="kpi-content">
+                                            <h4 class="kpi-value">{{ metricas_principais.tendencia_participacao|default:"0" }}%</h4>
+                                            <p class="kpi-label">Tendência Participação</p>
+                                            <small class="text-muted">Últimos 30 dias</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3 mb-3">
+                                    <div class="kpi-item">
+                                        <div class="kpi-icon bg-primary">
+                                            <i class="bi bi-calendar-plus"></i>
+                                        </div>
+                                        <div class="kpi-content">
+                                            <h4 class="kpi-value">{{ metricas_principais.inscricoes_ativas|default:"0" }}</h4>
+                                            <p class="kpi-label">Inscrições Ativas</p>
+                                            <small class="text-muted">Em competições</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sistema de Status -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">
+                                <i class="bi bi-info-circle me-2"></i>Informações do Sistema
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Última Atualização:</strong></p>
+                                    <p class="text-muted" id="lastUpdate">{{ ultima_atualizacao|date:"d/m/Y H:i:s" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Cache Status:</strong></p>
+                                    <span class="badge bg-success" id="cacheStatus">Ativo</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">
+                                <i class="bi bi-gear me-2"></i>Ações Rápidas
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary btn-sm" onclick="invalidateCache()">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>Limpar Cache
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="window.location.href='/keychart/relatorio/'">
+                                    <i class="bi bi-file-text me-1"></i>Ver Relatórios
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== SEÇÃO: ESTATÍSTICAS DE COMPETIÇÕES ===== -->
+            <div class="section-divider">
+                <h3 class="section-title">
+                    <i class="bi bi-trophy-fill me-2"></i>Estatísticas de Competições
+                </h3>
+                <p class="section-subtitle">Análise completa de performance e participação</p>
+            </div>
+
+            <!-- Métricas de Competições -->
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="metric-card bg-gradient-primary">
+                        <div class="metric-icon">
+                            <i class="bi bi-calendar-event"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h4 class="metric-value">{{ competicoes_stats.total_competicoes|default:"0" }}</h4>
+                            <p class="metric-label">Total de Competições</p>
+                            <small class="metric-detail">
+                                <i class="bi bi-calendar-month me-1"></i>{{ competicoes_stats.competicoes_mes|default:"0" }} este mês
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="metric-card bg-gradient-success">
+                        <div class="metric-icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h4 class="metric-value">{{ competicoes_stats.taxa_finalizacao|default:"0" }}%</h4>
+                            <p class="metric-label">Taxa de Finalização</p>
+                            <small class="metric-detail">
+                                <i class="bi bi-graph-up me-1"></i>+2.3% vs mês anterior
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="metric-card bg-gradient-info">
+                        <div class="metric-icon">
+                            <i class="bi bi-stopwatch"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h4 class="metric-value">{{ competicoes_stats.tempo_medio|default:"0" }}</h4>
+                            <p class="metric-label">Tempo Médio (dias)</p>
+                            <small class="metric-detail">
+                                <i class="bi bi-clock me-1"></i>Para organização
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="metric-card bg-gradient-warning">
+                        <div class="metric-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h4 class="metric-value">{{ competicoes_stats.participacao_media|default:"0" }}</h4>
+                            <p class="metric-label">Média Atletas/Comp.</p>
+                            <small class="metric-detail">
+                                <i class="bi bi-person-plus me-1"></i>Por competição
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos de Competições -->
+            <div class="row mb-4">
+                <div class="col-lg-8">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-graph-up me-2"></i>Timeline de Competições
+                                </h5>
+                                <div class="chart-controls">
+                                    <select class="form-select form-select-sm" onchange="updateTimelineChart(this.value)">
+                                        <option value="6m">Últimos 6 meses</option>
+                                        <option value="1y">Último ano</option>
+                                        <option value="all">Todos os períodos</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="competicoesTimelineChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-pie-chart me-2"></i>Por Modalidade
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="modalidadeChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== SEÇÃO: ESTATÍSTICAS DE ATLETAS ===== -->
+            <div class="section-divider">
+                <h3 class="section-title">
+                    <i class="bi bi-people-fill me-2"></i>Estatísticas de Atletas
+                </h3>
+                <p class="section-subtitle">Demografia e jornada dos atletas</p>
+            </div>
+
+            <!-- Demografia de Atletas -->
+            <div class="row mb-4">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-bar-chart me-2"></i>Distribuição por Faixa
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="faixasChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-geo-alt me-2"></i>Distribuição Geográfica
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="geographic-stats">
+                                {% for estado in distribuicao_estados %}
+                                <div class="geo-item">
+                                    <div class="geo-state">{{ estado.nome }}</div>
+                                    <div class="geo-bar">
+                                        <div class="geo-progress" style="width: {{ estado.percentual }}%"></div>
+                                    </div>
+                                    <div class="geo-count">{{ estado.total }}</div>
+                                </div>
+                                {% empty %}
+                                <div class="text-center text-muted py-3">
+                                    <i class="bi bi-map fs-1"></i>
+                                    <p class="mt-2">Dados sendo carregados...</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progressão e Jornada -->
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-arrow-up-circle me-2"></i>Progressão de Faixas
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="progression-timeline">
+                                <div class="progression-item">
+                                    <div class="progression-badge bg-white text-dark">Branca</div>
+                                    <div class="progression-arrow">→</div>
+                                    <div class="progression-count">{{ progressao.branca_azul|default:"0" }}</div>
+                                </div>
+                                <div class="progression-item">
+                                    <div class="progression-badge bg-primary">Azul</div>
+                                    <div class="progression-arrow">→</div>
+                                    <div class="progression-count">{{ progressao.azul_roxa|default:"0" }}</div>
+                                </div>
+                                <div class="progression-item">
+                                    <div class="progression-badge bg-purple">Roxa</div>
+                                    <div class="progression-arrow">→</div>
+                                    <div class="progression-count">{{ progressao.roxa_marrom|default:"0" }}</div>
+                                </div>
+                                <div class="progression-item">
+                                    <div class="progression-badge bg-warning">Marrom</div>
+                                    <div class="progression-arrow">→</div>
+                                    <div class="progression-count">{{ progressao.marrom_preta|default:"0" }}</div>
+                                </div>
+                                <div class="progression-item">
+                                    <div class="progression-badge bg-dark">Preta</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-calendar-range me-2"></i>Jornada do Atleta
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="journey-stats">
+                                <div class="journey-metric">
+                                    <div class="journey-icon bg-success">
+                                        <i class="bi bi-person-plus"></i>
+                                    </div>
+                                    <div class="journey-info">
+                                        <h6>Tempo Médio de Cadastro</h6>
+                                        <p class="mb-0">{{ jornada.tempo_medio_cadastro|default:"0" }} dias</p>
+                                    </div>
+                                </div>
+                                <div class="journey-metric">
+                                    <div class="journey-icon bg-info">
+                                        <i class="bi bi-trophy"></i>
+                                    </div>
+                                    <div class="journey-info">
+                                        <h6>Primeira Competição</h6>
+                                        <p class="mb-0">{{ jornada.tempo_primeira_comp|default:"0" }} dias</p>
+                                    </div>
+                                </div>
+                                <div class="journey-metric">
+                                    <div class="journey-icon bg-warning">
+                                        <i class="bi bi-arrow-up"></i>
+                                    </div>
+                                    <div class="journey-info">
+                                        <h6>Primeira Progressão</h6>
+                                        <p class="mb-0">{{ jornada.tempo_primeira_faixa|default:"0" }} meses</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== SEÇÃO: ESTATÍSTICAS DE ACADEMIAS ===== -->
+            <div class="section-divider">
+                <h3 class="section-title">
+                    <i class="bi bi-building me-2"></i>Estatísticas de Academias
+                </h3>
+                <p class="section-subtitle">Ranking e análise comparativa</p>
+            </div>
+
+            <!-- Ranking de Academias -->
+            <div class="row mb-4">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-award me-2"></i>Ranking de Performance
+                                </h5>
+                                <div class="ranking-controls">
+                                    <select class="form-select form-select-sm" onchange="updateRanking(this.value)">
+                                        <option value="atletas">Por Número de Atletas</option>
+                                        <option value="competicoes">Por Competições</option>
+                                        <option value="medalhas">Por Medalhas</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="ranking-list">
+                                {% for academia in ranking_academias %}
+                                <div class="ranking-item">
+                                    <div class="ranking-position">
+                                        <span class="position-badge {% if forloop.counter <= 3 %}top-three{% endif %}">
+                                            {{ forloop.counter }}
+                                        </span>
+                                    </div>
+                                    <div class="ranking-info">
+                                        <h6 class="academy-name">{{ academia.nome }}</h6>
+                                        <p class="academy-location">{{ academia.cidade }}, {{ academia.estado }}</p>
+                                    </div>
+                                    <div class="ranking-metrics">
+                                        <div class="metric">
+                                            <span class="metric-label">Atletas</span>
+                                            <span class="metric-value">{{ academia.total_atletas }}</span>
+                                        </div>
+                                        <div class="metric">
+                                            <span class="metric-label">Competições</span>
+                                            <span class="metric-value">{{ academia.total_competicoes }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="ranking-score">
+                                        <div class="score-bar">
+                                            <div class="score-fill" style="width: {{ academia.score_percentual }}%"></div>
+                                        </div>
+                                        <span class="score-value">{{ academia.score }}</span>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="text-center text-muted py-4">
+                                    <i class="bi bi-building fs-1"></i>
+                                    <p class="mt-2">Nenhuma academia encontrada</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-graph-up me-2"></i>Crescimento Regional
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="crescimentoRegionalChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== SEÇÃO: ANÁLISES COMPARATIVAS ===== -->
+            <div class="section-divider">
+                <h3 class="section-title">
+                    <i class="bi bi-graph-up-arrow me-2"></i>Análises Comparativas
+                </h3>
+                <p class="section-subtitle">Comparações temporais e benchmarking</p>
+            </div>
+
+            <!-- Comparações Temporais -->
+            <div class="row mb-4">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-calendar-range me-2"></i>Comparação Período-a-Período
+                                </h5>
+                                <div class="comparison-controls d-flex gap-2">
+                                    <select class="form-select form-select-sm" id="periodoA">
+                                        <option value="2024-01">Janeiro 2024</option>
+                                        <option value="2024-02">Fevereiro 2024</option>
+                                        <option value="2024-03">Março 2024</option>
+                                        <option value="2024-04">Abril 2024</option>
+                                        <option value="2024-05">Maio 2024</option>
+                                        <option value="2024-06" selected>Junho 2024</option>
+                                    </select>
+                                    <span class="align-self-center">vs</span>
+                                    <select class="form-select form-select-sm" id="periodoB">
+                                        <option value="2024-05" selected>Maio 2024</option>
+                                        <option value="2024-04">Abril 2024</option>
+                                        <option value="2024-03">Março 2024</option>
+                                        <option value="2024-02">Fevereiro 2024</option>
+                                        <option value="2024-01">Janeiro 2024</option>
+                                    </select>
+                                    <button class="btn btn-primary btn-sm" onclick="updateComparison()">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <canvas id="comparativoChart" height="300"></canvas>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="comparison-summary">
+                                        <div class="summary-item">
+                                            <h6>Variação de Atletas</h6>
+                                            <div class="variation positive">
+                                                <i class="bi bi-arrow-up"></i>
+                                                <span>+12.5%</span>
+                                            </div>
+                                        </div>
+                                        <div class="summary-item">
+                                            <h6>Variação de Competições</h6>
+                                            <div class="variation positive">
+                                                <i class="bi bi-arrow-up"></i>
+                                                <span>+8.3%</span>
+                                            </div>
+                                        </div>
+                                        <div class="summary-item">
+                                            <h6>Variação de Participação</h6>
+                                            <div class="variation negative">
+                                                <i class="bi bi-arrow-down"></i>
+                                                <span>-3.2%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projeções e Tendências -->
+            <div class="row mb-4">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-graph-up me-2"></i>Projeções e Tendências
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="projecoesChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-bullseye me-2"></i>Metas vs Realizado
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="goals-progress">
+                                <div class="goal-item">
+                                    <div class="goal-header">
+                                        <span class="goal-label">Meta Atletas 2024</span>
+                                        <span class="goal-percentage">75%</span>
+                                    </div>
+                                    <div class="goal-bar">
+                                        <div class="goal-fill" style="width: 75%"></div>
+                                    </div>
+                                    <div class="goal-details">
+                                        <small>150 de 200 atletas</small>
+                                    </div>
+                                </div>
+
+                                <div class="goal-item">
+                                    <div class="goal-header">
+                                        <span class="goal-label">Meta Competições 2024</span>
+                                        <span class="goal-percentage">62%</span>
+                                    </div>
+                                    <div class="goal-bar">
+                                        <div class="goal-fill" style="width: 62%"></div>
+                                    </div>
+                                    <div class="goal-details">
+                                        <small>25 de 40 competições</small>
+                                    </div>
+                                </div>
+
+                                <div class="goal-item">
+                                    <div class="goal-header">
+                                        <span class="goal-label">Meta Academias 2024</span>
+                                        <span class="goal-percentage">90%</span>
+                                    </div>
+                                    <div class="goal-bar">
+                                        <div class="goal-fill" style="width: 90%"></div>
+                                    </div>
+                                    <div class="goal-details">
+                                        <small>18 de 20 academias</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-3">Atualizando dados...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/sidebar.js' %}"></script>
+    <script src="{% static 'estatisticas/js/dashboard-main.js' %}"></script>
+
+    <!-- Dados para gráficos -->
+    <script>
+        // Dados do Django para JavaScript
+        const dashboardData = {
+            evolucao_inscricoes: {{ evolucao_inscricoes_json|safe }},
+            distribuicao_sexo: {{ distribuicao_sexo_json|safe }},
+            distribuicao_categoria: {{ distribuicao_categoria_json|safe }},
+            distribuicao_faixas: {{ distribuicao_faixas_json|safe }},
+            modalidades: {{ modalidades_json|safe }},
+            metricas: {{ metricas_principais|safe }},
+            alertas_count: {{ alertas|length|default:"0" }}
+        };
+
+        // URLs para APIs
+        const apiUrls = {
+            metricas: '{% url "estatisticas:api_metricas" %}',
+            graficos: '{% url "estatisticas:api_graficos" %}',
+            alertas: '{% url "estatisticas:api_alertas" %}'
+        };
+
+        // Configurações
+        const config = {
+            autoRefresh: false,
+            refreshInterval: 30000, // 30 segundos
+            animationsEnabled: true
+        };
+
+        // Inicializar Dashboard quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Inicializando Dashboard de Estatísticas...');
+            window.dashboardMain = new DashboardMainComplete();
+        });
+    </script>
+</body>
+</html>
