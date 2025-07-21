@@ -356,23 +356,286 @@
             transform: none !important;
         }
 
-        /* Melhorias nos modais */
+        /* Melhorias nos modais - Estilo Desktop Moderno */
+        .modal-backdrop {
+            backdrop-filter: blur(6px);
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
         .modal-content {
-            border-radius: 16px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+            border: 1px solid #e9ecef;
+            background: white;
         }
 
         .modal-header {
-            padding: 1.5rem 2rem;
+            padding: 1.25rem 1.75rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #495057 100%);
+            border-bottom: none;
+            color: white;
+        }
+
+        .modal-header.bg-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #e74c3c 100%);
+        }
+
+        .modal-header.bg-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #27ae60 100%);
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .modal-title i {
+            font-size: 1rem;
+            margin-right: 0.5rem;
         }
 
         .modal-body {
-            padding: 2rem;
+            padding: 1.75rem;
+            background: #ffffff;
         }
 
         .modal-footer {
-            padding: 1.5rem 2rem;
+            padding: 1rem 1.75rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            gap: 0.5rem;
+        }
+
+        /* Formulários nos modais */
+        .modal .form-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal .form-control,
+        .modal .form-select {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .modal .form-control:focus,
+        .modal .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.15rem rgba(52, 58, 64, 0.08);
+            background: white;
+        }
+
+        /* Avatar no modal de edição */
+        .avatar-upload {
+            background: white;
+            border-radius: 10px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Alertas nos modais */
+        .modal .alert {
+            border-radius: 8px;
+            border: none;
+            padding: 0.9rem 1.1rem;
+            margin: 1rem 0;
+        }
+
+        .alert-warning.bg-warning-subtle {
+            background: linear-gradient(135deg, #fff3cd, #fef7e0) !important;
+            color: #856404;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .alert-info.bg-info-subtle {
+            background: linear-gradient(135deg, #d1ecf1, #e7f3ff) !important;
+            color: #0c5460;
+            border-left: 4px solid var(--info-color);
+        }
+
+        /* Sistema de Mensagens Personalizadas */
+        .custom-toast {
+            min-width: 320px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .custom-toast.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .custom-toast.error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .custom-toast.warning {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .custom-toast.info {
+            border-left: 4px solid var(--info-color);
+        }
+
+        .custom-toast-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-bottom: 1px solid #dee2e6;
+            padding: 0.6rem 0.9rem;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .custom-toast-header.success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+        }
+
+        .custom-toast-header.error {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+        }
+
+        .custom-toast-header.warning {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            color: #856404;
+        }
+
+        .custom-toast-header.info {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            color: #0c5460;
+        }
+
+        .custom-toast-body {
+            padding: 0.9rem;
+            color: #495057;
+            line-height: 1.4;
+        }
+
+        .toast-icon {
+            margin-right: 0.6rem;
+            font-size: 1rem;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-left: auto;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            transition: background-color 0.2s ease;
+        }
+
+        .toast-close:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .custom-toast.hiding {
+            animation: slideOutRight 0.3s ease-in forwards;
+        }
+
+        /* Estilo para dropdown de ordenação */
+        .dropdown-menu {
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: none;
+            padding: 0.5rem 0;
+            min-width: 240px;
+        }
+
+        .dropdown-header {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.5rem 1rem 0.25rem;
+        }
+
+        .dropdown-item {
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, var(--primary-color), #495057);
+            color: white;
+            transform: none !important;
+        }
+
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .dropdown-divider {
+            margin: 0.5rem 0;
+        }
+
+        .btn-outline-light {
+            border-color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.8);
+            color: white;
+        }
+
+        .vr {
+            width: 1px;
+            height: 24px;
+            background-color: currentColor;
+            opacity: 0.3;
         }
 
         /* Remover hover dos cards */
@@ -1149,12 +1412,51 @@
                         <h5 class="card-title mb-0">
                             <i class="bi bi-list-check me-2"></i>Lista de Atletas
                         </h5>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-primary me-2 border border-white" onclick="abrirModalImprimir()">
-                                <i class="bi bi-printer"></i> Imprimir
+                        <div class="d-flex gap-2 align-items-center">
+                            <!-- Dropdown de Ordenação -->
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-light dropdown-toggle border border-white" type="button" id="dropdownOrdenacao" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-sort-down me-1"></i>Ordenar
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownOrdenacao">
+                                    <li><h6 class="dropdown-header">Ordenar por:</h6></li>
+                                    <li><a class="dropdown-item" href="#" onclick="ordenarAtletas('nome', 'asc')">
+                                        <i class="bi bi-sort-alpha-down me-2"></i>Nome (A-Z)
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="ordenarAtletas('nome', 'desc')">
+                                        <i class="bi bi-sort-alpha-up me-2"></i>Nome (Z-A)
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#" onclick="ordenarAtletas('idade', 'asc')">
+                                        <i class="bi bi-sort-numeric-down me-2"></i>Idade (Menor-Maior)
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="ordenarAtletas('idade', 'desc')">
+                                        <i class="bi bi-sort-numeric-up me-2"></i>Idade (Maior-Menor)
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#" onclick="ordenarAtletas('categoria', 'asc')">
+                                        <i class="bi bi-layers me-2"></i>Categoria (A-Z)
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="ordenarAtletas('academia', 'asc')">
+                                        <i class="bi bi-building me-2"></i>Academia (A-Z)
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#" onclick="ordenarAtletas('status', 'asc')">
+                                        <i class="bi bi-check-circle me-2"></i>Status (Ativo primeiro)
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="ordenarAtletas('status', 'desc')">
+                                        <i class="bi bi-x-circle me-2"></i>Status (Inativo primeiro)
+                                    </a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="vr text-white-50"></div>
+                            
+                            <button class="btn btn-sm btn-primary border border-white" onclick="abrirModalImprimir()">
+                                <i class="bi bi-printer me-1"></i>Imprimir
                             </button>
                             <button class="btn btn-sm btn-success border border-white" onclick="abrirModalExportar()">
-                                <i class="bi bi-download"></i> Exportar
+                                <i class="bi bi-download me-1"></i>Exportar
                             </button>
                         </div>
                     </div>
@@ -1232,17 +1534,20 @@
                                                 <i class="bi bi-eye"></i>
                                             </button>
                                             <button class="btn btn-outline-warning btn-sm"
-                                                    data-bs-toggle="tooltip" title="Editar">
+                                                    data-bs-toggle="tooltip" title="Editar"
+                                                    onclick="editarAtleta({{ atleta.id }})">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                             {% if atleta.ativo %}
                                             <button class="btn btn-outline-danger btn-sm"
-                                                    data-bs-toggle="tooltip" title="Inativar">
+                                                    data-bs-toggle="tooltip" title="Inativar"
+                                                    onclick="confirmarDesativacao({{ atleta.id }}, '{{ atleta.nome_completo }}')">
                                                 <i class="bi bi-person-x"></i>
                                             </button>
                                             {% else %}
                                             <button class="btn btn-outline-success btn-sm"
-                                                    data-bs-toggle="tooltip" title="Ativar">
+                                                    data-bs-toggle="tooltip" title="Ativar"
+                                                    onclick="confirmarAtivacao({{ atleta.id }}, '{{ atleta.nome_completo }}')">
                                                 <i class="bi bi-person-check"></i>
                                             </button>
                                             {% endif %}
@@ -1268,6 +1573,11 @@
         </main>
     </div>
 
+    <!-- Sistema de Mensagens Personalizadas -->
+    <div id="messageContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+        <!-- Mensagens serão inseridas aqui dinamicamente -->
+    </div>
+
     <!-- Modal Editar Atleta -->
     <div class="modal fade" id="editAthleteModal" tabindex="-1" aria-labelledby="editAthleteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -1280,6 +1590,7 @@
                 </div>
                 <div class="modal-body p-4">
                     <form id="editAthleteForm">
+                        {% csrf_token %}
                         <div class="row mb-4">
                             <div class="col-md-4 text-center">
                                 <div class="avatar-upload mb-3">
@@ -1331,11 +1642,14 @@
                             <div class="col-md-6">
                                 <label for="editAthleteBelt" class="form-label fw-semibold">Faixa</label>
                                 <select class="form-select" id="editAthleteBelt" required>
-                                    <option value="black" selected>Preta</option>
-                                    <option value="white">Branca</option>
-                                    <option value="blue">Azul</option>
-                                    <option value="purple">Roxa</option>
-                                    <option value="brown">Marrom</option>
+                                    <option value="branca">Branca</option>
+                                    <option value="azul">Azul</option>
+                                    <option value="amarela">Amarela</option>
+                                    <option value="laranja">Laranja</option>
+                                    <option value="verde">Verde</option>
+                                    <option value="roxa">Roxa</option>
+                                    <option value="marrom">Marrom</option>
+                                    <option value="preta">Preta</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -1359,7 +1673,7 @@
                 </div>
                 <div class="modal-footer border-0 bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" class="btn btn-primary" id="saveAthleteBtn">
                         <i class="bi bi-check-lg me-1"></i>Salvar Alterações
                     </button>
                 </div>
@@ -1378,7 +1692,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <p class="mb-3">Tem certeza que deseja desativar o atleta <strong>Luan Carvalho</strong>?</p>
+                    <p class="mb-3">Tem certeza que deseja desativar o atleta <strong id="deactivateAthleteName">Atleta</strong>?</p>
                     <div class="alert alert-warning border-0 bg-warning-subtle">
                         <i class="bi bi-exclamation-circle me-2"></i>O atleta não aparecerá mais nas listas de competições ativas.
                     </div>
@@ -1386,10 +1700,11 @@
                         <label for="deactivateReason" class="form-label fw-semibold">Motivo (opcional)</label>
                         <textarea class="form-control" id="deactivateReason" rows="3" placeholder="Descreva o motivo da desativação..."></textarea>
                     </div>
+                    <input type="hidden" id="deactivateAthleteId" value="">
                 </div>
                 <div class="modal-footer border-0 bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger">
+                    <button type="button" class="btn btn-danger" id="confirmDeactivateBtn">
                         <i class="bi bi-person-x me-1"></i>Confirmar Desativação
                     </button>
                 </div>
@@ -1408,14 +1723,15 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <p class="mb-3">Tem certeza que deseja ativar o atleta <strong>Maria Silva</strong>?</p>
+                    <p class="mb-3">Tem certeza que deseja ativar o atleta <strong id="activateAthleteName">Atleta</strong>?</p>
                     <div class="alert alert-info border-0 bg-info-subtle">
                         <i class="bi bi-info-circle me-2"></i>O atleta voltará a aparecer nas listas de competições.
                     </div>
+                    <input type="hidden" id="activateAthleteId" value="">
                 </div>
                 <div class="modal-footer border-0 bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-success">
+                    <button type="button" class="btn btn-success" id="confirmActivateBtn">
                         <i class="bi bi-person-check me-1"></i>Confirmar Ativação
                     </button>
                 </div>
@@ -1714,6 +2030,357 @@
                     document.getElementById('filterName').value = '';
                 });
             }
+
+            // Adicionar eventos para tooltips (se não estiver já inicializado)
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
+        // Sistema de Mensagens Personalizadas
+        function showMessage(type, title, message, duration = 5000) {
+            const messageContainer = document.getElementById('messageContainer');
+            
+            const icons = {
+                success: 'bi-check-circle-fill',
+                error: 'bi-x-circle-fill',
+                warning: 'bi-exclamation-triangle-fill',
+                info: 'bi-info-circle-fill'
+            };
+
+            const titles = {
+                success: title || 'Sucesso!',
+                error: title || 'Erro!',
+                warning: title || 'Atenção!',
+                info: title || 'Informação'
+            };
+
+            const toastHtml = `
+                <div class="custom-toast ${type}">
+                    <div class="custom-toast-header ${type}">
+                        <i class="bi ${icons[type]} toast-icon"></i>
+                        <span>${titles[type]}</span>
+                        <button type="button" class="toast-close" onclick="closeToast(this)">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                    <div class="custom-toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            messageContainer.insertAdjacentHTML('beforeend', toastHtml);
+
+            // Auto remover após o tempo especificado
+            const toast = messageContainer.lastElementChild;
+            setTimeout(() => {
+                closeToast(toast.querySelector('.toast-close'));
+            }, duration);
+        }
+
+        function closeToast(closeBtn) {
+            const toast = closeBtn.closest('.custom-toast');
+            toast.classList.add('hiding');
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }
+
+        // Função para ordenar atletas
+        function ordenarAtletas(criterio, ordem) {
+            // Obter filtros atuais
+            const filtros = {
+                filterName: document.getElementById('filterName')?.value || '',
+                filterAge: document.getElementById('filterAge')?.value || '',
+                filterCategory: document.getElementById('filterCategory')?.value || '',
+                filterStatus: document.getElementById('filterStatus')?.value || '',
+                order_by: criterio,
+                order_direction: ordem
+            };
+            
+            // Construir URL com parâmetros
+            const params = new URLSearchParams();
+            Object.keys(filtros).forEach(key => {
+                if (filtros[key]) {
+                    params.append(key, filtros[key]);
+                }
+            });
+            
+            // Recarregar página com ordenação
+            window.location.href = `${window.location.pathname}?${params.toString()}`;
+        }
+
+        // Função alternativa para ordenação via JavaScript (sem recarregar página)
+        function ordenarAtletasLocal(criterio, ordem) {
+            const tbody = document.querySelector('.table tbody');
+            const linhas = Array.from(tbody.querySelectorAll('tr'));
+            
+            // Remove a linha "Nenhum atleta encontrado" se existir
+            const linhaVazia = linhas.find(linha => linha.cells[0]?.colSpan === 5);
+            if (linhaVazia) {
+                return; // Não ordena se não há atletas
+            }
+            
+            linhas.sort((a, b) => {
+                let valorA, valorB;
+                
+                switch(criterio) {
+                    case 'nome':
+                        valorA = a.cells[0]?.querySelector('.fw-semibold')?.textContent?.trim() || '';
+                        valorB = b.cells[0]?.querySelector('.fw-semibold')?.textContent?.trim() || '';
+                        break;
+                    case 'idade':
+                        valorA = parseInt(a.cells[1]?.textContent?.replace(/\D/g, '')) || 0;
+                        valorB = parseInt(b.cells[1]?.textContent?.replace(/\D/g, '')) || 0;
+                        break;
+                    case 'categoria':
+                        valorA = a.cells[2]?.querySelector('.badge')?.textContent?.trim() || '';
+                        valorB = b.cells[2]?.querySelector('.badge')?.textContent?.trim() || '';
+                        break;
+                    case 'academia':
+                        valorA = a.cells[0]?.querySelector('.text-muted')?.textContent?.trim() || '';
+                        valorB = b.cells[0]?.querySelector('.text-muted')?.textContent?.trim() || '';
+                        break;
+                    case 'status':
+                        const statusA = a.cells[3]?.querySelector('.badge')?.classList.contains('badge-active') ? 'ativo' : 'inativo';
+                        const statusB = b.cells[3]?.querySelector('.badge')?.classList.contains('badge-active') ? 'ativo' : 'inativo';
+                        valorA = statusA;
+                        valorB = statusB;
+                        break;
+                    default:
+                        return 0;
+                }
+                
+                // Comparação
+                if (typeof valorA === 'string' && typeof valorB === 'string') {
+                    valorA = valorA.toLowerCase();
+                    valorB = valorB.toLowerCase();
+                }
+                
+                if (ordem === 'asc') {
+                    return valorA > valorB ? 1 : valorA < valorB ? -1 : 0;
+                } else {
+                    return valorA < valorB ? 1 : valorA > valorB ? -1 : 0;
+                }
+            });
+            
+            // Reordenar as linhas na tabela
+            linhas.forEach(linha => tbody.appendChild(linha));
+            
+            // Mostrar feedback visual
+            const criterioTexto = {
+                'nome': 'Nome',
+                'idade': 'Idade',
+                'categoria': 'Categoria',
+                'academia': 'Academia',
+                'status': 'Status'
+            };
+            
+            const ordemTexto = ordem === 'asc' ? 'crescente' : 'decrescente';
+            
+            showMessage('info', 'Lista Ordenada!', 
+                `Atletas ordenados por ${criterioTexto[criterio]} em ordem ${ordemTexto}.`, 3000);
+        }
+
+        // Função para editar atleta
+        function editarAtleta(atletaId) {
+            // Buscar dados do atleta
+            fetch(`/keychart/equipes_atletas/atletas/editar/${atletaId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.atleta) {
+                        // Preencher formulário
+                        document.getElementById('editAthleteName').value = data.atleta.nome_completo;
+                        document.getElementById('editAthleteEmail').value = data.atleta.email;
+                        document.getElementById('editAthleteWeight').value = data.atleta.peso;
+                        document.getElementById('editAthleteHeight').value = data.atleta.altura;
+                        
+                        // Preencher faixa
+                        const faixaSelect = document.getElementById('editAthleteBelt');
+                        faixaSelect.value = data.atleta.faixa;
+                        
+                        // Preencher categorias
+                        const categoriaSelect = document.getElementById('editAthleteCategory');
+                        categoriaSelect.innerHTML = '';
+                        data.categorias.forEach(cat => {
+                            const option = document.createElement('option');
+                            option.value = cat.id;
+                            option.textContent = `${cat.nome} (${cat.tipo})`;
+                            if (cat.id == data.atleta.categoria_id) {
+                                option.selected = true;
+                            }
+                            categoriaSelect.appendChild(option);
+                        });
+                        
+                        // Preencher academias
+                        const academiaSelect = document.getElementById('editAthleteTeam');
+                        academiaSelect.innerHTML = '';
+                        data.academias.forEach(acad => {
+                            const option = document.createElement('option');
+                            option.value = acad.id;
+                            option.textContent = acad.nome;
+                            if (acad.id == data.atleta.academia_id) {
+                                option.selected = true;
+                            }
+                            academiaSelect.appendChild(option);
+                        });
+                        
+                        // Definir foto
+                        if (data.atleta.foto_url) {
+                            document.getElementById('editAvatarPreview').src = data.atleta.foto_url;
+                        }
+                        
+                        // Armazenar ID do atleta
+                        document.getElementById('editAthleteForm').setAttribute('data-atleta-id', atletaId);
+                        
+                        // Mostrar modal
+                        const modal = new bootstrap.Modal(document.getElementById('editAthleteModal'));
+                        modal.show();
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar dados do atleta:', error);
+                    showMessage('error', 'Erro de Conexão', 'Não foi possível carregar os dados do atleta. Verifique sua conexão e tente novamente.');
+                });
+        }
+
+        // Salvar alterações do atleta
+        document.getElementById('saveAthleteBtn').addEventListener('click', function() {
+            const atletaId = document.getElementById('editAthleteForm').getAttribute('data-atleta-id');
+            const formData = new FormData();
+            
+            formData.append('nome_completo', document.getElementById('editAthleteName').value);
+            formData.append('email', document.getElementById('editAthleteEmail').value);
+            formData.append('peso', document.getElementById('editAthleteWeight').value);
+            formData.append('altura', document.getElementById('editAthleteHeight').value);
+            formData.append('faixa', document.getElementById('editAthleteBelt').value);
+            formData.append('categoria_id', document.getElementById('editAthleteCategory').value);
+            formData.append('academia_id', document.getElementById('editAthleteTeam').value);
+            
+            // Adicionar token CSRF
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            fetch(`/keychart/equipes_atletas/atletas/editar/${atletaId}/`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('success', 'Atleta Atualizado!', data.message);
+                    // Fechar modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editAthleteModal'));
+                    modal.hide();
+                    // Recarregar página após um delay para mostrar a mensagem
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showMessage('error', 'Erro ao Salvar', data.message || 'Não foi possível salvar as alterações do atleta.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao salvar atleta:', error);
+                showMessage('error', 'Erro de Conexão', 'Falha na comunicação com o servidor. Tente novamente.');
+            });
+        });
+
+        // Função para confirmar desativação
+        function confirmarDesativacao(atletaId, nomeAtleta) {
+            document.getElementById('deactivateAthleteId').value = atletaId;
+            document.getElementById('deactivateAthleteName').textContent = nomeAtleta;
+            document.getElementById('deactivateReason').value = '';
+            
+            const modal = new bootstrap.Modal(document.getElementById('deactivateAthleteModal'));
+            modal.show();
+        }
+
+        // Confirmar desativação
+        document.getElementById('confirmDeactivateBtn').addEventListener('click', function() {
+            const atletaId = document.getElementById('deactivateAthleteId').value;
+            const motivo = document.getElementById('deactivateReason').value;
+            
+            const formData = new FormData();
+            formData.append('atleta_id', atletaId);
+            formData.append('motivo', motivo);
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            fetch('/keychart/equipes_atletas/atletas/desativar/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('warning', 'Atleta Desativado!', data.message);
+                    // Fechar modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('deactivateAthleteModal'));
+                    modal.hide();
+                    // Recarregar página após um delay
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showMessage('error', 'Erro ao Desativar', data.message || 'Não foi possível desativar o atleta.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao desativar atleta:', error);
+                showMessage('error', 'Erro de Conexão', 'Falha na comunicação com o servidor. Tente novamente.');
+            });
+        });
+
+        // Função para confirmar ativação
+        function confirmarAtivacao(atletaId, nomeAtleta) {
+            document.getElementById('activateAthleteId').value = atletaId;
+            document.getElementById('activateAthleteName').textContent = nomeAtleta;
+            
+            const modal = new bootstrap.Modal(document.getElementById('activateAthleteModal'));
+            modal.show();
+        }
+
+        // Confirmar ativação
+        document.getElementById('confirmActivateBtn').addEventListener('click', function() {
+            const atletaId = document.getElementById('activateAthleteId').value;
+            
+            const formData = new FormData();
+            formData.append('atleta_id', atletaId);
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            fetch('/keychart/equipes_atletas/atletas/ativar/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('success', 'Atleta Ativado!', data.message);
+                    // Fechar modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('activateAthleteModal'));
+                    modal.hide();
+                    // Recarregar página após um delay
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showMessage('error', 'Erro ao Ativar', data.message || 'Não foi possível ativar o atleta.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao ativar atleta:', error);
+                showMessage('error', 'Erro de Conexão', 'Falha na comunicação com o servidor. Tente novamente.');
+            });
         });
     </script>
 </body>
