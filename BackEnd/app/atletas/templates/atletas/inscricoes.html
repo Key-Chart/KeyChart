@@ -18,38 +18,59 @@
 
     <!-- Conteúdo Principal -->
     <div class="content" id="content">
+        <!-- Header Moderno -->
+        <div class="header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="bi bi-pencil-square"></i> Sistema de Inscrições</h2>
+                    <p class="mb-0 text-white-50">Cadastre atletas em competições de forma rápida e eficiente</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/keychart/competicoes/'">
+                        <i class="bi bi-trophy me-1"></i>Ver Competições
+                    </button>
+                    <button class="btn btn-outline-light btn-sm" onclick="window.location.href='/keychart/equipes_atletas/'">
+                        <i class="bi bi-people me-1"></i>Gerenciar Atletas
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alertas de Sistema -->
         {% if messages %}
           {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-              {{ message }}
+              <div class="d-flex align-items-center">
+                <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}x-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-3 fs-5"></i>
+                <div>
+                  {{ message }}
+                </div>
+              </div>
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
           {% endfor %}
         {% endif %}
-        <div class="header">
-            <h2 style="color: #343A40;"><i class="bi bi-pencil-square" style="color: #343A40;"></i> Inscrições</h2>
-        </div>
 
         <div class="container-fluid mt-4">
             <!-- Passos do Processo -->
             <div class="step-indicator">
                 <div class="step active" id="step1">
-                    <div class="step-number" style="background: #343A40;">1</div>
+                    <div class="step-number">1</div>
                     <div class="step-title">Selecionar Competição</div>
                     <div class="step-connector"></div>
                 </div>
                 <div class="step" id="step2">
-                    <div class="step-number" style="background: #343A40;">2</div>
+                    <div class="step-number">2</div>
                     <div class="step-title">Selecionar Categoria</div>
                     <div class="step-connector"></div>
                 </div>
                 <div class="step" id="step3">
-                    <div class="step-number" style="background: #343A40;">3</div>
+                    <div class="step-number">3</div>
                     <div class="step-title">Cadastrar Atleta</div>
                     <div class="step-connector"></div>
                 </div>
                 <div class="step" id="step4">
-                    <div class="step-number" style="background: #343A40;">4</div>
+                    <div class="step-number">4</div>
                     <div class="step-title">Confirmar Inscrição</div>
                 </div>
             </div>
@@ -57,36 +78,75 @@
             <!-- Passo 1: Selecionar Competição -->
             <div class="card mb-4" id="step1-content">
                 <div class="card-header">
-                    <h5 class="mb-0">Passo 1: Selecionar Competição</h5>
+                    <h5 class="mb-0">
+                        <i class="bi bi-trophy me-2"></i>Passo 1: Selecionar Competição
+                    </h5>
                 </div>
                 <div class="card-body">
+                    <div class="filters-section mb-3">
+                        <h6><i class="bi bi-funnel me-2"></i>Filtros</h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="filter-status">
+                                    <option value="">Todas</option>
+                                    <option value="aberta">Abertas para Inscrição</option>
+                                    <option value="futura">Futuras</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Local</label>
+                                <select class="form-select" id="filter-local">
+                                    <option value="">Todos</option>
+                                    {% for competicao in competicoes %}
+                                        <option value="{{ competicao.local }}">{{ competicao.local }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Buscar</label>
+                                <input type="text" class="form-control" id="search-competicao" placeholder="Nome da competição...">
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Nome</th>
-                                    <th>Data</th>
-                                    <th>Local</th>
-                                    <th>Ação</th>
+                                    <th><i class="bi bi-trophy me-1"></i>Nome</th>
+                                    <th><i class="bi bi-calendar me-1"></i>Data</th>
+                                    <th><i class="bi bi-geo-alt me-1"></i>Local</th>
+                                    <th><i class="bi bi-info-circle me-1"></i>Status</th>
+                                    <th><i class="bi bi-gear me-1"></i>Ação</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for competicao in competicoes %}
                                 <tr>
-                                    <td>{{ competicao.nome }}</td>
+                                    <td>
+                                        <strong>{{ competicao.nome }}</strong>
+                                        <br><small class="text-muted">{{ competicao.descricao|truncatechars:50 }}</small>
+                                    </td>
                                     <td>{{ competicao.data_inicio|date:"d/m/Y" }}</td>
                                     <td>{{ competicao.local }}</td>
                                     <td>
+                                        <span class="badge badge-success">
+                                            <i class="bi bi-check-circle me-1"></i>Aberta
+                                        </span>
+                                    </td>
+                                    <td>
                                         <button class="btn btn-success btn-sm"
                                                 onclick="nextStep(1, '{{ competicao.nome|escapejs }}', {{ competicao.id }})">
-                                            Selecionar <i class="bi bi-arrow-right"></i>
+                                            <i class="bi bi-arrow-right me-1"></i>Selecionar
                                         </button>
                                     </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="4" class="text-center text-muted">
-                                        Nenhuma competição disponível no momento
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="bi bi-trophy fs-1 mb-3"></i>
+                                        <br>Nenhuma competição disponível no momento
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -99,27 +159,41 @@
             <!-- Passo 2: Selecionar Categoria -->
             <div class="card mb-4 d-none" id="step2-content">
                 <div class="card-header">
-                    <h5 class="mb-0">Passo 2: Selecionar Categoria - <span id="competicao-selecionada"></span></h5>
+                    <h5 class="mb-0">
+                        <i class="bi bi-tags me-2"></i>Passo 2: Selecionar Categoria - <span id="competicao-selecionada"></span>
+                    </h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Tipo de Categoria</label>
-                            <select class="form-select" id="tipo-categoria" onchange="filterCategories()">
-                                <option value="">Todos</option>
-                                <option value="kata">Kata</option>
-                                <option value="kumite">Kumite</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Sexo</label>
-                            <select class="form-select" id="sexo-categoria" name="sexo" onchange="filterCategories()">
-                                <option value="">Todos</option>
-                                <option value="M">Masculino</option>
-                                <option value="F">Feminino</option>
-                                <option value="X">Misto</option>
-                            </select>
-
+                    <div class="filters-section mb-3">
+                        <h6><i class="bi bi-funnel me-2"></i>Filtros de Categoria</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tipo de Categoria</label>
+                                <select class="form-select" id="tipo-categoria" onchange="filterCategories()">
+                                    <option value="">Todos os Tipos</option>
+                                    <option value="kata">
+                                        <i class="bi bi-person-standing me-1"></i>Kata (Individual)
+                                    </option>
+                                    <option value="kumite">
+                                        <i class="bi bi-people me-1"></i>Kumite (Combate)
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Sexo</label>
+                                <select class="form-select" id="sexo-categoria" name="sexo" onchange="filterCategories()">
+                                    <option value="">Todos os Sexos</option>
+                                    <option value="M">
+                                        <i class="bi bi-gender-male me-1"></i>Masculino
+                                    </option>
+                                    <option value="F">
+                                        <i class="bi bi-gender-female me-1"></i>Feminino
+                                    </option>
+                                    <option value="X">
+                                        <i class="bi bi-gender-ambiguous me-1"></i>Misto
+                                    </option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -127,10 +201,11 @@
                         <table class="table table-hover" id="categorias-table">
                             <thead>
                                 <tr>
-                                    <th>Nome</th>
-                                    <th>Tipo</th>
-                                    <th>Sexo</th>
-                                    <th>Ação</th>
+                                    <th><i class="bi bi-tag me-1"></i>Nome da Categoria</th>
+                                    <th><i class="bi bi-diagram-2 me-1"></i>Tipo</th>
+                                    <th><i class="bi bi-people me-1"></i>Sexo</th>
+                                    <th><i class="bi bi-person me-1"></i>Faixa Etária</th>
+                                    <th><i class="bi bi-gear me-1"></i>Ação</th>
                                 </tr>
                             </thead>
                             <tbody id="categorias-body">
@@ -143,13 +218,32 @@
                                                     data-competicao-id="{{ competicao.id }}"
                                                     class="categoria-row"
                                                     style="display: none;">
-                                                    <td>{{ categoria.nome }}</td>
-                                                    <td>{{ categoria.get_tipo_display }}</td>
-                                                    <td>{{ categoria.get_sexo_display }}</td>
+                                                    <td>
+                                                        <strong>{{ categoria.nome }}</strong>
+                                                        <br><small class="text-muted">{{ categoria.descricao|default:"Categoria padrão"|truncatechars:40 }}</small>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge {% if categoria.tipo == 'kata' %}badge-primary{% else %}badge-secondary{% endif %}">
+                                                            <i class="bi bi-{% if categoria.tipo == 'kata' %}person-standing{% else %}people{% endif %} me-1"></i>
+                                                            {{ categoria.get_tipo_display }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-success">
+                                                            <i class="bi bi-gender-{% if categoria.sexo == 'M' %}male{% elif categoria.sexo == 'F' %}female{% else %}ambiguous{% endif %} me-1"></i>
+                                                            {{ categoria.get_sexo_display }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-calendar-range me-1"></i>
+                                                            {{ categoria.idade_min|default:"0" }}-{{ categoria.idade_max|default:"99" }} anos
+                                                        </small>
+                                                    </td>
                                                     <td>
                                                         <button class="btn btn-success btn-sm"
-                                                                onclick="nextStep(2, '{{ categoria.nome }}', {{ categoria.id }})">
-                                                            Selecionar <i class="bi bi-arrow-right"></i>
+                                                                onclick="nextStep(2, '{{ categoria.nome|escapejs }}', {{ categoria.id }})">
+                                                            <i class="bi bi-arrow-right me-1"></i>Selecionar
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -159,6 +253,12 @@
                                 {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-3">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep(2)">
+                            <i class="bi bi-arrow-left me-1"></i>Voltar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -363,8 +463,11 @@
     </div>
 
     <!-- Modal de sucesso -->
-    <div id="successModal" class="modal-email">
+    <div id="successModal" class="modal-email" style="display: none;">
         <div class="modal-content text-center">
+            <div class="position-absolute" style="top: 10px; right: 15px;">
+                <button type="button" class="btn-close" onclick="closeModal()" aria-label="Close"></button>
+            </div>
             <div class="mb-3">
                 <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
             </div>
@@ -374,8 +477,11 @@
                 <button type="button" class="btn btn-success me-2" onclick="window.location.href='/keychart/competicoes/'">
                     <i class="bi bi-trophy"></i> Voltar para Competições
                 </button>
-                <button type="button" class="btn btn-primary" onclick="window.location.href='/keychart/equipes_atletas/inscricoes/'">
+                <button type="button" class="btn btn-primary me-2" onclick="window.location.href='/keychart/equipes_atletas/inscricoes/'">
                     <i class="bi bi-plus-circle"></i> Nova Inscrição
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                    <i class="bi bi-x-circle"></i> Fechar
                 </button>
             </div>
         </div>
@@ -421,6 +527,25 @@
 
         // Carrega na inicialização
         carregarAcademias();
+
+        // Função para fechar o modal
+        function closeModal() {
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Disponibilizar globalmente
+        window.closeModal = closeModal;
+
+        // Fechar modal clicando fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('successModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
     </script>
 </body>
 </html>
