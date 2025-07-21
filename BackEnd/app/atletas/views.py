@@ -209,10 +209,15 @@ def atletas(request):
     nome = request.GET.get('filterName', '')
     idade = request.GET.get('filterAge', '')
     categoria = request.GET.get('filterCategory', '')
+    status = request.GET.get('filterStatus', '')
     export_format = request.GET.get('export')
+    
+    # Parâmetros de ordenação
+    order_by = request.GET.get('order_by', 'nome_completo')
+    order_direction = request.GET.get('order_direction', 'asc')
 
     # Construir a query de filtro
-    atletas = Atleta.objects.all()
+    atletas = Atleta.objects.select_related('categoria', 'academia').all()
 
     if nome:
         atletas = atletas.filter(nome_completo__icontains=nome)
@@ -220,26 +225,48 @@ def atletas(request):
         atletas = atletas.filter(idade=idade)
     if categoria:
         atletas = atletas.filter(categoria__tipo=categoria)
+    if status:
+        if status == 'ativo':
+            atletas = atletas.filter(ativo=True)
+        elif status == 'inativo':
+            atletas = atletas.filter(ativo=False)
+    
+    # Aplicar ordenação
+    order_fields = {
+        'nome': 'nome_completo',
+        'idade': 'idade',
+        'categoria': 'categoria__nome',
+        'academia': 'academia__nome',
+        'status': 'ativo'
+    }
+    
+    order_field = order_fields.get(order_by, 'nome_completo')
+    if order_direction == 'desc':
+        order_field = f'-{order_field}'
+    
+    atletas = atletas.order_by(order_field)
 
     # Verificar se é uma requisição de exportação
     if export_format in ['pdf', 'csv']:
         return exportar_atletas(atletas, export_format)
 
-    # Como não temos campo 'ativo', vamos considerar todos como ativos
-    atletas_ativos_count = atletas.count()
-    atletas_inativos_count = 0
+    # Contadores de status
+    atletas_ativos_count = atletas.filter(ativo=True).count()
+    atletas_inativos_count = atletas.filter(ativo=False).count()
     kata_count = atletas.filter(categoria__tipo='kata').count()
     kumite_count = atletas.filter(categoria__tipo='kumite').count()
 
     context = {
         'atletas': atletas,
+        'atletas_ativos': atletas_ativos_count,
         'atletas_ativos_count': atletas_ativos_count,
         'atletas_inativos_count': atletas_inativos_count,
         'kata_count': kata_count,
         'kumite_count': kumite_count,
         'filterName': nome,
         'filterAge': idade,
-        'filterCategory': categoria
+        'filterCategory': categoria,
+        'filterStatus': status
     }
 
     return render(request, 'atletas/equipes_atletas.html', context)
@@ -317,7 +344,8 @@ def exportar_csv(queryset):
     return response
 
 # Função para desativar Atleta
-'''def desativar_atleta(request):
+@require_POST
+def desativar_atleta(request):
     if request.method == 'POST':
         atleta_id = request.POST.get('atleta_id')
         motivo = request.POST.get('motivo', '')
@@ -328,14 +356,21 @@ def exportar_csv(queryset):
             atleta.motivo_inativacao = motivo
             atleta.save()
 
-            messages.success(request, f'Atleta {atleta.nome_completo} desativado com sucesso!')
+            return JsonResponse({
+                'success': True, 
+                'message': f'Atleta {atleta.nome_completo} desativado com sucesso!'
+            })
         except Atleta.DoesNotExist:
-            messages.error(request, 'Atleta não encontrado!')
-
-    return redirect('equipes_atletas:atletas')'''
+            return JsonResponse({
+                'success': False, 
+                'message': 'Atleta não encontrado!'
+            }, status=404)
+    
+    return JsonResponse({'success': False, 'message': 'Método não permitido'}, status=405)
 
 # Função para Ativar atleta
-'''def ativar_atleta(request):
+@require_POST
+def ativar_atleta(request):
     if request.method == 'POST':
         atleta_id = request.POST.get('atleta_id')
 
@@ -345,31 +380,101 @@ def exportar_csv(queryset):
             atleta.motivo_inativacao = ''
             atleta.save()
 
-            messages.success(request, f'Atleta {atleta.nome_completo} ativado com sucesso!')
+            return JsonResponse({
+                'success': True, 
+                'message': f'Atleta {atleta.nome_completo} ativado com sucesso!'
+            })
         except Atleta.DoesNotExist:
-            messages.error(request, 'Atleta não encontrado!')
-
-    return redirect('equipes_atletas:atletas')'''
+            return JsonResponse({
+                'success': False, 
+                'message': 'Atleta não encontrado!'
+            }, status=404)
+    
+    return JsonResponse({'success': False, 'message': 'Método não permitido'}, status=405)
 
 # Função para Editar Atleta
-'''def editar_atleta(request, atleta_id):
+def editar_atleta(request, atleta_id):
     atleta = get_object_or_404(Atleta, id=atleta_id)
-
+    
     if request.method == 'POST':
-        atleta.nome = request.POST.get('nome')
-        atleta.email = request.POST.get('email')
-        atleta.data_nascimento = request.POST.get('data_nascimento')
-        atleta.sexo = request.POST.get('sexo')
-        atleta.categoria = request.POST.get('categoria')
-        atleta.faixa = request.POST.get('faixa')
-        atleta.peso = request.POST.get('peso')
-        atleta.altura = request.POST.get('altura')
-        atleta.equipe_id = request.POST.get('equipe')
-        atleta.save()
-        return redirect('nome_da_tua_view_de_lista')  # Altere para onde deve redirecionar após editar
+        try:
+            # Atualizar dados do atleta
+            atleta.nome_completo = request.POST.get('nome_completo', atleta.nome_completo)
+            atleta.email = request.POST.get('email', atleta.email)
+            atleta.telefone = request.POST.get('telefone', atleta.telefone)
+            atleta.peso = request.POST.get('peso', atleta.peso) or None
+            atleta.altura = request.POST.get('altura', atleta.altura) or 0
+            
+            # Atualizar faixa se fornecida
+            faixa = request.POST.get('faixa')
+            if faixa:
+                atleta.faixa = faixa
+            
+            # Atualizar categoria se fornecida
+            categoria_id = request.POST.get('categoria_id')
+            if categoria_id:
+                try:
+                    categoria = Categoria.objects.get(id=categoria_id)
+                    atleta.categoria = categoria
+                except Categoria.DoesNotExist:
+                    pass
+            
+            # Atualizar academia se fornecida
+            academia_id = request.POST.get('academia_id')
+            if academia_id:
+                try:
+                    academia = Academia.objects.get(id=academia_id)
+                    atleta.academia = academia
+                except Academia.DoesNotExist:
+                    pass
 
-    context = {'atleta': atleta}
-    return render(request, 'teu_template.html', context)'''
+            atleta.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Atleta {atleta.nome_completo} atualizado com sucesso!'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'Erro ao atualizar atleta: {str(e)}'
+            }, status=500)
+    
+    # Para GET requests, retornar dados do atleta para popular o modal
+    if request.method == 'GET':
+        categorias = Categoria.objects.filter(competicao=atleta.competicao)
+        academias = Academia.objects.filter(competicao=atleta.competicao)
+        
+        return JsonResponse({
+            'atleta': {
+                'id': atleta.id,
+                'nome_completo': atleta.nome_completo,
+                'email': atleta.email or '',
+                'telefone': atleta.telefone or '',
+                'peso': float(atleta.peso) if atleta.peso else '',
+                'altura': atleta.altura or '',
+                'faixa': atleta.faixa,
+                'categoria_id': atleta.categoria.id if atleta.categoria else '',
+                'academia_id': atleta.academia.id if atleta.academia else '',
+                'foto_url': atleta.foto.url if atleta.foto else ''
+            },
+            'categorias': [
+                {
+                    'id': cat.id,
+                    'nome': cat.nome,
+                    'tipo': cat.get_tipo_display()
+                } for cat in categorias
+            ],
+            'academias': [
+                {
+                    'id': acad.id,
+                    'nome': acad.nome
+                } for acad in academias
+            ]
+        })
+    
+    return JsonResponse({'success': False, 'message': 'Método não permitido'}, status=405)
 
 # Função para exportar perfil do atleta para PDF
 def exportar_perfil_pdf(request, atleta_id):

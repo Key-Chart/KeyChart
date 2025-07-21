@@ -48,6 +48,10 @@ class Atleta(models.Model):
     estado = models.CharField(max_length=2, choices=ESTADO_CHOICES)
     foto = models.ImageField(upload_to='fotos_atletas/', null=True, blank=True)
     data_inscricao = models.DateTimeField(auto_now_add=True)
+    
+    # Campo de status do atleta
+    ativo = models.BooleanField(default=True)
+    motivo_inativacao = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.nome_completo} - {self.competicao.nome}"
