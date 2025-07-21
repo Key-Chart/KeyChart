@@ -458,6 +458,13 @@ const InscricoesApp = {
         }
     },
 
+    closeModal() {
+        const modal = document.getElementById('successModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    },
+
     /**
      * Utilitários
      */
