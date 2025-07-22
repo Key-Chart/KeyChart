@@ -1,0 +1,47 @@
+CONFIRMAÇÃO DE INSCRIÇÃO - {{ competicao.nome }}
+=========================================
+
+Olá, {{ inscricao.nome_completo }}!
+
+Sua inscrição foi registrada com sucesso em nosso sistema.
+
+DADOS DA INSCRIÇÃO:
+- Número: {{ inscricao.numero_inscricao }}
+- Competição: {{ competicao.nome }}
+- Data: {{ competicao.data_inicio|date:"d/m/Y" }} às {{ competicao.horario }}
+- Local: {{ competicao.local }}
+- Categoria: {{ inscricao.categoria.nome }}
+- Faixa: {{ inscricao.get_faixa_display }}
+- Academia: {{ inscricao.academia_nome }}
+- Valor: R$ {{ inscricao.valor_inscricao|floatformat:2 }}
+
+{% if inscricao.status == 'pendente' %}
+STATUS: AGUARDANDO PAGAMENTO
+{% if inscricao.forma_pagamento == 'pix' %}
+Para finalizar, realize o pagamento via PIX:
+Chave PIX: contato@keychart.com
+Valor: R$ {{ inscricao.valor_inscricao|floatformat:2 }}
+
+Após o pagamento, envie o comprovante para este email.
+{% endif %}
+{% endif %}
+
+DADOS DE ACESSO AO PORTAL DO ATLETA:
+Email: {{ inscricao.email }}
+Senha: {{ inscricao.senha_atleta }}
+
+ACOMPANHE SUA INSCRIÇÃO:
+{{ url_status }}
+
+IMPORTANTE:
+- Mantenha este email para consultas futuras
+- Traga documento oficial com foto no dia da competição
+- O uniforme (kimono) é obrigatório
+- Chegue 1 hora antes para credenciamento
+
+SUPORTE:
+Email: contato@keychart.com
+WhatsApp: (11) 99999-9999
+
+KeyChart - Sistema de Gestão de Competições de Karatê
+© 2025 KeyChart. Todos os direitos reservados.
