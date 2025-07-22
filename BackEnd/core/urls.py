@@ -12,7 +12,7 @@ urlpatterns = [
     path('keychart/competicoes/', include('app.competicoes.urls')),
     path('keychart/equipes_atletas/', include('app.atletas.urls')),
     path('keychart/login/', include('app.autenticacao.urls')),
-    path('keychart/portal_atleta/', include('app.portal_atleta.urls')),
+    path('portal-atleta/', include('app.portal_atleta.urls')),  # Portal do atleta com URL simplificada
     path('keychart/login/', include('app.autenticacao.urls')),
     path('keychart/configuracoes/', include('app.configuracoes.urls')),
     path('keychart/', include('app.partidas_chaveamento.urls')),

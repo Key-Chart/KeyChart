@@ -1,0 +1,351 @@
+{% extends 'portal_atleta/base.html' %}
+{% load static %}
+
+{% block title %}Estatísticas - Portal do Atleta{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 25px;
+        color: white;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .chart-container {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .progress-item {
+        margin-bottom: 15px;
+    }
+    
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+    
+    .progress {
+        height: 8px;
+        border-radius: 4px;
+        background-color: #f0f0f0;
+    }
+    
+    .progress-bar {
+        border-radius: 4px;
+    }
+
+    /* Garante altura fixa para o gráfico */
+    #evolucaoChart {
+        min-height: 200px;
+        max-height: 300px;
+        height: 250px !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-chart-bar me-2"></i>Estatísticas Detalhadas</h1>
+    <p class="text-muted">Acompanhe sua performance e evolução nas competições</p>
+</div>
+
+<div class="row">
+    <!-- Resumo Geral -->
+    <div class="col-12">
+        <div class="stats-card">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h3 class="mb-1">{{ stats.total_inscricoes }}</h3>
+                        <small>Total de Inscrições</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h3 class="mb-1">{{ stats.competicoes_participadas }}</h3>
+                        <small>Competições Participadas</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h3 class="mb-1">{{ stats.taxa_participacao }}%</h3>
+                        <small>Taxa de Participação</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h3 class="mb-1">R$ {{ stats.total_investido|floatformat:2 }}</h3>
+                        <small>Total Investido</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Estatísticas por Status -->
+    <div class="col-md-6">
+        <div class="chart-container">
+            <h5 class="mb-4"><i class="fas fa-pie-chart me-2"></i>Distribuição por Status</h5>
+            <div class="row">
+                <div class="col-6">
+                    <div class="stat-item">
+                        <div class="stat-number text-success">{{ stats.inscricoes_pagas }}</div>
+                        <div class="stat-label">Pagas</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="stat-item">
+                        <div class="stat-number text-warning">{{ stats.inscricoes_pendentes }}</div>
+                        <div class="stat-label">Pendentes</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="stat-item">
+                        <div class="stat-number text-danger">{{ stats.inscricoes_canceladas }}</div>
+                        <div class="stat-label">Canceladas</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="stat-item">
+                        <div class="stat-number text-info">{{ stats.inscricoes_confirmadas }}</div>
+                        <div class="stat-label">Confirmadas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Gráfico de Evolução -->
+    <div class="col-md-6">
+        <div class="chart-container">
+            <h5 class="mb-4"><i class="fas fa-line-chart me-2"></i>Evolução Mensal</h5>
+            <canvas id="evolucaoChart" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Categorias Mais Participadas -->
+    <div class="col-md-6">
+        <div class="chart-container">
+            <h5 class="mb-4"><i class="fas fa-trophy me-2"></i>Categorias Favoritas</h5>
+            {% for categoria in categorias_stats %}
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>{{ categoria.nome }}</span>
+                    <span>{{ categoria.count }} inscrições</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar bg-primary" 
+                         style="width: {{ categoria.percentage }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Modalidades Preferidas -->
+    <div class="col-md-6">
+        <div class="chart-container">
+            <h5 class="mb-4"><i class="fas fa-star me-2"></i>Modalidades Preferidas</h5>
+            {% for modalidade in modalidades_stats %}
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>{{ modalidade.nome }}</span>
+                    <span>{{ modalidade.count }} participações</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar bg-success" 
+                         style="width: {{ modalidade.percentage }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Timeline de Atividades -->
+    <div class="col-12">
+        <div class="chart-container">
+            <h5 class="mb-4"><i class="fas fa-clock me-2"></i>Timeline de Atividades Recentes</h5>
+            <div class="timeline">
+                {% for atividade in atividades_recentes %}
+                <div class="timeline-item">
+                    <div class="timeline-marker bg-primary"></div>
+                    <div class="timeline-content">
+                        <h6 class="mb-1">{{ atividade.descricao }}</h6>
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>{{ atividade.data_criacao|date:"d/m/Y H:i" }}
+                            {% if atividade.ip_address %}
+                            <span class="ms-2">
+                                <i class="fas fa-map-marker-alt me-1"></i>{{ atividade.ip_address }}
+                            </span>
+                            {% endif %}
+                        </small>
+                        {% if atividade.detalhes %}
+                        <div class="mt-2">
+                            <small class="text-muted">{{ atividade.detalhes }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Botões de Ação -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="d-flex gap-2">
+            <a href="{% url 'portal_atleta:dashboard' %}" class="btn btn-primary">
+                <i class="fas fa-arrow-left me-2"></i>Voltar ao Dashboard
+            </a>
+            <button class="btn btn-secondary" onclick="exportarEstatisticas()">
+                <i class="fas fa-download me-2"></i>Exportar PDF
+            </button>
+            <button class="btn btn-info" onclick="compartilharEstatisticas()">
+                <i class="fas fa-share me-2"></i>Compartilhar
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gráfico de Evolução Mensal
+    const ctx = document.getElementById('evolucaoChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ meses_labels|safe }},
+            datasets: [{
+                label: 'Inscrições por Mês',
+                data: {{ inscricoes_por_mes|safe }},
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+});
+
+function exportarEstatisticas() {
+    // Implementar exportação para PDF
+    alert('Funcionalidade de exportação será implementada em breve!');
+}
+
+function compartilharEstatisticas() {
+    // Implementar compartilhamento
+    if (navigator.share) {
+        navigator.share({
+            title: 'Minhas Estatísticas - Portal do Atleta',
+            text: 'Confira minhas estatísticas de participação em competições!',
+            url: window.location.href
+        });
+    } else {
+        // Fallback para navegadores sem suporte
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            alert('Link copiado para a área de transferência!');
+        });
+    }
+}
+</script>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.timeline-item:last-child {
+    border-bottom: none;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -35px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px #667eea;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: -30px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #e9ecef;
+}
+</style>
+{% endblock %}

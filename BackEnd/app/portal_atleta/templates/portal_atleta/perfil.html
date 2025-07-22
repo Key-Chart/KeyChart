@@ -1,0 +1,453 @@
+{% extends 'portal_atleta/base.html' %}
+{% load static %}
+
+{% block title %}Meu Perfil - Portal do Atleta{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        color: white;
+        padding: 40px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        background-color: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .info-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .info-item {
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: #666;
+        display: flex;
+        align-items: center;
+    }
+    
+    .info-value {
+        color: #333;
+        font-weight: 500;
+    }
+    
+    .edit-btn {
+        background: none;
+        border: 1px solid #667eea;
+        color: #667eea;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+    
+    .edit-btn:hover {
+        background: #667eea;
+        color: white;
+    }
+    
+    .achievement-badge {
+        background: linear-gradient(45deg, #ffd700, #ffed4e);
+        color: #333;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin: 5px;
+        display: inline-block;
+        box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+    }
+    
+    .stats-mini {
+        text-align: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .stats-mini-number {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 5px;
+    }
+    
+    .edit-form {
+        display: none;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <div class="profile-avatar">
+        <i class="fas fa-user"></i>
+    </div>
+    <h2 class="mb-2">{{ atleta.nome_completo }}</h2>
+    <p class="mb-1">{{ atleta.email }}</p>
+    <small>Atleta desde {{ atleta.data_criacao|date:"F Y" }}</small>
+</div>
+
+<div class="row">
+    <!-- Informações Pessoais -->
+    <div class="col-md-8">
+        <div class="info-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5><i class="fas fa-user me-2"></i>Informações Pessoais</h5>
+                <button class="edit-btn" onclick="toggleEdit('info-pessoais')">
+                    <i class="fas fa-edit me-1"></i>Editar
+                </button>
+            </div>
+            
+            <div id="info-pessoais-view">
+                <div class="info-item">
+                    <span class="info-label">
+                        <i class="fas fa-signature me-2"></i>Nome Completo
+                    </span>
+                    <span class="info-value">{{ atleta.nome_completo }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">
+                        <i class="fas fa-envelope me-2"></i>E-mail
+                    </span>
+                    <span class="info-value">{{ atleta.email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">
+                        <i class="fas fa-phone me-2"></i>Telefone
+                    </span>
+                    <span class="info-value">{{ atleta.telefone|default:"Não informado" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">
+                        <i class="fas fa-id-card me-2"></i>CPF
+                    </span>
+                    <span class="info-value">{{ atleta.cpf|default:"Não informado" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">
+                        <i class="fas fa-birthday-cake me-2"></i>Data de Nascimento
+                    </span>
+                    <span class="info-value">{{ atleta.data_nascimento|date:"d/m/Y"|default:"Não informado" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">
+                        <i class="fas fa-venus-mars me-2"></i>Sexo
+                    </span>
+                    <span class="info-value">{{ atleta.get_sexo_display|default:"Não informado" }}</span>
+                </div>
+            </div>
+            
+            <div id="info-pessoais-edit" class="edit-form">
+                <form method="post" action="{% url 'portal_atleta:atualizar_perfil' %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" name="nome_completo" 
+                                   value="{{ atleta.nome_completo }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" name="telefone" 
+                                   value="{{ atleta.telefone|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">CPF</label>
+                            <input type="text" class="form-control" name="cpf" 
+                                   value="{{ atleta.cpf|default:'' }}" 
+                                   placeholder="000.000.000-00">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control" name="data_nascimento" 
+                                   value="{{ atleta.data_nascimento|date:'Y-m-d'|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sexo</label>
+                            <select class="form-control" name="sexo">
+                                <option value="">Selecione</option>
+                                <option value="M" {% if atleta.sexo == 'M' %}selected{% endif %}>Masculino</option>
+                                <option value="F" {% if atleta.sexo == 'F' %}selected{% endif %}>Feminino</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Salvar Alterações
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleEdit('info-pessoais')">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Endereço -->
+        <div class="info-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5><i class="fas fa-map-marker-alt me-2"></i>Endereço</h5>
+                <button class="edit-btn" onclick="toggleEdit('endereco')">
+                    <i class="fas fa-edit me-1"></i>Editar
+                </button>
+            </div>
+            
+            <div id="endereco-view">
+                <div class="info-item">
+                    <span class="info-label">
+                        <i class="fas fa-road me-2"></i>Endereço
+                    </span>
+                    <span class="info-value">{{ atleta.endereco|default:"Não informado" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">
+                        <i class="fas fa-city me-2"></i>Cidade
+                    </span>
+                    <span class="info-value">{{ atleta.cidade|default:"Não informado" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">
+                        <i class="fas fa-flag me-2"></i>Estado
+                    </span>
+                    <span class="info-value">{{ atleta.estado|default:"Não informado" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">
+                        <i class="fas fa-mail-bulk me-2"></i>CEP
+                    </span>
+                    <span class="info-value">{{ atleta.cep|default:"Não informado" }}</span>
+                </div>
+            </div>
+            
+            <div id="endereco-edit" class="edit-form">
+                <form method="post" action="{% url 'portal_atleta:atualizar_endereco' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Endereço</label>
+                        <input type="text" class="form-control" name="endereco" 
+                               value="{{ atleta.endereco|default:'' }}" 
+                               placeholder="Rua, número, complemento">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Cidade</label>
+                            <input type="text" class="form-control" name="cidade" 
+                                   value="{{ atleta.cidade|default:'' }}">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Estado</label>
+                            <input type="text" class="form-control" name="estado" 
+                                   value="{{ atleta.estado|default:'' }}" 
+                                   placeholder="SP">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">CEP</label>
+                            <input type="text" class="form-control" name="cep" 
+                                   value="{{ atleta.cep|default:'' }}" 
+                                   placeholder="00000-000">
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Salvar Alterações
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleEdit('endereco')">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Estatísticas e Conquistas -->
+    <div class="col-md-4">
+        <div class="info-card">
+            <h5 class="mb-3"><i class="fas fa-chart-bar me-2"></i>Estatísticas Rápidas</h5>
+            
+            <div class="stats-mini">
+                <div class="stats-mini-number">{{ stats.total_inscricoes }}</div>
+                <div>Inscrições Realizadas</div>
+            </div>
+            
+            <div class="stats-mini">
+                <div class="stats-mini-number">{{ stats.competicoes_participadas }}</div>
+                <div>Competições Participadas</div>
+            </div>
+            
+            <div class="stats-mini">
+                <div class="stats-mini-number">{{ stats.modalidades_praticadas }}</div>
+                <div>Modalidades Praticadas</div>
+            </div>
+            
+            <div class="stats-mini">
+                <div class="stats-mini-number">R$ {{ stats.total_investido|floatformat:2 }}</div>
+                <div>Total Investido</div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <a href="{% url 'portal_atleta:estatisticas' %}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-chart-line me-1"></i>Ver Estatísticas Completas
+                </a>
+            </div>
+        </div>
+        
+        <!-- Conquistas -->
+        <div class="info-card">
+            <h5 class="mb-3"><i class="fas fa-trophy me-2"></i>Conquistas</h5>
+            
+            {% if conquistas %}
+                {% for conquista in conquistas %}
+                <div class="achievement-badge">
+                    <i class="fas fa-medal me-1"></i>{{ conquista.nome }}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted text-center py-3">
+                    <i class="fas fa-star me-2"></i>
+                    Continue participando para conquistar suas primeiras medalhas!
+                </p>
+            {% endif %}
+        </div>
+        
+        <!-- Atividade Recente -->
+        <div class="info-card">
+            <h5 class="mb-3"><i class="fas fa-clock me-2"></i>Atividade Recente</h5>
+            
+            <div class="info-item">
+                <span class="info-label">
+                    <i class="fas fa-sign-in-alt me-2"></i>Último Acesso
+                </span>
+                <span class="info-value">{{ atleta.ultimo_acesso|date:"d/m/Y H:i" }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">
+                    <i class="fas fa-user-plus me-2"></i>Membro Desde
+                </span>
+                <span class="info-value">{{ atleta.data_criacao|date:"d/m/Y" }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">
+                    <i class="fas fa-edit me-2"></i>Última Atualização
+                </span>
+                <span class="info-value">{{ atleta.data_atualizacao|date:"d/m/Y H:i" }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Botões de Ação -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="d-flex gap-2">
+            <a href="{% url 'portal_atleta:dashboard' %}" class="btn btn-primary">
+                <i class="fas fa-arrow-left me-2"></i>Voltar ao Dashboard
+            </a>
+            <a href="{% url 'portal_atleta:configuracoes' %}" class="btn btn-secondary">
+                <i class="fas fa-cog me-2"></i>Configurações
+            </a>
+            <button class="btn btn-info" onclick="exportarPerfil()">
+                <i class="fas fa-download me-2"></i>Exportar Dados
+            </button>
+            <button class="btn btn-danger" onclick="confirmarExclusao()">
+                <i class="fas fa-user-times me-2"></i>Excluir Conta
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleEdit(section) {
+    const viewDiv = document.getElementById(section + '-view');
+    const editDiv = document.getElementById(section + '-edit');
+    
+    if (viewDiv.style.display === 'none') {
+        viewDiv.style.display = 'block';
+        editDiv.style.display = 'none';
+    } else {
+        viewDiv.style.display = 'none';
+        editDiv.style.display = 'block';
+    }
+}
+
+function exportarPerfil() {
+    // Implementar exportação de dados
+    alert('Funcionalidade de exportação será implementada em breve!');
+}
+
+function confirmarExclusao() {
+    if (confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
+        if (confirm('Esta é uma ação permanente. Todos os seus dados serão perdidos. Confirma?')) {
+            // Implementar exclusão de conta
+            window.location.href = "{% url 'portal_atleta:excluir_conta' %}";
+        }
+    }
+}
+
+// Máscara para CPF
+document.addEventListener('DOMContentLoaded', function() {
+    const cpfInput = document.querySelector('input[name="cpf"]');
+    if (cpfInput) {
+        cpfInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
+        });
+    }
+    
+    // Máscara para CEP
+    const cepInput = document.querySelector('input[name="cep"]');
+    if (cepInput) {
+        cepInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            e.target.value = value;
+        });
+    }
+});
+</script>
+{% endblock %}

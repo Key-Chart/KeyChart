@@ -1,0 +1,574 @@
+{% extends 'portal_atleta/base.html' %}
+{% load static %}
+
+{% block title %}Competições - Portal do Atleta{% endblock %}
+
+{% block extra_css %}
+<style>
+    .competition-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 25px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .competition-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .competition-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        position: relative;
+    }
+    
+    .competition-status {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .status-proxima {
+        background: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+        border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+    
+    .status-inscricoes-abertas {
+        background: rgba(0, 123, 255, 0.2);
+        color: #007bff;
+        border: 1px solid rgba(0, 123, 255, 0.3);
+    }
+    
+    .status-passada {
+        background: rgba(108, 117, 125, 0.2);
+        color: #6c757d;
+        border: 1px solid rgba(108, 117, 125, 0.3);
+    }
+    
+    .status-cancelada {
+        background: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+        border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+    
+    .competition-body {
+        padding: 25px;
+    }
+    
+    .competition-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        color: #666;
+    }
+    
+    .info-item i {
+        color: #667eea;
+        width: 20px;
+        margin-right: 10px;
+    }
+    
+    .filter-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .category-badge {
+        background: #f8f9fa;
+        color: #667eea;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        margin: 2px;
+        display: inline-block;
+        border: 1px solid #e9ecef;
+    }
+    
+    .btn-action {
+        border-radius: 20px;
+        padding: 8px 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .tab-content {
+        margin-top: 20px;
+    }
+    
+    .nav-tabs .nav-link {
+        border-radius: 25px 25px 0 0;
+        border: none;
+        color: #666;
+        font-weight: 600;
+        padding: 12px 25px;
+        margin-right: 5px;
+    }
+    
+    .nav-tabs .nav-link.active {
+        background: #667eea;
+        color: white;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+    .favorite-btn {
+        background: none;
+        border: none;
+        color: #ffd700;
+        font-size: 1.5rem;
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 2;
+        transition: color 0.2s;
+    }
+    .favorite-btn.favorited {
+        color: #ffb300;
+        text-shadow: 0 0 6px #fffbe6;
+    }
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: inline-block;
+        margin-bottom: 5px;
+    }
+    .status-ativa { background: #e3fcec; color: #28a745; border: 1px solid #b7e4c7; }
+    .status-encerrada { background: #f8d7da; color: #dc3545; border: 1px solid #f5c2c7; }
+    .status-cancelada { background: #fdf6b2; color: #856404; border: 1px solid #ffeeba; }
+    .status-inscrito { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    .status-pendente { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+    .status-pago { background: #e2e3e5; color: #155724; border: 1px solid #c3e6cb; }
+    .chip-categoria {
+        display: inline-block;
+        background: linear-gradient(90deg, #667eea 60%, #764ba2 100%);
+        color: #fff;
+        border-radius: 12px;
+        padding: 4px 12px;
+        font-size: 0.85rem;
+        margin: 2px 2px 2px 0;
+        font-weight: 500;
+        box-shadow: 0 1px 4px rgba(102,126,234,0.08);
+    }
+    .illustration-empty {
+        width: 120px;
+        margin-bottom: 20px;
+        opacity: 0.7;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-trophy me-2"></i>Competições</h1>
+    <p class="text-muted">Explore e participe de competições de karatê</p>
+</div>
+
+<!-- Filtros -->
+<div class="filter-card">
+    <form method="get" class="row align-items-end">
+        <div class="col-md-3">
+            <label class="form-label">Buscar por nome</label>
+            <input type="text" class="form-control" name="busca" 
+                   value="{{ request.GET.busca }}" 
+                   placeholder="Nome da competição...">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Status</label>
+            <select class="form-control" name="status">
+                <option value="">Todos</option>
+                <option value="ativa" {% if request.GET.status == 'ativa' %}selected{% endif %}>Inscrições Abertas</option>
+                <option value="encerrada" {% if request.GET.status == 'encerrada' %}selected{% endif %}>Encerradas</option>
+                <option value="cancelada" {% if request.GET.status == 'cancelada' %}selected{% endif %}>Canceladas</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Estado</label>
+            <select class="form-control" name="estado">
+                <option value="">Todos</option>
+                {% for estado in estados %}
+                <option value="{{ estado }}" {% if request.GET.estado == estado %}selected{% endif %}>
+                    {{ estado }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Período</label>
+            <select class="form-control" name="periodo">
+                <option value="">Todos</option>
+                <option value="este_mes" {% if request.GET.periodo == 'este_mes' %}selected{% endif %}>Este Mês</option>
+                <option value="proximo_mes" {% if request.GET.periodo == 'proximo_mes' %}selected{% endif %}>Próximo Mês</option>
+                <option value="proximos_3_meses" {% if request.GET.periodo == 'proximos_3_meses' %}selected{% endif %}>Próximos 3 Meses</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search me-1"></i>Filtrar
+                </button>
+                <a href="{% url 'portal_atleta:competicoes' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-times me-1"></i>Limpar
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Tabs -->
+<ul class="nav nav-tabs" id="competitionTabs">
+    <li class="nav-item">
+        <a class="nav-link active" id="todas-tab" data-bs-toggle="tab" href="#todas">
+            <i class="fas fa-list me-2"></i>Todas ({{ total_competicoes }})
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="disponiveis-tab" data-bs-toggle="tab" href="#disponiveis">
+            <i class="fas fa-calendar-plus me-2"></i>Disponíveis ({{ competicoes_disponiveis.count }})
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="inscritas-tab" data-bs-toggle="tab" href="#inscritas">
+            <i class="fas fa-check-circle me-2"></i>Minhas Inscrições ({{ minhas_inscricoes.count }})
+        </a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <!-- Todas as Competições -->
+    <div class="tab-pane fade show active" id="todas">
+        {% if competicoes %}
+            <div class="row">
+                {% for competicao in competicoes %}
+                <div class="col-lg-6">
+                    <div class="competition-card position-relative">
+                        <button class="favorite-btn {% if competicao.id in favoritos_ids %}favorited{% endif %}" title="Favoritar" data-competicao="{{ competicao.id }}" onclick="toggleFavorite({{ competicao.id }})">
+                            <i class="fas fa-star"></i>
+                        </button>
+                        <div class="competition-header">
+                            <span class="status-badge status-{{ competicao.status|slugify }}">
+                                {% if competicao.status == 'ativa' %}
+                                    <i class="fas fa-calendar-check me-1"></i>Inscrições Abertas
+                                {% elif competicao.status == 'encerrada' %}
+                                    <i class="fas fa-flag-checkered me-1"></i>Encerrada
+                                {% elif competicao.status == 'cancelada' %}
+                                    <i class="fas fa-times-circle me-1"></i>Cancelada
+                                {% else %}
+                                    <i class="fas fa-clock me-1"></i>{{ competicao.status|title }}
+                                {% endif %}
+                            </span>
+                            <h5 class="mb-2">{{ competicao.nome }}</h5>
+                            <p class="mb-0 opacity-75">{{ competicao.organizador }}</p>
+                        </div>
+                        <div class="competition-body">
+                            <div class="info-item" data-bs-toggle="tooltip" title="Data de início e fim">
+                                <i class="fas fa-calendar"></i>
+                                <span>{{ competicao.data_inicio|date:"d/m/Y" }}{% if competicao.data_fim and competicao.data_fim != competicao.data_inicio %} a {{ competicao.data_fim|date:"d/m/Y" }}{% endif %}</span>
+                            </div>
+                            <div class="info-item" data-bs-toggle="tooltip" title="Local da competição">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ competicao.local }}</span>
+                            </div>
+                            <div class="info-item" data-bs-toggle="tooltip" title="Valor da inscrição">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>R$ {{ competicao.valor_inscricao|floatformat:2 }}</span>
+                            </div>
+                            <div class="info-item" data-bs-toggle="tooltip" title="Inscrições até">
+                                <i class="fas fa-clock"></i>
+                                <span>Inscrições até {{ competicao.inscricoes_data_limite|date:"d/m/Y" }}</span>
+                            </div>
+                            {% if competicao.limite_inscricoes %}
+                            <div class="info-item" data-bs-toggle="tooltip" title="Vagas disponíveis">
+                                <i class="fas fa-users"></i>
+                                <span>{{ competicao.limite_inscricoes|add:"-"|add:competicao.inscricoes_count }} vagas restantes</span>
+                            </div>
+                            {% endif %}
+                            {% if competicao.categorias.exists %}
+                            <div class="mt-3">
+                                <small class="text-muted">Categorias:</small><br>
+                                {% for categoria in competicao.categorias.all|slice:":3" %}
+                                <span class="chip-categoria">{{ categoria.nome }}</span>
+                                {% endfor %}
+                                {% if competicao.categorias.count > 3 %}
+                                <span class="chip-categoria">+{{ competicao.categorias.count|add:"-3" }} mais</span>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            <div class="d-flex gap-2 mt-4">
+                                <a href="{% url 'portal_atleta:competicao_detalhes' competicao.id %}" class="btn btn-outline-primary btn-action" data-bs-toggle="tooltip" title="Ver detalhes da competição">
+                                    <i class="fas fa-eye me-2"></i>Ver Detalhes
+                                </a>
+                                {% if competicao.status == 'ativa' and competicao.inscricoes_data_limite >= today %}
+                                    {% if competicao.id in minhas_inscricoes_ids %}
+                                    <span class="btn btn-success btn-action disabled" data-bs-toggle="tooltip" title="Você já está inscrito">
+                                        <i class="fas fa-check me-2"></i>Inscrito
+                                    </span>
+                                    {% else %}
+                                    <a href="{% url 'inscricoes_online:inscricao' competicao.slug %}" class="btn btn-primary btn-action" data-bs-toggle="tooltip" title="Inscrever-se nesta competição">
+                                        <i class="fas fa-plus me-2"></i>Inscrever-se
+                                    </a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Paginação -->
+            {% if competicoes.has_other_pages %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if competicoes.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ competicoes.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in competicoes.paginator.page_range %}
+                    {% if num == competicoes.number %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                    {% elif num > competicoes.number|add:'-3' and num < competicoes.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                    
+                    {% if competicoes.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ competicoes.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <img src="{% static 'portal_atleta/img/empty_competition.svg' %}" class="illustration-empty" alt="Nenhuma competição">
+                <h4>Nenhuma competição encontrada</h4>
+                <p>Não há competições que correspondam aos filtros selecionados.</p>
+                <a href="{% url 'portal_atleta:competicoes' %}" class="btn btn-primary">
+                    <i class="fas fa-refresh me-2"></i>Ver Todas as Competições
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Competições Disponíveis -->
+    <div class="tab-pane fade" id="disponiveis">
+        {% if competicoes_disponiveis %}
+            <div class="row">
+                {% for competicao in competicoes_disponiveis %}
+                <div class="col-lg-6">
+                    <!-- Mesmo layout das competições, mas apenas as disponíveis -->
+                    <div class="competition-card">
+                        <div class="competition-header">
+                            <div class="competition-status status-inscricoes-abertas">
+                                <i class="fas fa-calendar-plus me-1"></i>Disponível
+                            </div>
+                            <h5 class="mb-2">{{ competicao.nome }}</h5>
+                            <p class="mb-0 opacity-75">{{ competicao.organizador }}</p>
+                        </div>
+                        
+                        <div class="competition-body">
+                            <!-- Mesmas informações -->
+                            <div class="info-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>{{ competicao.data_inicio|date:"d/m/Y" }}</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ competicao.local }}</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>R$ {{ competicao.valor_inscricao|floatformat:2 }}</span>
+                            </div>
+                            
+                            <div class="d-flex gap-2 mt-4">
+                                <a href="{% url 'portal_atleta:competicao_detalhes' competicao.id %}" 
+                                   class="btn btn-outline-primary btn-action">
+                                    <i class="fas fa-eye me-2"></i>Ver Detalhes
+                                </a>
+                                
+                                <a href="{% url 'inscricoes_online:inscricao' competicao.slug %}" 
+                                   class="btn btn-primary btn-action">
+                                    <i class="fas fa-plus me-2"></i>Inscrever-se Agora
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-calendar-plus"></i>
+                <h4>Nenhuma competição disponível</h4>
+                <p>No momento não há competições com inscrições abertas.</p>
+                <a href="{% url 'portal_atleta:competicoes' %}" class="btn btn-primary">
+                    <i class="fas fa-bell me-2"></i>Ativar Notificações
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Minhas Inscrições -->
+    <div class="tab-pane fade" id="inscritas">
+        {% if minhas_inscricoes %}
+            <div class="row">
+                {% for inscricao in minhas_inscricoes %}
+                <div class="col-lg-6">
+                    <div class="competition-card">
+                        <div class="competition-header">
+                            <div class="competition-status status-{{ inscricao.status|slugify }}">
+                                {% if inscricao.status == 'pago' %}
+                                    <i class="fas fa-check-circle me-1"></i>Confirmada
+                                {% elif inscricao.status == 'pendente' %}
+                                    <i class="fas fa-clock me-1"></i>Pendente
+                                {% elif inscricao.status == 'cancelado' %}
+                                    <i class="fas fa-times-circle me-1"></i>Cancelada
+                                {% endif %}
+                            </div>
+                            <h5 class="mb-2">{{ inscricao.competicao.nome }}</h5>
+                            <p class="mb-0 opacity-75">{{ inscricao.categoria.nome }}</p>
+                        </div>
+                        
+                        <div class="competition-body">
+                            <div class="info-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>{{ inscricao.competicao.data_inicio|date:"d/m/Y" }}</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ inscricao.competicao.local }}</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>R$ {{ inscricao.valor_pago|floatformat:2 }}</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Inscrito em {{ inscricao.data_inscricao|date:"d/m/Y" }}</span>
+                            </div>
+                            
+                            <div class="d-flex gap-2 mt-4">
+                                <a href="{% url 'portal_atleta:detalhes_inscricao' inscricao.id %}" 
+                                   class="btn btn-outline-primary btn-action">
+                                    <i class="fas fa-eye me-2"></i>Ver Detalhes
+                                </a>
+                                
+                                {% if inscricao.status == 'pendente' %}
+                                <a href="{% url 'portal_atleta:pagar_inscricao' inscricao.id %}" 
+                                   class="btn btn-success btn-action">
+                                    <i class="fas fa-credit-card me-2"></i>Pagar
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-user-check"></i>
+                <h4>Você ainda não se inscreveu em nenhuma competição</h4>
+                <p>Explore as competições disponíveis e faça sua primeira inscrição!</p>
+                <a href="#disponiveis" class="btn btn-primary" data-bs-toggle="tab">
+                    <i class="fas fa-search me-2"></i>Ver Competições Disponíveis
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Ativar tooltips Bootstrap
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    // Atualizar contadores nas tabs baseado nos filtros
+    updateTabCounters();
+    
+    // Auto-refresh a cada 5 minutos para competições disponíveis
+    setInterval(function() {
+        if (document.querySelector('#disponiveis-tab').classList.contains('active')) {
+            location.reload();
+        }
+    }, 300000); // 5 minutos
+});
+
+function updateTabCounters() {
+    // Esta função pode ser expandida para atualizar contadores dinamicamente
+}
+
+// Função para favoritar competição
+function toggleFavorite(competicaoId) {
+    fetch(`/portal-atleta/favoritar-competicao/${competicaoId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const button = document.querySelector(`[data-competicao="${competicaoId}"]`);
+            button.classList.toggle('favorited');
+            // Atualizar visual do botão
+        }
+    });
+}
+</script>
+{% endblock %}

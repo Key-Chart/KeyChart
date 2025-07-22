@@ -1,0 +1,647 @@
+{% extends 'portal_atleta/base.html' %}
+
+{% block page_title %}Detalhes da Inscrição{% endblock %}
+
+{% block extra_css %}
+<style>
+    .inscricao-header {
+        background: linear-gradient(135deg, #000 0%, #333 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .inscricao-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 150px;
+        height: 150px;
+        background: rgba(212, 175, 55, 0.1);
+        border-radius: 50%;
+        transform: translate(50px, -50px);
+    }
+
+    .status-badge-large {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 1rem;
+        padding: 8px 16px;
+    }
+
+    .info-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 4px solid var(--accent-color);
+    }
+
+    .info-icon {
+        color: var(--accent-color);
+        font-size: 1.2rem;
+        margin-right: 15px;
+        margin-top: 2px;
+    }
+
+    .info-content {
+        flex: 1;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+    }
+
+    .info-value {
+        color: var(--secondary-color);
+        font-size: 0.95rem;
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #dee2e6;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 25px;
+        padding-left: 25px;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -32px;
+        top: 5px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #dee2e6;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #dee2e6;
+    }
+
+    .timeline-item.completed::before {
+        background: var(--success-color);
+        box-shadow: 0 0 0 3px var(--success-color);
+    }
+
+    .timeline-item.current::before {
+        background: var(--accent-color);
+        box-shadow: 0 0 0 3px var(--accent-color);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+
+    .timeline-content {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid #eee;
+    }
+
+    .timeline-date {
+        color: var(--accent-color);
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-bottom: 5px;
+    }
+
+    .timeline-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .timeline-description {
+        color: var(--secondary-color);
+        font-size: 0.9rem;
+    }
+
+    .payment-info {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 15px;
+        padding: 25px;
+        border: 2px solid #dee2e6;
+    }
+
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .payment-method {
+        background: white;
+        border: 2px solid #dee2e6;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .payment-method:hover {
+        border-color: var(--accent-color);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .payment-method.selected {
+        border-color: var(--accent-color);
+        background: rgba(212, 175, 55, 0.1);
+    }
+
+    .qr-code-container {
+        text-align: center;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        margin: 20px 0;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .action-buttons .btn {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    @media (max-width: 768px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .action-buttons .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'portal_atleta:dashboard' %}">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'portal_atleta:minhas_inscricoes' %}">Minhas Inscrições</a>
+        </li>
+        <li class="breadcrumb-item active">Detalhes da Inscrição</li>
+    </ol>
+</nav>
+
+<!-- Header -->
+<div class="inscricao-header">
+    <div class="status-badge-large">
+        {% if inscricao.status == 'paga' %}
+            <span class="badge bg-success">Paga</span>
+        {% elif inscricao.status == 'confirmada' %}
+            <span class="badge bg-info">Confirmada</span>
+        {% elif inscricao.status == 'pendente' %}
+            <span class="badge bg-warning">Pendente</span>
+        {% else %}
+            <span class="badge bg-danger">Cancelada</span>
+        {% endif %}
+    </div>
+    
+    <h1 class="mb-3">{{ inscricao.competicao.nome }}</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <p class="mb-2">
+                <i class="bi bi-calendar me-2"></i>
+                {{ inscricao.competicao.data_inicio|date:"d/m/Y" }}
+                {% if inscricao.competicao.data_fim != inscricao.competicao.data_inicio %}
+                    - {{ inscricao.competicao.data_fim|date:"d/m/Y" }}
+                {% endif %}
+            </p>
+            <p class="mb-2">
+                <i class="bi bi-geo-alt me-2"></i>
+                {{ inscricao.competicao.local }}
+            </p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <p class="mb-2">
+                <strong>ID da Inscrição:</strong> {{ inscricao.uuid }}
+            </p>
+            <p class="mb-0">
+                <strong>Inscrito em:</strong> {{ inscricao.data_inscricao|date:"d/m/Y \à\s H:i" }}
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Informações do Atleta -->
+    <div class="col-lg-8">
+        <div class="info-card">
+            <h5 class="mb-4"><i class="bi bi-person me-2"></i>Informações do Atleta</h5>
+            <div class="info-grid">
+                <div class="info-item">
+                    <i class="bi bi-person info-icon"></i>
+                    <div class="info-content">
+                        <div class="info-label">Nome Completo</div>
+                        <div class="info-value">{{ inscricao.nome_completo }}</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <i class="bi bi-calendar info-icon"></i>
+                    <div class="info-content">
+                        <div class="info-label">Data de Nascimento</div>
+                        <div class="info-value">{{ inscricao.data_nascimento|date:"d/m/Y" }}</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <i class="bi bi-envelope info-icon"></i>
+                    <div class="info-content">
+                        <div class="info-label">E-mail</div>
+                        <div class="info-value">{{ inscricao.email }}</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <i class="bi bi-phone info-icon"></i>
+                    <div class="info-content">
+                        <div class="info-label">Telefone</div>
+                        <div class="info-value">{{ inscricao.telefone }}</div>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <i class="bi bi-award info-icon"></i>
+                    <div class="info-content">
+                        <div class="info-label">Categoria</div>
+                        <div class="info-value">{{ inscricao.categoria.nome }}</div>
+                    </div>
+                </div>
+                
+                {% if inscricao.equipe %}
+                <div class="info-item">
+                    <i class="bi bi-people info-icon"></i>
+                    <div class="info-content">
+                        <div class="info-label">Equipe</div>
+                        <div class="info-value">{{ inscricao.equipe.nome }}</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Timeline de Status -->
+        <div class="info-card">
+            <h5 class="mb-4"><i class="bi bi-clock-history me-2"></i>Histórico da Inscrição</h5>
+            <div class="timeline">
+                <div class="timeline-item completed">
+                    <div class="timeline-content">
+                        <div class="timeline-date">{{ inscricao.data_inscricao|date:"d/m/Y H:i" }}</div>
+                        <div class="timeline-title">Inscrição Realizada</div>
+                        <div class="timeline-description">Inscrição criada no sistema</div>
+                    </div>
+                </div>
+                
+                {% if inscricao.status != 'pendente' %}
+                <div class="timeline-item completed">
+                    <div class="timeline-content">
+                        <div class="timeline-date">{{ inscricao.data_confirmacao|date:"d/m/Y H:i" }}</div>
+                        <div class="timeline-title">Inscrição Confirmada</div>
+                        <div class="timeline-description">Documentação verificada e aprovada</div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if inscricao.status == 'paga' %}
+                <div class="timeline-item completed">
+                    <div class="timeline-content">
+                        <div class="timeline-date">{{ inscricao.data_pagamento|date:"d/m/Y H:i" }}</div>
+                        <div class="timeline-title">Pagamento Confirmado</div>
+                        <div class="timeline-description">
+                            Pagamento de R$ {{ inscricao.valor_inscricao|floatformat:2 }} processado
+                        </div>
+                    </div>
+                </div>
+                {% elif inscricao.status == 'confirmada' %}
+                <div class="timeline-item current">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Aguardando</div>
+                        <div class="timeline-title">Pagamento Pendente</div>
+                        <div class="timeline-description">
+                            Prazo limite: {{ inscricao.data_limite_pagamento|date:"d/m/Y" }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if inscricao.status == 'paga' %}
+                <div class="timeline-item current">
+                    <div class="timeline-content">
+                        <div class="timeline-date">{{ inscricao.competicao.data_inicio|date:"d/m/Y" }}</div>
+                        <div class="timeline-title">Competição</div>
+                        <div class="timeline-description">Dia da competição</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar com Informações de Pagamento -->
+    <div class="col-lg-4">
+        <!-- Informações Financeiras -->
+        <div class="info-card">
+            <h5 class="mb-4"><i class="bi bi-currency-dollar me-2"></i>Informações Financeiras</h5>
+            
+            <div class="info-item mb-3">
+                <i class="bi bi-receipt info-icon"></i>
+                <div class="info-content">
+                    <div class="info-label">Valor da Inscrição</div>
+                    <div class="info-value">R$ {{ inscricao.valor_inscricao|floatformat:2 }}</div>
+                </div>
+            </div>
+            
+            {% if inscricao.desconto > 0 %}
+            <div class="info-item mb-3">
+                <i class="bi bi-percent info-icon"></i>
+                <div class="info-content">
+                    <div class="info-label">Desconto Aplicado</div>
+                    <div class="info-value">R$ {{ inscricao.desconto|floatformat:2 }}</div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="info-item mb-3">
+                <i class="bi bi-calendar-check info-icon"></i>
+                <div class="info-content">
+                    <div class="info-label">Data Limite Pagamento</div>
+                    <div class="info-value">{{ inscricao.data_limite_pagamento|date:"d/m/Y" }}</div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <strong>Total a Pagar:</strong>
+                <strong class="text-primary" style="font-size: 1.2rem;">
+                    R$ {{ inscricao.get_valor_final|floatformat:2 }}
+                </strong>
+            </div>
+        </div>
+
+        <!-- Ações -->
+        <div class="info-card">
+            <h5 class="mb-4"><i class="bi bi-gear me-2"></i>Ações</h5>
+            
+            <div class="action-buttons">
+                {% if inscricao.status == 'confirmada' %}
+                    <button class="btn btn-success" onclick="processarPagamento()">
+                        <i class="bi bi-credit-card me-1"></i>
+                        Pagar Agora
+                    </button>
+                {% endif %}
+                
+                <button class="btn btn-outline-primary" onclick="imprimirInscricao()">
+                    <i class="bi bi-printer me-1"></i>
+                    Imprimir
+                </button>
+                
+                <button class="btn btn-outline-secondary" onclick="baixarComprovante()">
+                    <i class="bi bi-download me-1"></i>
+                    Comprovante
+                </button>
+                
+                {% if inscricao.status == 'pendente' %}
+                    <button class="btn btn-outline-danger" onclick="cancelarInscricao()">
+                        <i class="bi bi-x-circle me-1"></i>
+                        Cancelar
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Informações da Competição -->
+        <div class="info-card">
+            <h5 class="mb-4"><i class="bi bi-trophy me-2"></i>Sobre a Competição</h5>
+            
+            {% if inscricao.competicao.descricao %}
+                <p class="text-muted">{{ inscricao.competicao.descricao }}</p>
+            {% endif %}
+            
+            <div class="info-item mb-3">
+                <i class="bi bi-building info-icon"></i>
+                <div class="info-content">
+                    <div class="info-label">Organizador</div>
+                    <div class="info-value">{{ inscricao.competicao.organizador }}</div>
+                </div>
+            </div>
+            
+            <div class="info-item mb-3">
+                <i class="bi bi-people info-icon"></i>
+                <div class="info-content">
+                    <div class="info-label">Limite de Inscrições</div>
+                    <div class="info-value">{{ inscricao.competicao.limite_inscricoes|default:"Sem limite" }}</div>
+                </div>
+            </div>
+            
+            {% if inscricao.competicao.contato_organizador %}
+            <div class="info-item">
+                <i class="bi bi-envelope info-icon"></i>
+                <div class="info-content">
+                    <div class="info-label">Contato</div>
+                    <div class="info-value">{{ inscricao.competicao.contato_organizador }}</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Pagamento -->
+{% if inscricao.status == 'confirmada' %}
+<div class="modal fade" id="pagamentoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pagamento da Inscrição</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-info">
+                    <h6 class="mb-3">Escolha a forma de pagamento:</h6>
+                    
+                    <div class="payment-methods">
+                        <div class="payment-method" data-method="pix">
+                            <i class="bi bi-qr-code display-6 text-primary mb-2"></i>
+                            <h6>PIX</h6>
+                            <small class="text-muted">Pagamento instantâneo</small>
+                        </div>
+                        
+                        <div class="payment-method" data-method="cartao">
+                            <i class="bi bi-credit-card display-6 text-success mb-2"></i>
+                            <h6>Cartão de Crédito</h6>
+                            <small class="text-muted">Até 12x sem juros</small>
+                        </div>
+                        
+                        <div class="payment-method" data-method="boleto">
+                            <i class="bi bi-file-earmark-text display-6 text-warning mb-2"></i>
+                            <h6>Boleto</h6>
+                            <small class="text-muted">Vencimento em 3 dias</small>
+                        </div>
+                    </div>
+                    
+                    <div id="pixInfo" class="d-none">
+                        <div class="qr-code-container">
+                            <div id="qrcode"></div>
+                            <p class="mt-3">Escaneie o QR Code ou copie o código PIX</p>
+                            <div class="input-group">
+                                <input type="text" class="form-control" value="00020126580014br.gov.bcb.pix..." readonly>
+                                <button class="btn btn-outline-secondary" onclick="copiarPix()">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="continuarPagamento">Continuar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function processarPagamento() {
+    const modal = new bootstrap.Modal(document.getElementById('pagamentoModal'));
+    modal.show();
+}
+
+function imprimirInscricao() {
+    window.print();
+}
+
+function baixarComprovante() {
+    window.open('{% url "portal_atleta:detalhes_inscricao" inscricao.uuid %}?download=pdf', '_blank');
+}
+
+function cancelarInscricao() {
+    if (confirm('Tem certeza que deseja cancelar esta inscrição?')) {
+        fetch('{% url "portal_atleta:detalhes_inscricao" inscricao.uuid %}', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '{% url "portal_atleta:minhas_inscricoes" %}';
+            } else {
+                alert('Erro ao cancelar inscrição: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao cancelar inscrição');
+        });
+    }
+}
+
+function copiarPix() {
+    const input = document.querySelector('#pixInfo input');
+    input.select();
+    document.execCommand('copy');
+    
+    const btn = document.querySelector('#pixInfo button');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="bi bi-check"></i>';
+    btn.classList.add('btn-success');
+    btn.classList.remove('btn-outline-secondary');
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('btn-success');
+        btn.classList.add('btn-outline-secondary');
+    }, 2000);
+}
+
+// Payment method selection
+document.querySelectorAll('.payment-method').forEach(method => {
+    method.addEventListener('click', function() {
+        document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+        this.classList.add('selected');
+        
+        const methodType = this.dataset.method;
+        document.getElementById('pixInfo').classList.add('d-none');
+        
+        if (methodType === 'pix') {
+            document.getElementById('pixInfo').classList.remove('d-none');
+        }
+    });
+});
+
+document.getElementById('continuarPagamento').addEventListener('click', function() {
+    const selectedMethod = document.querySelector('.payment-method.selected');
+    if (!selectedMethod) {
+        alert('Selecione uma forma de pagamento');
+        return;
+    }
+    
+    const method = selectedMethod.dataset.method;
+    window.open(`/pagamento/${method}/{{ inscricao.uuid }}/`, '_blank');
+});
+</script>
+{% endblock %}

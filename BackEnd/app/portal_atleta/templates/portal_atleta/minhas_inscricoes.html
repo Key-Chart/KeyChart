@@ -1,0 +1,458 @@
+{% extends 'portal_atleta/base.html' %}
+
+{% block page_title %}Minhas Inscrições{% endblock %}
+
+{% block extra_css %}
+<style>
+    .inscricao-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+    }
+
+    .inscricao-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .status-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 2;
+    }
+
+    .inscricao-header {
+        background: linear-gradient(135deg, #000 0%, #333 100%);
+        color: white;
+        border-radius: 15px 15px 0 0;
+        padding: 20px;
+        position: relative;
+    }
+
+    .inscricao-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: rgba(212, 175, 55, 0.1);
+        border-radius: 50%;
+        transform: translate(30px, -30px);
+    }
+
+    .competicao-nome {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .competicao-info {
+        opacity: 0.9;
+        font-size: 0.9rem;
+    }
+
+    .inscricao-details {
+        padding: 20px;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 8px 0;
+    }
+
+    .detail-item i {
+        color: var(--accent-color);
+        width: 20px;
+        margin-right: 10px;
+    }
+
+    .actions-section {
+        background: #f8f9fa;
+        border-radius: 0 0 15px 15px;
+        padding: 15px 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .filter-section {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-section .form-control,
+    .filter-section .form-select {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+
+    .stats-overview {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #333 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 30px;
+    }
+
+    .stats-overview .row > div {
+        text-align: center;
+        padding: 15px 0;
+    }
+
+    .stats-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--accent-color);
+    }
+
+    .stats-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-top: 5px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--secondary-color);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .timeline-vertical {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline-vertical::before {
+        content: '';
+        position: absolute;
+        left: 10px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #dee2e6;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -26px;
+        top: 8px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        border: 2px solid white;
+        box-shadow: 0 0 0 2px #dee2e6;
+    }
+
+    .timeline-item.completed::before {
+        background: var(--success-color);
+        box-shadow: 0 0 0 2px var(--success-color);
+    }
+
+    .timeline-item.pending::before {
+        background: var(--warning-color);
+        box-shadow: 0 0 0 2px var(--warning-color);
+    }
+
+    .timeline-item.cancelled::before {
+        background: var(--danger-color);
+        box-shadow: 0 0 0 2px var(--danger-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Statistics Overview -->
+<div class="stats-overview">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="stats-number">{{ estatisticas.total }}</div>
+            <div class="stats-label">Total de Inscrições</div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-number">{{ estatisticas.ativas }}</div>
+            <div class="stats-label">Ativas</div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-number">{{ estatisticas.concluidas }}</div>
+            <div class="stats-label">Concluídas</div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-number">{{ estatisticas.pendentes }}</div>
+            <div class="stats-label">Pendentes</div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="filter-section">
+    <form method="get" class="row align-items-end">
+        <div class="col-md-4">
+            <label for="competicao" class="form-label">Competição</label>
+            <input type="text" class="form-control" id="competicao" name="competicao" 
+                   placeholder="Nome da competição" value="{{ request.GET.competicao }}">
+        </div>
+        <div class="col-md-3">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status">
+                <option value="">Todos os status</option>
+                <option value="pendente" {% if request.GET.status == 'pendente' %}selected{% endif %}>Pendente</option>
+                <option value="confirmada" {% if request.GET.status == 'confirmada' %}selected{% endif %}>Confirmada</option>
+                <option value="paga" {% if request.GET.status == 'paga' %}selected{% endif %}>Paga</option>
+                <option value="cancelada" {% if request.GET.status == 'cancelada' %}selected{% endif %}>Cancelada</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="ano" class="form-label">Ano</label>
+            <select class="form-select" id="ano" name="ano">
+                <option value="">Todos os anos</option>
+                {% for ano in anos_disponiveis %}
+                    <option value="{{ ano }}" {% if request.GET.ano == ano|stringformat:"s" %}selected{% endif %}>{{ ano }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-1"></i>Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Action Buttons -->
+<div class="row mb-4">
+    <div class="col-12">
+        <a href="/inscricoes/" target="_blank" class="btn btn-accent me-2">
+            <i class="bi bi-plus-circle me-1"></i>Nova Inscrição
+        </a>
+        <button class="btn btn-outline-secondary" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i>Imprimir
+        </button>
+    </div>
+</div>
+
+<!-- Inscriptions List -->
+{% if inscricoes %}
+    <div class="row">
+        {% for inscricao in inscricoes %}
+            <div class="col-lg-6 col-xl-4">
+                <div class="inscricao-card position-relative">
+                    <!-- Status Badge -->
+                    <div class="status-badge">
+                        {% if inscricao.status == 'paga' %}
+                            <span class="badge bg-success">Paga</span>
+                        {% elif inscricao.status == 'confirmada' %}
+                            <span class="badge bg-info">Confirmada</span>
+                        {% elif inscricao.status == 'pendente' %}
+                            <span class="badge bg-warning">Pendente</span>
+                        {% else %}
+                            <span class="badge bg-danger">Cancelada</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Header -->
+                    <div class="inscricao-header">
+                        <div class="competicao-nome">{{ inscricao.competicao.nome }}</div>
+                        <div class="competicao-info">
+                            <i class="bi bi-calendar me-1"></i>
+                            {{ inscricao.competicao.data_inicio|date:"d/m/Y" }}
+                            {% if inscricao.competicao.data_fim != inscricao.competicao.data_inicio %}
+                                - {{ inscricao.competicao.data_fim|date:"d/m/Y" }}
+                            {% endif %}
+                        </div>
+                        <div class="competicao-info mt-1">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            {{ inscricao.competicao.local }}
+                        </div>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="inscricao-details">
+                        <div class="detail-item">
+                            <i class="bi bi-person"></i>
+                            <span><strong>Atleta:</strong> {{ inscricao.nome_completo }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="bi bi-award"></i>
+                            <span><strong>Categoria:</strong> {{ inscricao.categoria.nome }}</span>
+                        </div>
+                        {% if inscricao.equipe %}
+                            <div class="detail-item">
+                                <i class="bi bi-people"></i>
+                                <span><strong>Equipe:</strong> {{ inscricao.equipe.nome }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="detail-item">
+                            <i class="bi bi-currency-dollar"></i>
+                            <span><strong>Valor:</strong> R$ {{ inscricao.valor_inscricao|floatformat:2 }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="bi bi-clock"></i>
+                            <span><strong>Inscrito em:</strong> {{ inscricao.data_inscricao|date:"d/m/Y H:i" }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="actions-section">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                ID: {{ inscricao.uuid|slice:":8" }}...
+                            </small>
+                            <div class="btn-group btn-group-sm">
+                                {% if inscricao.uuid %}
+                                <a href="{% url 'portal_atleta:detalhes_inscricao' inscricao.uuid %}" 
+                                   class="btn btn-outline-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                {% endif %}
+                                {% if inscricao.status == 'confirmada' and inscricao.data_limite_pagamento >= data_atual %}
+                                    <button class="btn btn-outline-success" 
+                                            onclick="processarPagamento('{{ inscricao.uuid }}')">
+                                        <i class="bi bi-credit-card"></i>
+                                    </button>
+                                {% endif %}
+                                {% if inscricao.status == 'pendente' %}
+                                    <button class="btn btn-outline-danger"
+                                            onclick="cancelarInscricao('{{ inscricao.uuid }}')">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if inscricoes.has_other_pages %}
+        <nav aria-label="Navegação das inscrições" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if inscricoes.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ inscricoes.previous_page_number }}{% if request.GET.competicao %}&competicao={{ request.GET.competicao }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.ano %}&ano={{ request.GET.ano }}{% endif %}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in inscricoes.paginator.page_range %}
+                    {% if inscricoes.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > inscricoes.number|add:'-3' and num < inscricoes.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if request.GET.competicao %}&competicao={{ request.GET.competicao }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.ano %}&ano={{ request.GET.ano }}{% endif %}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if inscricoes.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ inscricoes.next_page_number }}{% if request.GET.competicao %}&competicao={{ request.GET.competicao }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.ano %}&ano={{ request.GET.ano }}{% endif %}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+{% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+        <i class="bi bi-clipboard-x"></i>
+        <h4>Nenhuma inscrição encontrada</h4>
+        <p class="mb-4">Você ainda não possui inscrições{% if request.GET.competicao or request.GET.status or request.GET.ano %} com os filtros aplicados{% endif %}.</p>
+        <a href="/inscricoes/" target="_blank" class="btn btn-accent">
+            <i class="bi bi-plus-circle me-1"></i>Fazer sua primeira inscrição
+        </a>
+    </div>
+{% endif %}
+
+<!-- Modal de Confirmação para Cancelamento -->
+<div class="modal fade" id="cancelarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cancelar Inscrição</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja cancelar esta inscrição?</p>
+                <p class="text-warning"><small><i class="bi bi-exclamation-triangle me-1"></i>Esta ação não pode ser desfeita.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                <button type="button" class="btn btn-danger" id="confirmarCancelamento">Sim, cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let inscricaoParaCancelar = null;
+
+function cancelarInscricao(uuid) {
+    inscricaoParaCancelar = uuid;
+    const modal = new bootstrap.Modal(document.getElementById('cancelarModal'));
+    modal.show();
+}
+
+document.getElementById('confirmarCancelamento').addEventListener('click', function() {
+    if (inscricaoParaCancelar) {
+        // Aqui você implementaria a chamada AJAX para cancelar
+        fetch(`/keychart/portal_atleta/inscricoes/${inscricaoParaCancelar}/cancelar/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erro ao cancelar inscrição: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao cancelar inscrição');
+        });
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('cancelarModal'));
+        modal.hide();
+    }
+});
+
+function processarPagamento(uuid) {
+    // Implementar integração com gateway de pagamento
+    alert('Redirecionando para pagamento...');
+    window.open(`/keychart/portal_atleta/inscricoes/${uuid}/pagamento/`, '_blank');
+}
+</script>
+{% endblock %}
