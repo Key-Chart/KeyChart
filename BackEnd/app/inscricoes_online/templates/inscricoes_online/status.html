@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status da Inscrição - {{ inscricao.numero_inscricao }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #343A40;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .status-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .status-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .status-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+        }
+        
+        .status-pendente {
+            background-color: var(--warning-color);
+        }
+        
+        .status-pago {
+            background-color: var(--info-color);
+        }
+        
+        .status-confirmado {
+            background-color: var(--success-color);
+        }
+        
+        .status-cancelado {
+            background-color: var(--danger-color);
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .log-item {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-custom {
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Cabeçalho -->
+                <div class="text-center mb-4">
+                    <h1 class="display-6">Status da Inscrição</h1>
+                    <p class="text-muted">Acompanhe o andamento da sua inscrição</p>
+                </div>
+                
+                <!-- Card Principal -->
+                <div class="status-card">
+                    <div class="status-header">
+                        <div class="status-icon status-{{ inscricao.status }}">
+                            {% if inscricao.status == 'pendente' %}
+                                <i class="bi bi-clock-fill"></i>
+                            {% elif inscricao.status == 'pago' %}
+                                <i class="bi bi-credit-card-fill"></i>
+                            {% elif inscricao.status == 'confirmado' %}
+                                <i class="bi bi-check-circle-fill"></i>
+                            {% else %}
+                                <i class="bi bi-x-circle-fill"></i>
+                            {% endif %}
+                        </div>
+                        <h3>Inscrição {{ inscricao.get_status_display }}</h3>
+                        <p class="mb-0">Número: <strong>{{ inscricao.numero_inscricao }}</strong></p>
+                    </div>
+                    
+                    <div class="p-4">
+                        <!-- Informações da Inscrição -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-person-fill me-2"></i>Dados do Atleta
+                                </h5>
+                                
+                                <div class="info-item">
+                                    <span class="fw-bold">Nome:</span>
+                                    <span>{{ inscricao.nome_completo }}</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span class="fw-bold">Email:</span>
+                                    <span>{{ inscricao.email }}</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span class="fw-bold">Telefone:</span>
+                                    <span>{{ inscricao.telefone }}</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span class="fw-bold">Faixa:</span>
+                                    <span>{{ inscricao.get_faixa_display }}</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span class="fw-bold">Categoria:</span>
+                                    <span>{{ inscricao.categoria.nome }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-trophy-fill me-2"></i>Competição
+                                </h5>
+                                
+                                <div class="info-item">
+                                    <span class="fw-bold">Evento:</span>
+                                    <span>{{ inscricao.competicao.nome }}</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span class="fw-bold">Data:</span>
+                                    <span>{{ inscricao.competicao.data_inicio|date:"d/m/Y" }}</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span class="fw-bold">Local:</span>
+                                    <span>{{ inscricao.competicao.local }}</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span class="fw-bold">Academia:</span>
+                                    <span>{{ inscricao.academia_nome }}</span>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <span class="fw-bold">Valor:</span>
+                                    <span>R$ {{ inscricao.valor_inscricao|floatformat:2 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Status específico -->
+                        {% if inscricao.status == 'pendente' %}
+                        <div class="alert alert-warning mt-4">
+                            <h6 class="alert-heading">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                Aguardando Pagamento
+                            </h6>
+                            <p class="mb-0">
+                                Sua inscrição foi registrada com sucesso! Para finalizar o processo, 
+                                realize o pagamento conforme instruções enviadas por email.
+                            </p>
+                            
+                            {% if inscricao.forma_pagamento == 'pix' %}
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    <strong>PIX:</strong> Use a chave PIX enviada por email para realizar o pagamento.
+                                </small>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Botão simulação para testes -->
+                            <div class="mt-3">
+                                <form action="{% url 'inscricoes_online:confirmar_pagamento' inscricao.uuid %}" method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="bi bi-check"></i> Simular Confirmação de Pagamento
+                                    </button>
+                                </form>
+                                <small class="text-muted ms-2">(Apenas para testes)</small>
+                            </div>
+                        </div>
+                        {% elif inscricao.status == 'pago' %}
+                        <div class="alert alert-info mt-4">
+                            <h6 class="alert-heading">
+                                <i class="bi bi-credit-card-fill"></i>
+                                Pagamento Confirmado
+                            </h6>
+                            <p class="mb-0">
+                                Seu pagamento foi confirmado! A organização irá analisar sua inscrição
+                                e enviar a confirmação final em breve.
+                            </p>
+                        </div>
+                        {% elif inscricao.status == 'confirmado' %}
+                        <div class="alert alert-success mt-4">
+                            <h6 class="alert-heading">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Inscrição Confirmada
+                            </h6>
+                            <p class="mb-2">
+                                Parabéns! Sua inscrição foi confirmada com sucesso. 
+                                Você está oficialmente inscrito na competição.
+                            </p>
+                            {% if inscricao.senha_enviada %}
+                            <p class="mb-0">
+                                <small>
+                                    <strong>Dados de acesso:</strong> Foi enviado um email com sua senha 
+                                    de acesso ao portal do atleta.
+                                </small>
+                            </p>
+                            {% endif %}
+                        </div>
+                        {% elif inscricao.status == 'cancelado' %}
+                        <div class="alert alert-danger mt-4">
+                            <h6 class="alert-heading">
+                                <i class="bi bi-x-circle-fill"></i>
+                                Inscrição Cancelada
+                            </h6>
+                            <p class="mb-0">
+                                Sua inscrição foi cancelada. Entre em contato com a organização 
+                                para mais informações.
+                            </p>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Histórico de Ações -->
+                        {% if logs %}
+                        <div class="mt-5">
+                            <h5 class="mb-3">
+                                <i class="bi bi-clock-history me-2"></i>Histórico
+                            </h5>
+                            {% for log in logs %}
+                            <div class="log-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <strong>{{ log.acao }}</strong>
+                                        {% if log.descricao %}
+                                        <p class="text-muted mb-0 mt-1">{{ log.descricao }}</p>
+                                        {% endif %}
+                                    </div>
+                                    <small class="text-muted">{{ log.data|date:"d/m/Y H:i" }}</small>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Botões de Ação -->
+                        <div class="text-center mt-4">
+                            <a href="/inscricoes/" class="btn btn-outline-primary btn-custom me-3">
+                                <i class="bi bi-arrow-left"></i> Voltar
+                            </a>
+                            
+                            {% if inscricao.status == 'confirmado' %}
+                            <a href="#" class="btn btn-primary btn-custom">
+                                <i class="bi bi-download"></i> Baixar Comprovante
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card de Suporte -->
+                <div class="card mt-4">
+                    <div class="card-body text-center">
+                        <h6><i class="bi bi-headset me-2"></i>Precisa de Ajuda?</h6>
+                        <p class="text-muted mb-3">
+                            Entre em contato conosco para esclarecer dúvidas sobre sua inscrição.
+                        </p>
+                        <div class="btn-group" role="group">
+                            <a href="mailto:contato@keychart.com" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-envelope"></i> Email
+                            </a>
+                            <a href="https://wa.me/5511999999999" class="btn btn-sm btn-outline-success" target="_blank">
+                                <i class="bi bi-whatsapp"></i> WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

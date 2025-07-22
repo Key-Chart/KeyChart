@@ -11,6 +11,10 @@ class LoginRequiredMiddleware:
 
     def __call__(self, request):
         if not request.session.get('usuario_autenticado'):
-            if request.path not in self.public_paths and not request.path.startswith('/static/'):
+            # Permitir acesso público às rotas de inscrições online
+            if (request.path not in self.public_paths and 
+                not request.path.startswith('/static/') and
+                not request.path.startswith('/inscricoes/') and
+                not request.path.startswith('/media/')):
                 return redirect('login')
         return self.get_response(request)

@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'app.partidas_chaveamento',
     'app.relatorios',
     'app.estatisticas',
+    'app.inscricoes_online',
 ]
 
 # Middlewares
