@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentação de Rotas - KeyChart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; }
+        .app-section { margin-bottom: 3rem; }
+        .route-table th, .route-table td { vertical-align: middle; }
+        .route-table { background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #0001; }
+        h1, h2 { color: #4f4f4f; }
+        .badge-param { background: #667eea; }
+        .route-name { font-family: monospace; font-size: 1rem; }
+        /* --- DARK MODE --- */
+        html.darkmode body { background: #181a1b !important; }
+        html.darkmode .route-table {
+            background: #23272b !important;
+            color: #f8f9fa !important;
+            box-shadow: 0 2px 8px #0006;
+        }
+        html.darkmode .route-table th, html.darkmode .route-table td {
+            color: #f8f9fa !important;
+            background: #23272b !important;
+        }
+        html.darkmode .route-table tr {
+            background: #23272b !important;
+        }
+        html.darkmode .route-table tr:nth-child(even) {
+            background: #232b32 !important;
+        }
+        html.darkmode h1, html.darkmode h2 {
+            color: #e0e0e0 !important;
+        }
+        html.darkmode .badge-param {
+            background: #4f8cff !important;
+        }
+        html.darkmode .route-name, html.darkmode code, html.darkmode .table-bordered td, html.darkmode .table-bordered th {
+            color: #f8f9fa !important;
+        }
+        html.darkmode .table-bordered {
+            border-color: #444c !important;
+        }
+        html.darkmode .table-bordered td, html.darkmode .table-bordered th {
+            border-color: #444c !important;
+        }
+        html.darkmode .app-section {
+            background: none !important;
+        }
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 1.3rem !important;
+            }
+            h2 {
+                font-size: 1.1rem !important;
+            }
+            .lead {
+                font-size: 1rem;
+            }
+            .app-section {
+                margin-bottom: 2rem;
+            }
+            .route-table th, .route-table td {
+                font-size: 0.95rem;
+                padding: 0.4rem;
+            }
+            #toggle-darkmode {
+                font-size: 0.95rem;
+                padding: 0.3rem 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <div class="d-flex flex-column align-items-center mb-4 position-relative">
+        <h1 class="mb-2 text-center fs-3 fs-md-1">Documentação de Rotas do Sistema KeyChart</h1>
+        <button id="toggle-darkmode" class="btn btn-outline-secondary position-absolute top-0 end-0 mt-2 me-2" type="button" style="max-width:200px;z-index:2;">
+            <span id="darkmode-icon" class="bi bi-moon"></span> Modo escuro
+        </button>
+    </div>
+    <p class="lead">Todas as rotas (URLs) disponíveis no sistema, agrupadas por aplicação. Parâmetros entre &lt;&gt; são variáveis.</p>
+
+    <!-- Dashboard -->
+    <div class="app-section">
+        <h2>Dashboard</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered route-table">
+                <thead><tr><th>URL</th><th>Nome</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/keychart/</code></td><td class="route-name">dashboard:home</td><td>Página inicial do dashboard</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Autenticação -->
+    <div class="app-section">
+        <h2>Autenticação</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered route-table">
+                <thead><tr><th>URL</th><th>Nome</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/keychart/login/</code></td><td class="route-name">login</td><td>Login do sistema</td></tr>
+                    <tr><td><code>/keychart/login/logout/</code></td><td class="route-name">logout</td><td>Logout do sistema</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Portal do Atleta -->
+    <div class="app-section">
+        <h2>Portal do Atleta</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered route-table">
+                <thead><tr><th>URL</th><th>Nome</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/portal-atleta/</code></td><td class="route-name">portal_atleta:login</td><td>Login do atleta</td></tr>
+                    <tr><td><code>/portal-atleta/login/</code></td><td class="route-name">portal_atleta:login</td><td>Login do atleta</td></tr>
+                    <tr><td><code>/portal-atleta/logout/</code></td><td class="route-name">portal_atleta:logout</td><td>Logout do atleta</td></tr>
+                    <tr><td><code>/portal-atleta/dashboard/</code></td><td class="route-name">portal_atleta:dashboard</td><td>Dashboard do atleta</td></tr>
+                    <tr><td><code>/portal-atleta/inscricoes/</code></td><td class="route-name">portal_atleta:minhas_inscricoes</td><td>Minhas inscrições</td></tr>
+                    <tr><td><code>/portal-atleta/inscricoes/&lt;uuid:uuid_inscricao&gt;/</code></td><td class="route-name">portal_atleta:detalhes_inscricao</td><td>Detalhes da inscrição</td></tr>
+                    <tr><td><code>/portal-atleta/competicoes/</code></td><td class="route-name">portal_atleta:competicoes</td><td>Lista de competições</td></tr>
+                    <tr><td><code>/portal-atleta/competicao/&lt;int:competicao_id&gt;/</code></td><td class="route-name">portal_atleta:competicao_detalhes</td><td>Detalhes da competição</td></tr>
+                    <tr><td><code>/portal-atleta/competicao/&lt;int:competicao_id&gt;/favoritar/</code></td><td class="route-name">portal_atleta:favoritar_competicao</td><td>Favoritar competição</td></tr>
+                    <tr><td><code>/portal-atleta/minhas-competicoes/</code></td><td class="route-name">portal_atleta:minhas_competicoes</td><td>Minhas competições</td></tr>
+                    <tr><td><code>/portal-atleta/notificacoes/</code></td><td class="route-name">portal_atleta:notificacoes</td><td>Notificações</td></tr>
+                    <tr><td><code>/portal-atleta/notificacoes/marcar-lida/</code></td><td class="route-name">portal_atleta:marcar_notificacao_lida</td><td>Marcar notificação como lida</td></tr>
+                    <tr><td><code>/portal-atleta/configuracoes/</code></td><td class="route-name">portal_atleta:configuracoes</td><td>Configurações do atleta</td></tr>
+                    <tr><td><code>/portal-atleta/estatisticas/</code></td><td class="route-name">portal_atleta:estatisticas</td><td>Estatísticas do atleta</td></tr>
+                    <tr><td><code>/portal-atleta/perfil/</code></td><td class="route-name">portal_atleta:perfil</td><td>Perfil do atleta</td></tr>
+                    <tr><td><code>/portal-atleta/perfil/atualizar/</code></td><td class="route-name">portal_atleta:atualizar_perfil</td><td>Atualizar perfil</td></tr>
+                    <tr><td><code>/portal-atleta/perfil/endereco/</code></td><td class="route-name">portal_atleta:atualizar_endereco</td><td>Atualizar endereço</td></tr>
+                    <tr><td><code>/portal-atleta/perfil/excluir/</code></td><td class="route-name">portal_atleta:excluir_conta</td><td>Excluir conta</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Inscrições Online -->
+    <div class="app-section">
+        <h2>Inscrições Online</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered route-table">
+                <thead><tr><th>URL</th><th>Nome</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/inscricoes/</code></td><td class="route-name">inscricoes_online:home</td><td>Lista de competições abertas</td></tr>
+                    <tr><td><code>/inscricoes/competicao/&lt;int:competicao_id&gt;/</code></td><td class="route-name">inscricoes_online:inscricao</td><td>Inscrição em competição</td></tr>
+                    <tr><td><code>/inscricoes/competicao/&lt;int:competicao_id&gt;/processar/</code></td><td class="route-name">inscricoes_online:processar</td><td>Processar inscrição</td></tr>
+                    <tr><td><code>/inscricoes/api/categorias/&lt;int:competicao_id&gt;/</code></td><td class="route-name">inscricoes_online:api_categorias</td><td>API: Listar categorias</td></tr>
+                    <tr><td><code>/inscricoes/&lt;uuid:uuid&gt;/status/</code></td><td class="route-name">inscricoes_online:status</td><td>Status da inscrição</td></tr>
+                    <tr><td><code>/inscricoes/&lt;uuid:uuid&gt;/confirmar-pagamento/</code></td><td class="route-name">inscricoes_online:confirmar_pagamento</td><td>Confirmar pagamento (simulação)</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Competições -->
+    <div class="app-section">
+        <h2>Competições</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered route-table">
+                <thead><tr><th>URL</th><th>Nome</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/keychart/competicoes/</code></td><td class="route-name">competicoes:home</td><td>Lista de competições</td></tr>
+                    <tr><td><code>/keychart/competicoes/criar/</code></td><td class="route-name">competicoes:criar_competicao</td><td>Criar competição</td></tr>
+                    <tr><td><code>/keychart/competicoes/editar/&lt;int:competicao_id&gt;/</code></td><td class="route-name">competicoes:editar_competicao</td><td>Editar competição</td></tr>
+                    <tr><td><code>/keychart/competicoes/excluir/&lt;int:competicao_id&gt;/</code></td><td class="route-name">competicoes:excluir_competicao</td><td>Excluir competição</td></tr>
+                    <tr><td><code>/keychart/competicoes/categorias/</code></td><td class="route-name">competicoes:categoria_home</td><td>Home de categorias</td></tr>
+                    <tr><td><code>/keychart/competicoes/competicao/&lt;int:competicao_id&gt;/categorias/</code></td><td class="route-name">competicoes:categoria</td><td>Categorias da competição</td></tr>
+                    <tr><td><code>/keychart/competicoes/categoria/&lt;int:categoria_id&gt;/excluir/</code></td><td class="route-name">competicoes:excluir_categoria</td><td>Excluir categoria</td></tr>
+                    <tr><td><code>/keychart/competicoes/categoria/&lt;int:categoria_id&gt;/atletas/chaveamento_kata/</code></td><td class="route-name">competicoes:chaveamento_kata</td><td>Chaveamento Kata</td></tr>
+                    <tr><td><code>/keychart/competicoes/categoria/&lt;int:categoria_id&gt;/atletas/chaveamento_kata/pdf/</code></td><td class="route-name">competicoes:chaveamento_kata_pdf</td><td>Chaveamento Kata PDF</td></tr>
+                    <tr><td><code>/keychart/competicoes/categoria/&lt;int:categoria_id&gt;/atletas/chaveamento_kumite/</code></td><td class="route-name">competicoes:chaveamento_kumite</td><td>Chaveamento Kumite</td></tr>
+                    <tr><td><code>/keychart/competicoes/categoria/&lt;int:categoria_id&gt;/atletas/chaveamento_kumite/chaveamento-dados/</code></td><td class="route-name">competicoes:chaveamento_kumite_dados</td><td>Chaveamento Kumite Dados</td></tr>
+                    <tr><td><code>/keychart/competicoes/categoria/&lt;int:categoria_id&gt;/atletas/chaveamento_kumite/pdf/</code></td><td class="route-name">competicoes:chaveamento_kumite_pdf</td><td>Chaveamento Kumite PDF</td></tr>
+                    <tr><td><code>/keychart/competicoes/categoria/atletas/chaveamento_kumite_teste</code></td><td class="route-name">competicoes:chaveamento_kumite_teste</td><td>Chaveamento Kumite Teste</td></tr>
+                    <tr><td><code>/keychart/competicoes/competicao/&lt;int:competicao_id&gt;/categoria/cadastrar/</code></td><td class="route-name">competicoes:cadastrar_categoria</td><td>Cadastrar categoria</td></tr>
+                    <tr><td><code>/keychart/competicoes/categoria/&lt;int:categoria_id&gt;/atletas/</code></td><td class="route-name">competicoes:atletas_categoria</td><td>Atletas da categoria</td></tr>
+                    <tr><td><code>/keychart/competicoes/academia/cadastrar/</code></td><td class="route-name">competicoes:cadastrar_academia</td><td>Cadastrar academia</td></tr>
+                    <tr><td><code>/keychart/competicoes/academia/&lt;int:academia_id&gt;/editar/</code></td><td class="route-name">competicoes:editar_academia</td><td>Editar academia</td></tr>
+                    <tr><td><code>/keychart/competicoes/academia/&lt;int:academia_id&gt;/excluir/</code></td><td class="route-name">competicoes:excluir_academia</td><td>Excluir academia</td></tr>
+                    <tr><td><code>/keychart/competicoes/atleta/&lt;int:pk&gt;/editar/</code></td><td class="route-name">competicoes:atleta_editar</td><td>Editar atleta</td></tr>
+                    <tr><td><code>/keychart/competicoes/arbitro/adicionar/</code></td><td class="route-name">competicoes:adicionar_arbitro</td><td>Adicionar árbitro</td></tr>
+                    <tr><td><code>/keychart/competicoes/competicao/&lt;int:competicao_id&gt;/arbitro/adicionar/</code></td><td class="route-name">competicoes:adicionar_arbitro_competicao</td><td>Adicionar árbitro à competição</td></tr>
+                    <tr><td><code>/keychart/competicoes/competicao/&lt;int:competicao_id&gt;/arbitro/&lt;int:arbitro_id&gt;/remover/</code></td><td class="route-name">competicoes:remover_arbitro_competicao</td><td>Remover árbitro da competição</td></tr>
+                    <tr><td><code>/keychart/competicoes/arbitros/listar/</code></td><td class="route-name">competicoes:listar_arbitros</td><td>Listar árbitros</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Atletas / Equipes -->
+    <div class="app-section">
+        <h2>Atletas / Equipes</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered route-table">
+                <thead><tr><th>URL</th><th>Nome</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/keychart/equipes_atletas/</code></td><td class="route-name">equipes_atletas:home</td><td>Home de atletas</td></tr>
+                    <tr><td><code>/keychart/equipes_atletas/perfil_atleta/</code></td><td class="route-name">equipes_atletas:perfil_atleta</td><td>Perfil do atleta</td></tr>
+                    <tr><td><code>/keychart/equipes_atletas/inscricoes/</code></td><td class="route-name">equipes_atletas:inscricoes</td><td>Inscrições</td></tr>
+                    <tr><td><code>/keychart/equipes_atletas/carregar_categorias/&lt;int:competicao_id&gt;/</code></td><td class="route-name">equipes_atletas:carregar_categorias</td><td>Carregar categorias</td></tr>
+                    <tr><td><code>/keychart/equipes_atletas/finalizar_inscricao/</code></td><td class="route-name">equipes_atletas:finalizar_inscricao</td><td>Finalizar inscrição</td></tr>
+                    <tr><td><code>/keychart/equipes_atletas/enviar_email_inscricao/</code></td><td class="route-name">equipes_atletas:enviar_email_inscricao</td><td>Enviar e-mail de inscrição</td></tr>
+                    <tr><td><code>/keychart/equipes_atletas/atletas/</code></td><td class="route-name">equipes_atletas:atletas</td><td>Lista de atletas</td></tr>
+                    <tr><td><code>/keychart/equipes_atletas/atletas/desativar/</code></td><td class="route-name">equipes_atletas:desativar_atleta</td><td>Desativar atleta</td></tr>
+                    <tr><td><code>/keychart/equipes_atletas/atletas/ativar/</code></td><td class="route-name">equipes_atletas:ativar_atleta</td><td>Ativar atleta</td></tr>
+                    <tr><td><code>/keychart/equipes_atletas/atletas/editar/&lt;int:atleta_id&gt;/</code></td><td class="route-name">equipes_atletas:editar_atleta</td><td>Editar atleta</td></tr>
+                    <tr><td><code>/keychart/equipes_atletas/atletas/perfil/&lt;int:atleta_id&gt;/</code></td><td class="route-name">equipes_atletas:perfil_atleta</td><td>Perfil do atleta</td></tr>
+                    <tr><td><code>/keychart/equipes_atletas/atletas/perfil/&lt;int:atleta_id&gt;/pdf/</code></td><td class="route-name">equipes_atletas:exportar_perfil_pdf</td><td>Exportar perfil do atleta em PDF</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Configurações -->
+    <div class="app-section">
+        <h2>Configurações</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered route-table">
+                <thead><tr><th>URL</th><th>Nome</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/keychart/configuracoes/</code></td><td class="route-name">configuracoes:home</td><td>Página de configurações</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Relatórios -->
+    <div class="app-section">
+        <h2>Relatórios</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered route-table">
+                <thead><tr><th>URL</th><th>Nome</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/keychart/relatorio/</code></td><td class="route-name">relatorio:home</td><td>Página de relatórios</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="app-section">
+        <h2>Estatísticas</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered route-table">
+                <thead><tr><th>URL</th><th>Nome</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/keychart/estatisticas/</code></td><td class="route-name">estatisticas:dashboard</td><td>Dashboard de estatísticas</td></tr>
+                    <tr><td><code>/keychart/estatisticas/competicoes/</code></td><td class="route-name">estatisticas:competicoes</td><td>Estatísticas de competições</td></tr>
+                    <tr><td><code>/keychart/estatisticas/atletas/</code></td><td class="route-name">estatisticas:atletas</td><td>Estatísticas de atletas</td></tr>
+                    <tr><td><code>/keychart/estatisticas/academias/</code></td><td class="route-name">estatisticas:academias</td><td>Estatísticas de academias</td></tr>
+                    <tr><td><code>/keychart/estatisticas/comparativas/</code></td><td class="route-name">estatisticas:comparativas</td><td>Comparativos</td></tr>
+                    <tr><td><code>/keychart/estatisticas/api/metricas/</code></td><td class="route-name">estatisticas:api_metricas</td><td>API: Métricas</td></tr>
+                    <tr><td><code>/keychart/estatisticas/api/graficos/</code></td><td class="route-name">estatisticas:api_graficos</td><td>API: Gráficos</td></tr>
+                    <tr><td><code>/keychart/estatisticas/api/kpis/</code></td><td class="route-name">estatisticas:api_kpis</td><td>API: KPIs</td></tr>
+                    <tr><td><code>/keychart/estatisticas/api/alertas/</code></td><td class="route-name">estatisticas:api_alertas</td><td>API: Alertas</td></tr>
+                    <tr><td><code>/keychart/estatisticas/api/export/</code></td><td class="route-name">estatisticas:api_export</td><td>API: Exportação</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Partidas/Chaveamento -->
+    <div class="app-section">
+        <h2>Partidas / Chaveamento</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered route-table">
+                <thead><tr><th>URL</th><th>Nome</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/keychart/partidas/</code></td><td class="route-name">partidas_chaveamento:home</td><td>Partidas</td></tr>
+                    <tr><td><code>/keychart/chaveamento/</code></td><td class="route-name">partidas_chaveamento:chaveamento</td><td>Chaveamento</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer class="text-center mt-5 text-muted">
+        <small>Gerado automaticamente em 22 de julho de 2025</small>
+    </footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.js"></script>
+<script>
+// Dark mode toggle
+const btn = document.getElementById('toggle-darkmode');
+const icon = document.getElementById('darkmode-icon');
+const html = document.documentElement;
+const body = document.body;
+
+function setDarkMode(on) {
+    if (on) {
+        body.classList.add('bg-dark', 'text-light');
+        html.classList.add('darkmode');
+        icon.className = 'bi bi-sun';
+        btn.innerHTML = '<span id="darkmode-icon" class="bi bi-sun"></span> Modo claro';
+    } else {
+        body.classList.remove('bg-dark', 'text-light');
+        html.classList.remove('darkmode');
+        icon.className = 'bi bi-moon';
+        btn.innerHTML = '<span id="darkmode-icon" class="bi bi-moon"></span> Modo escuro';
+    }
+}
+
+btn.addEventListener('click', function() {
+    const isDark = body.classList.contains('bg-dark');
+    setDarkMode(!isDark);
+    localStorage.setItem('keychart-darkmode', !isDark);
+});
+
+// On load, check preference
+if (localStorage.getItem('keychart-darkmode') === 'true') {
+    setDarkMode(true);
+}
+</script>
+</body>
+</html>
