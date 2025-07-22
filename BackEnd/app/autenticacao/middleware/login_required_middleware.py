@@ -10,11 +10,17 @@ class LoginRequiredMiddleware:
         ]
 
     def __call__(self, request):
-        if not request.session.get('usuario_autenticado'):
+        # Ignorar completamente rotas do portal do atleta (controle de login próprio)
+        if request.path.startswith('/portal-atleta/'):
+            return self.get_response(request)
+        # Permitir acesso se for usuário autenticado normal OU atleta autenticado
+        if not (request.session.get('usuario_autenticado') or request.session.get('atleta_id')):
             # Permitir acesso público às rotas de inscrições online
             if (request.path not in self.public_paths and 
                 not request.path.startswith('/static/') and
                 not request.path.startswith('/inscricoes/') and
-                not request.path.startswith('/media/')):
+                not request.path.startswith('/media/') and
+                not request.path.startswith('/portal-atleta/login') and
+                not request.path.startswith('/portal-atleta/recuperar-senha')):
                 return redirect('login')
         return self.get_response(request)
