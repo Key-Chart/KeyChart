@@ -16,6 +16,7 @@ import base64
 from datetime import date
 
 from app.competicoes.models import Competicao, Categoria, Academia
+from django.db.models import Q
 from .models import Atleta, CertificadoAtleta, EstatisticaAtleta, HistoricoCompeticao
 import csv
 
@@ -566,7 +567,7 @@ def perfil_atleta(request, atleta_id):
         
         # Contar partidas de kumite
         partidas_kumite = PartidaKumite.objects.filter(
-            models.Q(atleta1=atleta) | models.Q(atleta2=atleta)
+            Q(atleta1=atleta) | Q(atleta2=atleta)
         )
         
         # Atualizar estatísticas
@@ -701,16 +702,17 @@ def perfil_atleta(request, atleta_id):
                     'pontuacao': 6.5
                 }
             ]
-            
             for comp in competicoes_exemplo:
-                HistoricoCompeticao.objects.create(
+                HistoricoCompeticao.objects.get_or_create(
                     atleta=atleta,
                     competicao=atleta.competicao,  # Usa a competição atual do atleta
                     categoria=atleta.categoria,
-                    resultado=comp['resultado'],
-                    pontuacao=comp['pontuacao'],
-                    data_participacao=comp['data'],
-                    observacoes=f"Participação no {comp['nome']}"
+                    defaults={
+                        'resultado': comp['resultado'],
+                        'pontuacao': comp['pontuacao'],
+                        'data_participacao': comp['data'],
+                        'observacoes': f"Participação no {comp['nome']}"
+                    }
                 )
         
         # Recarregar histórico
