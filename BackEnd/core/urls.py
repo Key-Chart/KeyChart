@@ -6,7 +6,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from app.atletas import views as atletas_views
 from django.http import HttpResponseNotFound
+from django.shortcuts import redirect
+
 urlpatterns = [
+    path('', lambda request: redirect('/keychart/')),  # Redireciona a raiz para /keychart/
     path('admin/', admin.site.urls),
     path('keychart/', include('app.dashboard.urls')),
     path('keychart/competicoes/', include('app.competicoes.urls')),

@@ -406,6 +406,152 @@
             align-items: center;
             min-height: calc(100% - (1.75rem * 2));
         }
+
+        /* Modal de Atletas */
+        .atleta-card {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            transition: all 0.2s ease;
+        }
+
+        .atleta-card:hover {
+            background-color: #e9ecef;
+        }
+
+        .atleta-foto {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 2px solid #dee2e6;
+        }
+
+        .atleta-info {
+            flex: 1;
+        }
+
+        .atleta-nome {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .atleta-cpf {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        /* Filtros de atletas */
+        .filtro-atletas {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        /* Scroll para lista de atletas */
+        .lista-atletas-container {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Indicador de status */
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Efeitos de hover para cards de competição */
+        .competition-card {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .competition-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+            border-color: #0d6efd;
+        }
+
+        /* Efeitos de hover para linhas da tabela */
+        .competition-row {
+            transition: all 0.2s ease;
+        }
+
+        .competition-row:hover {
+            background-color: rgba(13, 110, 253, 0.05);
+            transform: scale(1.001);
+        }
+
+        /* Nome da competição com efeito hover */
+        .competition-name:hover {
+            text-decoration: underline !important;
+        }
+
+        /* Filtros colapsáveis */
+        #filtersContainer {
+            transition: all 0.3s ease;
+        }
+
+        .filters-collapsed #filtersContainer {
+            display: none !important;
+        }
+
+        /* Badges modernos */
+        .badge {
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+
+        /* Botões de alternância de view */
+        .btn-group .btn {
+            transition: all 0.2s ease;
+        }
+
+        .btn-group .btn:not(.btn-light) {
+            background-color: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        /* Loading states */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Animação para busca automática */
+        .auto-search-active #searchInput {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+
+        /* Empty state melhorado */
+        .empty-state {
+            padding: 4rem 2rem;
+        }
+
+        /* Responsividade para filtros */
+        @media (max-width: 768px) {
+            .card-header .d-flex {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn-group {
+                width: 100%;
+            }
+            
+            .btn-group .btn {
+                flex: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -655,6 +801,9 @@
                                             <i class="bi bi-info-circle text-info me-1"></i>Status
                                         </th>
                                         <th class="border-0" style="background: transparent; padding: 1rem; color: var(--text-primary); font-weight: 600;">
+                                            <i class="bi bi-people-fill text-secondary me-1"></i>Atletas
+                                        </th>
+                                        <th class="border-0" style="background: transparent; padding: 1rem; color: var(--text-primary); font-weight: 600;">
                                             <i class="bi bi-person-check text-secondary me-1"></i>Inscrições
                                         </th>
                                         <th class="border-0 text-center" style="background: transparent; padding: 1rem; color: var(--text-primary); font-weight: 600;">
@@ -718,6 +867,13 @@
                                                 {% else %}
                                                     <span class="badge bg-light text-dark border rounded-pill">{{ competicao.status }}</span>
                                                 {% endif %}
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <a href="#" class="text-decoration-none" onclick="mostrarAtletasModal({{ competicao.id }})">
+                                                    <span class="badge bg-primary rounded-pill">
+                                                        {{ competicao.total_atletas }} atleta{{ competicao.total_atletas|pluralize }}
+                                                    </span>
+                                                </a>
                                             </td>
                                             <td class="align-middle">
                                                 {% if competicao.inscricoes_abertas %}
@@ -869,6 +1025,16 @@
                                                         </span>
                                                     {% endif %}
                                                 </div>
+                                                <div class="col-12 mt-2">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="text-muted small">
+                                                            <i class="bi bi-people me-1"></i>Atletas:
+                                                        </span>
+                                                        <a href="#" onclick="mostrarAtletasModal({{ competicao.id }})" class="badge bg-primary rounded-pill">
+                                                            {{ competicao.total_atletas }}
+                                                        </a>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -896,6 +1062,41 @@
         </main>
     </div>
 
+    <!-- Modal para listar atletas -->
+    <div class="modal fade" id="atletasModal" tabindex="-1" aria-labelledby="atletasModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="atletasModalLabel">
+                        <i class="bi bi-people-fill me-2"></i>Lista de Atletas
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="filtro-atletas">
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <input type="text" id="filtroNomeAtleta" class="form-control" placeholder="Filtrar por nome...">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <input type="text" id="filtroCPFAtleta" class="form-control" placeholder="Filtrar por CPF...">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lista-atletas-container">
+                        <div id="listaAtletas">
+                            <!-- Lista de atletas será carregada aqui via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% for competicao in listar_competicoes %}
     <!-- Modal Visualizar -->
     <div class="modal fade" id="viewModal{{ competicao.id }}" tabindex="-1" aria-labelledby="viewModalLabel{{ competicao.id }}" aria-hidden="true">
@@ -915,11 +1116,7 @@
                         </div>
                         <div class="col-md-6">
                             <p><strong><i class="bi bi-list-check me-2"></i>Modalidade:</strong> {{ competicao.modalidade }}</p>
-                            <p><strong><i class="bi bi-people me-2"></i>Categorias:</strong>
-                                {% for categoria in competicao.categorias.all %}
-                                    {{ categoria.nome }}{% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                            </p>
+                            <p><strong><i class="bi bi-people me-2"></i>Total de Atletas:</strong> {{ competicao.total_atletas }}</p>
                             <p><strong><i class="bi bi-person-badge me-2"></i>Árbitros:</strong>
                                 {% for arbitro in competicao.arbitros.all %}
                                     {{ arbitro.nome }}{% if not forloop.last %}, {% endif %}
@@ -1594,7 +1791,9 @@
                     }, 500);
                 }
             }, 100);
-        }        // Array para armazenar os árbitros selecionados
+        }
+
+        // Array para armazenar os árbitros selecionados
         let arbitrosSelecionados = [];
 
         function selecionarArbitro(id, nome, email, telefone) {
@@ -1806,11 +2005,6 @@
             }
         }
 
-        // Inicializar ao carregar a página
-        document.addEventListener('DOMContentLoaded', function() {
-            atualizarTabelaArbitrosSelecionados();
-        });
-
         function adicionarArbitroExistente(competicaoId, arbitroId) {
             // Enviar requisição via AJAX para adicionar árbitro existente à competição
             fetch(`/competicoes/competicao/${competicaoId}/arbitro/adicionar/`, {
@@ -1822,7 +2016,8 @@
                 body: `arbitro_id=${arbitroId}`
             })
             .then(response => response.json())
-            .then(data => {                if (data.success) {
+            .then(data => {
+                if (data.success) {
                     alert(data.message);
                     // Recarregar a página para atualizar as tabelas de árbitros
                     location.reload();
@@ -1835,103 +2030,92 @@
                 alert('Erro ao adicionar árbitro. Tente novamente.');
             });
         }
-    </script>    <!-- Estilos adicionais para filtros e visualizações -->
-    <style>
-        /* Indicador de status */
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
+
+        // Função para mostrar a modal com os atletas
+        function mostrarAtletasModal(categoriaId) {
+            // Mostrar modal
+            const modal = new mdb.Modal(document.getElementById('atletasModal'));
+            modal.show();
+            // Caminho do avatar padrão
+            const avatarPadrao = '/static/competicoes/img/default-avatar.png';
+            // Carregar dados dos atletas via AJAX
+            fetch(`/competicoes/categoria/${categoriaId}/atletas/`)
+                .then(response => response.json())
+                .then(data => {
+                    const listaAtletas = document.getElementById('listaAtletas');
+                    if (data.atletas && data.atletas.length > 0) {
+                        listaAtletas.innerHTML = '';
+                        // Adicionar título com total de atletas
+                        const titulo = document.createElement('h6');
+                        titulo.className = 'mb-3';
+                        titulo.innerHTML = `<i class="bi bi-people-fill me-2"></i>Total de Atletas: ${data.atletas.length}`;
+                        listaAtletas.appendChild(titulo);
+                        // Adicionar cada atleta
+                        data.atletas.forEach(atleta => {
+                            const atletaCard = document.createElement('div');
+                            atletaCard.className = 'atleta-card d-flex align-items-center mb-2 p-2 shadow-sm rounded';
+                            const fotoUrl = atleta.foto && atleta.foto !== '' ? atleta.foto : '/static/competicoes/img/default-avatar.png';
+                            atletaCard.innerHTML = `
+                                <img src="${fotoUrl}" alt="Foto do Atleta" class="atleta-foto rounded-circle me-3" style="width:48px;height:48px;object-fit:cover;">
+                                <div class="atleta-info flex-grow-1">
+                                    <div class="atleta-nome fw-semibold text-dark">${atleta.nome_completo}</div>
+                                </div>
+                            `;
+                            listaAtletas.appendChild(atletaCard);
+                        });
+                    } else {
+                        listaAtletas.innerHTML = `
+                            <div class="text-center py-4">
+                                <i class="bi bi-people display-4 text-muted mb-3"></i>
+                                <h5 class="text-muted">Nenhum atleta inscrito</h5>
+                                <p class="text-muted">Esta competição ainda não possui atletas inscritos.</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar atletas:', error);
+                    document.getElementById('listaAtletas').innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Erro ao carregar lista de atletas. Tente novamente.
+                        </div>
+                    `;
+                });
         }
 
-        /* Efeitos de hover para cards de competição */
-        .competition-card {
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
+        // Filtros para a lista de atletas
+        document.getElementById('filtroNomeAtleta').addEventListener('input', function() {
+            filtrarAtletas();
+        });
 
-        .competition-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-            border-color: #0d6efd;
-        }
+        document.getElementById('filtroCPFAtleta').addEventListener('input', function() {
+            filtrarAtletas();
+        });
 
-        /* Efeitos de hover para linhas da tabela */
-        .competition-row {
-            transition: all 0.2s ease;
-        }
-
-        .competition-row:hover {
-            background-color: rgba(13, 110, 253, 0.05);
-            transform: scale(1.001);
-        }
-
-        /* Nome da competição com efeito hover */
-        .competition-name:hover {
-            text-decoration: underline !important;
-        }
-
-        /* Filtros colapsáveis */
-        #filtersContainer {
-            transition: all 0.3s ease;
-        }
-
-        .filters-collapsed #filtersContainer {
-            display: none !important;
-        }
-
-        /* Badges modernos */
-        .badge {
-            font-size: 0.75em;
-            font-weight: 500;
-        }
-
-        /* Botões de alternância de view */
-        .btn-group .btn {
-            transition: all 0.2s ease;
-        }
-
-        .btn-group .btn:not(.btn-light) {
-            background-color: rgba(255,255,255,0.2);
-            border-color: rgba(255,255,255,0.3);
-        }
-
-        /* Loading states */
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        /* Animação para busca automática */
-        .auto-search-active #searchInput {
-            border-color: #0d6efd;
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-        }
-
-        /* Empty state melhorado */
-        .empty-state {
-            padding: 4rem 2rem;
-        }
-
-        /* Responsividade para filtros */
-        @media (max-width: 768px) {
-            .card-header .d-flex {
-                flex-direction: column;
-                gap: 1rem;
-            }
+        function filtrarAtletas() {
+            const filtroNome = document.getElementById('filtroNomeAtleta').value.toLowerCase();
+            const filtroCPF = document.getElementById('filtroCPFAtleta').value.toLowerCase();
+            const atletasCards = document.querySelectorAll('.atleta-card');
             
-            .btn-group {
-                width: 100%;
-            }
-            
-            .btn-group .btn {
-                flex: 1;
-            }
+            atletasCards.forEach(card => {
+                const nome = card.querySelector('.atleta-nome').textContent.toLowerCase();
+                const cpf = card.querySelector('.atleta-cpf').textContent.toLowerCase();
+                
+                const nomeMatch = nome.includes(filtroNome);
+                const cpfMatch = cpf.includes(filtroCPF);
+                
+                if (nomeMatch && cpfMatch) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         }
-    </style>
 
-    <!-- JavaScript para filtros avançados -->
-    <script src="{% load static %}{% static 'competicoes/js/filtros_competicoes.js' %}"></script>
+        // Inicializar ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            atualizarTabelaArbitrosSelecionados();
+        });
+    </script>
 </body>
 </html>
