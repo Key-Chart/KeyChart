@@ -7,16 +7,18 @@ from django.conf.urls.static import static
 from app.atletas import views as atletas_views
 from django.http import HttpResponseNotFound
 from django.shortcuts import redirect
+from app.autenticacao import views as autenticacao_views
 
 urlpatterns = [
     path('', lambda request: redirect('/keychart/')),  # Redireciona a raiz para /keychart/
     path('admin/', admin.site.urls),
+    path('keychart/login/', autenticacao_views.login_view, name='login'),
+    path('keychart/logout/', autenticacao_views.logout_view, name='logout'),
+    path('keychart/password_reset/', autenticacao_views.password_reset_view, name='password_reset'),
     path('keychart/', include('app.dashboard.urls')),
     path('keychart/competicoes/', include('app.competicoes.urls')),
     path('keychart/equipes_atletas/', include('app.atletas.urls')),
-    path('keychart/login/', include('app.autenticacao.urls')),
     path('portal-atleta/', include('app.portal_atleta.urls')),  # Portal do atleta com URL simplificada
-    path('keychart/login/', include('app.autenticacao.urls')),
     path('keychart/configuracoes/', include('app.configuracoes.urls')),
     path('keychart/', include('app.partidas_chaveamento.urls')),
     path('keychart/relatorio/', include('app.relatorios.urls')),
