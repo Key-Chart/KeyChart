@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block navbar %}{% endblock %}
+{% block content %}
+<div class="login-container">
+    <div class="login-form">
+        <div class="logo-login">
+            <img src="{% static 'autenticacao/img/icone_keychart.png' %}" alt="KeyChart Logo">
+        </div>
+        <h1 class="login-title">KEYCHART</h1>
+        <p class="login-subtitle">Crie sua conta para acessar o sistema</p>
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div class="overlay"></div>
+                <div class="success-popup">
+                    <div class="error-icon">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="error-title">Sucesso!</div>
+                    <div class="error-message">{{ message }}</div>
+                    <button class="close-btn" onclick="closePopup()">Entendido</button>
+                </div>
+                {% endif %}
+                {% if message.tags == 'error' %}
+                <div class="overlay"></div>
+                <div class="error-popup">
+                    <div class="error-icon">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </div>
+                    <div class="error-title">Ops!</div>
+                    <div class="error-message">{{ message }}</div>
+                    <button class="close-btn" onclick="closePopup()">Entendido</button>
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+                <label for="id_username" class="form-label">Usuário</label>
+                <input type="text" name="username" id="id_username" class="form-control" placeholder="Digite seu usuário" required>
+                {% if form.username.errors %}
+                    <div class="text-danger small">{{ form.username.errors|striptags }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group mb-3">
+                <label for="id_password1" class="form-label">Senha</label>
+                <input type="password" name="password1" id="id_password1" class="form-control" placeholder="Digite sua senha" required>
+                {% if form.password1.errors %}
+                    <div class="text-danger small">{{ form.password1.errors|striptags }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group mb-3">
+                <label for="id_password2" class="form-label">Confirme a Senha</label>
+                <input type="password" name="password2" id="id_password2" class="form-control" placeholder="Confirme sua senha" required>
+                {% if form.password2.errors %}
+                    <div class="text-danger small">{{ form.password2.errors|striptags }}</div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-login w-100">Cadastrar</button>
+        </form>
+        <div class="mt-3 text-center">
+            <a href="{% url 'login' %}">Já tem conta? Entrar</a>
+        </div>
+    </div>
+</div>
+<script>
+    function closePopup() {
+        document.querySelector('.overlay').style.display = 'none';
+        document.querySelector('.error-popup')?.style.display = 'none';
+        document.querySelector('.success-popup')?.style.display = 'none';
+    }
+    document.querySelector('.overlay')?.addEventListener('click', closePopup);
+</script>
+{% endblock %}

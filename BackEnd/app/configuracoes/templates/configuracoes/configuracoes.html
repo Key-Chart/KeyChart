@@ -340,103 +340,136 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-4">
-                                        <button class="btn btn-primary mb-3">
-                                            <i class="bi bi-plus-circle"></i> Adicionar Novo Usuário
-                                        </button>
-                                        
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nome</th>
-                                                    <th>Email</th>
-                                                    <th>Perfil</th>
-                                                    <th>Status</th>
-                                                    <th>Ações</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Admin Master</td>
-                                                    <td>admin@keychart.com</td>
-                                                    <td>Administrador</td>
-                                                    <td><span class="badge bg-success">Ativo</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-primary">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Organizador Eventos</td>
-                                                    <td>organizador@keychart.com</td>
-                                                    <td>Organizador</td>
-                                                    <td><span class="badge bg-success">Ativo</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-primary">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Juiz Principal</td>
-                                                    <td>juiz@keychart.com</td>
-                                                    <td>Juiz</td>
-                                                    <td><span class="badge bg-warning text-dark">Inativo</span></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-outline-primary">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <form method="post" class="row g-3">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="add_user" value="1">
+                                            <div class="col-md-3">
+                                                <input type="text" name="nome" class="form-control" placeholder="Nome" required>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="email" name="email" class="form-control" placeholder="Email" required>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="password" name="senha" class="form-control" placeholder="Senha" required>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <select name="perfil" class="form-select" required>
+                                                    <option value="Administrador">Administrador</option>
+                                                    <option value="Organizador">Organizador</option>
+                                                    <option value="Juiz">Juiz</option>
+                                                    <option value="Visualizador">Visualizador</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button type="submit" class="btn btn-success w-100 btn-criar-usuario"><i class="bi bi-plus-circle"></i></button>
+                                            </div>
+                                        </form>
                                     </div>
-                                    
-                                    <div class="settings-section">
-                                        <h5 class="settings-title">Perfis de Acesso</h5>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="card mb-3">
-                                                    <div class="card-header">
-                                                        Administrador
+                                    {% if messages %}
+                                        {% for message in messages %}
+                                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Nome</th>
+                                                <th>Email</th>
+                                                <th>Perfil</th>
+                                                <th>Status</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for usuario in usuarios %}
+                                            <tr>
+                                                <td>{{ usuario.first_name }}</td>
+                                                <td>{{ usuario.email }}</td>
+                                                <td>Administrador</td>
+                                                <td>
+                                                    {% if usuario.is_active %}
+                                                        <span class="badge bg-success">Ativo</span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning text-dark">Inativo</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <button class="btn btn-sm btn-outline-primary btn-editar-usuario" data-bs-toggle="modal" data-bs-target="#editarUsuarioModal{{ usuario.id }}" title="Editar">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                        <form method="post" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="delete_user" value="{{ usuario.id }}">
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger btn-excluir-usuario" title="Excluir">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                        {% if usuario.is_active %}
+                                                            <form method="post" style="display:inline;">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="toggle_user" value="{{ usuario.id }}">
+                                                                <button type="submit" class="btn btn-sm btn-outline-warning" title="Desativar">
+                                                                    <i class="bi bi-person-x"></i>
+                                                                </button>
+                                                            </form>
+                                                        {% else %}
+                                                            <form method="post" style="display:inline;">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="toggle_user" value="{{ usuario.id }}">
+                                                                <button type="submit" class="btn btn-sm btn-outline-success" title="Ativar">
+                                                                    <i class="bi bi-person-check"></i>
+                                                                </button>
+                                                            </form>
+                                                        {% endif %}
                                                     </div>
-                                                    <div class="card-body">
-                                                        <p>Acesso completo a todas as funcionalidades do sistema.</p>
+                                                    <!-- Modal de edição -->
+                                                    <div class="modal fade" id="editarUsuarioModal{{ usuario.id }}" tabindex="-1" aria-labelledby="editarUsuarioModalLabel{{ usuario.id }}" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <form method="post">
+                                                                    {% csrf_token %}
+                                                                    <input type="hidden" name="edit_user" value="{{ usuario.id }}">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="editarUsuarioModalLabel{{ usuario.id }}">Editar Usuário</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Nome</label>
+                                                                            <input type="text" name="nome" class="form-control" value="{{ usuario.first_name }}" required>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Email</label>
+                                                                            <input type="email" name="email" class="form-control" value="{{ usuario.email }}" required>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Nova Senha</label>
+                                                                            <input type="password" name="senha" class="form-control" placeholder="Deixe em branco para não alterar">
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Perfil</label>
+                                                                            <select name="perfil" class="form-select" required>
+                                                                                <option value="Administrador">Administrador</option>
+                                                                                <option value="Organizador">Organizador</option>
+                                                                                <option value="Juiz">Juiz</option>
+                                                                                <option value="Visualizador">Visualizador</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                                        <button type="submit" class="btn btn-primary">Salvar</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="card mb-3">
-                                                    <div class="card-header">
-                                                        Organizador
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <p>Pode gerenciar competições, atletas e partidas, mas não tem acesso às configurações do sistema.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="card mb-3">
-                                                    <div class="card-header">
-                                                        Juiz
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <p>Pode registrar resultados e avaliar atletas, mas não pode modificar configurações de competições.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="card mb-3">
-                                                    <div class="card-header">
-                                                        Visualizador
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <p>Apenas visualização de dados, sem permissão para modificar qualquer informação.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -849,7 +882,126 @@
         </div>
     </div>
 
+    <!-- Modal de autenticação master -->
+    <div class="modal fade" id="masterAuthModal" tabindex="-1" aria-labelledby="masterAuthModalLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="post" class="p-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="master_auth" value="1">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="masterAuthModalLabel">Autenticação de Chefe do Sistema</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="masterSenha" class="form-label">Digite a senha master para editar usuários:</label>
+                            <input type="password" name="master_senha" id="masterSenha" class="form-control" required autofocus>
+                        </div>
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Autenticar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Verificação de Código -->
+    <div class="modal fade" id="verificacaoCodigoModal" tabindex="-1" aria-labelledby="verificacaoCodigoModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form method="post" id="formVerificacaoCodigo">
+            {% csrf_token %}
+            <input type="hidden" name="verificar_codigo" value="1">
+            <div class="modal-header">
+              <h5 class="modal-title" id="verificacaoCodigoModalLabel">Verificação de Código</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar" id="btnFecharCodigo"></button>
+            </div>
+            <div class="modal-body">
+              <p>Digite o código de verificação que foi enviado para o e-mail do usuário:</p>
+              <input type="text" name="codigo_verificacao" class="form-control mb-3" placeholder="Código de verificação" required>
+              {% if messages %}
+                {% for message in messages %}
+                  {% if message.tags == 'error' %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+              <div id="verificacaoCodigoMensagem"></div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Verificar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'configuracoes/js/configuracoes.js' %}"></script>
+    <script>
+    // Passa o status de autenticação master para o JS
+    var masterAuthenticated = "{{ request.session.master_authenticated|yesno:'true,false' }}";
+    // Função para abrir o modal master quando necessário
+    function solicitarMasterAuth(event) {
+        if (masterAuthenticated !== "true") {
+            event.preventDefault();
+            var modal = new bootstrap.Modal(document.getElementById('masterAuthModal'));
+            modal.show();
+        }
+    }
+    // Adicione a função aos botões de criar, editar e excluir usuário
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-criar-usuario, .btn-editar-usuario, .btn-excluir-usuario').forEach(function(btn) {
+            btn.addEventListener('click', solicitarMasterAuth);
+        });
+    });
+    // Exibe o modal de verificação após criar usuário ou erro de código
+    function abrirModalVerificacao() {
+      var modal = new bootstrap.Modal(document.getElementById('verificacaoCodigoModal'));
+      modal.show();
+    }
+    window.addEventListener('DOMContentLoaded', function() {
+      const msgs = document.querySelectorAll('.alert-success, .alert-danger');
+      let erroCodigo = false;
+      msgs.forEach(function(msg) {
+        if (msg.textContent.includes('Usuário criado!')) {
+          abrirModalVerificacao();
+        }
+        if (msg.textContent.includes('Código de verificação incorreto') || msg.textContent.includes('Nenhum usuário pendente de verificação') || msg.textContent.includes('Código de verificação não encontrado')) {
+          erroCodigo = true;
+        }
+      });
+      if (erroCodigo) {
+        abrirModalVerificacao();
+      }
+    });
+    // Permite abrir o modal manualmente pelo menu de usuários
+    document.addEventListener('DOMContentLoaded', function() {
+      var btnAbrirCodigo = document.createElement('button');
+      btnAbrirCodigo.textContent = 'Verificar Código';
+      btnAbrirCodigo.className = 'btn btn-outline-primary btn-sm ms-2';
+      btnAbrirCodigo.onclick = abrirModalVerificacao;
+      var usuariosCard = document.querySelector('#usuarios .card-header');
+      if (usuariosCard) {
+        usuariosCard.appendChild(btnAbrirCodigo);
+      }
+    });
+    // Impede fechar o modal de verificação pelo backdrop ou ESC
+    document.addEventListener('DOMContentLoaded', function() {
+      var modalEl = document.getElementById('verificacaoCodigoModal');
+      if (modalEl) {
+        modalEl.addEventListener('show.bs.modal', function (event) {
+          modalEl.setAttribute('data-bs-backdrop', 'static');
+          modalEl.setAttribute('data-bs-keyboard', 'false');
+        });
+      }
+    });
+    </script>
 </body>
 </html>

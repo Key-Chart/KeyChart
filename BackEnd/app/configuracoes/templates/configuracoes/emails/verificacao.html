@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Verificação de Conta KeyChart</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f8f9fa; }
+        .container { background: #fff; padding: 24px; border-radius: 8px; max-width: 480px; margin: 0 auto; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .codigo { font-size: 2em; color: #007bff; font-weight: bold; letter-spacing: 2px; margin: 16px 0; }
+        .footer { font-size: 0.9em; color: #888; margin-top: 24px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Bem-vindo ao KeyChart!</h2>
+        <p>Olá {{ nome }},</p>
+        <p>Para ativar seu acesso de administrador, insira o código abaixo no sistema:</p>
+        <div class="codigo">{{ codigo }}</div>
+        <p>Se você não solicitou este cadastro, ignore este e-mail.</p>
+        <div class="footer">
+            <strong>KeyChart - Sistema de Gestão de Competições</strong><br>
+            Este é um e-mail automático. Não responda.<br>
+            &copy; 2025 KeyChart
+        </div>
+    </div>
+</body>
+</html>
