@@ -547,5 +547,44 @@
             }
         }
     </script>
+
+    <!-- Script de filtragem da tabela de competições -->
+    <script>
+        function filtrarCompeticoes() {
+            const status = document.getElementById('filter-status').value.toLowerCase();
+            const local = document.getElementById('filter-local').value.toLowerCase();
+            const busca = document.getElementById('search-competicao').value.toLowerCase();
+            const linhas = document.querySelectorAll('#step1-content tbody tr');
+            linhas.forEach(linha => {
+                // Ignora linha de vazio
+                if (linha.querySelector('td[colspan]')) {
+                    linha.style.display = '';
+                    return;
+                }
+                let mostrar = true;
+                // Status
+                if (status) {
+                    const badge = linha.querySelector('.badge');
+                    if (status === 'aberta' && (!badge || !badge.classList.contains('badge-success'))) mostrar = false;
+                    if (status === 'futura' && (!badge || !badge.classList.contains('badge-secondary'))) mostrar = false;
+                }
+                // Local
+                if (local) {
+                    const localTd = linha.children[2].textContent.toLowerCase();
+                    if (!localTd.includes(local)) mostrar = false;
+                }
+                // Busca
+                if (busca) {
+                    const nomeTd = linha.children[0].textContent.toLowerCase();
+                    if (!nomeTd.includes(busca)) mostrar = false;
+                }
+                linha.style.display = mostrar ? '' : 'none';
+            });
+        }
+        document.getElementById('filter-status').addEventListener('change', filtrarCompeticoes);
+        document.getElementById('filter-local').addEventListener('change', filtrarCompeticoes);
+        document.getElementById('search-competicao').addEventListener('input', filtrarCompeticoes);
+        filtrarCompeticoes();
+    </script>
 </body>
 </html>
